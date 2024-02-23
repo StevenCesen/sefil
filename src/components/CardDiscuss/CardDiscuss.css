@@ -1,0 +1,120 @@
+.CardDiscuss{
+    width: 100%;
+    height: calc(100vh - var(--height-header));
+    background-color: var(--bg-2);
+    margin-top: -20px;
+    position: relative;
+}
+
+.CardDiscuss__head{
+    width: 100%;
+    background-color: var(--bg-alert-successful);
+    height: 50px;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.CardDiscuss__head>div>img{
+    width: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.CardDiscuss__head>div>p{
+    color: var(--color-3);
+}
+
+.CardDiscuss__head>div:first-child{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.CardDiscuss__head>div:last-child{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.CardDiscuss__head>div:last-child>button{
+    width: 40px;
+    border: none;
+    background-color: inherit;
+    color: var(--color-3);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.CardDiscuss__head>div:last-child>button>img{
+    width: 20px;
+    cursor: pointer;
+}
+
+.CardDiscuss__messages{
+    width: 100%;
+    height: calc(100vh - 160px);
+    overflow-y: auto;
+}
+
+.CardDiscuss__box{
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 10% 80% 10%;
+    height: 50px;
+    position: absolute;
+    padding: 0 10px;
+    bottom: 0;
+    background-color: var(--bg-alert-successful);
+}
+
+.CardDiscuss__box>textarea{
+    width: 100%;
+    resize: vertical;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: inherit;
+    color: var(--color-3);
+    border: none;
+}
+
+.CardDiscuss__box>textarea:focus{
+    outline: none;
+}
+
+.CardDiscuss__actions{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.CardDiscuss__actions>img{
+    width: 20px;
+    cursor: pointer;
+}
+
+.CardDiscuss__actions>img:first-child{
+    margin-right: 20px;
+}
+
+.CardDiscuss__send{
+    width: 100%;
+    justify-self: flex-end;
+    background-color: inherit;
+    border: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.CardDiscuss__send>img{
+    width: 25px;
+    cursor: pointer;
+}

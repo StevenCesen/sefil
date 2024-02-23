@@ -1,0 +1,27 @@
+:root{
+    --width-button:35px;
+}
+
+.MenuUser{
+    width: 40px;
+    height: 40px;
+    justify-self: flex-end;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 40px;
+}
+
+.MenuUser>button{
+    display: block;
+    justify-content: center;
+    align-items: center;
+    width: var(--width-button);
+    height: var(--width-button);
+    background-color: var(--bg-buttons);
+    border: none;
+    border-radius: var(--width-button);
+    color: var(--color-3);
+    font-size: 15px;
+    cursor: pointer;
+}

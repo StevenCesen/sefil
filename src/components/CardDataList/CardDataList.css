@@ -1,0 +1,69 @@
+.CardDataList{
+    width: 100%;
+    padding: 10px 10px;
+    border-radius: 10px;
+    background-color: var(--bg-1);
+    box-shadow: var(--box-shadow);
+}
+
+.CardDataList__head{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.CardDataList__head>h4{
+    color: var(--color-1);
+}
+
+.CardDataList__data{
+    width: 100%;
+    height: 200px;
+    overflow-y: auto;
+}
+
+.CardDataList>a{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: rgb(77, 157, 192);
+    text-decoration: none;
+    font-weight: 100;
+    font-size: 14px;
+}
+
+.CardDataList__item{
+    margin-top: 10px;
+    width: 100%;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 5% 15% 25% 25% 25%;
+    justify-content: center;
+    align-items: center;
+}
+
+.CardDataList__item>div{
+    width: 100%;
+}
+
+.CardDataList__item>button{
+    background-color: var(--bg-alert-successful);
+    height: 35px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--color-3);
+    border: none;
+}
+
+.CardDataList__item>div>p:first-child{
+    font-weight: 600;
+    color: var(--color-5);
+    font-size: 14px;
+}
+
+.CardDataList__item>div>p:last-child{
+    font-size: 14px;
+    font-weight: 100;
+}

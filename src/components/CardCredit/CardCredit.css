@@ -1,0 +1,49 @@
+.CardCredit{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-alert-successful);
+    padding: 10px 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.CardCredit__alert{
+    background-color: var(--bg-alert-error);
+}
+
+.CardCredit__inactive{
+    background-color: rgb(174, 174, 174);
+}
+
+.CardCredit>div{
+    width: 100%;
+    text-align: center;
+}
+.CardCredit>div>label{
+    display: block;
+    font-weight: bold;
+    color: var(--color-3);
+    font-size: 14px;
+}
+
+.CardCredit>div>a{
+    display: block;
+    color: var(--color-links);
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.CardCredit>div>input{
+    width: 15px;
+    height: 15px;
+    margin-top: 5px;
+}
+
+.CardCredit>div>p{
+    color: var(--color-3);
+    font-weight: 100;
+    margin-top: 5px;
+}

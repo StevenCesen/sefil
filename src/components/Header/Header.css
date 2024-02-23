@@ -1,0 +1,36 @@
+:root{
+    --width-image:200px;
+    --height-header:60px;
+}
+
+.header{
+    width: 100%;
+    background-color: var(--bg-2);
+    height: var(--height-header);
+    display: grid;
+    grid-template-columns: 2fr 9fr 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    font-weight: bold;
+    color: var(--color-1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header>div:nth-child(4){
+    justify-self: center;
+}
+
+.header>img{
+    margin: 0 auto;
+    width: var(--width-image);
+}
+
+.header>button{
+    border: none;
+    color: var(--color-links);
+    background-color: inherit;
+    cursor: pointer;
+}

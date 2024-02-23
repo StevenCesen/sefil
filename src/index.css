@@ -1,0 +1,30 @@
+:root {
+  /*Colores de texto y fondo*/
+  --color-1:#009793;
+  --color-2:#FF9619;
+  --color-3:white;
+  --color-links:#05476b;
+  --color-texts:#939393;
+  --color-4:#B5B5B5;
+  --color-5:#4A4A4A;
+  --color-error:#BB3106;
+
+  --bg-1:#F6F6F6;
+  --bg-2:white;
+  --bg-buttons:#009793;
+  --bg-alert-successful:#009793;
+  --bg-alert-error:#FF9619;
+  --bg-transparent:rgba(0, 0, 0, 0);
+  --box-shadow: 0 2px 5px rgba(119, 119, 119, 0.319);
+}
+
+*{
+  box-sizing: border-box;
+  margin: 0;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1;
+}
+
+body{
+  background-color: var(--bg-1);
+}

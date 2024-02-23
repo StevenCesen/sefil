@@ -1,0 +1,76 @@
+.MenuNotifier{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.MenuNotifier>img{
+    width: 25px;
+    cursor: pointer;
+}
+
+/* .MenuNotifier>span{
+    top:-12px;
+    background-color: var(--bg-alert-successful);
+    width: 20px;
+    border-radius: 2px;
+    right: -10px;
+    color: var(--color-3);
+    position: absolute;
+    font-size: 12px;
+    font-weight: 100;
+    padding: 2px;
+    text-align: center;
+} */
+
+.MenuNotifier__contentPush{
+    display: block;
+    z-index: 100;
+    position: absolute;
+    width: 400px;
+    right: 0;
+    height: calc(100vh - var(--height-header));
+    background-color: var(--bg-2);
+    box-shadow: var(--box-shadow);
+    bottom: calc(-100vh + var(--height-header));
+    overflow-y: auto !important;
+    transition: all 2s ease-in-out;
+}
+
+.MenuNotifier__contentPush::-webkit-scrollbar {
+    width: 5px;
+}
+
+.MenuNotifier__contentPush::-webkit-scrollbar-track {
+    background: #ddd;
+}
+   
+.MenuNotifier__contentPush::-webkit-scrollbar-thumb {
+background: var(--bg-alert-successful); 
+}
+
+.MenuNotifier__push{
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 350px 50px;
+    height: 50px;
+    border-bottom: 1px solid var(--color-4);
+}
+
+.MenuNotifier__push>p{
+    width: 100%;
+    padding-left: 10px;
+    color: var(--color-5);
+    font-weight: 400;
+    font-size: 11px;
+}
+
+.MenuNotifier__push>a{
+    width: 100%;
+    text-decoration: none;
+    font-size: 14px;
+    color: var(--bg-alert-error);
+}

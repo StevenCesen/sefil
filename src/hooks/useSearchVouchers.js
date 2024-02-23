@@ -1,0 +1,12 @@
+export default function useSearchVouchers(string,setData){
+    fetch(`https://sefil.softsen.space/public/api/vouchers/group/${string}`,{
+        headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+    })
+        .then((response) => response.json())  
+        .then((data) => {
+            setData(data)
+        });
+}

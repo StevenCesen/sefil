@@ -1,0 +1,79 @@
+.CardUsuarios{
+    width: 100%;
+}
+
+.CardUsuarios>span{
+    text-align: center;
+    font-weight: 100;
+}
+
+.CardUsuarios>button{
+    width: 40px;
+    margin: 0 auto;
+    background-color: inherit;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.CardUsuarios>button>img{
+    width: 100%;
+}
+
+.CardUsuarios__list{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    flex-direction: column;
+}
+.CardUsuarios__list>label{
+    font-size: 14px;
+    text-align: left;
+}
+
+.CardUsuarios__list>label>input{
+    margin-right: 10px;
+}
+
+.CardUsuarios__actions{
+    display: none;
+    width: 140px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    position: absolute;
+    left:-130px;
+    top: 30px;
+    box-shadow: var(--box-shadow);
+}
+
+.CardUsuarios__actions--active{
+    display: block !important;
+}
+
+.CardUsuarios__actions>button{
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: flex-start;
+    padding:5px 5px;
+    background-color: inherit;
+    align-items: center;
+    border: none;
+    color: var(--color-1);
+    text-align: left;
+    cursor: pointer;
+}
+.CardUsuarios__actions>button:first-child{
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+.CardUsuarios__actions>button:last-child{
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.CardUsuarios__actions>button:hover,.CardUsuarios__actions>button:focus{
+    background-color: var(--bg-1);
+}

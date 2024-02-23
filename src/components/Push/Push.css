@@ -1,0 +1,22 @@
+.push{
+    padding: 10px 10px;
+    border-radius: 5px;
+    position: fixed;
+    z-index: 2000;
+    top: 100px;
+    right: 20px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    background-color:var(--bg-alert-successful);
+    color: var(--color-3);
+    height: 50px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+.push>p{
+    font-size: 12px;
+}

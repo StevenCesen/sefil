@@ -1,0 +1,61 @@
+.CardCreateCartera{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.CardCreateCartera__button,.CardCreateCartera__inputDates>button{
+    width: 120px;
+    height: 40px;
+    border: none;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.CardCreateCartera__button{
+    background-color: var(--bg-alert-successful);
+}
+
+.CardCreateCartera__inputDates>button{
+    background-color: var(--bg-alert-error);
+}
+
+.CardCreateCartera__inputDates{
+    width: 100%;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    padding: 10px 10px;
+    margin-top: 10px;
+}
+
+.CardCreateCartera__inputDates>div{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.CardCreateCartera__inputDates>div>label{
+    font-weight: 100
+}
+
+.CardCreateCartera__inputDates>div>label>input{
+    display: block;
+    margin-bottom: 10px;
+    width: 300px;
+    border: none;
+    height: 40px;
+    font-size: 14px;
+    background-color: inherit;
+}
+
+.CardCreateCartera__inputDates>div>label>input:hover,.CardCreateCartera__inputDates>div>label>input:focus{
+    outline: none;
+}
+
+.CardCreateCartera__inputDates>div>input{
+    margin-bottom: 10px;
+    margin-top: 5px;
+}

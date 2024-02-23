@@ -1,0 +1,83 @@
+.NavSlide__option{
+    position: relative;
+    cursor: pointer;
+}
+
+.NavSlide__option>label{
+    cursor: pointer;
+}
+
+.NavSlide__option>span{
+    position: absolute;
+    width: 100px;
+    right: -110px;
+    color: var(--color-5);
+    z-index: 88;
+    background-color: var(--bg-2);
+    padding: 5px 5px;
+    box-shadow: var(--box-shadow);
+    border-radius: 5px;
+    font-size: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    font-weight: 100;
+}
+
+.NavSlide__option>img:hover ~ span{
+    display: block;
+}
+
+.NavSlide__optionActive{
+    transition: all 0.3s ease-in;
+    display: none;
+}
+
+.CloseNav{
+    grid-template-columns: 3% 97%;
+    transition: all 0.3s ease-in;
+}
+
+.setMargin{
+    margin: 0 auto !important;
+}
+
+.NavSlide__option--down{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column;
+}
+
+.NavSlide__option--down>img{
+    width: 10px;
+    position: absolute;
+    right: 0;
+    top: 15px;
+}
+
+.NavSlide__option--down>div{
+    display: none;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.NavSlide__subOption--active{
+    display: flex !important;
+}
+
+.NavSlide__option--down>div>a{
+    text-decoration: none;
+    color: var(--color-3);
+    margin-bottom: 20px;
+}
+
+.NavSlide__option--down>div>a:first-child{
+    margin-top: 20px;
+}
+
+.NavSlide__option--down>div>a:last-child{
+    margin-bottom: 0;
+}

@@ -1,0 +1,69 @@
+.NavLeftCRM{
+    width: 100%;
+
+}
+
+
+/* ============================================== HeaderCRM ============================================= */
+.HeaderCRM{
+    width: 100%;
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   justify-content: center;
+   align-items: center;
+}
+
+.HeaderCRM>h3{
+    color: var(--color-1);
+}
+
+.HeaderCRM__actions{
+    width: 100%;
+    display: flex !important;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.HeaderCRM__dropDown{
+    width:100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column;
+}
+
+.HeaderCRM__actions>div:first-child{
+    align-items: flex-end;
+}
+
+.HeaderCRM__dropDown>button{
+    width: 35px;
+    background-color: inherit;
+    border: none;
+    cursor: pointer;
+}
+.HeaderCRM__dropDown>button>img{
+    width: 100%;
+}
+
+/* ============================================== SearchCRM ============================================= */
+.SearchCRM{
+    width: 95%;
+    height: 35px;
+    margin: 20px 0;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+}
+
+.SearchCRM>input{
+    width: 100%;
+    border: none;
+    height: inherit;
+    border-radius: inherit;
+    padding-left: 10px;
+}
+
+.SearchCRM>input:focus,.SearchCRM>input:hover{
+    outline: none;
+}
+

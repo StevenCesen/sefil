@@ -1,0 +1,29 @@
+.CardUpdateCartera{
+    position: absolute;
+    width: 100%;
+    height: calc(100% - var(--height-header));
+    background-color: rgba(100, 100, 100, 0.437);
+    top: var(--height-header);
+    left: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}   
+
+.CardUpdateCartera__content{
+    width: 500px;
+    height: 520px;
+    border-radius: 5px;
+    background-color: var(--bg-1);
+    position: relative;
+    overflow-y: auto;
+    padding: 20px 20px;
+    margin-right: 10px;
+}
+
+.CardUpdateCartera>button{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
