@@ -106,14 +106,6 @@ import {
             <Text>{type_print}</Text>
           </View>
 
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Forma de pago:
-            </Text>
-            <Text style={styles.voucherText}>
-              {forma_pago.toUpperCase()}
-            </Text>
-          </View>
           <View style={[styles.watermark,{top:250,left:20}]}>
             <Text>{type_print}</Text>
           </View>
@@ -264,6 +256,15 @@ import {
                 }
               </View>
           }
+
+          <View style={styles.sectionDates}>
+            <Text style={styles.voucherText}>
+              Forma de pago:
+            </Text>
+            <Text style={styles.voucherText}>
+              {forma_pago.toUpperCase()}
+            </Text>
+          </View>
           
 
           <View style={[styles.watermark,{top:650,left:20}]}>

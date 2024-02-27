@@ -8,6 +8,7 @@ export default function useNotification(){
     let channel = pusher.subscribe('notification');
 
     channel.bind('notification', async function(data) {
+        console.log(data)
         const options = {
             body: data.message.message,
             icon: "./icons/logo.png",

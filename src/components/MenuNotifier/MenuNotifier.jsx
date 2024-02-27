@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./MenuNotifier.css";
+import CardNotifierModify from "../CardNotifierModify/CardNotifierModify";
 import { NavLink } from "react-router-dom";
 
 export default function MenuNotifier(){
@@ -32,10 +33,23 @@ export default function MenuNotifier(){
                     <div className="MenuNotifier__contentPush">
                         {
                             pusher.map((push,index)=>(
-                                <div className="MenuNotifier__push">
-                                    <p>{push.message.message}</p>
-                                    <NavLink>Abrir</NavLink>
-                                </div>
+                                // <div key={index} className="MenuNotifier__push">
+                                //     <p>{push.message.message}</p>
+                                //     <NavLink>Abrir</NavLink>
+                                // </div>
+                                (push.action==1)
+                                ?
+                                    <></>
+                                :
+                                    <CardNotifierModify
+                                        message={push.message.message}
+                                        credito={push.message.credito}
+                                        cartera={push.message.cartera}
+                                        user_generate={push.message.byUser}
+                                        prev_data={push.message.prev_data}
+                                        current_data={push.message.current_data}
+                                    />
+
                             ))
                         }
                         
