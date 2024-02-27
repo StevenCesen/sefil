@@ -1,4 +1,4 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useLocation} from "react-router-dom";
 import "./pages.css";
 import { useEffect, useState } from "react";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
@@ -18,7 +18,7 @@ export default function DetailCredit(){
     const [view_reestructurar,setReestructurar]=useState(true);
     const [viewPush,setPush]=useState();
 
-    const param=useParams();
+    const param=new URLSearchParams(useLocation().search);
 
     const clean=setInterval(() => {
             setPush({
@@ -32,7 +32,7 @@ export default function DetailCredit(){
         setReestructurar(false);
         setViewCondonation(false);
 
-        fetch(`https://sefil.softsen.space/public/api/credit/${param.id}`,{
+        fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${param.get('cartera')}&credit=${param.get('id')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -40,8 +40,9 @@ export default function DetailCredit(){
         })
             .then((response) => response.json())  
             .then((data) => {
-                setCredit(data.data);
+                setCredit(data);
             });
+
         setPush({
             view:false,
             text:''
@@ -65,7 +66,7 @@ export default function DetailCredit(){
                 <div>
                     <p>Créditos asociados</p>
                     <select onChange={(e)=>{
-                        fetch(`https://sefil.softsen.space/public/api/credit/${e.target.value}`,{
+                        fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${param.get('cartera')}&credit=${e.target.value}`,{
                             headers: {
                                 Accept: 'application/json',
                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -73,7 +74,7 @@ export default function DetailCredit(){
                         })
                             .then((response) => response.json())  
                             .then((data) => {
-                                setCredit(data.data);
+                                setCredit(data);
                             });
                     }}>
                         <option value={param.id}>TITULAR | {credit.credito}</option>
@@ -217,8 +218,8 @@ export default function DetailCredit(){
                             <></>
                     }
                    
-                    <NavLink to={`/dashboard/comprobantes/view/${credit.ci}`}>Comprobantes de pago</NavLink>
-                    <NavLink to={`/dashboard/garantes/${param.id}`}>Garantes</NavLink>
+                    <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${param.get('cartera')}`}>Comprobantes de pago</NavLink>
+                    <NavLink to={`/dashboard/garantes/${param.get('id')}`}>Garantes</NavLink>
                 </div>
             
             </div>
@@ -228,7 +229,8 @@ export default function DetailCredit(){
                     <CardStructure
                         total={credit.totalAmount}
                         set={setReestructurar}
-                        id={param.id}
+                        id={param.get('id')}
+                        cartera={param.get('cartera')}
                     />
             }
 
@@ -242,13 +244,19 @@ export default function DetailCredit(){
                         gastos_judiciales={credit.gastos_judiciales}
                         gastos_cobranza={credit.gastos_cobranza}
                         set={setViewCondonation}
-                        id={param.id}
+                        id={param.get('id')}
+                        cartera={param.get('cartera')}
                     />
             }
 
             {
                 (pay) &&
-                    <CardPay setPay={setPay} data={credit} id={param.id}/>
+                    <CardPay 
+                        setPay={setPay} 
+                        data={credit} 
+                        id={param.get('id')}
+                        cartera={param.get('cartera')}
+                    />
             }
 
             {

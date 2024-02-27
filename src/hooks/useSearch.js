@@ -1,7 +1,18 @@
-export default function useSearch(string,setData){
+export default function useSearch(string,cartera,setData){
     if(string.length>4){
-        if(/^[A-Za-z ]+/.test(string)){
-            fetch(`https://sefil.softsen.space/public/api/credit?nombre=${string}`,{
+        if(/^[A-Za-z ]+/.test(string) & cartera!==''){
+            fetch(`https://sefil.softsen.space/public/api/credit?nombre=${string}&cartera=${cartera}`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    setData(data)
+                });
+        }else if(cartera!==''){
+            fetch(`https://sefil.softsen.space/public/api/credit?cedula=${string}&cartera=${cartera}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -12,27 +23,19 @@ export default function useSearch(string,setData){
                     setData(data)
                 });
         }else{
-            fetch(`https://sefil.softsen.space/public/api/credit?cedula=${string}`,{
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-                .then((response) => response.json())  
-                .then((data) => {
-                    setData(data)
-                });
+            //Buscamos en todas las  carteras
         }
     }else if(string===''){
-        fetch(`https://sefil.softsen.space/public/api/credit`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
-                setData(data)
-            });
+        console.log('no hay entradas');
+        // fetch(`https://sefil.softsen.space/public/api/credit`,{
+        //     headers: {
+        //         Accept: 'application/json',
+        //         Authorization: `Bearer ${localStorage.getItem('token')}`
+        //     }
+        // })
+        //     .then((response) => response.json())  
+        //     .then((data) => {
+        //         setData(data)
+        //     });
     }
 }

@@ -3,7 +3,7 @@ import "./CardStructure.css";
 import useFadeArray from "../../hooks/useFadeArray";
 import useStruct from "../../hooks/useStruct";
 
-export default function CardStructure({total,id,set}){
+export default function CardStructure({total,id,set,cartera}){
 
     const [tipo_desgloce,setDesgloce]=useState();
     const [nro_cuotas,setNumber]=useState();
@@ -71,6 +71,7 @@ export default function CardStructure({total,id,set}){
                         nro_cuotas:nro_cuotas,
                         payment_date:date,
                         credito:id,
+                        cartera:cartera,
                         postDates:JSON.stringify({
                             totalAmount:total,
                             saldo_capital:total,

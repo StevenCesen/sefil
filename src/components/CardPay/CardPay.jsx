@@ -4,7 +4,7 @@ import { PDFViewer } from "@react-pdf/renderer";
 import PDF from "../PDF";
 import usePrelacion from "../../hooks/usePrelacion";
 
-export default function CardPay({setPay,data,id}){
+export default function CardPay({setPay,data,id,cartera}){
 
     const [pay,setData]=useState({
         tipo_transaccion:'total',
@@ -385,6 +385,7 @@ export default function CardPay({setPay,data,id}){
                             let data_encode=data_send;
                             data_encode.prevDates=JSON.stringify(data_encode.prevDates);
                             data_encode.detalle=JSON.stringify(data_encode.detalle);
+                            data_encode.cartera=cartera;
 
                             // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIENDO
                             fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{

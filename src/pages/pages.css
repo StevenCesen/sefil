@@ -197,6 +197,9 @@
 
 .pageConsulta__search{
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     position: relative;
 }
 
@@ -210,6 +213,7 @@
 }
 
 .pageConsulta__search>label>input{
+    width: 350px;
     margin-top: 5px;
     background-color: inherit;
     border: none;

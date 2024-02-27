@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./CardCondonacion.css";
 import useCondonation from "../../hooks/useCondonation";
 
-export default function CardCondonacion({total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,set,id}){
+export default function CardCondonacion({total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,set,id,cartera}){
 
     const [credit,setValues]=useState();
     const [totalCondonado,setTotal]=useState(0);
@@ -109,7 +109,8 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                             gastos_cobranza:credit.gastos_cobranza,
                             gastos_judiciales:credit.gastos_judiciales,
                             otros_valores:'0',
-                            credito:Number(id)
+                            credito:Number(id),
+                            cartera:cartera
                         }
                         
                         /*

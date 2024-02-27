@@ -24,6 +24,10 @@ export default function Consulta(){
         acumulado:0,
     });
 
+    const [business,setBusiness]=useState();
+
+    const [aux_busines,setAux]=useState("");
+
     const updateData=(url)=>{
         fetch(url,{
             headers: {
@@ -36,7 +40,7 @@ export default function Consulta(){
     }
 
     useEffect(()=>{
-        fetch("https://sefil.softsen.space/public/api/credit",{
+        fetch("https://sefil.softsen.space/public/api/bussines",{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -44,11 +48,18 @@ export default function Consulta(){
         })
             .then((response) => response.json())  
             .then((data) => {
-                setCredits(data);
+                setBusiness(data.data);
             });
+        
+        setCredits({
+            ...credits,
+            data:[],
+            links:[]
+        });
+
     },[]);
 
-    
+    if(!business) return <></>    
 
     return (
         <div className="pageConsulta">
@@ -59,6 +70,31 @@ export default function Consulta(){
                         const ci=e.target.value;
                         useSearch(ci,setCredits);
                     }} placeholder="115057XXXX"/>
+                </label>
+                <label>
+                    Empresa
+                    <select onChange={(e)=>{
+                        if(e.target.value!=='default'){
+                            setAux(e.target.value);
+                            fetch(`https://sefil.softsen.space/public/api/bussines/${e.target.value}`,{
+                                headers: {
+                                    Accept: 'application/json',
+                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                }
+                            })
+                                .then((response) => response.json())  
+                                .then((data) => {
+                                    setCredits(data);
+                                });
+                        }
+                    }}>
+                            <option value={"default"}>--Seleccionar--</option>
+                        {
+                            business.map((bus,index)=>(
+                                <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
+                            ))
+                        }
+                    </select>
                 </label>
             </div>
 
@@ -81,7 +117,7 @@ export default function Consulta(){
                     {
                         credits.data.map((credit,index)=>(
                             <div>
-                                <NavLink to={`/dashboard/cobranza/view/${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
+                                <NavLink to={`/dashboard/cobranza/view/set?cartera=${aux_busines}&id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
                                 <p>{credit.credito}</p>
                                 <p>{credit.tipo}</p>
                                 <p>{credit.name}</p>

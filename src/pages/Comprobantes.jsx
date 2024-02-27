@@ -1,4 +1,4 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import CardCredit from "../components/CardCredit/CardCredit";
 import { useEffect, useRef, useState } from "react";
@@ -11,6 +11,7 @@ import useSearchVouchers from "../hooks/useSearchVouchers.js";
 
 export default function Comprobantes(){
     const param = useParams();
+    const cartera=new URLSearchParams(useLocation().search);
 
     const [comprobantes,setComprobantes]=useState({
         current_page:1,
@@ -69,7 +70,7 @@ export default function Comprobantes(){
 
     useEffect(()=>{
         if(param.id!==undefined){
-            useSearch(param.id,setCredits);
+            useSearch(param.id,cartera.get('cartera'),setCredits);
             setVal(param.id);
         }
     },[]);
@@ -81,9 +82,9 @@ export default function Comprobantes(){
                     Buscar cliente
                     <input onKeyUp={(e)=>{
                         const ci=e.target.value;
-                        useSearch(ci,setCredits);
+                        useSearch(ci,'',setCredits);
                         setCredit(0);
-                    }} onChange={(e)=>{setVal(e.target.value)}} value={val} placeholder="115057XXXX"/>
+                    }} onChange={(e)=>{setVal(e.target.value)}} value={val} placeholder="Nombre o número de cédula"/>
                 </label>
                 {
                     (credit===0) &&
@@ -92,7 +93,7 @@ export default function Comprobantes(){
                                 credits.data.map((credit,index)=>(
                                     <button onClick={()=>{
                                         setCredit(credit.id);
-                                        useSearchVouchers(credit.id,setComprobantes);
+                                        useSearchVouchers(credit.id,cartera.get('cartera'),setComprobantes);
                                     }} key={index}>
                                         <p>{credit.name}</p>
                                         <p className="pageConsulta__prevResult--space"> | </p>
@@ -140,10 +141,10 @@ export default function Comprobantes(){
                                                 if('status' in data){
                                                     console.log("Cantidad excedida, pedir permiso a administrador?");
                                                 }else{
-                                                    data.data.name=data.data.name[0].name;
-                                                    data.data.ci=data.data.ci[0].ci;
-                                                    data.data.agente=data.data.agente[0].name;
-                                                    setComprobante(data.data);
+                                                    data.name=data.name[0].name;
+                                                    data.ci=data.ci[0].ci;
+                                                    data.agente=data.agente[0].name;
+                                                    setComprobante(data);
                                                     setView(true);
                                                 }
                                             });

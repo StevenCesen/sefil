@@ -7,7 +7,7 @@ export default async function useStruct(data,btn,id){
             Authorization: `Bearer ${localStorage.getItem('token')}`
         }
     });
-    
+
     const response=await request.json();
 
     if(response.status===200){
