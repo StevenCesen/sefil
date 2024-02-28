@@ -137,6 +137,7 @@ export default function Garantes(){
                                     <h3>Ubicación del garante</h3>
                                     <Wrapper  apiKey="AIzaSyDqk_2FCNezPuFgd8Zaeu2s1idsDpdC1Qc" render={render}>
                                         <div ref={refMap}>
+                                            
                                         </div>
                                     </Wrapper>
                                     {/* <div ref={refMap}>

@@ -219,7 +219,7 @@ export default function DetailCredit(){
                     }
                    
                     <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${param.get('cartera')}`}>Comprobantes de pago</NavLink>
-                    <NavLink to={`/dashboard/garantes/${param.get('id')}`}>Garantes</NavLink>
+                    <NavLink to={`/dashboard/garantes/${param.get('id')}?cartera=${param.get('cartera')}`}>Garantes</NavLink>
                 </div>
             
             </div>

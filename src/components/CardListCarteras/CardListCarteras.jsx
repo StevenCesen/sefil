@@ -2,14 +2,15 @@ import { NavLink } from "react-router-dom";
 import "./CardListCarteras.css";
 import { useEffect, useState } from "react";
 
-export default function CardListCarteras({name,fecha_upload,last_update,versions}){
+export default function CardListCarteras({name,fecha_upload,last_update,versions,state}){
     
     const [viewVersions,setView]=useState(false);
     const [cartera,setCartera]=useState({
         name:'',
         fecha_upload:'',
         last_update:'',
-        versions:[]
+        versions:[],
+        state:''
     });
 
     useEffect(()=>{
@@ -18,7 +19,8 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
             name:name,
             fecha_upload:fecha_upload,
             last_update:last_update,
-            versions:versions
+            versions:versions,
+            state:state
         });
     },[]);
 
@@ -52,6 +54,8 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                     :   <></>
                 }
 
+                <p>{cartera.state}</p>
+                
             </div>
         </div>
     );

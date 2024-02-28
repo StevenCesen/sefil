@@ -7,6 +7,7 @@ export default function CardCreateCartera(){
 
     const cartera_original=useRef();
     const cartera_actual=useRef();
+    const cartera_name=useRef();
 
     useEffect(()=>{
         setView(false);
@@ -31,7 +32,7 @@ export default function CardCreateCartera(){
                         <div>
                             <label>
                                 Nombre de cartera:
-                                <input type="text" placeholder="Escribe aquí.."/>
+                                <input ref={cartera_name} type="text" placeholder="Escribe aquí.."/>
                             </label>
                         </div>
 
@@ -45,8 +46,28 @@ export default function CardCreateCartera(){
                             <input ref={cartera_actual} type="file" id="cartera_actual"/>
                         </div>
                         <button onClick={(e)=>{
-                            console.log(cartera_original.current.files[0]);
-                            console.log(cartera_actual.current.files[0]);
+
+                            const data_import=new FormData();
+                            data_import.append('name',cartera_name.current.value);
+                            data_import.append('file',cartera_actual.current.files[0]);
+                            data_import.append('file_original',cartera_original.current.files[0]);
+
+                            fetch("https://sefil.softsen.space/public/api/cartera/create",{
+                                method:'POST',
+                                body:data_import,
+                                headers: {
+                                    Accept: 'application/json',
+                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                }
+                            })
+                                .then((response) => response.json())  
+                                .then((data) => {
+                                    if(data.message==='Importación exitosa'){
+                                        e.target.textContent='Importación correcta';
+                                    }
+                                });
+
+
                         }}>Subir cartera</button>
                     </div>
                 : <></>
