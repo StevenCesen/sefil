@@ -68,8 +68,8 @@ export default function Consulta(){
                     Buscar cliente
                     <input onKeyUp={(e)=>{
                         const ci=e.target.value;
-                        useSearch(ci,setCredits);
-                    }} placeholder="115057XXXX"/>
+                        useSearch(ci,aux_busines,setCredits);
+                    }} placeholder="Ingrese cédula o nombre"/>
                 </label>
                 <label>
                     Empresa

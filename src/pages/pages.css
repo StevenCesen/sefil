@@ -850,13 +850,15 @@
     margin: 10px 0;
     width: 100%;
     display: grid;
-    grid-template-columns: 2fr 3fr;
+    /* grid-template-columns: 2fr 3fr; */
+    grid-template-columns: 1fr;
     gap: 10px;
 }
 
 .Home__stadisticOne>div{
     width: 100%;
     margin: 20px 0;
+    height: 500px;
     box-shadow: var(--box-shadow);
     padding: 10px 10px;
     background-color: var(--bg-2);

@@ -214,13 +214,13 @@ export default function Home(){
             </div>
 
             <div className="Home__stadisticOne">
-                <div>
+                {/* <div>
                     <h3>Estado actual de cartera</h3>
                     <Doughnut
                         data={data_1}
                         options={options_1}
                     />
-                </div>
+                </div> */}
 
                 <div>
                     <div>

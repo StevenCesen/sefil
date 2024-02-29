@@ -51,6 +51,7 @@ export default function CardCreateCartera(){
                             data_import.append('name',cartera_name.current.value);
                             data_import.append('file',cartera_actual.current.files[0]);
                             data_import.append('file_original',cartera_original.current.files[0]);
+                            e.target.textContent='Importando cartera, espere...';
 
                             fetch("https://sefil.softsen.space/public/api/cartera/create",{
                                 method:'POST',
@@ -62,13 +63,12 @@ export default function CardCreateCartera(){
                             })
                                 .then((response) => response.json())  
                                 .then((data) => {
-                                    if(data.message==='Importación exitosa'){
-                                        e.target.textContent='Importación correcta';
-                                    }
+                                    e.target.textContent='Importación correcta';
                                 });
 
 
                         }}>Subir cartera</button>
+
                     </div>
                 : <></>
             }

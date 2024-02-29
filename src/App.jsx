@@ -4,15 +4,10 @@ import Login from './pages/Login'
 import Header from './components/Header/Header'
 import NavSlide from './components/navSlide/NavSlide'
 import { useEffect, useState } from 'react'
-import useNotification from './hooks/useNotification'
 
 function App() {
   useEffect(()=>{
-    if(localStorage.getItem('token')!==''){
-      if(localStorage.getItem('rol')==='administrador'){
-        useNotification()
-      }
-    }
+    
   },[]);
 
   return (

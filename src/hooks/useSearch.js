@@ -26,16 +26,15 @@ export default function useSearch(string,cartera,setData){
             //Buscamos en todas las  carteras
         }
     }else if(string===''){
-        console.log('no hay entradas');
-        // fetch(`https://sefil.softsen.space/public/api/credit`,{
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())  
-        //     .then((data) => {
-        //         setData(data)
-        //     });
+        fetch(`https://sefil.softsen.space/public/api/credit?cartera=${cartera}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setData(data)
+            });
     }
 }

@@ -22,8 +22,6 @@ export default function Login(){
             "password":user.password
         });
 
-        console.log(user)
-
         useLogin(formdata,response,btn);
     }
 

@@ -1,21 +1,19 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./MenuNotifier.css";
 import CardNotifierModify from "../CardNotifierModify/CardNotifierModify";
 import { NavLink } from "react-router-dom";
+import { NotifierContext } from "../../contexts/notifierContext";
 
 export default function MenuNotifier(){
 
     const [menu,setMenu]=useState(false);
     const [pusher,setPusher]=useState();
+    const dataContext=useContext(NotifierContext);
 
     useEffect(()=>{
         setMenu(false);
-        if(localStorage.getItem('pusher')!==null){
-            setPusher(JSON.parse(localStorage.getItem('pusher')));
-        }else{
-            setPusher([])
-        }
-    },[]);
+        setPusher(dataContext.data_push);
+    },[dataContext]);
 
     if(!pusher) return <></>
 
@@ -33,15 +31,12 @@ export default function MenuNotifier(){
                     <div className="MenuNotifier__contentPush">
                         {
                             pusher.map((push,index)=>(
-                                // <div key={index} className="MenuNotifier__push">
-                                //     <p>{push.message.message}</p>
-                                //     <NavLink>Abrir</NavLink>
-                                // </div>
                                 (push.action==1)
                                 ?
                                     <></>
                                 :
                                     <CardNotifierModify
+                                        key={index}
                                         message={push.message.message}
                                         credito={push.message.credito}
                                         cartera={push.message.cartera}

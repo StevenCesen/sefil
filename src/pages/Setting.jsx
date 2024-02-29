@@ -22,7 +22,7 @@ export default function Setting(){
             .then((data) => {
                 setCarteras(data.data);
             });
-
+        location.hash='#/dashboard/configuracion/importdb';
     },[]);
 
     if(!carteras) return <></>
@@ -76,7 +76,7 @@ export default function Setting(){
                         (param.ci==='exportdb')
                         ?
                             <h1>Exportar bases de datos</h1>
-                        :<h1>Copias de seguridad</h1>
+                        :  <></>
                 : <CardCreateCartera/>
             }
         </div>
