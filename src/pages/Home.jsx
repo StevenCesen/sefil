@@ -201,15 +201,15 @@ export default function Home(){
                 />
 
                 {
-                    users.data.map((user,index)=>(
-                        <CardDataShort
-                            key={index}
-                            title="Usuarios"
-                            status={"Creados"}
-                            subtitle={user.name.toUpperCase()}
-                            data={`${user.size}`}
-                        />
-                    ))
+                    // users.data.map((user,index)=>(
+                    //     <CardDataShort
+                    //         key={index}
+                    //         title="Usuarios"
+                    //         status={"Creados"}
+                    //         subtitle={user.name.toUpperCase()}
+                    //         data={`${user.size}`}
+                    //     />
+                    // ))
                 }
             </div>
 

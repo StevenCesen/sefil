@@ -303,14 +303,35 @@ export default function CardPay({setPay,data,id,cartera}){
                         :   <></>
                     }
                     {
-                        (pay.tipo_transaccion==='total' & pay.forma_pago==='efectivo') ?
-                            <div>
-                                <p>
-                                    <label>Valor devuelto</label>
-                                    <label>:</label>
-                                </p>
-                                <input type="number" value={Number(pay.valor_devuelto).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} disabled/>
-                            </div>
+                        (pay.tipo_transaccion==='total') ?
+                            (pay.forma_pago==='efectivo') 
+                            ?
+                                <div>
+                                    <p>
+                                        <label>Valor devuelto</label>
+                                        <label>:</label>
+                                    </p>
+                                
+                                    <input type="number" value={Number(pay.valor_devuelto).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} disabled/>
+                                </div>
+                            :
+                                <div>
+                                    <p>
+                                        <label>Diferencia</label>
+                                        <label>:</label>
+                                    </p>
+                                
+                                    <input 
+                                        type="number" 
+                                        onChange={(e)=>[
+                                            setData({
+                                                ...pay,
+                                                valor_devuelto:Number(e.target.value).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                                            })
+                                        ]}
+                                        value={Number(pay.valor_devuelto).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}/>
+                                </div>
+
                         :   <></>
                     }
                 </div>
@@ -372,12 +393,14 @@ export default function CardPay({setPay,data,id,cartera}){
 
                                 data_send.valor_recibido=ref.current.value;
                                 data_send.valor_devuelto=0;
+
                             }else if(pay.forma_pago==='efectivo'){
                                 data_send.valor_recibido=ref.current.value;
                                 data_send.valor_devuelto=pay.valor_devuelto;
+
                             }else{
-                                data_send.valor_recibido=data.totalAmount;
-                                data_send.valor_devuelto=0;
+                                data_send.valor_recibido=Number(data.totalAmount)+Number(pay.valor_devuelto);
+                                data_send.valor_devuelto=pay.valor_devuelto;
                             }
 
                             setSend(data_send);
@@ -387,7 +410,9 @@ export default function CardPay({setPay,data,id,cartera}){
                             data_encode.detalle=JSON.stringify(data_encode.detalle);
                             data_encode.cartera=cartera;
 
-                            // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIENDO
+                            // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIEND
+
+                            console.log(data_encode)
                             fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
                                 method:'PUT',
                                 headers: {
@@ -408,7 +433,6 @@ export default function CardPay({setPay,data,id,cartera}){
                                         e.target.textContent='Error, inténtalo de nuevo';
                                     }
                                 });
-                            // console.log(data_encode)
   
                         }}>Registrar pago</button>
                     :
@@ -438,7 +462,7 @@ export default function CardPay({setPay,data,id,cartera}){
                             gastos_cobranza={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).gastos_cobranza : JSON.parse(send.prevDates).gastos_cobranza}
                             otros_valores={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).otros_valores : JSON.parse(send.prevDates).otros_valores}
 
-                            valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial') ? pay.valor_recibido : (send.tipo_transaccion==='total') ? data.totalAmount : send.valor_recibido}
+                            valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial') ? pay.valor_recibido : (send.tipo_transaccion==='total') ? Number(data.totalAmount)+Number(pay.valor_devuelto) : send.valor_recibido}
                             valor_devuelto={pay.valor_devuelto}
 
                             fecha={new Date().toLocaleDateString()}

@@ -10,14 +10,18 @@ function NotifierContextProvider({children}){
         setPushes(data)
     }
 
-    const removePush=()=>{
-        // setData({
-        //     items:items,
-        //     subtotal:subtotal,
-        //     iva:iva,
-        //     total:total
-        // });
-        console.log("hola mundo vas a eliminar push");
+    const removePush=(id)=>{
+        let pushes=JSON.parse(localStorage.getItem('pusher'));
+        let new_pushes=[];
+
+        pushes.map((push,index)=>{
+            if(Number(push.message.id)!==Number(id)){
+                new_pushes.push(push);
+            }
+        });
+
+        localStorage.setItem('pusher',JSON.stringify(new_pushes));
+        setPushes(JSON.parse(localStorage.getItem('pusher')));
     }
 
     useEffect(()=>{

@@ -36,6 +36,7 @@
     bottom: calc(-100vh + var(--height-header));
     overflow-y: auto !important;
     transition: all 2s ease-in-out;
+    padding-bottom: 20px;
 }
 
 .MenuNotifier__contentPush::-webkit-scrollbar {

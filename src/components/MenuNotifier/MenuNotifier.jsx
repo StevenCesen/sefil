@@ -3,6 +3,7 @@ import "./MenuNotifier.css";
 import CardNotifierModify from "../CardNotifierModify/CardNotifierModify";
 import { NavLink } from "react-router-dom";
 import { NotifierContext } from "../../contexts/notifierContext";
+import CardNotifierSimple from "../CardNotifierSimple/CardNotifierSimple";
 
 export default function MenuNotifier(){
 
@@ -31,12 +32,18 @@ export default function MenuNotifier(){
                     <div className="MenuNotifier__contentPush">
                         {
                             pusher.map((push,index)=>(
-                                (push.action==1)
-                                ?
-                                    <></>
+                                
+                                (Number(push.message.action)===1)
+                                ? 
+                                    <CardNotifierSimple
+                                        message={push.message.message}
+                                        byUser={push.message.byUser}
+                                        id={push.message.id}
+                                    />
                                 :
                                     <CardNotifierModify
                                         key={index}
+                                        title={push.message.title}
                                         message={push.message.message}
                                         credito={push.message.credito}
                                         cartera={push.message.cartera}

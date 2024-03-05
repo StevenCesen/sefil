@@ -55,6 +55,10 @@ export default function Comprobantes(){
         acumulado:0,
     });
 
+    const [business,setBusiness]=useState();
+
+    const [aux_busines,setAux]=useState("");
+
     const menu=useRef();
 
     const updateData=(url)=>{
@@ -73,10 +77,33 @@ export default function Comprobantes(){
             useSearch(param.id,cartera.get('cartera'),setCredits);
             setVal(param.id);
         }
+
+        fetch("https://sefil.softsen.space/public/api/bussines",{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setBusiness(data.data);
+            });
+
     },[]);
+
+    if(!business) return <></>  
 
     return (
         <div className="pageConsulta">
+            <div className="DetailCredit__head">
+                <NavLink 
+                    to="" 
+                    onClick={(e)=>{
+                        e.preventDefault();
+                        history.go(-1) 
+                    }}
+                >Regresar</NavLink>
+            </div>
             <div className="pageConsulta__search">
                 <label>
                     Buscar cliente
@@ -85,6 +112,19 @@ export default function Comprobantes(){
                         useSearch(ci,'',setCredits);
                         setCredit(0);
                     }} onChange={(e)=>{setVal(e.target.value)}} value={val} placeholder="Nombre o número de cédula"/>
+                </label>
+                <label>
+                    Empresa
+                    <select onChange={(e)=>{
+                        
+                    }}>
+                            <option value={"default"}>--Seleccionar--</option>
+                        {
+                            business.map((bus,index)=>(
+                                <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
+                            ))
+                        }
+                    </select>
                 </label>
                 {
                     (credit===0) &&
@@ -138,12 +178,15 @@ export default function Comprobantes(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
+                                                console.log(data)
                                                 if('status' in data){
                                                     console.log("Cantidad excedida, pedir permiso a administrador?");
                                                 }else{
+                                                  
                                                     data.name=data.name[0].name;
                                                     data.ci=data.ci[0].ci;
-                                                    data.agente=data.agente[0].name;
+                                                    data.agente=data.agente;
+                                                    
                                                     setComprobante(data);
                                                     setView(true);
                                                 }
@@ -181,6 +224,7 @@ export default function Comprobantes(){
             
             {
                 (view) &&
+                
                     <div className="CardPay">
                         <button onClick={()=>{setView(!view)}}>Volver</button>
                         <PDFViewer width={'500px'} height={'500px'}>
@@ -188,18 +232,18 @@ export default function Comprobantes(){
                                 nro_voucher={comprobante.id}
                                 type_print={"COPIA"}
                                 forma_pago={comprobante.forma_pago}
-                                insitucion_financiera={comprobante.insitucion_financiera}
+                                insitucion_financiera={comprobante.institucion_financiera}
                                 codigo_deposito={comprobante.codigo_deposito}
                                 name={comprobante.name}
                                 ci={comprobante.ci}
 
-                                mora={(comprobante.tipo_transaccion==='parcial') ? comprobante.detalle.mora : comprobante.prevDates.mora}
-                                interes={(comprobante.tipo_transaccion==='parcial') ? comprobante.detalle.interes : comprobante.prevDates.interes}
-                                seguro_desgravamen={(comprobante.tipo_transaccion==='parcial') ? comprobante.detalle.seguro_desgravamen : comprobante.prevDates.seguro_desgravamen}
-                                gastos_judiciales={(comprobante.tipo_transaccion==='parcial') ? comprobante.detalle.gastos_judiciales : comprobante.prevDates.gastos_judiciales}
-                                saldo_capital={(comprobante.tipo_transaccion==='parcial') ? comprobante.detalle.saldo_capital : comprobante.prevDates.saldo_capital}
-                                gastos_cobranza={(comprobante.tipo_transaccion==='parcial') ? comprobante.detalle.gastos_cobranza : comprobante.prevDates.gastos_cobranza}
-                                otros_valores={(comprobante.tipo_transaccion==='parcial') ? comprobante.detalle.otros_valores : comprobante.prevDates.otros_valores}
+                                mora={(comprobante.tipo_transaccion==='parcial') ? Number(comprobante.detalle.mora).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1') : Number(comprobante.prevDates.mora).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}
+                                interes={(comprobante.tipo_transaccion==='parcial') ? Number(comprobante.detalle.interes).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1') : Number(comprobante.prevDates.interes).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}
+                                seguro_desgravamen={(comprobante.tipo_transaccion==='parcial') ? Number(comprobante.detalle.seguro_desgravamen).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1') : Number(comprobante.prevDates.seguro_desgravamen).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}
+                                gastos_judiciales={(comprobante.tipo_transaccion==='parcial') ? Number(comprobante.detalle.gastos_judiciales).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1') : Number(comprobante.prevDates.gastos_judiciales).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}
+                                saldo_capital={(comprobante.tipo_transaccion==='parcial') ? Number(comprobante.detalle.saldo_capital).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1') : Number(comprobante.prevDates.saldo_capital).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}
+                                gastos_cobranza={(comprobante.tipo_transaccion==='parcial') ? Number(comprobante.detalle.gastos_cobranza).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1') : Number(comprobante.prevDates.gastos_cobranza).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}
+                                otros_valores={(comprobante.tipo_transaccion==='parcial') ? Number(comprobante.detalle.otros_valores).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1') : Number(comprobante.prevDates.otros_valores).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}
                                 total={comprobante.totalAmount}
 
                                 valor_recibido={comprobante.valor_recibido}

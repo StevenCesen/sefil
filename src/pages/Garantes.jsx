@@ -1,4 +1,4 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +9,7 @@ const render = (status) => {
 
 export default function Garantes(){
     const param = useParams();
+    const cartera=new URLSearchParams(useLocation().search);
 
     const [garantes,setGarantes]=useState();
 
@@ -27,7 +28,7 @@ export default function Garantes(){
     const [map, setMap] = useState();
 
     useEffect(()=>{
-        fetch(`https://sefil.softsen.space/public/api/credit/${param.ci}`,{
+        fetch(`https://sefil.softsen.space/public/api/credit/view?credit=${param.ci}&cartera=${cartera.get('cartera')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -35,13 +36,14 @@ export default function Garantes(){
         })
         .then((response) => response.json())  
         .then((data) => {
-            console.log(data)
-            setGarantes(data.data);
+            setGarantes(data);
         });
+        
 
         if (refMap.current && !map) {
-            setMap(new window.google.maps.Map(refMap.current, {zoom:1}));
+            setMap(new window.google.maps.Map(refMap.current, {zoom:1},center={lat:0,lng:0}));
         }
+
     },[refMap,map]);
 
 
@@ -50,13 +52,19 @@ export default function Garantes(){
     return (
         <div className="pageConsulta">
             <div className="DetailCredit__head">
-                <NavLink to="" onClick={()=>history.back()}>Regresar</NavLink>
+                <NavLink
+                    to="" 
+                    onClick={(e)=>{
+                        e.preventDefault();
+                        history.go(-1) 
+                    }}
+                >Regresar</NavLink>
             </div>
             {
-                JSON.parse(garantes.contactos).map((contacto,index)=>(
+                garantes.contactos.map((contacto,index)=>(
                     (contacto.name) &&
                         <>
-                            <div key={index} className="DetailCredit__head">
+                            <div className="DetailCredit__head">
                                 <div>
                                     <p>Garante</p>
                                     <label>{contacto.name} | {contacto.ci}</label>
@@ -75,9 +83,9 @@ export default function Garantes(){
                                                 console.log(data)
                                             });
                                     }}>
-                                        <option value={''}>GARANTE | </option>
+                                        <option value={''}>GARANTE | {garantes.credito}</option>
                                         {
-                                            JSON.parse(garantes.contactos).map((contacto)=>(
+                                            garantes.contactos.map((contacto)=>(
                                                 (contacto.reference_credits) ?
                                                     contacto.reference_credits.map((reference,index)=>(
                                                         <option key={index} value={reference.id}>{reference.type} | {reference.credito}</option>
@@ -89,7 +97,7 @@ export default function Garantes(){
                                     </select>
                                 </div>
                             </div>
-                            <div className="DetailCredit__dates">
+                            <div  className="DetailCredit__dates">
                                 <div className="DetailCredit__general">
                                     <h3>Información del garante</h3>
                                     <div className="DetailCredit__table">
@@ -136,16 +144,17 @@ export default function Garantes(){
                                 <div className="DetailCredit__general">
                                     <h3>Ubicación del garante</h3>
                                     <Wrapper  apiKey="AIzaSyDqk_2FCNezPuFgd8Zaeu2s1idsDpdC1Qc" render={render}>
-                                        <div ref={refMap}>
+                                        {/* <div ref={refMap}>
                                             
-                                        </div>
+                                        </div> */}
+                                    
+                                        
                                     </Wrapper>
                                     {/* <div ref={refMap}>
 
                                     </div> */}
                                 </div>
                             </div>
-
                         </>
                 ))
             }

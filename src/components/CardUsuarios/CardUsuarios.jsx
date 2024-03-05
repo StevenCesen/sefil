@@ -26,7 +26,6 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                 <img src="./icons/options.png" onClick={(e)=>{useMenu(e.target,menu,'CardUsuarios__actions--active',null)}}/>
                 <div ref={menu} className="CardUsuarios__actions">
                     <button>Editar datos</button>
-                    <button>Editar permisos</button>
                     <button>Borrar</button>
                 </div>
             </button>

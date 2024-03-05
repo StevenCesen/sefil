@@ -74,7 +74,9 @@ export default function Cobranza(){
                             Buscar cliente
                             <input onKeyUp={(e)=>{
                                 const ci=e.target.value;
-                                useSearch(ci,aux_busines,setCredits);
+                                if(aux_busines!==""){
+                                    useSearch(ci,aux_busines,setCredits);
+                                }
                             }} placeholder="Ingrese cédula o nombre"/>
                         </label>
                         <label>
@@ -128,7 +130,7 @@ export default function Cobranza(){
                             {
                                 credits.data.map((credit,index)=>(
                                     <div>
-                                        <NavLink to={`/dashboard/cobranza/view/set?cartera=${aux_busines}&id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
+                                        <NavLink to={`/dashboard/cobranza/view/${aux_busines}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
                                         <p>{credit.credito}</p>
                                         <p>{credit.tipo}</p>
                                         <p>{credit.name}</p>

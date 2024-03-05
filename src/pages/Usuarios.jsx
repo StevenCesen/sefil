@@ -4,8 +4,11 @@ import CardUsuarios from "../components/CardUsuarios/CardUsuarios";
 export default function Usuarios(){
 
     const [users,setUsers]=useState([]);
+    
     const content_users=useRef();
+    
     const [new_user,setNew]=useState(true);
+
     const [data,setData]=useState({
         name:'',
         email:'',
@@ -31,6 +34,7 @@ export default function Usuarios(){
 
     return (
         <div className="pageUsuarios" ref={content_users}>
+            
             <div className="pageUsuarios__access">
                 <button onClick={(e)=>{
                     setNew(!new_user);
@@ -65,8 +69,8 @@ export default function Usuarios(){
 
                                 if(e.target.value==='super'){
                                     permiss[0].permission=[];
-                                    permiss[0].permission.push('User:all');
-                                    permiss[0].permission.push('DB:show');
+                                    permiss[0].permission.push('Dashboard');
+                                    permiss[0].permission.push('');
                                     permiss[0].permission.push('DB:import');
                                     permiss[0].permission.push('DB:destroy');
                                     permiss[0].permission.push('DB:update');
@@ -102,6 +106,7 @@ export default function Usuarios(){
                                 }
 
                                 setData({...data,role:e.target.value,permission:permiss})
+
                             }}>
                                 {
                                     (localStorage.getItem('rol')==='super') &&

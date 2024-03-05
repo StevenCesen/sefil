@@ -1,4 +1,4 @@
-import { NavLink, useLocation} from "react-router-dom";
+import { NavLink, useLocation, useParams} from "react-router-dom";
 import "./pages.css";
 import { useEffect, useState } from "react";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
@@ -19,6 +19,7 @@ export default function DetailCredit(){
     const [viewPush,setPush]=useState();
 
     const param=new URLSearchParams(useLocation().search);
+    const cartera=useParams();
 
     const clean=setInterval(() => {
             setPush({
@@ -32,7 +33,7 @@ export default function DetailCredit(){
         setReestructurar(false);
         setViewCondonation(false);
 
-        fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${param.get('cartera')}&credit=${param.get('id')}`,{
+        fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -55,7 +56,13 @@ export default function DetailCredit(){
     return (
         <div className="DetailCredit">
             <div className="DetailCredit__head">
-                <NavLink to="" onClick={()=>history.back()}>Regresar</NavLink>
+                <NavLink 
+                    to="" 
+                    onClick={(e)=>{
+                        e.preventDefault();
+                        history.go(-1) 
+                    }}
+                >Regresar</NavLink>
             </div>
             
             <div className="DetailCredit__head">
@@ -66,7 +73,7 @@ export default function DetailCredit(){
                 <div>
                     <p>Créditos asociados</p>
                     <select onChange={(e)=>{
-                        fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${param.get('cartera')}&credit=${e.target.value}`,{
+                        fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${cartera.id}&credit=${e.target.value}`,{
                             headers: {
                                 Accept: 'application/json',
                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -74,6 +81,7 @@ export default function DetailCredit(){
                         })
                             .then((response) => response.json())  
                             .then((data) => {
+                                //Tenemos que actualizar la URI
                                 setCredit(data);
                             });
                     }}>
@@ -218,8 +226,8 @@ export default function DetailCredit(){
                             <></>
                     }
                    
-                    <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${param.get('cartera')}`}>Comprobantes de pago</NavLink>
-                    <NavLink to={`/dashboard/garantes/${param.get('id')}?cartera=${param.get('cartera')}`}>Garantes</NavLink>
+                    <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}`}>Comprobantes de pago</NavLink>
+                    <NavLink to={`/dashboard/garantes/${param.get('id')}?cartera=${cartera.id}`}>Garantes</NavLink>
                 </div>
             
             </div>
@@ -230,7 +238,7 @@ export default function DetailCredit(){
                         total={credit.totalAmount}
                         set={setReestructurar}
                         id={param.get('id')}
-                        cartera={param.get('cartera')}
+                        cartera={cartera.id}
                     />
             }
 
@@ -245,7 +253,7 @@ export default function DetailCredit(){
                         gastos_cobranza={credit.gastos_cobranza}
                         set={setViewCondonation}
                         id={param.get('id')}
-                        cartera={param.get('cartera')}
+                        cartera={cartera.id}
                     />
             }
 
@@ -255,7 +263,7 @@ export default function DetailCredit(){
                         setPay={setPay} 
                         data={credit} 
                         id={param.get('id')}
-                        cartera={param.get('cartera')}
+                        cartera={cartera.id}
                     />
             }
 
