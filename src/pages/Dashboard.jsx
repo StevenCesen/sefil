@@ -106,7 +106,7 @@ export default function Dashboard({rol}){
                 ?
                     <Consulta/>
                 :
-                    (page.action==='cobranza')
+                    (page.action==='recaudacion')
                     ?
                         <Cobranza/>
                     :
@@ -122,7 +122,7 @@ export default function Dashboard({rol}){
                                 ?
                                     <Reports/>
                                 :
-                                    (page.action==='gestion')
+                                    (page.action==='cobranza')
                                     ?
                                         <Gestion/>
                                     :

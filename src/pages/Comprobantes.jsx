@@ -88,6 +88,7 @@ export default function Comprobantes(){
             .then((data) => {
                 setBusiness(data.data);
             });
+        setAux("");
 
     },[]);
 
@@ -109,14 +110,17 @@ export default function Comprobantes(){
                     Buscar cliente
                     <input onKeyUp={(e)=>{
                         const ci=e.target.value;
-                        useSearch(ci,'',setCredits);
+                        useSearch(ci,aux_busines,setCredits);
                         setCredit(0);
                     }} onChange={(e)=>{setVal(e.target.value)}} value={val} placeholder="Nombre o número de cédula"/>
                 </label>
+
                 <label>
                     Empresa
                     <select onChange={(e)=>{
-                        
+                        if(e.target.value!=='default'){
+                            setAux(e.target.value);
+                        }
                     }}>
                             <option value={"default"}>--Seleccionar--</option>
                         {
@@ -133,7 +137,13 @@ export default function Comprobantes(){
                                 credits.data.map((credit,index)=>(
                                     <button onClick={()=>{
                                         setCredit(credit.id);
-                                        useSearchVouchers(credit.id,cartera.get('cartera'),setComprobantes);
+
+                                        if(param.id!==undefined){
+                                            useSearchVouchers(credit.id,cartera.get('cartera'),setComprobantes);
+                                        }else{
+                                            useSearchVouchers(credit.id,aux_busines,setComprobantes);
+                                        }
+                                        
                                     }} key={index}>
                                         <p>{credit.name}</p>
                                         <p className="pageConsulta__prevResult--space"> | </p>
@@ -230,7 +240,8 @@ export default function Comprobantes(){
                         <PDFViewer width={'500px'} height={'500px'}>
                             <PDF 
                                 nro_voucher={comprobante.id}
-                                type_print={"COPIA"}
+                                type_print={"ORIGINAL"}
+                                credito={comprobante.sync}
                                 forma_pago={comprobante.forma_pago}
                                 insitucion_financiera={comprobante.institucion_financiera}
                                 codigo_deposito={comprobante.codigo_deposito}

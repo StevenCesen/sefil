@@ -50,6 +50,9 @@ export default function MenuNotifier(){
                                         user_generate={push.message.byUser}
                                         prev_data={push.message.prev_data}
                                         current_data={push.message.current_data}
+                                        id={push.message.id}
+                                        name={push.message.name}
+                                        ci={push.message.ci}
                                     />
 
                             ))

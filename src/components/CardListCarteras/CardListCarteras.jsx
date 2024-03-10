@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import "./CardListCarteras.css";
 import { useEffect, useState } from "react";
 
+
 export default function CardListCarteras({name,fecha_upload,last_update,versions,state}){
     
     const [viewVersions,setView]=useState(false);
@@ -12,6 +13,8 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
         versions:[],
         state:''
     });
+
+    const [export_cartera,setExport]=useState();
 
     useEffect(()=>{
         setView(false);
@@ -55,7 +58,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                 }
 
                 <p>{cartera.state}</p>
-                
+                <NavLink to={`https://sefil.softsen.space/public/api/exportar?cartera=${cartera.name}`}>Excel</NavLink>
             </div>
         </div>
     );

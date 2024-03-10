@@ -55,7 +55,7 @@ export default function CardPay({setPay,data,id,cartera}){
             otros_valores:0.00
         }
     });
-
+    
     const title=useRef();
 
     const [active,setActive]=useState(true);
@@ -175,8 +175,8 @@ export default function CardPay({setPay,data,id,cartera}){
                                     });   
                                 }}>
                                     <option value="Banco de Loja">Banco de Loja</option>
-                                    <option value="Banco Pichincha">Banco Pichincha</option>
-                                    <option value="Banco de Guayaquil">Banco de Guayaquil</option>
+                                    <option value="CACPE Loja">CACPE Loja</option>
+                                    <option value="BanEcuador">BanEcuador</option>
                                 </select>
                             </div>
                     }
@@ -320,7 +320,7 @@ export default function CardPay({setPay,data,id,cartera}){
                                         <label>Diferencia</label>
                                         <label>:</label>
                                     </p>
-                                
+                                    
                                     <input 
                                         type="number" 
                                         onChange={(e)=>[
@@ -411,8 +411,8 @@ export default function CardPay({setPay,data,id,cartera}){
                             data_encode.cartera=cartera;
 
                             // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIEND
-
                             console.log(data_encode)
+
                             fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
                                 method:'PUT',
                                 headers: {
@@ -425,7 +425,10 @@ export default function CardPay({setPay,data,id,cartera}){
                                 .then(async (data) => {
                                     
                                     if(data.status===200){
-                                        setVouch(data.id);
+                                        setVouch({
+                                            id:data.id,
+                                            sync:data.sync
+                                        });
                                         e.target.textContent='Pago registrado';
                                         title.current.textContent='COMPROBANTE DE PAGO';
                                         setActive(false);
@@ -436,7 +439,24 @@ export default function CardPay({setPay,data,id,cartera}){
   
                         }}>Registrar pago</button>
                     :
-                        <></>
+                        <button 
+                            className="CardPay__button"
+                            onClick={(e)=>{
+                                e.target.textContent="Procesando...";
+                                fetch(`https://sefil.softsen.space/public/api/credit/reverse/${idVouch.id}`,{
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    }
+                                })
+                                    .then((response) => response.json())  
+                                    .then(async (data) => {
+                                        if(data.status===200){
+                                            location.reload();
+                                        }
+                                    });
+                            }}
+                        >Revertir cobro</button>
                 }
 
             </div>
@@ -445,7 +465,7 @@ export default function CardPay({setPay,data,id,cartera}){
                 (active===false) &&
                     <PDFViewer width={'500px'} height={'500px'}>
                         <PDF 
-                            nro_voucher={idVouch}
+                            nro_voucher={idVouch.id}
                             type_print={"ORIGINAL"}
                             tipo_transaccion={send.tipo_transaccion}
                             forma_pago={send.forma_pago}
@@ -453,6 +473,7 @@ export default function CardPay({setPay,data,id,cartera}){
                             codigo_deposito={send.codigo_deposito}
                             name={data.name}
                             ci={data.ci}
+                            credito={idVouch.sync}
                             
                             mora={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).mora : JSON.parse(send.prevDates).mora}
                             interes={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).interes : JSON.parse(send.prevDates).interes}

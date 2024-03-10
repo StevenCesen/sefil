@@ -25,8 +25,8 @@ export default function NavSlide({actions,permission}){
                 });
             }else if(permiso==='Cobranza:all'){
                 array_links.push({
-                    link:'dashboard/cobranza',
-                    text:'Cobranza',
+                    link:'dashboard/recaudacion',
+                    text:'Recaudación',
                     icon:'./icons/solar_cart-bold.png'
                 });
             }else if(permiso==='Comprobantes:all'){
@@ -43,12 +43,12 @@ export default function NavSlide({actions,permission}){
                     icon:'./icons/ion_bar-chart.png',
                     sublinks:[
                         {
-                            link:'dashboard/reportes/pagos',
-                            text:'Reporte de pagos'
+                            link:'dashboard/reportes/estado',
+                            text:'Estado de cartera'
                         },
                         {
                             link:'dashboard/reportes/actividad',
-                            text:'Reporte de actividad'
+                            text:'Cierre de caja'
                         }
                     ]
                 });
@@ -63,8 +63,8 @@ export default function NavSlide({actions,permission}){
             }else if(permiso==='Gestion:all'){
 
                 array_links.push({
-                    link:'dashboard/gestion',
-                    text:'Gestión',
+                    link:'dashboard/cobranza',
+                    text:'Cobranza',
                     icon:'./icons/zoiper.png'
                 });
 

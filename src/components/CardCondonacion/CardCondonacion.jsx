@@ -88,6 +88,16 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                     </div>
                 </div>
 
+                <div className="CardCondonacion__result">
+                    <p>Total condonado</p>
+                    <p>$ {(total-(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
+                </div>
+
+                <div className="CardCondonacion__result">
+                    <p>Total a cancelar</p>
+                    <p>$ {(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
+                </div>
+
                 <button className="CardCondonacion__save" 
                     onClick={(e)=>{
                         e.target.textContent='Guardando...';

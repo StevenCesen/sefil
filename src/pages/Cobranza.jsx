@@ -61,6 +61,20 @@ export default function Cobranza(){
             links:[]
         });
 
+        if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null){
+            setAux(localStorage.getItem('cartera'));
+            fetch(`https://sefil.softsen.space/public/api/bussines/${localStorage.getItem('cartera')}`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    setCredits(data);
+                });
+        }
+
     },[]);
 
     if(!business) return <></>  
@@ -81,9 +95,10 @@ export default function Cobranza(){
                         </label>
                         <label>
                             Empresa
-                            <select onChange={(e)=>{
+                            <select value={aux_busines} onChange={(e)=>{
                                 if(e.target.value!=='default'){
                                     setAux(e.target.value);
+                                    localStorage.setItem('cartera',e.target.value);
                                     fetch(`https://sefil.softsen.space/public/api/bussines/${e.target.value}`,{
                                         headers: {
                                             Accept: 'application/json',
@@ -130,7 +145,7 @@ export default function Cobranza(){
                             {
                                 credits.data.map((credit,index)=>(
                                     <div>
-                                        <NavLink to={`/dashboard/cobranza/view/${aux_busines}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
+                                        <NavLink to={`/dashboard/recaudacion/view/${aux_busines}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
                                         <p>{credit.credito}</p>
                                         <p>{credit.tipo}</p>
                                         <p>{credit.name}</p>

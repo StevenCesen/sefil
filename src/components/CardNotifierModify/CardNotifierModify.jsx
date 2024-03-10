@@ -1,21 +1,23 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./CardNotifierModify.css";
+import { NotifierContext } from "../../contexts/notifierContext";
 
-export default function CardNotifierModify({title,message,credito,cartera,user_generate,prev_data,current_data}){
+export default function CardNotifierModify({title,message,credito,cartera,user_generate,prev_data,current_data,id,name,ci}){
 
     const [condonation,setCondonation]=useState({});
     const [restruct,setRestruct]=useState({});
+    const dataContext=useContext(NotifierContext);
 
     useEffect(()=>{
         
         if(title.toLowerCase()==='condonación'){
             setCondonation({
-                capital:current_data.capital,
-                mora:current_data.mora,
-                interes:current_data.interes,
-                seguro_desgravamen:current_data.seguro_desgravamen,
-                gastos_cobranza:current_data.gastos_cobranza,
-                gastos_judiciales:current_data.gastos_judiciales
+                capital:(Number(prev_data.capital)-Number(current_data.capital)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
+                mora:(Number(prev_data.mora)-Number(current_data.mora)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
+                interes:(Number(prev_data.interes)-Number(current_data.interes)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
+                seguro_desgravamen:(Number(prev_data.seguro_desgravamen)-Number(current_data.seguro_desgravamen)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
+                gastos_cobranza:(Number(prev_data.gastos_cobranza)-Number(current_data.gastos_cobranza)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
+                gastos_judiciales:(Number(prev_data.gastos_judiciales)-Number(current_data.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
             });
         }else if(title.toLowerCase()==='reestructuración'){
             setRestruct({
@@ -37,6 +39,9 @@ export default function CardNotifierModify({title,message,credito,cartera,user_g
             
             <p className="CardNotifierModify__title">Datos generados por el agente: </p>
 
+            <p className="CardNotifierModify__title">CLIENTE: {name}</p>
+
+            <p className="CardNotifierModify__title">CÉDULA: {ci}</p>
 
             <div className="CardNotifierModify__subhead">
                 <p>Nro. crédito: {credito}</p>
@@ -143,6 +148,11 @@ export default function CardNotifierModify({title,message,credito,cartera,user_g
                             </label>
                         </div>
 
+                        <div className="CardNotifierModify__datesCondonacion">
+                            <label>Total condonado</label>
+                            <label>$ {((Number(condonation.capital)+Number(condonation.mora)+Number(condonation.interes)+Number(condonation.seguro_desgravamen)+Number(condonation.gastos_cobranza)+Number(condonation.gastos_judiciales))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</label>
+                        </div>
+
                     </div>
                 :
                     <div className="CardNotifierModify__dates">
@@ -154,7 +164,8 @@ export default function CardNotifierModify({title,message,credito,cartera,user_g
                                 onChange={(e)=>{
                                     setRestruct({
                                         ...restruct,
-                                        nro_cuotas:e.target.value
+                                        nro_cuotas:e.target.value,
+                                        cuota:(Number(restruct.total)/Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                                     });
                                 }} 
                             />
@@ -201,11 +212,36 @@ export default function CardNotifierModify({title,message,credito,cartera,user_g
                                 }}
                             />
                         </div>
+                        
                     </div>
             }
 
             <div className="CardNotifierModify__buttons">
-                <button className="CardNotifierModify__button--success">Guardar y autorizar</button>
+                <button 
+                    className="CardNotifierModify__button--success"
+                    onClick={(e)=>{
+                        e.target.textContent="Autorizando...";
+                        const data=restruct;
+                        data.cartera=cartera;
+                        data.credito=credito;
+
+                        fetch(`https://sefil.softsen.space/public/api/credit/estructurar/${id}`,{
+                            method:'PUT',
+                            body:new URLSearchParams(data),
+                            headers: {
+                                Accept: 'application/json',
+                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                            }
+                        })
+                            .then((response) => response.json())  
+                            .then((data) => {
+                                console.log(data);
+                                dataContext.removePush(id);
+                            });
+
+                    }}
+                >Guardar y autorizar</button>
+
                 <button className="CardNotifierModify__button--failed">Rechazar</button>
             </div>
         </div>

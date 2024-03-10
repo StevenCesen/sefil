@@ -10,8 +10,11 @@ import {
 
   const styles = StyleSheet.create({
     page: {
+      display:"flex",
+      flexDirection:"row",
+      justifyContent:"center",
+      alignItems:"flex-start",
       backgroundColor: "white",
-      padding: 10,
       position:'relative'
     },
     watermark:{
@@ -21,29 +24,33 @@ import {
       zIndex:0
     },
     title: {
-      width:"50%",
-      fontSize: 12,
-      textAlign: "center",
+      width:"100%",
+      fontSize: 10,
+      paddingLeft:40,
+      wordWrap:"break-word",
+      textAlign: "justify",
       fontWeight: "ultrabold",
     },
     section: {
       display: "flex",
       flexDirection: "row",
       alignItems:"center",
-      margin: 5,
-      width:"50%",
+      width:"100%",
       padding: 0,
+      marginTop:40,
     },
     sectionDates: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent:"space-between",
-        alignItems:"center",
-        margin: 2,
-        width:"50%",
-        fontSize:10,
-        fontWeight:"100"
-      },
+      display: "flex",
+      flexDirection: "row",
+      justifyContent:"space-between",
+      alignItems:"flex-start",
+      width:"100%",
+      paddingLeft:50,
+      paddingRight:30,
+      fontSize:9,
+      fontWeight:"100",
+      marginBottom:5
+    },
     pageNumber: {
       position: "absolute",
       fontSize: 12,
@@ -56,16 +63,15 @@ import {
     voucherNumber:{
         color:"red",
         width:"50%",
-        fontSize:15,
+        fontSize:12,
         textAlign:"right",
-        marginTop:10,
-        marginBottom:10,
-        paddingRight:10
+        marginTop:20,
+        marginBottom:5,
+        paddingRight:40
     },
     voucherText:{
-        width:"50%",
-        paddingLeft:5,
-        paddingRight:5
+        marginRight:50,
+        width:"20%"
     },
     voucherTextBold:{
       width:"50%",
@@ -77,12 +83,13 @@ import {
     sectionFooter:{
         display: "flex",
         flexDirection: "row",
-        justifyContent:"space-between",
-        alignItems:"center",
-        marginLeft:5,
-        width:"50%",
-        fontSize:10,
-        fontWeight:"100"
+        justifyContent:"flex-start",
+        alignItems:"flex-start",
+        width:"100%",
+        fontSize:9,
+        fontWeight:"100",
+        paddingLeft:40,
+        paddingRight:40,
     },
     nueva:{
       top:100
@@ -103,440 +110,464 @@ import {
 
   });
   
-  function PDF({nro_voucher,type_print,tipo_transaccion,forma_pago,insitucion_financiera,codigo_deposito,name,ci,mora,interes,seguro_desgravamen,gastos_judiciales,saldo_capital,gastos_cobranza,otros_valores,total,valor_recibido,valor_devuelto,fecha,agente}) {
+  function PDF({nro_voucher,type_print,tipo_transaccion,credito,forma_pago,insitucion_financiera,codigo_deposito,name,ci,mora,interes,seguro_desgravamen,gastos_judiciales,saldo_capital,gastos_cobranza,otros_valores,total,valor_recibido,valor_devuelto,fecha,agente}) {
     return (
       <Document>
         <Page style={styles.page}>
-          <View style={[styles.watermark,{top:50,left:20}]}>
-            <Text>{type_print}</Text>
-          </View>
-          <View style={styles.section}>
-            <Text style={styles.title}>
-              COMPROBANTE DE PAGO
-            </Text>
-            <Image style={styles.image} src={"./icons/logo.png"}/>
-          </View>
-
-            <View style={styles.voucherNumber}>
-                <Text>No. {nro_voucher}</Text>
+        
+          <View style={{padding:20}}>
+            <View style={[styles.watermark,{top:50,left:20}]}>
+              <Text>{type_print}</Text>
+            </View>
+            <View style={styles.section}>
+              <Text style={styles.title}>
+                COMPROBANTE DE PAGO
+              </Text>
+              <Image style={styles.image} src={"./icons/logo.png"}/>
             </View>
 
-          <View style={[styles.watermark,{top:120,left:150}]}>
-            <Text>{type_print}</Text>
-          </View>
-
-          <View style={[styles.watermark,{top:250,left:20}]}>
-            <Text>{type_print}</Text>
-          </View>
-
-          <View style={[styles.watermark,{top:350,left:150}]}>
-            <Text>{type_print}</Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Nombre:
-            </Text>
-            <Text style={styles.voucherText}>
-              {name}
-            </Text>
-          </View>
-
-          {/* <View style={[styles.watermark,{top:450,left:20}]}>
-            <Text>{type_print}</Text>
-          </View> */}
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}> 
-              Cédula:
-            </Text>
-            <Text style={styles.voucherText}>
-              {ci}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Capital:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {saldo_capital}
-            </Text>
-          </View>
-
-          {/* <View style={[styles.watermark,{top:550,left:150}]}>
-            <Text>{type_print}</Text>
-          </View> */}
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Interés:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {interes}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Mora:
-            </Text>
-            <Text style={styles.voucherText}>
-              $ {mora}
-            </Text>
-          </View>
-          
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Seguro desgravamen:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {seguro_desgravamen}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Gastos de cobranza
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {gastos_cobranza}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Gastos judiciales:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {gastos_judiciales}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Otros valores:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {otros_valores}
-            </Text>
-          </View>
-
-          {/* <View style={styles.sectionDates}>
-            <Text style={styles.voucherTextBold}>
-              Total pagado:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {total} USD
-            </Text>
-          </View> */}
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Valor recibido:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {valor_recibido}
-            </Text>
-          </View>
-
-          {
-            (tipo_transaccion!=='parcial' & forma_pago==='efectivo') &&
-              <View style={styles.sectionDates}>
-                <Text style={styles.voucherText}>
-                  Valor devuelto:
-                </Text>
-                {
-                  (valor_devuelto) &&
-                    <Text style={styles.voucherText}>
-                        $ {Number(valor_devuelto)}
-                    </Text>
-                }
+              <View style={styles.voucherNumber}>
+                  <Text>No. {nro_voucher}</Text>
               </View>
-          }
 
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Forma de pago:
-            </Text>
-            <Text style={styles.voucherText}>
-              {forma_pago.toUpperCase()}
-            </Text>
-          </View>
+            <View style={[styles.watermark,{top:120,left:150}]}>
+              <Text>{type_print}</Text>
+            </View>
 
-          {
-            (forma_pago!=='efectivo') &&
-                <>
-                    <View style={styles.sectionDates}>
-                        <Text style={styles.voucherText}>
-                        Institución financiera:
-                        </Text>
-                        <Text style={styles.voucherText}>
-                            {insitucion_financiera}
-                        </Text>
-                    </View>
-                    <View style={styles.sectionDates}>
-                        <Text style={styles.voucherText}>
-                        Código de depósito:
-                        </Text>
-                        <Text style={styles.voucherText}>
-                            {codigo_deposito}
-                        </Text>
-                    </View>
-                </>
-          }
+            <View style={[styles.watermark,{top:250,left:20}]}>
+              <Text>{type_print}</Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Nombre:
+              </Text>
+              <Text style={styles.voucherText}>
+                {name}
+              </Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}> 
+                Cédula:
+              </Text>
+              <Text style={styles.voucherText}>
+                {ci}
+              </Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}> 
+                Crédito:
+              </Text>
+              <Text style={styles.voucherText}>
+                {credito}
+              </Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Capital:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {saldo_capital}
+              </Text>
+            </View>
+
+            {
+              (interes>0) &&
+                <View style={styles.sectionDates}>
+                  <Text style={styles.voucherText}>
+                    Interés:
+                  </Text>
+                  <Text style={styles.voucherText}>
+                    $ {interes}
+                  </Text>
+                </View>
+            }
+
+            {
+              (mora>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Mora:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {mora}
+              </Text>
+            </View>
+            }
+
+{
+              (seguro_desgravamen>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Seguro desgravamen:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {seguro_desgravamen}
+              </Text>
+            </View>
+            }
+
+            {
+              (gastos_cobranza>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Gastos de cobranza
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {gastos_cobranza}
+              </Text>
+            </View>
+            }
+
+            {
+              (gastos_judiciales>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Gastos judiciales:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {gastos_judiciales}
+              </Text>
+            </View>
+            }
+
+            {
+              (otros_valores>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Otros valores:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {otros_valores}
+              </Text>
+            </View>
+            }
+
+            {/* <View style={styles.sectionDates}>
+              <Text style={styles.voucherTextBold}>
+                Total pagado:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {total} USD
+              </Text>
+            </View> */}
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                {`${forma_pago.substring(0,1).toUpperCase()}${forma_pago.substring(1)}`}:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {valor_recibido}
+              </Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Saldo a favor:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {valor_devuelto}
+              </Text>
+            </View>
+
+            {
+              (tipo_transaccion!=='parcial' & forma_pago==='efectivo') &&
+                <View style={styles.sectionDates}>
+                  <Text style={styles.voucherText}>
+                    Valor devuelto:
+                  </Text>
+                  {
+                    (valor_devuelto) &&
+                      <Text style={styles.voucherText}>
+                          $ {Number(valor_devuelto)}
+                      </Text>
+                  }
+                </View>
+            }
+
+            {
+              (forma_pago!=='efectivo') &&
+                  <>
+                      <View style={styles.sectionDates}>
+                          <Text style={styles.voucherText}>
+                          Institución financiera:
+                          </Text>
+                          <Text style={styles.voucherText}>
+                              {insitucion_financiera}
+                          </Text>
+                      </View>
+                      <View style={styles.sectionDates}>
+                          <Text style={styles.voucherText}>
+                          Código de depósito:
+                          </Text>
+                          <Text style={styles.voucherText}>
+                              {codigo_deposito}
+                          </Text>
+                      </View>
+                  </>
+            }
+
+            <View style={styles.marginBottom}>
+
+            </View>
           
+            <View style={styles.sectionFooter}>
+              <Text style={styles.voucherText}>
+                Fecha:
+              </Text>
+              <Text style={styles.voucherText}>
+                {fecha}
+              </Text>
+            </View>
+            <View style={styles.sectionFooter}>
+              <Text style={styles.voucherText}>
+                Atendido por:
+              </Text>
+              <Text style={styles.voucherText}>
+                {agente}
+              </Text>
+            </View>
 
-          {/* <View style={[styles.watermark,{top:650,left:20}]}>
-            <Text>{type_print}</Text>
-          </View> */}
-
-          <View style={styles.marginBottom}>
-
+            <View style={[styles.sectionFooter,{marginTop:20,marginLeft:80}]}>
+              <Text style={styles.voucherText}>
+              
+              </Text>
+              <Text style={[styles.voucherText]}>
+                CLIENTE
+              </Text>
+            </View>
+          
           </View>
-        
-          <View style={styles.sectionFooter}>
-            <Text style={styles.voucherText}>
-              Fecha:
-            </Text>
-            <Text style={styles.voucherText}>
-               {fecha}
-            </Text>
-          </View>
-          <View style={styles.sectionFooter}>
-            <Text style={styles.voucherText}>
-              Atendido por:
-            </Text>
-            <Text style={styles.voucherText}>
-               {agente}
-            </Text>
-          </View>
+  
+          <View style={{padding:20}}>
+            <View style={[styles.section]}>
+              <Text style={styles.title}>
+                COMPROBANTE DE PAGO
+              </Text>
+              <Image style={styles.image} src={"./icons/logo.png"}/>
+            </View>
 
-          <View style={[styles.sectionFooter,{marginTop:20,marginLeft:80}]}>
-            <Text style={styles.voucherText}>
+              <View style={styles.voucherNumber}>
+                  <Text>No. {nro_voucher}</Text>
+              </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={[styles.voucherText]} wrap={true}>
+                Nombre:
+              </Text>
+              <Text style={styles.voucherText}>
+                {name}
+              </Text>
+            </View>
+
+            <View style={[styles.watermark,{top:50,left:100}]}>
+              <Text>{type_print}</Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}> 
+                Cédula:
+              </Text>
+              <Text style={styles.voucherText}>
+                {ci}
+              </Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}> 
+                Crédito:
+              </Text>
+              <Text style={styles.voucherText}>
+                {credito}
+              </Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Capital:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {saldo_capital}
+              </Text>
+            </View>
+
+            <View style={[styles.watermark,{top:150,left:20}]}>
+              <Text>{type_print}</Text>
+            </View>
+
+            {
+              (interes>0) &&
+                <View style={styles.sectionDates}>
+                  <Text style={styles.voucherText}>
+                    Interés:
+                  </Text>
+                  <Text style={styles.voucherText}>
+                    $ {interes}
+                  </Text>
+                </View>
+            }
+
+            {
+              (mora>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Mora:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {mora}
+              </Text>
+            </View>
+            }
+
+{
+              (seguro_desgravamen>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Seguro desgravamen:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {seguro_desgravamen}
+              </Text>
+            </View>
+            }
+
+            {
+              (gastos_cobranza>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Gastos de cobranza
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {gastos_cobranza}
+              </Text>
+            </View>
+            }
+
+            {
+              (gastos_judiciales>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Gastos judiciales:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {gastos_judiciales}
+              </Text>
+            </View>
+            }
+
+            {
+              (otros_valores>0) &&
+              <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Otros valores:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {otros_valores}
+              </Text>
+            </View>
+            }
+
+            {/* <View style={styles.sectionDates}>
+              <Text style={styles.voucherTextBold}>
+                Total pagado:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {total} USD
+              </Text>
+            </View> */}
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                {`${forma_pago.substring(0,1).toUpperCase()}${forma_pago.substring(1)}`}:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {valor_recibido}
+              </Text>
+            </View>
+
+            <View style={styles.sectionDates}>
+              <Text style={styles.voucherText}>
+                Saldo a favor:
+              </Text>
+              <Text style={styles.voucherText}>
+                $ {valor_devuelto}
+              </Text>
+            </View>
+
+            {
+              (tipo_transaccion!=='parcial' & forma_pago==='efectivo') &&
+                <View style={styles.sectionDates}>
+                  <Text style={styles.voucherText}>
+                    Valor devuelto:
+                  </Text>
+                  {
+                    (valor_devuelto) &&
+                      <Text style={styles.voucherText}>
+                          $ {Number(valor_devuelto)}
+                      </Text>
+                  }
+                </View>
+            }
+
+            {
+              (forma_pago!=='efectivo') &&
+                  <>
+                      <View style={styles.sectionDates}>
+                          <Text style={styles.voucherText}>
+                          Institución financiera:
+                          </Text>
+                          <Text style={styles.voucherText}>
+                              {insitucion_financiera}
+                          </Text>
+                      </View>
+                      <View style={styles.sectionDates}>
+                          <Text style={styles.voucherText}>
+                          Código de depósito:
+                          </Text>
+                          <Text style={styles.voucherText}>
+                              {codigo_deposito}
+                          </Text>
+                      </View>
+                  </>
+            }
             
-            </Text>
-            <Text style={[styles.voucherText]}>
-              CLIENTE
-            </Text>
-          </View>
 
-          
-          {/* <View style={[styles.watermark,{top:50,left:20}]}>
-            <Text>{type_print}</Text>
-          </View> */}
-          <View style={[styles.section,{marginTop:80}]}>
-            <Text style={styles.title}>
-              COMPROBANTE DE PAGO
-            </Text>
-            <Image style={styles.image} src={"./icons/logo.png"}/>
-          </View>
-
-            <View style={styles.voucherNumber}>
-                <Text>No. {nro_voucher}</Text>
+            <View style={[styles.watermark,{top:250,left:150}]}>
+              <Text>{type_print}</Text>
             </View>
 
-          {/* <View style={[styles.watermark,{top:120,left:150}]}>
-            <Text>{type_print}</Text>
-          </View>
+            <View style={styles.marginBottom}>
 
-          <View style={[styles.watermark,{top:250,left:20}]}>
-            <Text>{type_print}</Text>
-          </View> */}
-
+            </View>
           
-          {/* <View style={[styles.watermark,{top:350,left:150}]}>
-            <Text>{type_print}</Text>
-          </View> */}
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Nombre:
-            </Text>
-            <Text style={styles.voucherText}>
-              {name}
-            </Text>
+            <View style={styles.sectionFooter}>
+              <Text style={styles.voucherText}>
+                Fecha:
+              </Text>
+              <Text style={styles.voucherText}>
+                {fecha}
+              </Text>
+            </View>
+            <View style={styles.sectionFooter}>
+              <Text style={styles.voucherText}>
+                Atendido por:
+              </Text>
+              <Text style={styles.voucherText}>
+                {agente}
+              </Text>
+            </View>
+            <View style={[styles.sectionFooter,{marginTop:20,marginLeft:80}]}>
+              <Text style={styles.voucherText}>
+            
+              </Text>
+              <Text style={[styles.voucherText]}>
+                SEFIL SA
+              </Text>
+            </View>
           </View>
-
-          <View style={[styles.watermark,{top:450,left:20}]}>
-            <Text>{type_print}</Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}> 
-              Cédula:
-            </Text>
-            <Text style={styles.voucherText}>
-              {ci}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Capital:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {saldo_capital}
-            </Text>
-          </View>
-
-          <View style={[styles.watermark,{top:550,left:150}]}>
-            <Text>{type_print}</Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Interés:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {interes}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Mora:
-            </Text>
-            <Text style={styles.voucherText}>
-              $ {mora}
-            </Text>
-          </View>
-          
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Seguro desgravamen:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {seguro_desgravamen}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Gastos de cobranza
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {gastos_cobranza}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Gastos judiciales:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {gastos_judiciales}
-            </Text>
-          </View>
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Otros valores:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {otros_valores}
-            </Text>
-          </View>
-
-          {/* <View style={styles.sectionDates}>
-            <Text style={styles.voucherTextBold}>
-              Total pagado:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {total} USD
-            </Text>
-          </View> */}
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Valor recibido:
-            </Text>
-            <Text style={styles.voucherText}>
-               $ {valor_recibido}
-            </Text>
-          </View>
-
-          {
-            (tipo_transaccion!=='parcial' & forma_pago==='efectivo') &&
-              <View style={styles.sectionDates}>
-                <Text style={styles.voucherText}>
-                  Valor devuelto:
-                </Text>
-                {
-                  (valor_devuelto) &&
-                    <Text style={styles.voucherText}>
-                        $ {Number(valor_devuelto)}
-                    </Text>
-                }
-              </View>
-          }
-
-          <View style={styles.sectionDates}>
-            <Text style={styles.voucherText}>
-              Forma de pago:
-            </Text>
-            <Text style={styles.voucherText}>
-              {forma_pago.toUpperCase()}
-            </Text>
-          </View>
-
-          {
-            (forma_pago!=='efectivo') &&
-                <>
-                    <View style={styles.sectionDates}>
-                        <Text style={styles.voucherText}>
-                        Institución financiera:
-                        </Text>
-                        <Text style={styles.voucherText}>
-                            {insitucion_financiera}
-                        </Text>
-                    </View>
-                    <View style={styles.sectionDates}>
-                        <Text style={styles.voucherText}>
-                        Código de depósito:
-                        </Text>
-                        <Text style={styles.voucherText}>
-                            {codigo_deposito}
-                        </Text>
-                    </View>
-                </>
-          }
-          
-
-          <View style={[styles.watermark,{top:650,left:20}]}>
-            <Text>{type_print}</Text>
-          </View>
-
-          <View style={styles.marginBottom}>
-
-          </View>
-        
-          <View style={styles.sectionFooter}>
-            <Text style={styles.voucherText}>
-              Fecha:
-            </Text>
-            <Text style={styles.voucherText}>
-               {fecha}
-            </Text>
-          </View>
-          <View style={styles.sectionFooter}>
-            <Text style={styles.voucherText}>
-              Atendido por:
-            </Text>
-            <Text style={styles.voucherText}>
-               {agente}
-            </Text>
-          </View>
-          <View style={[styles.sectionFooter,{marginTop:20,marginLeft:80}]}>
-            <Text style={styles.voucherText}>
-          
-            </Text>
-            <Text style={styles.voucherText}>
-              SEFIL SA
-            </Text>
-          </View>
-
-
 
         </Page>
       </Document>

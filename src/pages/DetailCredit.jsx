@@ -208,7 +208,7 @@ export default function DetailCredit(){
                                             text:'No se puede, hay un proceso de reestructuración no autorizado aún.'
                                         });
                                     }
-                                }}>Reestructurar crédito</button>
+                                }}>Convenio de pago</button>
 
                                 <button onClick={async e=>{
                                     if(await useVerifyCondonation(param.id)){
@@ -251,6 +251,7 @@ export default function DetailCredit(){
                         seguro_desgravamen={credit.seguro_desgravamen}
                         gastos_judiciales={credit.gastos_judiciales}
                         gastos_cobranza={credit.gastos_cobranza}
+                        total={Number(credit.totalAmount)}
                         set={setViewCondonation}
                         id={param.get('id')}
                         cartera={cartera.id}

@@ -56,6 +56,7 @@ export default function Setting(){
                                 <label>Versiones</label>
                                 <label>Acciones</label>
                                 <label>Estado</label>
+                                <label>Descargar</label>
                             </div>
 
                             {

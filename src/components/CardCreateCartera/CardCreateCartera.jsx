@@ -63,6 +63,7 @@ export default function CardCreateCartera(){
                             })
                                 .then((response) => response.json())  
                                 .then((data) => {
+                                    console.log(data)
                                     e.target.textContent='Importación correcta';
                                 });
 

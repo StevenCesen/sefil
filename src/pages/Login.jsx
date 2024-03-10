@@ -73,7 +73,7 @@ export default function Login(){
                             />
                         </label>
     
-                        <NavLink to="/recovery">¿Olvidaste tu contraseña?</NavLink>
+                        {/* <NavLink to="/recovery">¿Olvidaste tu contraseña?</NavLink> */}
     
                         <button ref={btn} type="submit" onClick={(e)=>{e.target.textContent='Cargando...'}}>Iniciar sesión</button>
                     </form>
