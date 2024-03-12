@@ -45,7 +45,7 @@ export const options = {
         borderColor: 'white',
         borderRadius: 5,
         borderWidth: 0,
-        color: 'white',
+        color: 'black',
         display: function(context) {
           let dataset = context.dataset;
           let value = dataset.data[context.dataIndex];
@@ -59,6 +59,38 @@ export const options = {
        }
     }
 };
+
+export const options_nro = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: '',
+      },
+      datalabels: {
+        anchor: 'end',
+        borderColor: 'white',
+        borderRadius: 5,
+        borderWidth: 0,
+        color: 'black',
+        display: function(context) {
+          let dataset = context.dataset;
+          let value = dataset.data[context.dataIndex];
+          return value;
+        },
+        formatter: Math.round,
+        font: {
+          weight: 'bold',
+          size: '25'
+        },
+       }
+    }
+};
+
+const labels_nro = ['Catacocha','Palanda','Cariamanga','Zamora','Zumba','Piñas','Celica','Catamayo','Malacatos','Santa Rosa','Oficina las pitas','Oficina centro','Oficina norte','San miguel de los bancos','Milagro','Santo Domingo','El carmen','Cayambe','Pasaje','Tumbaco','La troncal','Amaguaña','Naranjal','Quinche','Quininde'];
 
 const labels = ['Capital', 'Interés', 'Mora', 'Seguro desgravamen', 'Gastos de cobranza', 'Gastos judiciales', 'Otros valores'];
 
@@ -86,6 +118,9 @@ export default function Reports(){
     const [fecha_inicio,setFechaInicio]=useState("");
     const [fecha_final,setFechaFinal]=useState("");
     const [agent,setAgent]=useState("");
+
+    const [nro_credit,setNro]=useState();
+    const [amount_credits,setAmount]=useState();
 
     const param=useParams();
 
@@ -151,11 +186,45 @@ export default function Reports(){
         })
             .then((response) => response.json())  
             .then((data) => setReports(data));
+        
+        fetch(`https://sefil.softsen.space/public/api/cartera/estado?cartera=${empresa}&agencia=${""}&provincia=${""}&canton=${""}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setResults(data);
+            });
+
+        setEmpresa("SEFIL_1");
+        
+        fetch(`https://sefil.softsen.space/public/api/cartera/distribution?cartera=${empresa}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setNro(data);
+            });
+        
+        fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setAmount(data.data);
+            });
 
         setSelect("");
         setProvincia("loja");
         setCanton("");
-        setEmpresa("SEFIL_1");
         setResults([]);
         setFechaInicio("");
         setFechaFinal("")
@@ -167,6 +236,7 @@ export default function Reports(){
     if(!reports) return <></>
     if(!business) return <></>
     if(!results) return <></>
+    if(!nro_credit) return <></>
 
     return (
         <div className="Reports">
@@ -174,7 +244,7 @@ export default function Reports(){
                 (param.ci==='estado')
                 ?
                     <div className="Reports__content">
-                        <h4 className="Reports__title">Resumen de valores adeudados</h4>
+                        <h4 className="Reports__title">Valores a recuperar</h4>
                         <div className="Reports__filters Reports__filters--columns-8">
 
                             <label className="Reports__filter">
@@ -324,9 +394,30 @@ export default function Reports(){
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            console.log(data)
                                             setResults(data);
                                         });
+                                    fetch(`https://sefil.softsen.space/public/api/cartera/distribution?cartera=${empresa}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setNro(data);
+                                        });
+                                    
+                                    fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setAmount(data.data);
+                                        });
+
                                 }}
                             >Aplicar</NavLink>
                         </div>
@@ -384,42 +475,54 @@ export default function Reports(){
                                                 <label>Créditos inactivos:</label>
                                                 <span>{results.data.actual.creditos_inactivos}</span>
                                             </div>
+                                            <div>
+                                                <label>Total:</label>
+                                                <span>{Number(results.data.actual.creditos_activos)+Number(results.data.actual.creditos_inactivos)}</span>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    {/* Gráfica */}
-                                    <div className="Reports__resultGraphic">
-                                        <h3>Distribución de valores</h3>
-                                        <Bar
-                                            width={"100%"}
-                                            height={"30px"}
-                                            data={{
-                                                labels,
-                                                datasets:[
-                                                    {
-                                                        label:'Cartera original',
-                                                        data:[results.data.original.saldo_capital,results.data.original.interes,results.data.original.mora,results.data.original.seguro_desgravamen,results.data.original.gastos_cobranza,results.data.original.gastos_judiciales,results.data.original.otros_valores],
-                                                        backgroundColor: 'rgba(255, 99, 132, 0.5)'
-                                                    },
-                                                    {
-                                                        label:'Cartera a recuperar',
-                                                        data:[results.data.actual.saldo_capital,results.data.actual.interes,results.data.actual.mora,results.data.actual.seguro_desgravamen,results.data.actual.gastos_cobranza,results.data.actual.gastos_judiciales,results.data.actual.otros_valores],
-                                                        backgroundColor: 'rgba(53, 162, 235, 0.5)'
-                                                    }
-                                                ]
-                                            }}
-                                            options={options}
-                                        />
-                                    </div>
-
+                                    </div>        
 
                                 </div>
                         }
 
-                        {/* <h4 className="Reports__title">Resumen de distribución de créditos</h4>
+                        <h4 className="Reports__title">Cartera recuperada</h4>
+                        <div className="Reports__resultGraphic">
+                            <h3>Distribución de rubros</h3>
+                            <Bar
+                                key={1}
+                                width={"100%"}
+                                height={"30px"}
+                                data={{
+                                    labels,
+                                    datasets:[
+                                        {
+                                            label:'Cartera original',
+                                            data:[results.data.original.saldo_capital,results.data.original.interes,results.data.original.mora,results.data.original.seguro_desgravamen,results.data.original.gastos_cobranza,results.data.original.gastos_judiciales,results.data.original.otros_valores],
+                                            backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                                        },
+                                        {
+                                            label:'Cartera recuperada',
+                                            data:[
+                                                Number(results.data.original.saldo_capital)-Number(results.data.actual.saldo_capital),
+                                                Number(results.data.original.interes)-Number(results.data.actual.interes),
+                                                Number(results.data.original.mora)-Number(results.data.actual.mora),
+                                                Number(results.data.original.seguro_desgravamen)-Number(results.data.actual.seguro_desgravamen),
+                                                Number(results.data.original.gastos_cobranza)-Number(results.data.actual.gastos_cobranza),
+                                                Number(results.data.original.gastos_judiciales)-Number(results.data.actual.gastos_judiciales),
+                                                Number(results.data.original.otros_valores)-Number(results.data.actual.otros_valores)
+                                            ],
+                                            backgroundColor: 'rgba(53, 162, 235, 0.5)'
+                                        }
+                                    ]
+                                }}
+                                options={options}
+                            />
+                        </div>
+
+                        <h4 className="Reports__title">Distribución de créditos</h4>
                         <div className="Reports__filters Reports__filters--columns-8">
 
-                            <label className="Reports__filter">
+                            {/* <label className="Reports__filter">
                                 Agencia
                                 <select 
                                     value={select_value}
@@ -455,9 +558,9 @@ export default function Reports(){
                                     <option value={"quininde"}>QUININDE</option>
                             
                                 </select>
-                            </label>
+                            </label> */}
 
-                            <label className="Reports__filter">
+                            {/* <label className="Reports__filter">
                                 Provincia
                                 <select 
                                     value={provincia}
@@ -470,9 +573,9 @@ export default function Reports(){
                                     <option value={'el oro'}>El Oro</option>
                                     <option value={'zamora chinchipe'}>Zamora Chinchipe</option>
                                 </select>
-                            </label>
+                            </label> */}
 
-                            <label className="Reports__filter">
+                            {/* <label className="Reports__filter">
                                 Cantón
                                 <select 
                                     value={canton}
@@ -537,9 +640,9 @@ export default function Reports(){
                                         
                                     }
                                 </select>
-                            </label>
+                            </label> */}
 
-                            <label className="Reports__filter">
+                            {/* <label className="Reports__filter">
                                 Días en mora
                                 <select 
                                     //value={select_value}
@@ -555,9 +658,9 @@ export default function Reports(){
                                     <option value={'101'}>Mayor a 101</option>
                                     
                                 </select>
-                            </label>
+                            </label> */}
 
-                            <label className="Reports__filter">
+                            {/* <label className="Reports__filter">
                                 Monto
                                 <select 
                                     //value={select_value}
@@ -573,9 +676,9 @@ export default function Reports(){
                                     <option value={'5000.01-10000'}>5000-10000</option>
                                     <option value={'10000.01'}>Mayor a 10000</option>
                                 </select>
-                            </label>
+                            </label> */}
 
-                            <label className="Reports__filter">
+                            {/* <label className="Reports__filter">
                                 Empresa
                                 <select 
                                     value={empresa}
@@ -590,9 +693,9 @@ export default function Reports(){
                                         ))
                                     }
                                 </select>
-                            </label>
+                            </label> */}
                             
-                            <NavLink 
+                            {/* <NavLink 
                                 className="Reports__button"
                                 onClick={(e)=>{
                                     fetch(`https://sefil.softsen.space/public/api/cartera/estado?cartera=${empresa}&agencia=${select_value}&provincia=${provincia}&canton=${canton}`,{
@@ -606,8 +709,126 @@ export default function Reports(){
                                             console.log(data)
                                         });
                                 }}
-                            >Aplicar</NavLink>
-                        </div> */}
+                            >Aplicar</NavLink> */}
+                        </div>
+
+                        <div className="Reports__resultsResume">
+                            <div>
+                                <h4>Créditos</h4>
+
+                                {/* <div className="Reports__resultHead">
+                                    <p><strong>Agencia:</strong> {(select_value==='') ? 'Todas' : select_value}</p>
+                                    <p><strong>Provincia:</strong> {(provincia==='') ? 'Todas' : provincia.toUpperCase()}</p>
+                                    <p><strong>Cantón:</strong> {(canton==='') ? 'Todos' : canton.toUpperCase()}</p>
+                                    <p><strong>Empresa:</strong> {(empresa==='') ? 'Todas' : empresa.toUpperCase()}</p>
+                                </div> */}
+                                {
+                                    nro_credit.map((credit,index)=>(
+                                        ((credit.cartera_actual.activos+credit.cartera_actual.inactivos)>0) && 
+                                            <div key={index}>
+                                                <label>Agencia {credit.agency}:</label>
+                                                <span>{credit.cartera_actual.activos+credit.cartera_actual.inactivos}</span>
+                                            </div>
+                                    ))
+                                }
+                                
+                            </div>
+
+                            <div>
+                                <h4>Créditos por monto</h4>
+                                {
+                                    amount_credits.map((amount,index)=>(
+                                        <div key={index}>
+                                            {
+                                                (amount.rango.split('-').length>1) 
+                                                ?
+                                                    <label>{amount.rango} $:</label>
+                                                :
+                                                    <label>Mayor a {amount.rango} $:</label>
+                                            }
+                                            <span>{amount.cantidad}</span>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+
+                        </div>
+
+                        <div className="Reports__resultGraphic">
+                            <h3>Distribución de créditos por agencias</h3>
+                            <Bar
+                                key={2}
+                                width={"100%"}
+                                height={"30px"}
+                                data={{
+                                    labels:labels_nro,
+                                    datasets:[
+                                        {
+                                            label:'Créditos activos',
+                                            data:[
+                                                nro_credit[0].cartera_actual.activos,
+                                                nro_credit[1].cartera_actual.activos,
+                                                nro_credit[2].cartera_actual.activos,
+                                                nro_credit[3].cartera_actual.activos,
+                                                nro_credit[4].cartera_actual.activos,
+                                                nro_credit[5].cartera_actual.activos,
+                                                nro_credit[6].cartera_actual.activos,
+                                                nro_credit[7].cartera_actual.activos,
+                                                nro_credit[8].cartera_actual.activos,
+                                                nro_credit[9].cartera_actual.activos,
+                                                nro_credit[10].cartera_actual.activos,
+                                                nro_credit[11].cartera_actual.activos,
+                                                nro_credit[12].cartera_actual.activos,
+                                                nro_credit[13].cartera_actual.activos,
+                                                nro_credit[14].cartera_actual.activos,
+                                                nro_credit[15].cartera_actual.activos,
+                                                nro_credit[16].cartera_actual.activos,
+                                                nro_credit[17].cartera_actual.activos,
+                                                nro_credit[18].cartera_actual.activos,
+                                                nro_credit[19].cartera_actual.activos,
+                                                nro_credit[20].cartera_actual.activos,
+                                                nro_credit[21].cartera_actual.activos,
+                                                nro_credit[22].cartera_actual.activos,
+                                                nro_credit[23].cartera_actual.activos,
+                                                nro_credit[24].cartera_actual.activos],
+                                            backgroundColor: 'rgba(255, 99, 133, 0.8)'
+                                        },
+                                        {
+                                            label:'Créditos inactivos',
+                                            data:[
+                                                nro_credit[0].cartera_actual.inactivos,
+                                                nro_credit[1].cartera_actual.inactivos,
+                                                nro_credit[2].cartera_actual.inactivos,
+                                                nro_credit[3].cartera_actual.inactivos,
+                                                nro_credit[4].cartera_actual.inactivos,
+                                                nro_credit[5].cartera_actual.inactivos,
+                                                nro_credit[6].cartera_actual.inactivos,
+                                                nro_credit[7].cartera_actual.inactivos,
+                                                nro_credit[8].cartera_actual.inactivos,
+                                                nro_credit[9].cartera_actual.inactivos,
+                                                nro_credit[10].cartera_actual.inactivos,
+                                                nro_credit[11].cartera_actual.inactivos,
+                                                nro_credit[12].cartera_actual.inactivos,
+                                                nro_credit[13].cartera_actual.inactivos,
+                                                nro_credit[14].cartera_actual.inactivos,
+                                                nro_credit[15].cartera_actual.inactivos,
+                                                nro_credit[16].cartera_actual.inactivos,
+                                                nro_credit[17].cartera_actual.inactivos,
+                                                nro_credit[18].cartera_actual.inactivos,
+                                                nro_credit[19].cartera_actual.inactivos,
+                                                nro_credit[20].cartera_actual.inactivos,
+                                                nro_credit[21].cartera_actual.inactivos,
+                                                nro_credit[22].cartera_actual.inactivos,
+                                                nro_credit[23].cartera_actual.inactivos,
+                                                nro_credit[24].cartera_actual.inactivos
+                                            ],
+                                            backgroundColor: 'rgba(53, 162, 236, 0.8)'
+                                        }
+                                    ]
+                                }}
+                                options={options_nro}
+                            />
+                        </div>
 
                     </div>
                 :

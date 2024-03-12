@@ -932,7 +932,7 @@
 
 .Reports__title{
     margin-bottom: 20px;
-    font-size: 16px;
+    font-size: 18px;
     color: var(--color-1);
 }
 
@@ -1045,7 +1045,8 @@
 }
 
 .Reports__resultsResume>div>h4{
-    color: var(--color-1);
+    color: var(--color-2);
+    margin-bottom: 10px;
 }
 
 .Reports__resultsResume>div>div{
@@ -1073,8 +1074,8 @@
 }
 
 .Reports__resultGraphic>h3{
-    color: var(--color-1);
-    font-size: 18px;
+    color: var(--color-2);
+    font-size: 16px;
 }
 
 /* .Reports>div{
