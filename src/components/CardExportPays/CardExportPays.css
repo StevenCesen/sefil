@@ -1,0 +1,28 @@
+.CardExportPays{
+    width:100%;
+    margin-top: 20px;
+}
+
+.CardExportPays>h4{
+    color: var(--color-1);
+    margin-bottom: 10px;
+}
+
+.CardExportPays>p{
+    font-size: 16px;
+    font-weight: 100;
+    margin-bottom: 10px;
+}
+
+.CardExportPays>a{
+    height: 40px;
+    color: var(--color-3);
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 2px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    background-color: var(--bg-alert-successful);
+}

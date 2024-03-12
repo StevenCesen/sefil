@@ -1,8 +1,66 @@
 import { useState } from "react";
 import useFilters from "../hooks/useFilters";
 import { useEffect } from "react";
-import useCheckbox from "../hooks/useCheckbox";
 import { NavLink, useParams } from "react-router-dom";
+import { Line, Bar,Doughnut} from 'react-chartjs-2';
+
+import "./pages.css";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    ArcElement,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    BarElement,
+    LineElement,
+    ArcElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
+export const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: '',
+      },
+      datalabels: {
+        anchor: 'end',
+        borderColor: 'white',
+        borderRadius: 5,
+        borderWidth: 0,
+        color: 'white',
+        display: function(context) {
+          let dataset = context.dataset;
+          let value = dataset.data[context.dataIndex];
+          return value;
+        },
+        formatter: Math.round,
+        font: {
+          weight: 'bold',
+          size: '25'
+        },
+       }
+    }
+};
+
+const labels = ['Capital', 'Interés', 'Mora', 'Seguro desgravamen', 'Gastos de cobranza', 'Gastos judiciales', 'Otros valores'];
 
 export default function Reports(){
 
@@ -17,40 +75,17 @@ export default function Reports(){
 
     const [reports,setReports]=useState();
 
-    const [provincia,setProvincia]=useState("loja");
+    const [results,setResults]=useState();
 
-    // const [cantones,setCantones]=({
-    //     loja:[
-            
-    //     ],
-    //     oro:[
-    //         'Machala', 
-    //         'Arenillas', 
-    //         'Atahualpa', 
-    //         'Balsas', 
-    //         'Chila', 
-    //         'El Guabo', 
-    //         'Huaquillas', 
-    //         'Marcabelí', 
-    //         'Pasaje', 
-    //         'Piñas', 
-    //         'Portovelo', 
-    //         'Santa Rosa', 
-    //         'Zaruma',
-    //         'Las Lajas'
-    //     ],
-    //     zamora:[
-    //         'Centinela del Cóndor',
-    //         'Chinchipe',
-    //         'El Pangui',
-    //         'Nangaritza',
-    //         'Palanda',
-    //         'Paquisha',
-    //         'Yacuambi',
-    //         'Yantzaza',
-    //         'Zamora'
-    //     ]
-    // });
+    const [provincia,setProvincia]=useState("loja");
+    
+    const [canton,setCanton]=useState("all");
+
+    const [empresa,setEmpresa]=useState("SEFIL_1");
+
+    const [fecha_inicio,setFechaInicio]=useState("");
+    const [fecha_final,setFechaFinal]=useState("");
+    const [agent,setAgent]=useState("");
 
     const param=useParams();
 
@@ -117,14 +152,21 @@ export default function Reports(){
             .then((response) => response.json())  
             .then((data) => setReports(data));
 
-        setSelect("all");
+        setSelect("");
         setProvincia("loja");
+        setCanton("");
+        setEmpresa("SEFIL_1");
+        setResults([]);
+        setFechaInicio("");
+        setFechaFinal("")
+        setAgent("");
     
     },[]);
 
     if(!agents) return <></>
     if(!reports) return <></>
     if(!business) return <></>
+    if(!results) return <></>
 
     return (
         <div className="Reports">
@@ -132,7 +174,7 @@ export default function Reports(){
                 (param.ci==='estado')
                 ?
                     <div className="Reports__content">
-                        <h4 className="Reports__title">Resúmenes</h4>
+                        <h4 className="Reports__title">Resumen de valores adeudados</h4>
                         <div className="Reports__filters Reports__filters--columns-8">
 
                             <label className="Reports__filter">
@@ -143,32 +185,274 @@ export default function Reports(){
                                         setSelect(e.target.value);
                                     }}
                                 >
-                                    <option value={'all'}>--Todos--</option>
+                                    <option value={''}>--Todos--</option>
                                     <option value={"catacocha"}>CATACOCHA</option>
-                                    <option value={"catacocha"}>PALANDA</option>
-                                    <option value={"catacocha"}>CARIAMANGA</option>
-                                    <option value={"catacocha"}>ZAMORA</option>
-                                    <option value={"catacocha"}>ZUMBA</option>
-                                    <option value={"catacocha"}>PIÑAS</option>
-                                    <option value={"catacocha"}>CELICA</option>
-                                    <option value={"catacocha"}>CATAMAYO</option>
-                                    <option value={"catacocha"}>MALACATOS</option>
-                                    <option value={"catacocha"}>SANTA ROSA</option>
-                                    <option value={"catacocha"}>OFICINA LAS PITAS</option>
-                                    <option value={"catacocha"}>OFICINA CENTRO</option>
-                                    <option value={"catacocha"}>OFICINA NORTE</option>
-                                    <option value={"catacocha"}>SAN MIGUEL DE LOS BANCOS</option>
-                                    <option value={"catacocha"}>MILAGRO</option>
-                                    <option value={"catacocha"}>SANTO DOMINGO</option>
-                                    <option value={"catacocha"}>EL CARMEN</option>
-                                    <option value={"catacocha"}>CAYAMBE</option>
-                                    <option value={"catacocha"}>PASAJE</option>
-                                    <option value={"catacocha"}>TUMBACO</option>
-                                    <option value={"catacocha"}>LA TRONCAL</option>
-                                    <option value={"catacocha"}>AMAGUAÑA</option>
-                                    <option value={"catacocha"}>NARANJAL</option>
-                                    <option value={"catacocha"}>QUINCHE</option>
-                                    <option value={"catacocha"}>QUININDE</option>
+                                    <option value={"palanda"}>PALANDA</option>
+                                    <option value={"cariamanga"}>CARIAMANGA</option>
+                                    <option value={"zamora"}>ZAMORA</option>
+                                    <option value={"zumba"}>ZUMBA</option>
+                                    <option value={"piñas"}>PIÑAS</option>
+                                    <option value={"celica"}>CELICA</option>
+                                    <option value={"catamayo"}>CATAMAYO</option>
+                                    <option value={"malacatos"}>MALACATOS</option>
+                                    <option value={"santa rosa"}>SANTA ROSA</option>
+                                    <option value={"oficina las pitas"}>OFICINA LAS PITAS</option>
+                                    <option value={"oficina centro"}>OFICINA CENTRO</option>
+                                    <option value={"oficina norte"}>OFICINA NORTE</option>
+                                    <option value={"san miguel de los bancos"}>SAN MIGUEL DE LOS BANCOS</option>
+                                    <option value={"milagro"}>MILAGRO</option>
+                                    <option value={"santo domingo"}>SANTO DOMINGO</option>
+                                    <option value={"el carmen"}>EL CARMEN</option>
+                                    <option value={"cayambe"}>CAYAMBE</option>
+                                    <option value={"pasaje"}>PASAJE</option>
+                                    <option value={"tumbaco"}>TUMBACO</option>
+                                    <option value={"la troncal"}>LA TRONCAL</option>
+                                    <option value={"amaguaña"}>AMAGUAÑA</option>
+                                    <option value={"naranjal"}>NARANJAL</option>
+                                    <option value={"quinche"}>QUINCHE</option>
+                                    <option value={"quininde"}>QUININDE</option>
+                                </select>
+                            </label>
+
+                            <label className="Reports__filter">
+                                Provincia
+                                <select 
+                                    value={provincia}
+                                    onChange={(e)=>{
+                                        setProvincia(e.target.value);
+                                    }}
+                                >
+                                    <option value={''}>--Todos--</option>
+                                    <option value={'loja'}>Loja</option>
+                                    <option value={'el oro'}>El Oro</option>
+                                    <option value={'zamora chinchipe'}>Zamora Chinchipe</option>
+                                </select>
+                            </label>
+
+                            <label className="Reports__filter">
+                                Cantón
+                                <select 
+                                    value={canton}
+                                    onChange={(e)=>{
+                                        setCanton(e.target.value);
+                                    }}
+                                >
+                                    <option value={''}>--Todos--</option>
+                                    {
+
+                                        (provincia==="loja") 
+                                        ?
+                                            <>
+                                            
+                                                <option value={'calvas'}>Calvas</option>
+                                                <option value={'catamayo'}>Catamayo</option>
+                                                <option value={'celica'}>Celica</option>
+                                                <option value={'chaguarpamba'}>Chaguarpamba</option>
+                                                <option value={'espíndola'}>Espíndola</option>
+                                                <option value={'gonzanamá'}>Gonzanamá</option>
+                                                <option value={'loja'}>Loja</option>
+                                                <option value={'macará'}>Macará</option>
+                                                <option value={'olmedo'}>Olmedo</option>
+                                                <option value={'paltas'}>Paltas</option>
+                                                <option value={'pindal'}>Pindal</option>
+                                                <option value={'puyango'}>Puyango</option>
+                                                <option value={'quilanga'}>Quilanga</option>
+                                                <option value={'saraguro'}>Saraguro</option>
+                                                <option value={'sozoranga'}>Sozoranga</option>
+                                                <option value={'zapotillo'}>Zapotillo</option>
+                                            </>
+                                        : (provincia==="el oro")
+                                            ?
+                                                <>
+                                                    <option value={'machala'}>Machala</option>
+                                                    <option value={'arenillas'}>Arenillas</option>
+                                                    <option value={'atahualpa'}>Atahualpa</option>
+                                                    <option value={'balsas'}>Balsas</option>
+                                                    <option value={'chila'}>Chila</option>
+                                                    <option value={'el guabo'}>El Guabo</option>
+                                                    <option value={'huaquillas'}>Huaquillas</option>
+                                                    <option value={'marcabelí'}>Marcabelí</option>
+                                                    <option value={'pasaje'}>Pasaje</option>
+                                                    <option value={'piñas'}>Piñas</option>
+                                                    <option value={'portovelo'}>Portovelo</option>
+                                                    <option value={'santa rosa'}>Santa Rosa</option>
+                                                    <option value={'zaruma'}>Zaruma</option>
+                                                    <option value={'las lajas'}>Las Lajas</option>
+                                                </>
+                                            :   
+                                                <>
+                                                    <option value={'centinela del cóndor'}>Centinela del Cóndor</option>
+                                                    <option value={'chinchipe'}>Chinchipe</option>
+                                                    <option value={'el pangui'}>El Pangui</option>
+                                                    <option value={'nangaritza'}>Nangaritza</option>
+                                                    <option value={'palanda'}>Palanda</option>
+                                                    <option value={'paquisha'}>Paquisha</option>
+                                                    <option value={'yacuambi'}>Yacuambi</option>
+                                                    <option value={'yantzaza'}>Yantzaza</option>
+                                                    <option value={'zamora'}>Zamora</option>
+                                                </>
+                                        
+                                    }
+                                </select>
+                            </label>
+
+                            <label className="Reports__filter">
+                                Empresa
+                                <select 
+                                    value={empresa}
+                                    onChange={(e)=>{
+                                        setEmpresa(e.target.value);
+                                    }}
+                                >
+                                    <option value={''}>--Todos--</option>
+                                    {
+                                        business.map((bus,index)=>(
+                                            <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
+                                        ))
+                                    }
+                                </select>
+                            </label>
+                            
+                            <NavLink 
+                                className="Reports__button"
+                                onClick={(e)=>{
+                                    fetch(`https://sefil.softsen.space/public/api/cartera/estado?cartera=${empresa}&agencia=${select_value}&provincia=${provincia}&canton=${canton}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            console.log(data)
+                                            setResults(data);
+                                        });
+                                }}
+                            >Aplicar</NavLink>
+                        </div>
+
+                        {
+                            ('data' in results) &&
+                                <div className="Reports__results">
+                                    
+                                    <div className="Reports__resultsResume">
+                                        <div>
+                                            <h4>Valores a recuperar</h4>
+
+                                            <div className="Reports__resultHead">
+                                                <p><strong>Agencia:</strong> {(select_value==='') ? 'Todas' : select_value}</p>
+                                                <p><strong>Provincia:</strong> {(provincia==='') ? 'Todas' : provincia.toUpperCase()}</p>
+                                                <p><strong>Cantón:</strong> {(canton==='') ? 'Todos' : canton.toUpperCase()}</p>
+                                                <p><strong>Empresa:</strong> {(empresa==='') ? 'Todas' : empresa.toUpperCase()}</p>
+                                            </div>
+
+                                            <div>
+                                                <label>Capital:</label>
+                                                <span> $ {Number(results.data.actual.saldo_capital).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                            </div>
+                                            <div>
+                                                <label>Interés:</label>
+                                                <span> $ {Number(results.data.actual.interes).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                            </div>
+                                            <div>
+                                                <label>Mora:</label>
+                                                <span> $ {Number(results.data.actual.mora).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                            </div>
+                                            <div>
+                                                <label>Seguro:</label>
+                                                <span> $ {Number(results.data.actual.seguro_desgravamen).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                            </div>
+                                            <div>
+                                                <label>Gastos de cobranza:</label>
+                                                <span> $ {Number(results.data.actual.gastos_cobranza).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                            </div>
+                                            <div>
+                                                <label>Gastos judiciales:</label>
+                                                <span> $ {Number(results.data.actual.gastos_judiciales).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                            </div>
+                                            <div>
+                                                <label>Otros valores:</label>
+                                                <span> $ {Number(results.data.actual.otros_valores).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <label>Créditos activos:</label>
+                                                <span>{results.data.actual.creditos_activos}</span>
+                                            </div>
+                                            <div>
+                                                <label>Créditos inactivos:</label>
+                                                <span>{results.data.actual.creditos_inactivos}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Gráfica */}
+                                    <div className="Reports__resultGraphic">
+                                        <h3>Distribución de valores</h3>
+                                        <Bar
+                                            width={"100%"}
+                                            height={"30px"}
+                                            data={{
+                                                labels,
+                                                datasets:[
+                                                    {
+                                                        label:'Cartera original',
+                                                        data:[results.data.original.saldo_capital,results.data.original.interes,results.data.original.mora,results.data.original.seguro_desgravamen,results.data.original.gastos_cobranza,results.data.original.gastos_judiciales,results.data.original.otros_valores],
+                                                        backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                                                    },
+                                                    {
+                                                        label:'Cartera a recuperar',
+                                                        data:[results.data.actual.saldo_capital,results.data.actual.interes,results.data.actual.mora,results.data.actual.seguro_desgravamen,results.data.actual.gastos_cobranza,results.data.actual.gastos_judiciales,results.data.actual.otros_valores],
+                                                        backgroundColor: 'rgba(53, 162, 235, 0.5)'
+                                                    }
+                                                ]
+                                            }}
+                                            options={options}
+                                        />
+                                    </div>
+
+
+                                </div>
+                        }
+
+                        {/* <h4 className="Reports__title">Resumen de distribución de créditos</h4>
+                        <div className="Reports__filters Reports__filters--columns-8">
+
+                            <label className="Reports__filter">
+                                Agencia
+                                <select 
+                                    value={select_value}
+                                    onChange={(e)=>{
+                                        setSelect(e.target.value);
+                                    }}
+                                >
+                                    <option value={''}>--Todos--</option>
+                                    <option value={"catacocha"}>CATACOCHA</option>
+                                    <option value={"palanda"}>PALANDA</option>
+                                    <option value={"cariamanga"}>CARIAMANGA</option>
+                                    <option value={"zamora"}>ZAMORA</option>
+                                    <option value={"zumba"}>ZUMBA</option>
+                                    <option value={"piñas"}>PIÑAS</option>
+                                    <option value={"celica"}>CELICA</option>
+                                    <option value={"catamayo"}>CATAMAYO</option>
+                                    <option value={"malacatos"}>MALACATOS</option>
+                                    <option value={"santa rosa"}>SANTA ROSA</option>
+                                    <option value={"oficina las pitas"}>OFICINA LAS PITAS</option>
+                                    <option value={"oficina centro"}>OFICINA CENTRO</option>
+                                    <option value={"oficina norte"}>OFICINA NORTE</option>
+                                    <option value={"san miguel de los bancos"}>SAN MIGUEL DE LOS BANCOS</option>
+                                    <option value={"milagro"}>MILAGRO</option>
+                                    <option value={"santo domingo"}>SANTO DOMINGO</option>
+                                    <option value={"el carmen"}>EL CARMEN</option>
+                                    <option value={"cayambe"}>CAYAMBE</option>
+                                    <option value={"pasaje"}>PASAJE</option>
+                                    <option value={"tumbaco"}>TUMBACO</option>
+                                    <option value={"la troncal"}>LA TRONCAL</option>
+                                    <option value={"amaguaña"}>AMAGUAÑA</option>
+                                    <option value={"naranjal"}>NARANJAL</option>
+                                    <option value={"quinche"}>QUINCHE</option>
+                                    <option value={"quininde"}>QUININDE</option>
                             
                                 </select>
                             </label>
@@ -181,7 +465,7 @@ export default function Reports(){
                                         setProvincia(e.target.value);
                                     }}
                                 >
-                                    <option value={'all'}>--Todos--</option>
+                                    <option value={''}>--Todos--</option>
                                     <option value={'loja'}>Loja</option>
                                     <option value={'el oro'}>El Oro</option>
                                     <option value={'zamora chinchipe'}>Zamora Chinchipe</option>
@@ -191,53 +475,65 @@ export default function Reports(){
                             <label className="Reports__filter">
                                 Cantón
                                 <select 
-                                    value={select_value}
+                                    value={canton}
                                     onChange={(e)=>{
-                                        setSelect(e.target.value);
+                                        setCanton(e.target.value);
                                     }}
                                 >
-                                    <option value={'all'}>--Todos--</option>
+                                    <option value={''}>--Todos--</option>
                                     {
 
                                         (provincia==="loja") 
                                         ?
                                             <>
-                                                <option value={'zamora chinchipe'}>Calvas</option>
-                                                <option value={'zamora chinchipe'}>Catamayo</option>
-                                                <option value={'zamora chinchipe'}>Celica</option>
-                                                <option value={'zamora chinchipe'}>Chaguarpamba</option>
-                                                <option value={'zamora chinchipe'}>Espíndola</option>
-                                                <option value={'zamora chinchipe'}>Gonzanamá</option>
-                                                <option value={'zamora chinchipe'}>Loja</option>
-                                                <option value={'zamora chinchipe'}>Macará</option>
-                                                <option value={'zamora chinchipe'}>Olmedo</option>
-                                                <option value={'zamora chinchipe'}>Paltas</option>
-                                                <option value={'zamora chinchipe'}>Pindal</option>
-                                                <option value={'zamora chinchipe'}>Puyango</option>
-                                                <option value={'zamora chinchipe'}>Quilanga</option>
-                                                <option value={'zamora chinchipe'}>Saraguro</option>
-                                                <option value={'zamora chinchipe'}>Sozoranga</option>
-                                                <option value={'zamora chinchipe'}>Zapotillo</option>
+                                            
+                                                <option value={'calvas'}>Calvas</option>
+                                                <option value={'catamayo'}>Catamayo</option>
+                                                <option value={'celica'}>Celica</option>
+                                                <option value={'chaguarpamba'}>Chaguarpamba</option>
+                                                <option value={'espíndola'}>Espíndola</option>
+                                                <option value={'gonzanamá'}>Gonzanamá</option>
+                                                <option value={'loja'}>Loja</option>
+                                                <option value={'macará'}>Macará</option>
+                                                <option value={'olmedo'}>Olmedo</option>
+                                                <option value={'paltas'}>Paltas</option>
+                                                <option value={'pindal'}>Pindal</option>
+                                                <option value={'puyango'}>Puyango</option>
+                                                <option value={'quilanga'}>Quilanga</option>
+                                                <option value={'saraguro'}>Saraguro</option>
+                                                <option value={'sozoranga'}>Sozoranga</option>
+                                                <option value={'zapotillo'}>Zapotillo</option>
                                             </>
                                         : (provincia==="el oro")
                                             ?
                                                 <>
-                                                    <option value={'zamora chinchipe'}>Calvas</option>
-                                                    <option value={'zamora chinchipe'}>Catamayo</option>
-                                                    <option value={'zamora chinchipe'}>Celica</option>
-                                                    <option value={'zamora chinchipe'}>Chaguarpamba</option>
-                                                    <option value={'zamora chinchipe'}>Espíndola</option>
-                                                    <option value={'zamora chinchipe'}>Gonzanamá</option>
-                                                    <option value={'zamora chinchipe'}>Loja</option>
-                                                    <option value={'zamora chinchipe'}>Macará</option>
-                                                    <option value={'zamora chinchipe'}>Olmedo</option>
-                                                    <option value={'zamora chinchipe'}>Paltas</option>
-                                                    <option value={'zamora chinchipe'}>Pindal</option>
-                                                    <option value={'zamora chinchipe'}>Puyango</option>
-                                                    <option value={'zamora chinchipe'}>Quilanga</option>
-                                                    <option value={'zamora chinchipe'}>Saraguro</option>
+                                                    <option value={'machala'}>Machala</option>
+                                                    <option value={'arenillas'}>Arenillas</option>
+                                                    <option value={'atahualpa'}>Atahualpa</option>
+                                                    <option value={'balsas'}>Balsas</option>
+                                                    <option value={'chila'}>Chila</option>
+                                                    <option value={'el guabo'}>El Guabo</option>
+                                                    <option value={'huaquillas'}>Huaquillas</option>
+                                                    <option value={'marcabelí'}>Marcabelí</option>
+                                                    <option value={'pasaje'}>Pasaje</option>
+                                                    <option value={'piñas'}>Piñas</option>
+                                                    <option value={'portovelo'}>Portovelo</option>
+                                                    <option value={'santa rosa'}>Santa Rosa</option>
+                                                    <option value={'zaruma'}>Zaruma</option>
+                                                    <option value={'las lajas'}>Las Lajas</option>
                                                 </>
-                                            :<></>
+                                            :   
+                                                <>
+                                                    <option value={'centinela del cóndor'}>Centinela del Cóndor</option>
+                                                    <option value={'chinchipe'}>Chinchipe</option>
+                                                    <option value={'el pangui'}>El Pangui</option>
+                                                    <option value={'nangaritza'}>Nangaritza</option>
+                                                    <option value={'palanda'}>Palanda</option>
+                                                    <option value={'paquisha'}>Paquisha</option>
+                                                    <option value={'yacuambi'}>Yacuambi</option>
+                                                    <option value={'yantzaza'}>Yantzaza</option>
+                                                    <option value={'zamora'}>Zamora</option>
+                                                </>
                                         
                                     }
                                 </select>
@@ -246,12 +542,12 @@ export default function Reports(){
                             <label className="Reports__filter">
                                 Días en mora
                                 <select 
-                                    value={select_value}
+                                    //value={select_value}
                                     onChange={(e)=>{
-                                        setSelect(e.target.value);
+                                        //setSelect(e.target.value);
                                     }}
                                 >
-                                    <option value={'all'}>--Todos--</option>
+                                    <option value={''}>--Todos--</option>
                                     <option value={'1-2'}>1-2</option>
                                     <option value={'3-10'}>3-10</option>
                                     <option value={'11-50'}>11-50</option>
@@ -264,12 +560,12 @@ export default function Reports(){
                             <label className="Reports__filter">
                                 Monto
                                 <select 
-                                    value={select_value}
+                                    //value={select_value}
                                     onChange={(e)=>{
-                                        setSelect(e.target.value);
+                                        //setSelect(e.target.value);
                                     }}
                                 >
-                                    <option value={'all'}>--Todos--</option>
+                                    <option value={''}>--Todos--</option>
                                     <option value={'0.01-500'}>0-500</option>
                                     <option value={'500.01-1000'}>500-1000</option>
                                     <option value={'1000.01-3000'}>1000-3000</option>
@@ -282,12 +578,12 @@ export default function Reports(){
                             <label className="Reports__filter">
                                 Empresa
                                 <select 
-                                    value={select_value}
+                                    value={empresa}
                                     onChange={(e)=>{
-                                        setSelect(e.target.value);
+                                        setEmpresa(e.target.value);
                                     }}
                                 >
-                                    <option value={'all'}>--Todos--</option>
+                                    <option value={''}>--Todos--</option>
                                     {
                                         business.map((bus,index)=>(
                                             <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
@@ -298,12 +594,21 @@ export default function Reports(){
                             
                             <NavLink 
                                 className="Reports__button"
-                                to={"https://sefil.softsen.space/public/api/cierre"}
                                 onClick={(e)=>{
-                                    console.log(select_value)
+                                    fetch(`https://sefil.softsen.space/public/api/cartera/estado?cartera=${empresa}&agencia=${select_value}&provincia=${provincia}&canton=${canton}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            console.log(data)
+                                        });
                                 }}
                             >Aplicar</NavLink>
-                        </div>
+                        </div> */}
+
                     </div>
                 :
                     <div className="Reports__content">
@@ -312,23 +617,35 @@ export default function Reports(){
 
                             <label className="Reports__filter">
                                 Fecha de inicio
-                                <input type="date"/>
+                                <input 
+                                    type="date"
+                                    value={fecha_inicio}
+                                    onChange={(e)=>{
+                                        setFechaInicio(e.target.value);
+                                    }}
+                                />
                             </label>
 
                             <label className="Reports__filter">
                                 Fecha de corte
-                                <input type="date"/>
+                                <input 
+                                    type="date" 
+                                    value={fecha_final} 
+                                    onChange={(e)=>{
+                                        console.log("estoy aca")
+                                        setFechaFinal(e.target.value);
+                                    }}/>
                             </label>
 
                             <label className="Reports__filter">
                                 Usuario
                                 <select 
-                                    value={select_value}
+                                    value={agent}
                                     onChange={(e)=>{
-                                        setSelect(e.target.value);
+                                        setAgent(e.target.value);
                                     }}
                                 >
-                                    <option value={'all'}>--Todos--</option>
+                                    <option value={''}>--Todos--</option>
                                     <option value={"Maria Bravo"}>María Bravo</option>
                                     {
                                         agents.map((agent,index)=>(
@@ -341,15 +658,15 @@ export default function Reports(){
                             <label className="Reports__filter">
                                 Empresa
                                 <select 
-                                    value={select_value}
+                                    value={empresa}
                                     onChange={(e)=>{
-                                        setSelect(e.target.value);
+                                        setEmpresa(e.target.value);
                                     }}
                                 >
-                                    <option value={'all'}>--Todos--</option>
+                                    <option value={''}>--Todos--</option>
                                     {
                                         business.map((bus,index)=>(
-                                            <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
+                                            <option key={index} value={bus.name.toUpperCase()}>{bus.name.toUpperCase()}</option>
                                         ))
                                     }
                                 </select>
@@ -357,9 +674,15 @@ export default function Reports(){
                             
                             <NavLink 
                                 className="Reports__button"
-                                to={"https://sefil.softsen.space/public/api/cierre"}
+                                
                                 onClick={(e)=>{
-                                    console.log(select_value)
+                                    const splits_inicio=fecha_inicio.split('-');
+                                    const inicio=`${splits_inicio[0]}/${splits_inicio[1]}/${splits_inicio[2]}`;
+
+                                    const splits_final=fecha_final.split('-');
+                                    const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
+
+                                    location.href=`https://sefil.softsen.space/public/api/cierre?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}&agente=${agent}`;
                                 }}
                             >Generar EXCEL</NavLink>
 

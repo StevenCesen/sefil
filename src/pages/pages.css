@@ -817,8 +817,6 @@
 
 
 
-
-
 /* =============================== GESTIÓN ================================ */
 .Crm{
     width: 100%;
@@ -943,6 +941,7 @@
     justify-content: center;
     gap: 10px;
     align-items: flex-end;
+    margin-bottom: 10px;
 }
 
 .Reports__filters--columns-5{
@@ -993,6 +992,89 @@
     color: var(--color-3);
     text-decoration: none;
     font-weight: 600;
+}
+
+.Reports__results{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    align-items: center;
+}
+
+.Reports__resultHead{
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-bottom: 20px !important;
+    margin-top: 20px !important;
+}
+
+.Reports__resultHead>p{
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.Reports__resultsResume{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.Reports__resultsResume>div:first-child{
+    width: 300px;
+    padding: 10px 10px;
+    background-color: var(--bg-2);
+    border-radius: 2px;
+}
+.Reports__resultsResume>div:last-child{
+    width: 150px;
+    padding: 10px 10px;
+    background-color: var(--bg-2);
+    border-radius: 2px;
+}
+
+.Reports__resultsResume>div>p{
+    font-size: 14px;
+    margin-bottom: 5px;
+    word-break: break-all;
+}
+
+.Reports__resultsResume>div>h4{
+    color: var(--color-1);
+}
+
+.Reports__resultsResume>div>div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Reports__resultsResume>div>div{
+    margin-bottom: 10px;
+}
+
+.Reports__resultsResume>div>div>label,.Reports__resultsResume>div>div>span{
+    font-size: 14px;
+    font-weight: 100;
+}
+
+.Reports__resultGraphic{
+    width: 100%;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    padding: 10px 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.Reports__resultGraphic>h3{
+    color: var(--color-1);
+    font-size: 18px;
 }
 
 /* .Reports>div{

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import CardCreateCartera from "../components/CardCreateCartera/CardCreateCartera";
 import CardListCarteras from "../components/CardListCarteras/CardListCarteras";
 import CardUpdateCartera from "../components/CardUpdateCartera/CardUpdateCartera";
+import CardExportPays from "../components/CardExportPays/CardExportPays";
 
 export default function Setting(){
     const param = useParams();
@@ -41,12 +42,12 @@ export default function Setting(){
                     ?
                         
                         <>
-                            <CardCreateCartera/>
                             <div className="DetailCredit__sections">
                                 <div>
                                     <p>Carteras cargadas</p>
                                     <label>Formato de archivo .xlsx (EXCEL) </label>
                                 </div>
+                                <CardCreateCartera/>
                             </div>
 
                             <div className="CardListCarteras__head">
@@ -56,7 +57,8 @@ export default function Setting(){
                                 <label>Versiones</label>
                                 <label>Acciones</label>
                                 <label>Estado</label>
-                                <label>Descargar</label>
+                                <label>Descargar cartera</label>
+                                <label>Descargar pagos</label>
                             </div>
 
                             {
@@ -72,6 +74,9 @@ export default function Setting(){
                                     />
                                 ))
                             }
+                            
+                            <CardExportPays/>
+
                         </>
                     :
                         (param.ci==='exportdb')
