@@ -3,6 +3,7 @@ import "./pages.css";
 import CardCredit from "../components/CardCredit/CardCredit";
 import { useEffect, useState } from "react";
 import useSearch from "../hooks/useSearch.js";
+import useFormatterNumber from "../hooks/useFormatterNumber.js";
 
 export default function Consulta(){
     const param = useParams();
@@ -37,6 +38,13 @@ export default function Consulta(){
         })
             .then((response) => response.json())  
 	        .then((data) => setCredits(data));
+    }
+
+    const updateCredits=(data)=>{
+        setCredits({
+            ...credits,
+            data:data
+        })
     }
 
     useEffect(()=>{
@@ -83,7 +91,7 @@ export default function Consulta(){
                     <input onKeyUp={(e)=>{
                         const ci=e.target.value;
                         if(aux_busines!==""){
-                            useSearch(ci,aux_busines,setCredits);
+                            useSearch(ci,aux_busines,updateCredits,setCredits);
                         }
                         
                     }} placeholder="Ingrese cédula o nombre"/>
@@ -134,12 +142,12 @@ export default function Consulta(){
 
                     {
                         credits.data.map((credit,index)=>(
-                            <div>
-                                <NavLink to={`/dashboard/recaudacion/view/${aux_busines}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
+                            <div key={index}>
+                                <NavLink to={`/dashboard/recaudacion/view/${credit.cartera}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
                                 <p>{credit.credito}</p>
                                 <p>{credit.tipo}</p>
                                 <p>{credit.name}</p>
-                                <p>$ {credit.totalAmount} USD</p>
+                                <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                                 <p>{credit.ci}</p>
                                 <p>{credit.company}</p>
                                 <p>{credit.provincia}</p>

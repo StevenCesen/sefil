@@ -772,7 +772,7 @@
 .pageUsuarios>div{
     width: 100%;
     display: grid;
-    grid-template-columns: 5% 30% 30% 5% 20% 10%;
+    grid-template-columns: 5% 30% 30% 10% 15% 10%;
     padding: 10px 10px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -1002,6 +1002,35 @@
     align-items: center;
 }
 
+.Reports__resultsResume{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.Reports__resultsResume>div:first-child{
+    width: 400px;
+    padding: 10px 10px;
+    background-color: var(--bg-2);
+    border-radius: 2px;
+}
+
+.Reports__resultsResumePrincipal{
+    width: 300px !important;
+    padding: 10px 10px !important;
+    background-color: var(--bg-2) !important;
+    border-radius: 2px !important;
+}
+
+.Reports__resultRubro{
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
 .Reports__resultHead{
     width: 100% !important;
     display: grid !important;
@@ -1017,25 +1046,26 @@
     font-size: 14px;
 }
 
-.Reports__resultsResume{
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 10px;
+.Reports__resultTotals,.Reports__resultsResume>div:last-child{
+    width: 200px !important;
+    padding: 10px 10px;
+    background-color: var(--bg-2);
+    border-radius: 2px;
 }
 
-.Reports__resultsResume>div:first-child{
-    width: 300px;
-    padding: 10px 10px;
-    background-color: var(--bg-2);
-    border-radius: 2px;
-}
 .Reports__resultsResume>div:last-child{
-    width: 150px;
-    padding: 10px 10px;
+    width: 300px !important;
+}   
+
+.Reports__resultsResume>div:last-child>select{
+    width: 100%;
+    height: 30px;
     background-color: var(--bg-2);
-    border-radius: 2px;
+    border: 1px solid var(--color-4);
+    border-radius:2px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight:100;
 }
 
 .Reports__resultsResume>div>p{
@@ -1047,6 +1077,23 @@
 .Reports__resultsResume>div>h4{
     color: var(--color-2);
     margin-bottom: 10px;
+}
+
+.Reports__resultsResumeColumns{
+    display: grid !important;
+    grid-template-columns: 50% 25% 25% !important;
+    text-align: center;
+}
+
+.Reports__resultsRangeColumn{
+    display: grid !important;
+    grid-template-columns: 40% 20% 40% !important;
+    text-align: center;
+}
+
+.Reports__resultsResumeColumns>p,.Reports__resultsRangeColumn>p{
+    font-weight: 600;
+    font-size: 16px;
 }
 
 .Reports__resultsResume>div>div{
@@ -1073,9 +1120,32 @@
     margin-bottom: 20px;
 }
 
-.Reports__resultGraphic>h3{
+.Reports__resultGraphic>h3,.Reports__resumeGraphic>div>h3{
     color: var(--color-2);
     font-size: 16px;
+}
+
+.Reports__resumeGraphic{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.Reports__resumeGraphic>canvas,.Reports__resumeGraphic>div>canvas{
+    width: 100% !important;
+}
+
+.Reports__resumeGraphic>div{
+    width: 100%;
+    height: 400px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 /* .Reports>div{

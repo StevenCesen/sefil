@@ -165,14 +165,17 @@ import {
               </Text>
             </View>
 
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}>
-                Capital:
-              </Text>
-              <Text style={styles.voucherText}>
-                $ {saldo_capital}
-              </Text>
-            </View>
+            {
+              (saldo_capital>0) &&
+                <View style={styles.sectionDates}>
+                  <Text style={styles.voucherText}>
+                    Capital:
+                  </Text>
+                  <Text style={styles.voucherText}>
+                    $ {saldo_capital}
+                  </Text>
+                </View>
+            }
 
             {
               (interes>0) &&
@@ -385,14 +388,17 @@ import {
               </Text>
             </View>
 
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}>
-                Capital:
-              </Text>
-              <Text style={styles.voucherText}>
-                $ {saldo_capital}
-              </Text>
-            </View>
+            {
+              (saldo_capital>0) &&
+                <View style={styles.sectionDates}>
+                  <Text style={styles.voucherText}>
+                    Capital:
+                  </Text>
+                  <Text style={styles.voucherText}>
+                    $ {saldo_capital}
+                  </Text>
+                </View>
+            }
 
             <View style={[styles.watermark,{top:150,left:20}]}>
               <Text>{type_print}</Text>

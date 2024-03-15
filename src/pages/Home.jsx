@@ -15,6 +15,7 @@ import {
   } from 'chart.js';
 
 import { useEffect, useState } from "react";
+import useFormatterNumber from "../hooks/useFormatterNumber";
 
 ChartJS.register(
     CategoryScale,
@@ -105,6 +106,7 @@ const labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio','
 //     ]
 // };
 
+const months=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 export default function Home(){
 
@@ -114,6 +116,8 @@ export default function Home(){
     const [totalDay,setTotal]=useState(0);
     // const [data,setData]=useState({});
     const [users,setUsers]=useState();
+
+    const [totalMonth,setMonth]=useState(0);
 
     useEffect(()=>{
 
@@ -174,22 +178,32 @@ export default function Home(){
             .then((response) => response.json())  
             .then((data) => setTotal(data));
         
-        fetch("https://sefil.softsen.space/public/api/users/departaments",{
+        fetch("https://sefil.softsen.space/public/api/vouchers/getTotalMonth",{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
             .then((response) => response.json())  
-            .then((data) => setUsers(data));
+            .then((data) => setMonth(data));
+
+        // fetch("https://sefil.softsen.space/public/api/users/departaments",{
+        //     headers: {
+        //         Accept: 'application/json',
+        //         Authorization: `Bearer ${localStorage.getItem('token')}`
+        //     }
+        // })
+        //     .then((response) => response.json())  
+        //     .then((data) => setUsers(data));
 
     },[]);
 
     if(!vouchers) return <></>
+    if(!totalMonth) return <></>
     // if(!condonations) return <></>
     // if(!restruct) return <></>
     // if(!data) return <></>
-    if(!users) return <></>
+    // if(!users) return <></>
 
     return(
         <div className="Home">
@@ -197,8 +211,17 @@ export default function Home(){
                 <CardDataShort
                     title="Ingresos diarios"
                     subtitle={new Date().toLocaleDateString()}
-                    data={`$ ${totalDay} USD`}
+                    data={`${useFormatterNumber({value:totalDay,currency:"USD"})}`}
                 />
+                {
+                    totalMonth.map((total,index)=>(
+                        <CardDataShort
+                            title={`Ingresos | ${total.cartera}`}
+                            subtitle={months[new Date().getMonth()]}
+                            data={`${useFormatterNumber({value:total.total,currency:"USD"})}`}
+                        />
+                    ))
+                }
 
                 {
                     // users.data.map((user,index)=>(

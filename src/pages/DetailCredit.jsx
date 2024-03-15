@@ -7,7 +7,6 @@ import CardCondonacion from "../components/CardCondonacion/CardCondonacion";
 import CardStructure from "../components/CardStructure/CardStructure";
 import useVerifyStruct from "../hooks/useVerifyRestruct";
 import useVerifyCondonation from "../hooks/useVerifyCondonation";
-import Push from "../components/Push/Push";
 
 
 export default function DetailCredit(){
@@ -22,10 +21,10 @@ export default function DetailCredit(){
     const cartera=useParams();
 
     const clean=setInterval(() => {
-            setPush({
-                view:false,
-                text:''
-            })
+        setPush({
+            view:false,
+            text:''
+        })
     },3000);
 
     useEffect(()=>{
@@ -103,6 +102,14 @@ export default function DetailCredit(){
                         <div>
                             <p className="Head">Crédito</p>
                             <span>{credit.sync_id} </span>
+                        </div>
+                        <div>
+                            <p className="Head">Fecha de emisión</p>
+                            <span>{credit.emision} </span>
+                        </div>
+                        <div>
+                            <p className="Head">Días vencidos</p>
+                            <span>{credit.dias_vencidos} </span>
                         </div>
                         <div>
                             <p className="Head">Monto total</p>
@@ -226,7 +233,10 @@ export default function DetailCredit(){
                             <></>
                     }
                    
-                    <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}`}>Comprobantes de pago</NavLink>
+                    {
+                        (localStorage.getItem('permission').split(',').includes("Comprobantes:all")) &&
+                            <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}`}>Comprobantes de pago</NavLink>
+                    }
                     <NavLink to={`/dashboard/garantes/${param.get('id')}?cartera=${cartera.id}`}>Garantes</NavLink>
                 </div>
             

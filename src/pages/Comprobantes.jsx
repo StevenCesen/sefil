@@ -8,6 +8,7 @@ import "../components/CardUsuarios/CardUsuarios.css"
 import PDF from "../components/PDF.jsx";
 import { PDFViewer } from "@react-pdf/renderer";
 import useSearchVouchers from "../hooks/useSearchVouchers.js";
+import addNotification from "react-push-notification";
 
 export default function Comprobantes(){
     const param = useParams();
@@ -72,9 +73,16 @@ export default function Comprobantes(){
 	        .then((data) => setComprobantes(data));
     }
 
+    const updateCredits=(data)=>{
+        setCredits({
+            ...credits,
+            data:data
+        })
+    }
+
     useEffect(()=>{
         if(param.id!==undefined){
-            useSearch(param.id,cartera.get('cartera'),setCredits);
+            useSearch(param.id,cartera.get('cartera'),updateCredits,setCredits);
             setVal(param.id);
         }
 
@@ -110,8 +118,12 @@ export default function Comprobantes(){
                     Buscar cliente
                     <input onKeyUp={(e)=>{
                         const ci=e.target.value;
-                        useSearch(ci,aux_busines,setCredits);
-                        setCredit(0);
+                        useSearch(ci,aux_busines,updateCredits,setCredits);
+                        if(ci.length>2){
+                            setCredit(0);
+                        }else{
+                            setCredit(1);
+                        }
                     }} onChange={(e)=>{setVal(e.target.value)}} value={val} placeholder="Nombre o número de cédula"/>
                 </label>
 
@@ -135,7 +147,7 @@ export default function Comprobantes(){
                         <div className="pageConsulta__prevResult">
                             {
                                 credits.data.map((credit,index)=>(
-                                    <button onClick={()=>{
+                                    <button key={index} onClick={()=>{
                                         setCredit(credit.id);
 
                                         if(param.id!==undefined){
@@ -144,7 +156,7 @@ export default function Comprobantes(){
                                             useSearchVouchers(credit.id,aux_busines,setComprobantes);
                                         }
                                         
-                                    }} key={index}>
+                                    }}>
                                         <p>{credit.name}</p>
                                         <p className="pageConsulta__prevResult--space"> | </p>
                                         <p>{credit.ci}</p>
@@ -171,7 +183,7 @@ export default function Comprobantes(){
 
                     {
                         comprobantes.data.map((comprobante,index)=>(
-                            <div>
+                            <div key={index}>
                                 <p>{comprobante.id}</p>
                                 <p>{comprobante.credito}</p>
                                 <p></p>
@@ -188,9 +200,20 @@ export default function Comprobantes(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                console.log(data)
                                                 if('status' in data){
-                                                    console.log("Cantidad excedida, pedir permiso a administrador?");
+                                                    addNotification({
+                                                        title: 'No autorizado',
+                                                        subtitle: 'No se pudo recibir información de este comprobante',
+                                                        message: 'Cantidad excedida, se ha notificado al administrador',
+                                                        native: false,
+                                                        backgroundTop: '#FF9619',
+                                                        backgroundBottom: '#fdb864',
+                                                        colorTop: 'white',
+                                                        colorBottom: 'white',
+                                                        closeButton: 'Cerrar',
+                                                        duration: 5000,
+                                                    });
+                                                  
                                                 }else{
                                                   
                                                     data.name=data.name[0].name;

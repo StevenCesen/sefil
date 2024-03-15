@@ -4,6 +4,7 @@ import CardCredit from "../components/CardCredit/CardCredit";
 import DetailCredit from "./DetailCredit";
 import { useEffect, useRef, useState } from "react";
 import useSearch from "../hooks/useSearch";
+import useFormatterNumber from "../hooks/useFormatterNumber";
 
 export default function Cobranza(){
     const param = useParams();
@@ -28,6 +29,13 @@ export default function Cobranza(){
     const [business,setBusiness]=useState();
 
     const [aux_busines,setAux]=useState("");
+
+    const updateCredits=(data)=>{
+        setCredits({
+            ...credits,
+            data:data
+        })
+    }
 
     const updateData=(url,btn,text)=>{
         fetch(url,{
@@ -89,7 +97,7 @@ export default function Cobranza(){
                             <input onKeyUp={(e)=>{
                                 const ci=e.target.value;
                                 if(aux_busines!==""){
-                                    useSearch(ci,aux_busines,setCredits);
+                                    useSearch(ci,aux_busines,updateCredits,setCredits);
                                 }
                             }} placeholder="Ingrese cédula o nombre"/>
                         </label>
@@ -144,12 +152,12 @@ export default function Cobranza(){
 
                             {
                                 credits.data.map((credit,index)=>(
-                                    <div>
-                                        <NavLink to={`/dashboard/recaudacion/view/${aux_busines}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
+                                    <div key={index}>
+                                        <NavLink to={`/dashboard/recaudacion/view/${credit.cartera}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
                                         <p>{credit.credito}</p>
                                         <p>{credit.tipo}</p>
                                         <p>{credit.name}</p>
-                                        <p>$ {credit.totalAmount} USD</p>
+                                        <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                                         <p>{credit.ci}</p>
                                         <p>{credit.company}</p>
                                         <p>{credit.provincia}</p>

@@ -68,9 +68,6 @@ export default function Usuarios(){
                                 }];
 
                                 if(e.target.value==='super'){
-                                    permiss[0].permission=[];
-                                    permiss[0].permission.push('Dashboard');
-                                    permiss[0].permission.push('');
                                     permiss[0].permission.push('DB:import');
                                     permiss[0].permission.push('DB:destroy');
                                     permiss[0].permission.push('DB:update');
@@ -118,7 +115,7 @@ export default function Usuarios(){
                                 <option value="consulta">Consulta</option>
                             </select>
                         </span>
-                        <span className="CardUsuarios__list"></span>
+                        <span className="CardUsuarios__list">.</span>
                         
                         <button onClick={(e)=>{
 

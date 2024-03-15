@@ -17,6 +17,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import useFormatterNumber from "../hooks/useFormatterNumber";
 
 ChartJS.register(
     CategoryScale,
@@ -121,6 +122,11 @@ export default function Reports(){
 
     const [nro_credit,setNro]=useState();
     const [amount_credits,setAmount]=useState();
+    const [select_agency_amount,setAgencyAmount]=useState();
+
+    const [carteras,setCarteras]=useState();
+
+    const [total_months,setTotalMonths]=useState();
 
     const param=useParams();
 
@@ -158,6 +164,42 @@ export default function Reports(){
     const [select_value,setSelect]=useState("all");
 
     useEffect(()=>{
+        fetch("https://sefil.softsen.space/public/api/vouchers/getTotalMonths",{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setTotalMonths(data);
+            });
+
+        fetch("https://sefil.softsen.space/public/api/busines/estado",{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                const labels=[];
+                let x_1=[];
+                let x_2=[];
+
+                data.map((cartera)=>{
+                    labels.push(cartera.busine);
+                    x_1.push(cartera.original);
+                    x_2.push(cartera.actual);
+                });
+
+                setCarteras({
+                    labels:labels,
+                    x1:x_1,
+                    x2:x_2
+                });
+            });
+
         fetch("https://sefil.softsen.space/public/api/users/departament?role=cobranza",{
             headers: {
                 Accept: 'application/json',
@@ -199,7 +241,8 @@ export default function Reports(){
             });
 
         setEmpresa("SEFIL_1");
-        
+        setAgencyAmount("catacocha");
+
         fetch(`https://sefil.softsen.space/public/api/cartera/distribution?cartera=${empresa}`,{
             headers: {
                 Accept: 'application/json',
@@ -211,7 +254,7 @@ export default function Reports(){
                 setNro(data);
             });
         
-        fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}`,{
+        fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}&agencia=catacocha`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -229,6 +272,7 @@ export default function Reports(){
         setFechaInicio("");
         setFechaFinal("")
         setAgent("");
+        
     
     },[]);
 
@@ -237,6 +281,7 @@ export default function Reports(){
     if(!business) return <></>
     if(!results) return <></>
     if(!nro_credit) return <></>
+    if(!total_months) return <></>
 
     return (
         <div className="Reports">
@@ -372,6 +417,7 @@ export default function Reports(){
                                     value={empresa}
                                     onChange={(e)=>{
                                         setEmpresa(e.target.value);
+                                        setAgencyAmount('all');
                                     }}
                                 >
                                     <option value={''}>--Todos--</option>
@@ -418,6 +464,17 @@ export default function Reports(){
                                             setAmount(data.data);
                                         });
 
+                                    fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}&agencia=${select_agency_amount}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setAmount(data.data);
+                                        });
+
                                 }}
                             >Aplicar</NavLink>
                         </div>
@@ -427,7 +484,7 @@ export default function Reports(){
                                 <div className="Reports__results">
                                     
                                     <div className="Reports__resultsResume">
-                                        <div>
+                                        <div className="Reports__resultsResumePrincipal">
                                             <h4>Valores a recuperar</h4>
 
                                             <div className="Reports__resultHead">
@@ -437,36 +494,42 @@ export default function Reports(){
                                                 <p><strong>Empresa:</strong> {(empresa==='') ? 'Todas' : empresa.toUpperCase()}</p>
                                             </div>
 
-                                            <div>
+                                            <div className="Reports__resultRubro">
                                                 <label>Capital:</label>
-                                                <span> $ {Number(results.data.actual.saldo_capital).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                                <span>{useFormatterNumber({currency:'USD',value:results.data.actual.saldo_capital})}</span>
                                             </div>
-                                            <div>
+                                            <div className="Reports__resultRubro">
                                                 <label>Interés:</label>
-                                                <span> $ {Number(results.data.actual.interes).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                                <span>{useFormatterNumber({currency:'USD',value:results.data.actual.interes})}</span>
                                             </div>
-                                            <div>
+                                            <div className="Reports__resultRubro">
                                                 <label>Mora:</label>
-                                                <span> $ {Number(results.data.actual.mora).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                                <span>{useFormatterNumber({currency:'USD',value:results.data.actual.mora})}</span>
                                             </div>
-                                            <div>
+                                            <div className="Reports__resultRubro">
                                                 <label>Seguro:</label>
-                                                <span> $ {Number(results.data.actual.seguro_desgravamen).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                                <span>{useFormatterNumber({currency:'USD',value:results.data.actual.seguro_desgravamen})}</span>
                                             </div>
-                                            <div>
+                                            <div className="Reports__resultRubro">
                                                 <label>Gastos de cobranza:</label>
-                                                <span> $ {Number(results.data.actual.gastos_cobranza).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                                <span>{useFormatterNumber({currency:'USD',value:results.data.actual.gastos_cobranza})}</span>
                                             </div>
-                                            <div>
+                                            <div className="Reports__resultRubro">
                                                 <label>Gastos judiciales:</label>
-                                                <span> $ {Number(results.data.actual.gastos_judiciales).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                                <span>{useFormatterNumber({currency:'USD',value:results.data.actual.gastos_judiciales})}</span>
                                             </div>
-                                            <div>
+                                            <div className="Reports__resultRubro">
                                                 <label>Otros valores:</label>
-                                                <span> $ {Number(results.data.actual.otros_valores).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} USD</span>
+                                                <span>{useFormatterNumber({currency:'USD',value:results.data.actual.otros_valores})}</span>
                                             </div>
+
+                                            <div className="Reports__resultRubro">
+                                                <label>Total:</label>
+                                                <span>{useFormatterNumber({currency:'USD',value:(results.data.actual.saldo_capital+results.data.actual.mora+results.data.actual.interes+results.data.actual.seguro_desgravamen+results.data.actual.gastos_cobranza+results.data.actual.gastos_judiciales+results.data.actual.otros_valores)})}</span>
+                                            </div>
+
                                         </div>
-                                        <div>
+                                        <div className="Reports__resultTotals">
                                             <div>
                                                 <label>Créditos activos:</label>
                                                 <span>{results.data.actual.creditos_activos}</span>
@@ -485,38 +548,92 @@ export default function Reports(){
                                 </div>
                         }
 
-                        <h4 className="Reports__title">Cartera recuperada</h4>
+                        <h4 className="Reports__title">Estado de carteras</h4>
                         <div className="Reports__resultGraphic">
-                            <h3>Distribución de rubros</h3>
-                            <Bar
-                                key={1}
-                                width={"100%"}
-                                height={"30px"}
-                                data={{
-                                    labels,
-                                    datasets:[
-                                        {
-                                            label:'Cartera original',
-                                            data:[results.data.original.saldo_capital,results.data.original.interes,results.data.original.mora,results.data.original.seguro_desgravamen,results.data.original.gastos_cobranza,results.data.original.gastos_judiciales,results.data.original.otros_valores],
-                                            backgroundColor: 'rgba(255, 99, 132, 0.5)'
-                                        },
-                                        {
-                                            label:'Cartera recuperada',
-                                            data:[
-                                                Number(results.data.original.saldo_capital)-Number(results.data.actual.saldo_capital),
-                                                Number(results.data.original.interes)-Number(results.data.actual.interes),
-                                                Number(results.data.original.mora)-Number(results.data.actual.mora),
-                                                Number(results.data.original.seguro_desgravamen)-Number(results.data.actual.seguro_desgravamen),
-                                                Number(results.data.original.gastos_cobranza)-Number(results.data.actual.gastos_cobranza),
-                                                Number(results.data.original.gastos_judiciales)-Number(results.data.actual.gastos_judiciales),
-                                                Number(results.data.original.otros_valores)-Number(results.data.actual.otros_valores)
-                                            ],
-                                            backgroundColor: 'rgba(53, 162, 235, 0.5)'
-                                        }
-                                    ]
-                                }}
-                                options={options}
-                            />
+                            <h3>Distribución por cartera</h3>
+
+                            <div className="Reports__resumeGraphic">
+                                <Bar
+                                    key={1}
+                                    width={"100%"}
+                                    height={"30px"}
+                                    data={{
+                                        labels:carteras.labels,
+                                        datasets:[
+                                            {
+                                                label:'Monto original',
+                                                data:carteras.x1,
+                                                backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                                            },
+                                            {
+                                                label:'Monto a recuperar',
+                                                data:carteras.x2,
+                                                backgroundColor: 'rgba(53, 162, 235, 0.5)'
+                                            }
+                                        ]
+                                    }}
+                                    options={options}
+                                />
+
+                                <div>
+                                    <h3>Tendencia anual de recuperación</h3>
+                                    <Line
+                                        key={1}
+                                        width={"100%"}
+                                        height={"30px"}
+                                        data={{
+                                            labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                                            datasets:[
+                                                {
+                                                    label:'Total',
+                                                    data:total_months[0],
+                                                    backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                                                }
+                                            ]
+                                        }}
+                                        options={{
+                                            responsive:true,
+                                                plugins:{
+                                                legend: {
+                                                    position: 'top',
+                                                },
+                                                title: {
+                                                    display: true,
+                                                    text: 'SEFIL 1'
+                                                }
+                                            }
+                                        }}
+                                    />
+                                    <Line
+                                        key={1}
+                                        width={"100%"}
+                                        height={"30px"}
+                                        data={{
+                                            labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                                            datasets:[
+                                                {
+                                                    label:'Total',
+                                                    data:total_months[1],
+                                                    backgroundColor: 'rgba(53, 162, 235, 0.5)'
+                                                }
+                                            ]
+                                        }}
+                                        options={{
+                                            responsive:true,
+                                                plugins:{
+                                                legend: {
+                                                    position: 'top',
+                                                },
+                                                title: {
+                                                    display: true,
+                                                    text: 'SEFIL 2'
+                                                }
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
                         </div>
 
                         <h4 className="Reports__title">Distribución de créditos</h4>
@@ -714,7 +831,7 @@ export default function Reports(){
 
                         <div className="Reports__resultsResume">
                             <div>
-                                <h4>Créditos</h4>
+                                <h4>Créditos activos por agencia</h4>
 
                                 {/* <div className="Reports__resultHead">
                                     <p><strong>Agencia:</strong> {(select_value==='') ? 'Todas' : select_value}</p>
@@ -722,12 +839,19 @@ export default function Reports(){
                                     <p><strong>Cantón:</strong> {(canton==='') ? 'Todos' : canton.toUpperCase()}</p>
                                     <p><strong>Empresa:</strong> {(empresa==='') ? 'Todas' : empresa.toUpperCase()}</p>
                                 </div> */}
+                                <div className="Reports__resultsResumeColumns">
+                                    <p>Agencia</p>
+                                    <p>Créditos</p>
+                                    <p>Monto adeudado</p>
+                                </div>
+
                                 {
                                     nro_credit.map((credit,index)=>(
                                         ((credit.cartera_actual.activos+credit.cartera_actual.inactivos)>0) && 
-                                            <div key={index}>
-                                                <label>Agencia {credit.agency}:</label>
-                                                <span>{credit.cartera_actual.activos+credit.cartera_actual.inactivos}</span>
+                                            <div className="Reports__resultsResumeColumns" key={index}>
+                                                <label>{credit.agency.toUpperCase()}:</label>
+                                                <span>{credit.cartera_actual.activos}</span>
+                                                <span>{useFormatterNumber({currency:'USD',value:credit.cartera_actual.monto})}</span>
                                             </div>
                                     ))
                                 }
@@ -736,9 +860,43 @@ export default function Reports(){
 
                             <div>
                                 <h4>Créditos por monto</h4>
+                                <select 
+                                    onChange={(e)=>{
+                                        setAgencyAmount(e.target.value);
+                                        fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}&agencia=${e.target.value}`,{
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then((data) => {
+                                                setAmount(data.data);
+                                            });
+                                    }}
+                                    value={select_agency_amount}
+                                >
+                                    <option value={'all'}>Todas</option>
+                                    {
+                                        nro_credit.map((credit,index)=>(
+                                            ((credit.cartera_actual.activos+credit.cartera_actual.inactivos)>0) && 
+                                                <option 
+                                                    key={index}
+                                                    value={credit.agency}
+                                                >Agencia {`${credit.agency.substring(0,1).toUpperCase()}${credit.agency.substring(1)}`}:</option>
+                                        ))
+                                    }
+                                </select>
+                                
+                                <div className="Reports__resultsRangeColumn">
+                                    <p>Rango</p>
+                                    <p>Créditos</p>
+                                    <p>Monto adeudado</p>
+                                </div>
+
                                 {
                                     amount_credits.map((amount,index)=>(
-                                        <div key={index}>
+                                        <div className="Reports__resultsRangeColumn" key={index}>
                                             {
                                                 (amount.rango.split('-').length>1) 
                                                 ?
@@ -747,6 +905,7 @@ export default function Reports(){
                                                     <label>Mayor a {amount.rango} $:</label>
                                             }
                                             <span>{amount.cantidad}</span>
+                                            <span>{useFormatterNumber({currency:'USD',value:amount.monto})}</span>
                                         </div>
                                     ))
                                 }
@@ -754,7 +913,7 @@ export default function Reports(){
 
                         </div>
 
-                        <div className="Reports__resultGraphic">
+                        {/* <div className="Reports__resultGraphic">
                             <h3>Distribución de créditos por agencias</h3>
                             <Bar
                                 key={2}
@@ -828,7 +987,7 @@ export default function Reports(){
                                 }}
                                 options={options_nro}
                             />
-                        </div>
+                        </div> */}
 
                     </div>
                 :
@@ -914,11 +1073,6 @@ export default function Reports(){
         </div>
     );
 }
-
-
-
-
-
 
 
 /*

@@ -1,5 +1,4 @@
 export default function usePrelacion(value,data_original,setPrelacion,setData){
-
     let prelacion={
         totalAmount:0.00,
         saldo_capital:0.00,

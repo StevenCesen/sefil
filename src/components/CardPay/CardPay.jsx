@@ -6,25 +6,7 @@ import usePrelacion from "../../hooks/usePrelacion";
 
 export default function CardPay({setPay,data,id,cartera}){
 
-    const [pay,setData]=useState({
-        tipo_transaccion:'total',
-        forma_pago:'',
-        valor_recibido:'',
-        valor_devuelto:'',
-        institucion_financiera:'',
-        codigo_deposito:'',
-        credito:id,
-        detalle:{
-            totalAmount:0.00,
-            saldo_capital:0.00,
-            interes:0.00,
-            mora:0.00,
-            seguro_desgravamen:0.00,
-            gastos_cobranza:0.00,
-            gastos_judiciales:0.00,
-            otros_valores:0.00
-        }
-    });
+    const [pay,setData]=useState();
 
     const [send,setSend]=useState({
         prevDates:{
@@ -88,9 +70,9 @@ export default function CardPay({setPay,data,id,cartera}){
             forma_pago:'efectivo',
             tipo_transaccion:'total',
             institucion_financiera:'Banco de Loja',
-            valor_devuelto:'0',
-            valor_recibido:'0',
-            codigo_deposito:'0',
+            valor_devuelto:0,
+            valor_recibido:0,
+            codigo_deposito:0,
             credito:id,
             detalle:{
                 totalAmount:data.totalAmount,
@@ -105,6 +87,8 @@ export default function CardPay({setPay,data,id,cartera}){
         });
         setActive(true);
     },[]);  
+
+    if(!pay) return <></>
 
     return(
         <div className="CardPay">
@@ -131,6 +115,7 @@ export default function CardPay({setPay,data,id,cartera}){
                                         ...pay,
                                         tipo_transaccion:e.target.value
                                     });
+                                    ref.current.value=0;
                                 }}>
                                     <option value="total">Pago total</option>
                                     <option value="parcial">Pago parcial</option>
@@ -280,24 +265,27 @@ export default function CardPay({setPay,data,id,cartera}){
                                         <label>Valor recibido</label>
                                         <label>:</label>
                                     </p>
-                                    <input type="number" placeholder="0" ref={ref} onChange={(e)=>{
+                                    <input type="text" placeholder="0" ref={ref} onChange={(e)=>{
                                         if(pay.tipo_transaccion==='parcial'){
+                                            
                                             setData({
                                                 ...pay,
-                                                valor_recibido:e.target.value
-                                            })
+                                                valor_recibido:Number(e.target.value)
+                                            });
+
                                             usePrelacion(e.target.value,data,setPrelacion,updateDetalle);
+                                            
                                         }else{
                                             if(pay.forma_pago==='efectivo'){
                                                 setData({
                                                     ...pay,
                                                     valor_recibido:e.target.value,
-                                                    valor_devuelto:String((e.target.value-Number(data.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'))
+                                                    valor_devuelto:(Number(e.target.value)>Number(data.totalAmount)) ? String((e.target.value-Number(data.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')) : 0
                                                 })
                                             }
                                         }
 
-                                    }} min={Number(data.totalAmount)} step={0.1}/>
+                                    }}/>
                                 </div>
                             </>
                         :   <></>
@@ -411,31 +399,37 @@ export default function CardPay({setPay,data,id,cartera}){
                             data_encode.cartera=cartera;
 
                             // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIEND
-                            console.log(data_encode)
-
-                            fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
-                                method:'PUT',
-                                headers: {
-                                    Accept: 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                },
-                                body:new URLSearchParams(data_encode)
-                            })
-                                .then((response) => response.json())  
-                                .then(async (data) => {
-                                    
-                                    if(data.status===200){
-                                        setVouch({
-                                            id:data.id,
-                                            sync:data.sync
-                                        });
-                                        e.target.textContent='Pago registrado';
-                                        title.current.textContent='COMPROBANTE DE PAGO';
-                                        setActive(false);
-                                    }else{
-                                        e.target.textContent='Error, inténtalo de nuevo';
-                                    }
-                                });
+                            if(data_encode.forma_pago!=='efectivo' & data_encode.codigo_deposito===0){
+                                e.target.textContent='Error, falta código de transacción.'
+                            }else if(data_encode.tipo_transaccion==='total' & (Number(data_encode.valor_recibido)<Number(data.totalAmount))){
+                                e.target.textContent='Error, valor recibido no es correcto, inténtalo de nuevo.';
+                            }else if(data_encode.valor_recibido==='0'){
+                                e.target.textContent='Error, falta valor recibido.'
+                            }else{
+                                fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
+                                    method:'PUT',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    },
+                                    body:new URLSearchParams(data_encode)
+                                })
+                                    .then((response) => response.json())  
+                                    .then(async (data) => {
+                                        
+                                        if(data.status===200){
+                                            setVouch({
+                                                id:data.id,
+                                                sync:data.sync
+                                            });
+                                            e.target.textContent='Pago registrado';
+                                            title.current.textContent='COMPROBANTE DE PAGO';
+                                            setActive(false);
+                                        }else{
+                                            e.target.textContent='Error, inténtalo de nuevo';
+                                        }
+                                    });
+                            }
   
                         }}>Registrar pago</button>
                     :
@@ -484,7 +478,7 @@ export default function CardPay({setPay,data,id,cartera}){
                             otros_valores={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).otros_valores : JSON.parse(send.prevDates).otros_valores}
 
                             valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial') ? pay.valor_recibido : (send.tipo_transaccion==='total') ? Number(data.totalAmount)+Number(pay.valor_devuelto) : send.valor_recibido}
-                            valor_devuelto={pay.valor_devuelto}
+                            valor_devuelto={send.valor_devuelto}
 
                             fecha={new Date().toLocaleDateString()}
                             agente={localStorage.getItem('name').substring(0,1)+localStorage.getItem('name').split(' ')[1]}

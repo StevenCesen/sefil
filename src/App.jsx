@@ -4,6 +4,8 @@ import Login from './pages/Login'
 import Header from './components/Header/Header'
 import NavSlide from './components/navSlide/NavSlide'
 import { useEffect, useState } from 'react'
+import { Notifications } from 'react-push-notification';
+import "./index.css";
 
 function App() {
   useEffect(()=>{
@@ -12,6 +14,7 @@ function App() {
 
   return (
       <>
+      <Notifications className="push" position={'top-right'}/>
       <Header/>
       {
         (!useSessions()) 
