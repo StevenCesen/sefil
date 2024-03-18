@@ -2,6 +2,7 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import { useEffect, useRef, useState } from "react";
+import MyMapComponent from "../components/Map/Map";
 
 const render = (status) => {
     return <h1>{status}</h1>;
@@ -24,9 +25,6 @@ export default function Garantes(){
 	        .then((data) => setCredits(data));
     }
     
-    const refMap=useRef();
-    const [map, setMap] = useState();
-
     useEffect(()=>{
         fetch(`https://sefil.softsen.space/public/api/credit/view?credit=${param.ci}&cartera=${cartera.get('cartera')}`,{
             headers: {
@@ -38,14 +36,8 @@ export default function Garantes(){
         .then((data) => {
             setGarantes(data);
         });
-        
 
-        if (refMap.current && !map) {
-            setMap(new window.google.maps.Map(refMap.current, {zoom:1},center={lat:0,lng:0}));
-        }
-
-    },[refMap,map]);
-
+    },[]);
 
     if(!garantes) return <></>
 
@@ -143,16 +135,12 @@ export default function Garantes(){
                                 </div>
                                 <div className="DetailCredit__general">
                                     <h3>Ubicación del garante</h3>
-                                    <Wrapper  apiKey="AIzaSyDqk_2FCNezPuFgd8Zaeu2s1idsDpdC1Qc" render={render}>
-                                        {/* <div ref={refMap}>
-                                            
-                                        </div> */}
-                                    
-                                        
+                                    <Wrapper apiKey="AIzaSyDqk_2FCNezPuFgd8Zaeu2s1idsDpdC1Qc" render={render}>
+                                        <MyMapComponent
+                                            center={{lat:parseFloat(contacto.latitud),lng:parseFloat(contacto.longitud)}}
+                                            zoom={15}
+                                        />
                                     </Wrapper>
-                                    {/* <div ref={refMap}>
-
-                                    </div> */}
                                 </div>
                             </div>
                         </>

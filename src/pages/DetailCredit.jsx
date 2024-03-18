@@ -7,7 +7,11 @@ import CardCondonacion from "../components/CardCondonacion/CardCondonacion";
 import CardStructure from "../components/CardStructure/CardStructure";
 import useVerifyStruct from "../hooks/useVerifyRestruct";
 import useVerifyCondonation from "../hooks/useVerifyCondonation";
+import MyMapComponent from "../components/Map/Map";
 
+const render = (status) => {
+    return <h1>{status}</h1>;
+};
 
 export default function DetailCredit(){
 
@@ -100,6 +104,10 @@ export default function DetailCredit(){
                     <h3>Información del crédito</h3>
                     <div className="DetailCredit__table">
                         <div>
+                            <p className="Head">Cartera</p>
+                            <span>{cartera.id} </span>
+                        </div>
+                        <div>
                             <p className="Head">Crédito</p>
                             <span>{credit.sync_id} </span>
                         </div>
@@ -168,8 +176,18 @@ export default function DetailCredit(){
                             <p className="Head">Dirección</p>
                             <span>{credit.direccion}</span>
                         </div>
-                
                     </div>
+                    
+                    <div className="DetailCredit__general" style={{marginTop:10}}>
+                        <h3>Ubicación del titular</h3>
+                        <Wrapper apiKey="AIzaSyDqk_2FCNezPuFgd8Zaeu2s1idsDpdC1Qc" render={render}>
+                            <MyMapComponent
+                                center={{lat:parseFloat(credit.latitud),lng:parseFloat(credit.longitud)}}
+                                zoom={15}
+                            />
+                        </Wrapper>
+                    </div>
+
                 </div>
 
                 <div className="DetailCredit__general">

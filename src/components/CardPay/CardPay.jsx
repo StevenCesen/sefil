@@ -3,6 +3,7 @@ import "./CardPay.css";
 import { PDFViewer } from "@react-pdf/renderer";
 import PDF from "../PDF";
 import usePrelacion from "../../hooks/usePrelacion";
+import useFormatterNumber from "../../hooks/useFormatterNumber";
 
 export default function CardPay({setPay,data,id,cartera}){
 
@@ -53,6 +54,8 @@ export default function CardPay({setPay,data,id,cartera}){
         otros_valores:0.00
     });
 
+    const [cobranza,setCobranza]=useState();
+
     const [idVouch,setVouch]=useState(0);
 
     const ref=useRef();
@@ -75,7 +78,7 @@ export default function CardPay({setPay,data,id,cartera}){
             codigo_deposito:0,
             credito:id,
             detalle:{
-                totalAmount:data.totalAmount,
+                totalAmount:Number(data.totalAmount)-Number(data.gastos_cobranza),
                 saldo_capital:data.saldo_capital,
                 interes:data.interes,
                 mora:data.mora,
@@ -86,9 +89,14 @@ export default function CardPay({setPay,data,id,cartera}){
             }
         });
         setActive(true);
+        setCobranza({
+            status:false,
+            value:data.gastos_cobranza
+        });
     },[]);  
 
     if(!pay) return <></>
+    if(!cobranza) return <></>
 
     return(
         <div className="CardPay">
@@ -200,7 +208,7 @@ export default function CardPay({setPay,data,id,cartera}){
                             <label>Mora</label>
                             <label>:</label>
                         </p>
-                        <p>{Number(pay.detalle.mora).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} $</p>
+                        <p>{useFormatterNumber({value:pay.detalle.mora,currency:'USD'})} $</p>
                         
                     </div>
                     <div>
@@ -208,42 +216,67 @@ export default function CardPay({setPay,data,id,cartera}){
                             <label>Interés</label>
                             <label>:</label>
                         </p>
-                        <p>{Number(pay.detalle.interes).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} $</p>
+                        <p>{useFormatterNumber({value:pay.detalle.interes,currency:'USD'})} $</p>
                     </div>
                     <div>
                         <p>
                             <label>Seguro desgravamen</label>
                             <label>:</label>
                         </p>
-                        <p>{Number(pay.detalle.seguro_desgravamen).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} $</p>
+                        <p>{useFormatterNumber({value:pay.detalle.seguro_desgravamen,currency:'USD'})} $</p>
                     </div>
                     <div>
                         <p>
                             <label>Gastos judiciales</label>
                             <label>:</label>
                         </p>
-                        <p>{Number(pay.detalle.gastos_judiciales).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} $</p>
+                        <p>{useFormatterNumber({value:pay.detalle.gastos_judiciales,currency:'USD'})} $</p>
                     </div>
                     <div>
                         <p>
                             <label>Capital</label>
                             <label>:</label>
                         </p>
-                        <p>{Number(pay.detalle.saldo_capital).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} $</p>
+                        <p>{useFormatterNumber({value:pay.detalle.saldo_capital,currency:'USD'})} $</p>
                     </div>
                     <div>
                         <p>
                             <label>Gastos de cobranza</label>
                             <label>:</label>
                         </p>
-                        <p>{Number(pay.detalle.gastos_cobranza).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} $</p>
+                        <label>
+                            {useFormatterNumber({value:pay.detalle.gastos_cobranza,currency:'USD'})}
+                            <input
+                                value={cobranza.status}
+                                type="checkbox"
+                                onChange={(e)=>{
+                                    if(e.target.checked){
+                                        setData({
+                                            ...pay,
+                                            detalle:{
+                                                ...pay.detalle,
+                                                totalAmount:Number(pay.detalle.totalAmount)+Number(cobranza.value)
+                                            }
+                                        });
+                                    }else{
+                                        setData({
+                                            ...pay,
+                                            detalle:{
+                                                ...pay.detalle,
+                                                totalAmount:Number(pay.detalle.totalAmount)-Number(cobranza.value)
+                                            }
+                                        });
+                                    }
+                                }}
+                            />
+                        </label>
                     </div>
                     <div>
                         <p>
                             <label>Otros valores</label>
                             <label>:</label>
                         </p>
-                        <p>{pay.detalle.otros_valores} $</p>
+                        <p>{useFormatterNumber({value:pay.detalle.otros_valores,currency:'USD'})}</p>
                     </div>
                     <div>
                         {
@@ -252,7 +285,7 @@ export default function CardPay({setPay,data,id,cartera}){
                                     <label>Total</label>
                                     <label>:</label>
                                 </p>
-                                <p>{Number(pay.detalle.totalAmount).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} $</p>
+                                <p>{useFormatterNumber({value:pay.detalle.totalAmount,currency:'USD'})} $</p>
                             </> 
                         }
                     </div>

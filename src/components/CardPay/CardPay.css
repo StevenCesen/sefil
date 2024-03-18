@@ -93,6 +93,18 @@
     text-align: right;
 }
 
+.CardPay__detailPay>div>label{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.CardPay__detailPay>div>label>input{
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+}
+
 .CardPay__detailClient{
     margin-top: 20px;
 }
