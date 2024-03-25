@@ -5,7 +5,7 @@ import PDF from "../PDF";
 import usePrelacion from "../../hooks/usePrelacion";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 
-export default function CardPay({setPay,data,id,cartera}){
+export default function CardPay({setPay,data,id,cartera,setGastos,setPDF}){
 
     const [pay,setData]=useState();
 
@@ -58,6 +58,8 @@ export default function CardPay({setPay,data,id,cartera}){
 
     const [idVouch,setVouch]=useState(0);
 
+    const [preview,setPreview]=useState(false);
+
     const ref=useRef();
 
     const updateDetalle=(detalle)=>{
@@ -78,7 +80,7 @@ export default function CardPay({setPay,data,id,cartera}){
             codigo_deposito:0,
             credito:id,
             detalle:{
-                totalAmount:Number(data.totalAmount)-Number(data.gastos_cobranza),
+                totalAmount:data.totalAmount,
                 saldo_capital:data.saldo_capital,
                 interes:data.interes,
                 mora:data.mora,
@@ -89,6 +91,7 @@ export default function CardPay({setPay,data,id,cartera}){
             }
         });
         setActive(true);
+        setPreview(false);
         setCobranza({
             status:false,
             value:data.gastos_cobranza
@@ -100,9 +103,13 @@ export default function CardPay({setPay,data,id,cartera}){
 
     return(
         <div className="CardPay">
-            
+            <button className="CardCondonacion__close" onClick={()=>{
+                setPay()
+                if(pay.tipo_transaccion==='total' & pay.valor_recibido!==0){
+                    setPDF(true)
+                }
+            }}>Volver</button>
             <div className="CardPay__contentPay">
-                <button onClick={()=>{setPay()}}>Volver</button>
 
                 <div className="CardPay__head">
                     <h3 ref={title}>PAGO</h3>
@@ -180,10 +187,10 @@ export default function CardPay({setPay,data,id,cartera}){
                                     <label>Código de depósito/transferencia</label>
                                     <label>:</label>
                                 </p>
-                                <input type="number" value={pay.codigo_deposito} onChange={(e)=>{
+                                <input type="text" value={pay.codigo_deposito} onChange={(e)=>{
                                     setData({
                                         ...pay,
-                                        codigo_deposito:e.target.value
+                                        codigo_deposito:e.target.value.trim()
                                     });
                                 }} />
                             </div>
@@ -237,39 +244,14 @@ export default function CardPay({setPay,data,id,cartera}){
                             <label>Capital</label>
                             <label>:</label>
                         </p>
-                        <p>{useFormatterNumber({value:pay.detalle.saldo_capital,currency:'USD'})} $</p>
+                        <p>{useFormatterNumber({value:pay.detalle.saldo_capital,currency:'USD'})}</p>
                     </div>
                     <div>
                         <p>
                             <label>Gastos de cobranza</label>
                             <label>:</label>
                         </p>
-                        <label>
-                            {useFormatterNumber({value:pay.detalle.gastos_cobranza,currency:'USD'})}
-                            <input
-                                value={cobranza.status}
-                                type="checkbox"
-                                onChange={(e)=>{
-                                    if(e.target.checked){
-                                        setData({
-                                            ...pay,
-                                            detalle:{
-                                                ...pay.detalle,
-                                                totalAmount:Number(pay.detalle.totalAmount)+Number(cobranza.value)
-                                            }
-                                        });
-                                    }else{
-                                        setData({
-                                            ...pay,
-                                            detalle:{
-                                                ...pay.detalle,
-                                                totalAmount:Number(pay.detalle.totalAmount)-Number(cobranza.value)
-                                            }
-                                        });
-                                    }
-                                }}
-                            />
-                        </label>
+                        <p>{useFormatterNumber({value:pay.detalle.gastos_cobranza,currency:'USD'})}</p>
                     </div>
                     <div>
                         <p>
@@ -278,6 +260,7 @@ export default function CardPay({setPay,data,id,cartera}){
                         </p>
                         <p>{useFormatterNumber({value:pay.detalle.otros_valores,currency:'USD'})}</p>
                     </div>
+                    
                     <div>
                         {
                             <>
@@ -285,7 +268,11 @@ export default function CardPay({setPay,data,id,cartera}){
                                     <label>Total</label>
                                     <label>:</label>
                                 </p>
-                                <p>{useFormatterNumber({value:pay.detalle.totalAmount,currency:'USD'})} $</p>
+                                
+                                <p>{useFormatterNumber({
+                                    value:pay.detalle.totalAmount,
+                                    currency:'USD'
+                                })}</p>
                             </> 
                         }
                     </div>
@@ -310,10 +297,11 @@ export default function CardPay({setPay,data,id,cartera}){
                                             
                                         }else{
                                             if(pay.forma_pago==='efectivo'){
+                                                console.log(data.totalAmount)
                                                 setData({
                                                     ...pay,
                                                     valor_recibido:e.target.value,
-                                                    valor_devuelto:(Number(e.target.value)>Number(data.totalAmount)) ? String((e.target.value-Number(data.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')) : 0
+                                                    valor_devuelto:(Number(e.target.value)>Number(data.totalAmount)) ? String((Number(e.target.value)-Number(data.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')) : 0
                                                 })
                                             }
                                         }
@@ -439,29 +427,94 @@ export default function CardPay({setPay,data,id,cartera}){
                             }else if(data_encode.valor_recibido==='0'){
                                 e.target.textContent='Error, falta valor recibido.'
                             }else{
-                                fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
-                                    method:'PUT',
-                                    headers: {
-                                        Accept: 'application/json',
-                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                    },
-                                    body:new URLSearchParams(data_encode)
-                                })
-                                    .then((response) => response.json())  
-                                    .then(async (data) => {
-                                        
-                                        if(data.status===200){
-                                            setVouch({
-                                                id:data.id,
-                                                sync:data.sync
+
+                                //Compruebo si no existe el mismo codigo de deposito
+                                if(data_encode.forma_pago!=='efectivo'){
+                                    
+                                    console.log(data_encode)
+
+                                    fetch(`https://sefil.softsen.space/public/api/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
+                                            headers: {
+                                                Accept: 'application/json'
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then(async (data) => {
+
+                                                if(data.state===200){
+                                                    fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
+                                                        method:'PUT',
+                                                        headers: {
+                                                            Accept: 'application/json',
+                                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                        },
+                                                        body:new URLSearchParams(data_encode)
+                                                    })
+                                                        .then((response) => response.json())  
+                                                        .then(async (data) => {
+                                                            console.log(data)
+                                                            if(data.status===200){
+
+                                                                if('id' in data.gasto){
+                                                                    setPreview(true);
+                                                                    setGastos({
+                                                                        credito:data.gasto.credito,
+                                                                        id:data.gasto.id,
+                                                                        valor_gasto:data.gasto.postDates
+                                                                    });
+                                                                }
+
+                                                                setVouch({
+                                                                    id:data.id,
+                                                                    sync:data.sync
+                                                                });
+                                                                e.target.textContent='Pago registrado';
+                                                                title.current.textContent='COMPROBANTE DE PAGO';
+                                                                setActive(false);
+                                                            }else{
+                                                                e.target.textContent='Error, inténtalo de nuevo';
+                                                            }
+                                                        });
+                                                }else{
+                                                    e.target.textContent='Código de depósito repetido, inténtalo de nuevo.';
+                                                }
+
                                             });
-                                            e.target.textContent='Pago registrado';
-                                            title.current.textContent='COMPROBANTE DE PAGO';
-                                            setActive(false);
-                                        }else{
-                                            e.target.textContent='Error, inténtalo de nuevo';
-                                        }
-                                    });
+                                }else{
+                                    fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
+                                            method:'PUT',
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            },
+                                            body:new URLSearchParams(data_encode)
+                                        })
+                                            .then((response) => response.json())  
+                                            .then(async (data) => {
+                                                if(data.status===200){
+
+                                                    if('id' in data.gasto){
+                                                        setPreview(true);
+                                                        setGastos({
+                                                            credito:data.gasto.credito,
+                                                            id:data.gasto.id,
+                                                            valor_gasto:data.gasto.postDates
+                                                        });
+                                                    }
+
+                                                    setVouch({
+                                                        id:data.id,
+                                                        sync:data.sync
+                                                    });
+                                                    e.target.textContent='Pago registrado';
+                                                    title.current.textContent='COMPROBANTE DE PAGO';
+                                                    setActive(false);
+                                                }else{
+                                                    e.target.textContent='Error, inténtalo de nuevo';
+                                                }
+                                            });
+                                }
+                        
                             }
   
                         }}>Registrar pago</button>

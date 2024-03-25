@@ -187,6 +187,7 @@ export default function NavSlide({actions,permission}){
                             <img src="./icons/arrowDown.png"/>
                             <div ref={menu}>
                                 <NavLink to={"dashboard/configuracion/importdb"}>Carteras</NavLink>
+                                <NavLink to={"dashboard/configuracion/importpays"}>Pagos</NavLink>
                             </div>
                         </div>
                     </div>

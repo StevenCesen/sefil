@@ -1,0 +1,93 @@
+import { NavLink } from "react-router-dom";
+import "./CardUpdatePay.css";
+import { useEffect, useRef, useState } from "react";
+import addNotification from "react-push-notification";
+
+
+export default function CardUpdatePay({name,state}){
+    
+    const [viewVersions,setView]=useState(false);
+    const [cartera,setCartera]=useState({
+        name:'',
+        state:''
+    });
+
+    const label_ref=useRef();
+
+    const [error_pays,setError]=useState();
+
+    useEffect(()=>{
+        setView(false);
+        setCartera({
+            name:name,
+            state:state
+        });
+        setError(false);
+    },[]);
+
+    return(
+        <div className="CardListUpdateCarteras">
+            <div>
+                <p>{cartera.name}</p>
+                <label
+                    htmlFor={`pays-${name}`}
+                    onChange={(e)=>{
+                        label_ref.current.textContent=e.target.files[0].name;
+                    }}
+                >
+                    <p ref={label_ref}>Elegir archivo</p>
+                    <input type="file" id={`pays-${name}`}/>
+                </label>
+                <p>{cartera.state}</p>
+                <button
+                    onClick={(e)=>{
+                        const file=document.getElementById(`pays-${name}`);
+
+                        if(file.files[0]===undefined){
+                            addNotification({
+                                title: 'Error archivo',
+                                subtitle: 'Se debe cargar un archivo',
+                                message: 'Por favor, elige un archivo en formato EXCEL e intenta de nuevo',
+                                native: false,
+                                backgroundTop: '#FF9619',
+                                backgroundBottom: '#fdb864',
+                                colorTop: 'white',
+                                colorBottom: 'white',
+                                closeButton: 'Cerrar',
+                                duration: 4000,
+                            });
+                        }else{
+                            const data_import=new FormData();
+                            data_import.append('name',name);
+                            data_import.append('file',file.files[0]);
+                            e.target.textContent='Verificando pagos, espere...';
+
+                            fetch("https://sefil.softsen.space/public/api/cartera/pagosUpdate",{
+                                method:'POST',
+                                body:data_import,
+                                headers: {
+                                    Accept: 'application/json',
+                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                }
+                            })
+                                .then((response) => response.json())  
+                                .then((data) => {
+                                    e.target.textContent='Importación correcta';
+                                    if(data.pagos_erroneos.length>0){
+                                        
+                                    }
+                                });
+                        }
+                    }}
+                >Subir</button>
+            </div>
+            
+            {
+                (error_pays) 
+                ?<></>
+                :<></>
+            }
+            
+        </div>
+    );
+}

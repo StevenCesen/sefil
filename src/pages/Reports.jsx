@@ -18,6 +18,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import addNotification from "react-push-notification";
 
 ChartJS.register(
     CategoryScale,
@@ -89,7 +90,9 @@ export default function Reports(){
 
     const [nro_credit,setNro]=useState();
     const [amount_credits,setAmount]=useState();
+    const [mora,setMoraCredit]=useState();
     const [select_agency_amount,setAgencyAmount]=useState();
+    const [select_agency_mora,setAgencyMora]=useState();
 
     const [carteras,setCarteras]=useState();
 
@@ -231,6 +234,17 @@ export default function Reports(){
             .then((data) => {
                 setAmount(data.data);
             });
+        
+        fetch(`https://sefil.softsen.space/public/api/cartera/mora?cartera=${empresa}&agency=catacocha`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setMoraCredit(data.data);
+            });
 
         setSelect("");
         setProvincia("loja");
@@ -247,6 +261,7 @@ export default function Reports(){
     if(!results) return <></>
     if(!nro_credit) return <></>
     if(!total_months) return <></>
+    if(!mora) return <></>
 
     return (
         <div className="Reports">
@@ -375,14 +390,19 @@ export default function Reports(){
                                     }
                                 </select>
                             </label>
-
+                            
                             <label className="Reports__filter">
                                 Empresa
                                 <select 
                                     value={empresa}
                                     onChange={(e)=>{
-                                        setEmpresa(e.target.value);
+                                        if(e.target.value!==''){
+                                            setEmpresa(e.target.value);
+                                        }else{
+                                            setEmpresa('SEFIL_1');
+                                        }
                                         setAgencyAmount('all');
+                                        setAgencyMora('all');
                                     }}
                                 >
                                     <option value={''}>--Todos--</option>
@@ -438,6 +458,18 @@ export default function Reports(){
                                         .then((response) => response.json())  
                                         .then((data) => {
                                             setAmount(data.data);
+                                            addNotification({
+                                                title: 'Éxito',
+                                                subtitle: 'Filtro aplicado correctamente',
+                                                message: '',
+                                                native: false,
+                                                backgroundTop: '#009793',
+                                                backgroundBottom: '#459d9a',
+                                                colorTop: 'white',
+                                                colorBottom: 'white',
+                                                closeButton: 'Cerrar',
+                                                duration:3000,
+                                            });
                                         });
 
                                 }}
@@ -677,6 +709,59 @@ export default function Reports(){
 
                                 {
                                     amount_credits.map((amount,index)=>(
+                                        <div className="Reports__resultsRangeColumn" key={index}>
+                                            {
+                                                (amount.rango.split('-').length>1) 
+                                                ?
+                                                    <label>{amount.rango} $:</label>
+                                                :
+                                                    <label>Mayor a {amount.rango} $:</label>
+                                            }
+                                            <span>{amount.cantidad}</span>
+                                            <span>{useFormatterNumber({currency:'USD',value:amount.monto})}</span>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+
+                            <div>
+                                <h4>Créditos por días de mora</h4>
+                                <select 
+                                    onChange={(e)=>{
+                                        setAgencyMora(e.target.value);
+                                        fetch(`https://sefil.softsen.space/public/api/cartera/mora?cartera=${empresa}&agency=${e.target.value}`,{
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then((data) => {
+                                                setMoraCredit(data.data);
+                                            });
+                                    }}
+                                    value={select_agency_mora}
+                                >
+                                    <option value={'all'}>Todas</option>
+                                    {
+                                        nro_credit.map((credit,index)=>(
+                                            ((credit.cartera_actual.activos+credit.cartera_actual.inactivos)>0) && 
+                                                <option 
+                                                    key={index}
+                                                    value={credit.agency}
+                                                >Agencia {`${credit.agency.substring(0,1).toUpperCase()}${credit.agency.substring(1)}`}:</option>
+                                        ))
+                                    }
+                                </select>
+                                
+                                <div className="Reports__resultsRangeColumn">
+                                    <p>Rango</p>
+                                    <p>Créditos</p>
+                                    <p>Monto adeudado</p>
+                                </div>
+
+                                {
+                                    mora.map((amount,index)=>(
                                         <div className="Reports__resultsRangeColumn" key={index}>
                                             {
                                                 (amount.rango.split('-').length>1) 

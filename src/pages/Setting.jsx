@@ -5,6 +5,7 @@ import CardCreateCartera from "../components/CardCreateCartera/CardCreateCartera
 import CardListCarteras from "../components/CardListCarteras/CardListCarteras";
 import CardUpdateCartera from "../components/CardUpdateCartera/CardUpdateCartera";
 import CardExportPays from "../components/CardExportPays/CardExportPays";
+import CardUpdatePay from "../components/CardUpdatePay/CardUpdatePay";
 
 export default function Setting(){
     const param = useParams();
@@ -79,9 +80,33 @@ export default function Setting(){
 
                         </>
                     :
-                        (param.ci==='exportdb')
+                        (param.ci==='importpays')
                         ?
-                            <h1>Exportar bases de datos</h1>
+                        <>
+                            <div className="DetailCredit__sections">
+                                <div>
+                                    <p>Subir pagos</p>
+                                    <label>Formato de archivo .xlsx (EXCEL) </label>
+                                </div>
+                            </div>
+                            <div className="CardListUpdate__head">
+                                <label>Cartera</label>
+                                <label>Subir pagos</label>
+                                <label>Estado</label>
+                                <label>Acciones</label>
+                            </div>
+
+                            {
+                                carteras.map((cartera,index)=>(
+                                    <CardUpdatePay
+                                        key={index}
+                                        name={cartera.name}
+                                        state={cartera.status}
+                                    />
+                                ))
+                            }
+                        </>
+
                         :  <></>
                 : <CardCreateCartera/>
             }

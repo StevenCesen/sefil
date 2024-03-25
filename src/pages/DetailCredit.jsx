@@ -8,6 +8,9 @@ import CardStructure from "../components/CardStructure/CardStructure";
 import useVerifyStruct from "../hooks/useVerifyRestruct";
 import useVerifyCondonation from "../hooks/useVerifyCondonation";
 import MyMapComponent from "../components/Map/Map";
+import useFormatterNumber from "../hooks/useFormatterNumber";
+import { PDFViewer } from "@react-pdf/renderer";
+import PDFgastos from "../components/PDFgastos";
 
 const render = (status) => {
     return <h1>{status}</h1>;
@@ -20,9 +23,19 @@ export default function DetailCredit(){
     const [view_condonation,setViewCondonation]=useState(true);
     const [view_reestructurar,setReestructurar]=useState(true);
     const [viewPush,setPush]=useState();
+    const [viewGastos,setGastos]=useState({
+        status:true,
+        credito:0,
+        id:0,
+        valor_gasto:''
+    });
+
+    const [viewPDFGastos,setPDF]=useState(true);
 
     const param=new URLSearchParams(useLocation().search);
     const cartera=useParams();
+
+    const [prev_gasto,setPrev]=useState(0);
 
     const clean=setInterval(() => {
         setPush({
@@ -31,10 +44,23 @@ export default function DetailCredit(){
         })
     },3000);
 
+
+    const updateGastos=({credito,valor_gasto,id})=>{
+        setGastos({
+            ...viewGastos,
+            status:true,
+            credito:credito,
+            id:id,
+            valor_gasto:valor_gasto
+        });
+    }
+
     useEffect(()=>{
         setPay(false);
         setReestructurar(false);
         setViewCondonation(false);
+        setGastos(false);
+        setPDF(false);
 
         fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
             headers: {
@@ -46,15 +72,54 @@ export default function DetailCredit(){
             .then((data) => {
                 setCredit(data);
             });
+        
+        fetch(`https://sefil.softsen.space/public/api/gastos?credito=${param.get('id')}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                if(data.id===false){
+                    
+                    setGastos({
+                        ...viewGastos,
+                        status:false
+                    });
+                }else{
+                    setGastos({
+                        ...viewGastos,
+                        status:true,
+                        credito:data.id.credito,
+                        id:data.id.id,
+                        valor_gasto:data.id.postDates
+                    });
+                }
+            });
+        
+        fetch(`https://sefil.softsen.space/public/api/genGastos?cartera=${cartera.id}&credito=${param.get('id')}`,{
+            method:'GET',
+            headers: {
+                Accept: 'application/json'
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                console.log(data)
+                setPrev(data.gastos);
+            });
 
         setPush({
             view:false,
             text:''
-        })
+        });
+
     },[]);
 
     if(!credit) return <></>
     if(!viewPush) return <></>
+    if(!viewGastos) return <></>
 
     return (
         <div className="DetailCredit">
@@ -108,6 +173,10 @@ export default function DetailCredit(){
                             <span>{cartera.id} </span>
                         </div>
                         <div>
+                            <p className="Head">Estado</p>
+                            <span>{credit.status} </span>
+                        </div>
+                        <div>
                             <p className="Head">Crédito</p>
                             <span>{credit.sync_id} </span>
                         </div>
@@ -121,35 +190,38 @@ export default function DetailCredit(){
                         </div>
                         <div>
                             <p className="Head">Monto total</p>
-                            <span>{credit.totalAmount} $</span>
+                            <span>{useFormatterNumber({
+                                value:Number(credit.totalAmount),
+                                currency:'USD'
+                            })} </span>
                         </div>
                         <div>
                             <p className="Head">Saldo capital</p>
-                            <span>{Number(credit.saldo_capital).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} $</span>
+                            <span>{useFormatterNumber({value:credit.saldo_capital,currency:'USD'})}</span>
                         </div>
                         <div>
                             <p className="Head">Interés</p>
-                            <span>{credit.interes} $</span>
+                            <span>{useFormatterNumber({value:credit.interes,currency:'USD'})}</span>
                         </div>
                         <div>
                             <p className="Head">Mora</p>
-                            <span>{credit.mora} $</span>
+                            <span>{useFormatterNumber({value:credit.mora,currency:'USD'})}</span>
                         </div>
                         <div>
                             <p className="Head">Seguro desgravamen</p>
-                            <span>{credit.seguro_desgravamen} $</span>
+                            <span>{useFormatterNumber({value:credit.seguro_desgravamen,currency:'USD'})}</span>
                         </div>
                         <div>
                             <p className="Head">Gastos de cobranza</p>
-                            <span>{credit.gastos_cobranza} $</span>
+                            <span>{useFormatterNumber({value:credit.gastos_cobranza,currency:'USD'})}</span>
                         </div>
                         <div>   
                             <p className="Head">Gastos judiciales</p>
-                            <span>{credit.gastos_judiciales} $</span>
+                            <span>{useFormatterNumber({value:credit.gastos_judiciales,currency:'USD'})}</span>
                         </div>
                         <div>
                             <p className="Head">Otros valores</p>
-                            <span>{credit.otros_valores} $</span>
+                            <span>{useFormatterNumber({value:credit.otros_valores,currency:'USD'})}</span>
                         </div>
                     </div>
                 </div>
@@ -195,7 +267,10 @@ export default function DetailCredit(){
                     {
                         credit.condonations.map((condonation,index)=>(
                             <div className="DetailCredit__activity" key={index}>
-                                <p>Condonación <strong>{condonation.status.toUpperCase()}</strong>, realizada por {condonation.byUser}</p>
+                                <p>Condonación <strong>{condonation.status.toUpperCase()}</strong>, realizada por {condonation.byUser}. Valor total condonado {useFormatterNumber({
+                                    value:(Number(JSON.parse(condonation.postDates).capital)+Number(JSON.parse(condonation.postDates).mora)+Number(JSON.parse(condonation.postDates).interes)+Number(JSON.parse(condonation.postDates).seguro_desgravamen)+Number(JSON.parse(condonation.postDates).gastos_cobranza)+Number(JSON.parse(condonation.postDates).gastos_judiciales)),
+                                    currency:'USD'
+                                })}</p>
                                 <span>{condonation.fecha}</span>
                             </div>
                         ))
@@ -214,12 +289,46 @@ export default function DetailCredit(){
                         : <></>
                     }
                 </div>
-        
+                
                 <div className="DetailCredit__actions">
                     <h3>Acciones</h3>
                     {
                         (Number(credit.totalAmount)>0.00 & localStorage.getItem('hash')!=='#/dashboard/consulta') ?
                             <>
+                                {/* Aquí renderizo el botón para generar los gastos de cobranza por si se le cerro la ventana */}
+                                
+
+                                {
+                                    (viewGastos.status!==false) ?
+                                        <button 
+                                            onClick={(e)=>{
+                                                //Aquí actualizamos el estado para que desaparezca el botón
+                                                setPDF(true);
+
+                                                fetch(`https://sefil.softsen.space/public/api/gastos/${viewGastos.id}`,{
+                                                    method:'PUT',
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        if('status' in data){
+                                                            setGastos({
+                                                                ...viewGastos,
+                                                                status:false
+                                                            });
+                                                        }
+                                                    });
+                                            }}
+                                        >Generar gastos de cobranza</button>
+                                    : 
+                                    <p
+                                        style={{marginBottom:10,fontSize:14}}
+                                    >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                                }
+
                                 <button onClick={e=>{
                                     setPay(!pay);
                                 }}>Pago</button>
@@ -293,6 +402,8 @@ export default function DetailCredit(){
                         data={credit} 
                         id={param.get('id')}
                         cartera={cartera.id}
+                        setGastos={updateGastos}
+                        setPDF={setPDF}
                     />
             }
 
@@ -301,6 +412,21 @@ export default function DetailCredit(){
                     <Push
                         text={viewPush.text}
                     />
+            }
+            {
+                (viewPDFGastos) &&
+                    <div className="CardPay"> 
+                        <button className="CardCondonacion__close" onClick={()=>{setPDF(false)}}>Volver</button>
+                        <PDFViewer width={'500px'} height={'300px'}>
+                            <PDFgastos
+                                nro_voucher={0}
+                                credito={viewGastos.credito}
+                                name={credit.name}
+                                ci={credit.ci}
+                                valor_gasto={JSON.parse(viewGastos.valor_gasto).value}
+                            />
+                        </PDFViewer>
+                    </div>
             }
         </div>
     );

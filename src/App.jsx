@@ -8,8 +8,10 @@ import { Notifications } from 'react-push-notification';
 import "./index.css";
 
 function App() {
+
   useEffect(()=>{
     
+
   },[]);
 
   return (

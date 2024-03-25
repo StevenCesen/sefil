@@ -449,7 +449,7 @@
 .Head{
     width: 100%;
     background-color: var(--bg-alert-error);
-    height: 50px;
+    height: 40px;
     display: flex;
     text-align: center;
     justify-content: center;
@@ -463,7 +463,7 @@
 
 .DetailCredit__table>div>span{
     width: 100%;
-    height: 50px;
+    height: 40px;
     background-color: var(--bg-2);
     display: flex;
     justify-content: flex-start;
@@ -1057,7 +1057,12 @@
     width: 300px !important;
 }   
 
-.Reports__resultsResume>div:last-child>select{
+.Reports__resultsResume>div{
+    background-color: var(--bg-2);
+    padding: 10px 10px;
+}
+
+.Reports__resultsResume>div>select{
     width: 100%;
     height: 30px;
     background-color: var(--bg-2);

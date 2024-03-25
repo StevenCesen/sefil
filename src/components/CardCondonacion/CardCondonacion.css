@@ -66,6 +66,12 @@
 
 .CardCondonacion__close{
     position: absolute;
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    cursor: pointer;
     top: 30px;
     right: 30px;
 }
