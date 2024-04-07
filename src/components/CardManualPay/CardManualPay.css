@@ -1,0 +1,105 @@
+.CardManualPay{
+    position: fixed !important;
+    top: calc(var(--height-header) - 30px) !important;
+    right: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: rgba(0, 0, 0, 0.221);
+}
+
+.CardManualPay__close{
+    position: fixed;
+    width: 100px !important;
+    display: block;
+    top: calc(var(--height-header));
+    right: 20px !important;
+    margin-top: 20px !important;
+}
+
+.CardManualPay__content{
+    width: 60%;
+    margin: 0 auto !important;
+    border-radius: 5px;
+    background-color: var(--bg-2);
+    padding: 10px 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.CardManualPay__footer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.CardManualPay__footer>button{
+    height: 40px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border:none;
+    align-self: flex-end;
+    cursor: pointer;
+    border-radius: 2px;
+    width: 100px;
+}
+
+.CardManualPay__data{
+    width: 100%;
+}
+
+.CardManualPay__head{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.CardManualPay__head>p>strong{
+    color: var(--color-1);
+    font-weight: 600;
+}
+
+.CardManualPay__cards{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    margin: 30px 0;
+    gap: 5px;
+}
+
+.CardManualPay__card{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--bg-1);
+    padding: 10px;
+
+}
+
+.CardManualPay__card>div{
+    display: grid;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    grid-template-columns: 60% 40%;
+    margin-bottom: 10px;
+}
+
+.CardManualPay__card>div>p:first-child{
+    font-weight: 600;
+}
+
+.CardManualPay__card>div:last-child{
+    margin-bottom: 0;
+}

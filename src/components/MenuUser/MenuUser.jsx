@@ -12,7 +12,11 @@ export default function MenuUser(){
 
     return (
         <div className="MenuUser">
-            <button>{user.shortName}</button>
+            <button
+                onClick={(e)=>{
+                    location.hash='/dashboard/me';
+                }}
+            >{user.shortName}</button>
         </div>
     );
 }

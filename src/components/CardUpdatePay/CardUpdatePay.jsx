@@ -2,11 +2,13 @@ import { NavLink } from "react-router-dom";
 import "./CardUpdatePay.css";
 import { useEffect, useRef, useState } from "react";
 import addNotification from "react-push-notification";
+import CardManualPay from "../CardManualPay/CardManualPay";
 
 
 export default function CardUpdatePay({name,state}){
     
-    const [viewVersions,setView]=useState(false);
+    const [viewManual,setView]=useState(false);
+    const [pays_denied,setPays]=useState([]);
     const [cartera,setCartera]=useState({
         name:'',
         state:''
@@ -14,7 +16,9 @@ export default function CardUpdatePay({name,state}){
 
     const label_ref=useRef();
 
-    const [error_pays,setError]=useState();
+    const updateView=()=>{
+        setView(!viewManual);
+    }
 
     useEffect(()=>{
         setView(false);
@@ -22,7 +26,16 @@ export default function CardUpdatePay({name,state}){
             name:name,
             state:state
         });
-        setError(false);
+
+        fetch(`https://sefil.softsen.space/public/api/pays/denied?cartera=${name}`,{
+            headers: {
+                Accept: 'application/json',
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setPays(data);
+            });
     },[]);
 
     return(
@@ -39,6 +52,22 @@ export default function CardUpdatePay({name,state}){
                     <input type="file" id={`pays-${name}`}/>
                 </label>
                 <p>{cartera.state}</p>
+                <p>
+                    {
+                        (pays_denied.total>0) 
+                        ?
+                            <button
+                                onClick={(e)=>{
+                                    setView(true)
+                                }}
+                            >
+                                Procesar {pays_denied.total}
+                            </button>
+                        :
+                            pays_denied.total
+                    }
+                </p>
+
                 <button
                     onClick={(e)=>{
                         const file=document.getElementById(`pays-${name}`);
@@ -74,7 +103,32 @@ export default function CardUpdatePay({name,state}){
                                 .then((data) => {
                                     e.target.textContent='Importación correcta';
                                     if(data.pagos_erroneos.length>0){
-                                        
+                                        setPays(data);
+                                        addNotification({
+                                            title: 'Pagos subidos',
+                                            subtitle: 'Carga completa, con pendientes',
+                                            message: 'Se han encontrado pagos con diferencias',
+                                            native: false,
+                                            backgroundTop: '#FF9619',
+                                            backgroundBottom: '#fdb864',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration: 4000,
+                                        });
+                                    }else{
+                                        addNotification({
+                                            title: 'Pagos subidos',
+                                            subtitle: 'Carga completa sin pendientes',
+                                            message: '',
+                                            native: false,
+                                            backgroundTop: '#009793',
+                                            backgroundBottom: '#459d9a',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration: 4000,
+                                        });
                                     }
                                 });
                         }
@@ -83,9 +137,17 @@ export default function CardUpdatePay({name,state}){
             </div>
             
             {
-                (error_pays) 
-                ?<></>
-                :<></>
+                (viewManual) 
+                ?
+                    <CardManualPay
+                        callback={updateView}
+                        pays={pays_denied}
+                        cartera={name}
+                        setUpdate={setPays}
+                    />
+                :
+                    <>
+                    </>
             }
             
         </div>

@@ -6,6 +6,7 @@ import {
     Image,
     View,
   } from "@react-pdf/renderer";
+import useFormatterNumber from "../hooks/useFormatterNumber";
 
 
   const styles = StyleSheet.create({
@@ -172,7 +173,7 @@ import {
                     Capital:
                   </Text>
                   <Text style={styles.voucherText}>
-                    $ {saldo_capital}
+                    {useFormatterNumber({value:saldo_capital,currency:'USD'})}
                   </Text>
                 </View>
             }
@@ -184,7 +185,7 @@ import {
                     Interés:
                   </Text>
                   <Text style={styles.voucherText}>
-                    $ {interes}
+                    {useFormatterNumber({value:interes,currency:'USD'})}
                   </Text>
                 </View>
             }
@@ -196,7 +197,7 @@ import {
                 Mora:
               </Text>
               <Text style={styles.voucherText}>
-                $ {mora}
+                {useFormatterNumber({value:mora,currency:'USD'})}
               </Text>
             </View>
             }
@@ -208,7 +209,7 @@ import {
                 Seguro desgravamen:
               </Text>
               <Text style={styles.voucherText}>
-                $ {seguro_desgravamen}
+                {useFormatterNumber({value:seguro_desgravamen,currency:'USD'})}
               </Text>
             </View>
             }
@@ -220,7 +221,7 @@ import {
                 Gastos de cobranza
               </Text>
               <Text style={styles.voucherText}>
-                $ {gastos_cobranza}
+                {useFormatterNumber({value:gastos_cobranza,currency:'USD'})}
               </Text>
             </View>
             }
@@ -232,7 +233,7 @@ import {
                 Gastos judiciales:
               </Text>
               <Text style={styles.voucherText}>
-                $ {gastos_judiciales}
+                {useFormatterNumber({value:gastos_judiciales,currency:'USD'})}
               </Text>
             </View>
             }
@@ -244,7 +245,7 @@ import {
                 Otros valores:
               </Text>
               <Text style={styles.voucherText}>
-                $ {otros_valores}
+                {useFormatterNumber({value:otros_valores,currency:'USD'})}
               </Text>
             </View>
             }
@@ -263,7 +264,7 @@ import {
                 {`${forma_pago.substring(0,1).toUpperCase()}${forma_pago.substring(1)}`}:
               </Text>
               <Text style={styles.voucherText}>
-                $ {valor_recibido}
+                {useFormatterNumber({value:valor_recibido,currency:'USD'})}
               </Text>
             </View>
 
@@ -272,7 +273,7 @@ import {
                 Saldo a favor:
               </Text>
               <Text style={styles.voucherText}>
-                $ {valor_devuelto}
+                {useFormatterNumber({value:valor_devuelto,currency:'USD'})}
               </Text>
             </View>
 
@@ -285,7 +286,7 @@ import {
                   {
                     (valor_devuelto) &&
                       <Text style={styles.voucherText}>
-                          $ {Number(valor_devuelto)}
+                          {useFormatterNumber({value:valor_devuelto,currency:'USD'})}
                       </Text>
                   }
                 </View>
@@ -395,7 +396,7 @@ import {
                     Capital:
                   </Text>
                   <Text style={styles.voucherText}>
-                    $ {saldo_capital}
+                    {useFormatterNumber({value:saldo_capital,currency:'USD'})}
                   </Text>
                 </View>
             }
@@ -411,7 +412,7 @@ import {
                     Interés:
                   </Text>
                   <Text style={styles.voucherText}>
-                    $ {interes}
+                    {useFormatterNumber({value:interes,currency:'USD'})}
                   </Text>
                 </View>
             }
@@ -423,7 +424,7 @@ import {
                 Mora:
               </Text>
               <Text style={styles.voucherText}>
-                $ {mora}
+                {useFormatterNumber({value:mora,currency:'USD'})}
               </Text>
             </View>
             }
@@ -435,7 +436,7 @@ import {
                 Seguro desgravamen:
               </Text>
               <Text style={styles.voucherText}>
-                $ {seguro_desgravamen}
+                {useFormatterNumber({value:seguro_desgravamen,currency:'USD'})}
               </Text>
             </View>
             }
@@ -447,7 +448,7 @@ import {
                 Gastos de cobranza
               </Text>
               <Text style={styles.voucherText}>
-                $ {gastos_cobranza}
+                {useFormatterNumber({value:gastos_cobranza,currency:'USD'})}
               </Text>
             </View>
             }
@@ -459,7 +460,7 @@ import {
                 Gastos judiciales:
               </Text>
               <Text style={styles.voucherText}>
-                $ {gastos_judiciales}
+                {useFormatterNumber({value:gastos_judiciales,currency:'USD'})}
               </Text>
             </View>
             }
@@ -471,7 +472,7 @@ import {
                 Otros valores:
               </Text>
               <Text style={styles.voucherText}>
-                $ {otros_valores}
+                {useFormatterNumber({value:otros_valores,currency:'USD'})}
               </Text>
             </View>
             }
@@ -490,7 +491,7 @@ import {
                 {`${forma_pago.substring(0,1).toUpperCase()}${forma_pago.substring(1)}`}:
               </Text>
               <Text style={styles.voucherText}>
-                $ {valor_recibido}
+                {useFormatterNumber({value:valor_recibido,currency:'USD'})}
               </Text>
             </View>
 
@@ -499,7 +500,7 @@ import {
                 Saldo a favor:
               </Text>
               <Text style={styles.voucherText}>
-                $ {valor_devuelto}
+                {useFormatterNumber({value:valor_devuelto,currency:'USD'})}
               </Text>
             </View>
 
@@ -512,7 +513,7 @@ import {
                   {
                     (valor_devuelto) &&
                       <Text style={styles.voucherText}>
-                          $ {Number(valor_devuelto)}
+                          {useFormatterNumber({value:valor_devuelto,currency:'USD'})}
                       </Text>
                   }
                 </View>

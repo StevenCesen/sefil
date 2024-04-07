@@ -7,6 +7,7 @@ export default function useSearchVouchers(string,cartera,setData){
     })
         .then((response) => response.json())  
         .then((data) => {
+            console.log(data)
             setData(data)
         });
 }

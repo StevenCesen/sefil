@@ -19,15 +19,21 @@ const render = (status) => {
 export default function DetailCredit(){
 
     const [credit,setCredit]=useState();
+
     const [pay,setPay]=useState(true);
+
     const [view_condonation,setViewCondonation]=useState(true);
+
     const [view_reestructurar,setReestructurar]=useState(true);
+
     const [viewPush,setPush]=useState();
+
     const [viewGastos,setGastos]=useState({
         status:true,
         credito:0,
         id:0,
-        valor_gasto:''
+        valor_gasto:'',
+        sync:''
     });
 
     const [viewPDFGastos,setPDF]=useState(true);
@@ -81,8 +87,8 @@ export default function DetailCredit(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                console.log(data)
                 if(data.id===false){
-                    
                     setGastos({
                         ...viewGastos,
                         status:false
@@ -93,7 +99,8 @@ export default function DetailCredit(){
                         status:true,
                         credito:data.id.credito,
                         id:data.id.id,
-                        valor_gasto:data.id.postDates
+                        valor_gasto:data.id.postDates,
+                        sync:data.id.sync
                     });
                 }
             });
@@ -106,7 +113,6 @@ export default function DetailCredit(){
         })
             .then((response) => response.json())  
             .then((data) => {
-                console.log(data)
                 setPrev(data.gastos);
             });
 
@@ -167,29 +173,30 @@ export default function DetailCredit(){
 
                 <div className="DetailCredit__general">
                     <h3>Información del crédito</h3>
+                    
                     <div className="DetailCredit__table">
                         <div>
-                            <p className="Head">Cartera</p>
+                            <p className="Head Head--se">Cartera</p>
                             <span>{cartera.id} </span>
                         </div>
                         <div>
-                            <p className="Head">Estado</p>
+                            <p className="Head Head--se">Estado</p>
                             <span>{credit.status} </span>
                         </div>
                         <div>
-                            <p className="Head">Crédito</p>
+                            <p className="Head Head--se">Crédito</p>
                             <span>{credit.sync_id} </span>
                         </div>
                         <div>
-                            <p className="Head">Fecha de emisión</p>
+                            <p className="Head Head--se">Fecha de emisión</p>
                             <span>{credit.emision} </span>
                         </div>
                         <div>
-                            <p className="Head">Días vencidos</p>
+                            <p className="Head Head--se">Días vencidos</p>
                             <span>{credit.dias_vencidos} </span>
                         </div>
                         <div>
-                            <p className="Head">Monto total</p>
+                            <p className="Head Head--pr">Monto total</p>
                             <span>{useFormatterNumber({
                                 value:Number(credit.totalAmount),
                                 currency:'USD'
@@ -225,6 +232,7 @@ export default function DetailCredit(){
                         </div>
                     </div>
                 </div>
+
                 <div className="DetailCredit__general">
                     <h3>Información del cliente</h3>
                     <div className="DetailCredit__table">
@@ -293,42 +301,40 @@ export default function DetailCredit(){
                 <div className="DetailCredit__actions">
                     <h3>Acciones</h3>
                     {
+                        (localStorage.getItem('hash')!=='#/dashboard/consulta') &&
+                            (viewGastos.status===true) ?
+                                <button 
+                                    onClick={(e)=>{
+                                        //Aquí actualizamos el estado para que desaparezca el botón
+                                        setPDF(true);
+
+                                        fetch(`https://sefil.softsen.space/public/api/gastos/${viewGastos.id}`,{
+                                            method:'PUT',
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then((data) => {
+                                                if('status' in data){
+                                                    setGastos({
+                                                        ...viewGastos,
+                                                        status:false
+                                                    });
+                                                }
+                                            });
+                                    }}
+                                >Generar gastos de cobranza</button>
+                            : (Number(credit.totalAmount)>0.00) &&
+                                <p
+                                    style={{marginBottom:10,fontSize:14}}
+                                >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                            
+                    }
+                    {
                         (Number(credit.totalAmount)>0.00 & localStorage.getItem('hash')!=='#/dashboard/consulta') ?
                             <>
-                                {/* Aquí renderizo el botón para generar los gastos de cobranza por si se le cerro la ventana */}
-                                
-
-                                {
-                                    (viewGastos.status!==false) ?
-                                        <button 
-                                            onClick={(e)=>{
-                                                //Aquí actualizamos el estado para que desaparezca el botón
-                                                setPDF(true);
-
-                                                fetch(`https://sefil.softsen.space/public/api/gastos/${viewGastos.id}`,{
-                                                    method:'PUT',
-                                                    headers: {
-                                                        Accept: 'application/json',
-                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                    }
-                                                })
-                                                    .then((response) => response.json())  
-                                                    .then((data) => {
-                                                        if('status' in data){
-                                                            setGastos({
-                                                                ...viewGastos,
-                                                                status:false
-                                                            });
-                                                        }
-                                                    });
-                                            }}
-                                        >Generar gastos de cobranza</button>
-                                    : 
-                                    <p
-                                        style={{marginBottom:10,fontSize:14}}
-                                    >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
-                                }
-
                                 <button onClick={e=>{
                                     setPay(!pay);
                                 }}>Pago</button>
@@ -404,6 +410,7 @@ export default function DetailCredit(){
                         cartera={cartera.id}
                         setGastos={updateGastos}
                         setPDF={setPDF}
+                        setCredit={setCredit}
                     />
             }
 
@@ -419,11 +426,11 @@ export default function DetailCredit(){
                         <button className="CardCondonacion__close" onClick={()=>{setPDF(false)}}>Volver</button>
                         <PDFViewer width={'500px'} height={'300px'}>
                             <PDFgastos
-                                nro_voucher={0}
-                                credito={viewGastos.credito}
+                                nro_voucher={25}
+                                credito={`${param.get('id')}-${viewGastos.sync}`}
                                 name={credit.name}
                                 ci={credit.ci}
-                                valor_gasto={JSON.parse(viewGastos.valor_gasto).value}
+                                valor_gasto={useFormatterNumber({value:JSON.parse(viewGastos.valor_gasto).value,currency:'USD'})}
                             />
                         </PDFViewer>
                     </div>

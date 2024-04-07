@@ -120,7 +120,7 @@ import {
               <Image style={styles.image} src={"./icons/logo.png"}/>
             </View>
 
-            <View style={styles.sectionDates} >
+            <View style={[styles.sectionDates,{paddingTop:20}]} >
               <Text style={styles.voucherText}>
                 Nombre:
               </Text>
@@ -168,7 +168,7 @@ import {
               <Image style={styles.image} src={"./icons/logo.png"}/>
             </View>
 
-            <View style={styles.sectionDates}>
+            <View style={[styles.sectionDates,{paddingTop:20}]}>
               <Text style={styles.voucherText}>
                 Nombre:
               </Text>
@@ -200,7 +200,7 @@ import {
                 Gastos de cobranza
               </Text>
               <Text style={styles.voucherText}>
-                $ {valor_gasto}
+                {valor_gasto}
               </Text>
             </View>
         

@@ -766,9 +766,9 @@ export default function Reports(){
                                             {
                                                 (amount.rango.split('-').length>1) 
                                                 ?
-                                                    <label>{amount.rango} $:</label>
+                                                    <label>{amount.rango}</label>
                                                 :
-                                                    <label>Mayor a {amount.rango} $:</label>
+                                                    <label>Mayor a {amount.rango}</label>
                                             }
                                             <span>{amount.cantidad}</span>
                                             <span>{useFormatterNumber({currency:'USD',value:amount.monto})}</span>
@@ -856,7 +856,9 @@ export default function Reports(){
                         </div> */}
                     </div>
                 :
-                    <div className="Reports__content">
+                    (param.ci==='actividad')
+                    ?
+                        <div className="Reports__content">
                         <h4 className="Reports__title">Histórico de pagos</h4>
                         <div className="Reports__filters Reports__filters--columns-5">
 
@@ -933,7 +935,68 @@ export default function Reports(){
 
 
                         </div>
+                        </div>
+                    :
+                    <div className="Reports__content">
+                        <h4 className="Reports__title">Histórico de pagos para contabilidad</h4>
+                        <div className="Reports__filters Reports__filters--columns-5">
+
+                            <label className="Reports__filter">
+                                Fecha de inicio
+                                <input 
+                                    type="date"
+                                    value={fecha_inicio}
+                                    onChange={(e)=>{
+                                        setFechaInicio(e.target.value);
+                                    }}
+                                />
+                            </label>
+
+                            <label className="Reports__filter">
+                                Fecha de corte
+                                <input 
+                                    type="date" 
+                                    value={fecha_final} 
+                                    onChange={(e)=>{
+                                        console.log("estoy aca")
+                                        setFechaFinal(e.target.value);
+                                    }}/>
+                            </label>
+
+                            <label className="Reports__filter">
+                                Empresa
+                                <select 
+                                    value={empresa}
+                                    onChange={(e)=>{
+                                        setEmpresa(e.target.value);
+                                    }}
+                                >
+                                    <option value={''}>--Todos--</option>
+                                    {
+                                        business.map((bus,index)=>(
+                                            <option key={index} value={bus.name.toUpperCase()}>{bus.name.toUpperCase()}</option>
+                                        ))
+                                    }
+                                </select>
+                            </label>
+                            
+                            <NavLink 
+                                className="Reports__button"
+                                
+                                onClick={(e)=>{
+                                    const splits_inicio=fecha_inicio.split('-');
+                                    const inicio=`${splits_inicio[0]}/${splits_inicio[1]}/${splits_inicio[2]}`;
+
+                                    const splits_final=fecha_final.split('-');
+                                    const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
+                                    
+                                    //AQUÍ URL PARA VANESSA
+                                    location.href=`https://sefil.softsen.space/public/api/cobros?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                }}
+                            >Generar EXCEL</NavLink>
+                        </div>
                     </div>
+                        
             }
         </div>
     );

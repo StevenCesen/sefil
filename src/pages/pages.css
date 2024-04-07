@@ -269,6 +269,84 @@
     margin-top: 10px;
 }
 
+.pageConsulta__userDates{
+    width: 50%;
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pageConsulta__userDates>h1{
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-3);
+    background-color: var(--bg-alert-successful);
+    border-radius: 50%;
+}
+
+.pageConsulta__userDates>div{
+    background-color: var(--bg-2);
+    padding: 40px 40px;
+    border-radius: 5px;
+}
+
+.pageConsulta__userDates>div>p{
+    text-align: center;
+    font-weight: 100;
+    font-size: 25px;
+}
+
+.pageConsulta__userDates>div>div{
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.pageConsulta__userDates>div>div>h2{
+    color: var(--bg-alert-error);
+    font-size: 16px;
+    margin-bottom:5px;
+}
+
+.pageConsulta__userDates>div>div>label{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.pageConsulta__userDates>div>div>label>input{
+    width: 200px;
+    height: 30px;
+    border-radius: 2px;
+    border: 1px solid var(--color-4);
+    margin-top: 5px;
+}
+
+.pageConsulta__userDates>div>div>label>input:focus,.pageConsulta__userDates>div>div>label>input:hover{
+    outline: none;
+}
+
+.pageConsulta__userDates>div>div>button{
+    height: 30px;
+    width: 100%;
+    border: none;
+    border-radius: 2px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    font-size: 12px;
+    cursor: pointer;
+}
 
 /* =========================== DETAIL CREDIT ========================== */
 .DetailCredit{
@@ -461,6 +539,18 @@
     border-bottom: 1px solid rgb(255, 255, 255);
 }
 
+.Head--pr{
+    background-color: var(--bg-alert-successful) !important;
+}
+
+.Head--reduce{
+    background-color: var(--bg-alert-error-reduce) !important;
+}
+
+.Head--se{
+    background-color: var(--bg-alert-error-pr) !important;
+}
+
 .DetailCredit__table>div>span{
     width: 100%;
     height: 40px;
@@ -582,7 +672,7 @@
 .DetailCredit__comprobantes>div{
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
 }

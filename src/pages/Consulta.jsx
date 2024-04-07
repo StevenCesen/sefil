@@ -143,6 +143,9 @@ export default function Consulta(){
                     {
                         credits.data.map((credit,index)=>(
                             <div key={index}>
+                                {
+                                console.log(credit)
+                            }
                                 <NavLink to={`/dashboard/recaudacion/view/${credit.cartera}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
                                 <p>{credit.credito}</p>
                                 <p>{credit.tipo}</p>

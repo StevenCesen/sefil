@@ -159,8 +159,16 @@ export default function NavSlide({actions,permission}){
                         <div className="NavSlide__option--down">
                             <img src="./icons/arrowDown.png"/>
                             <div ref={menu}>
-                                <NavLink to={"dashboard/reportes/estado"}>Estado de cartera</NavLink>
-                                <NavLink to={"dashboard/reportes/actividad"}>Cierre de caja</NavLink>
+                                {
+                                    (options.includes('User:all') | options.includes('User:minimize')) ?
+                                        <>
+                                            <NavLink to={"dashboard/reportes/estado"}>Estado de cartera</NavLink>
+                                            <NavLink to={"dashboard/reportes/actividad"}>Cierre de caja</NavLink>
+                                        </>
+                                    :
+                                        <></>
+                                }
+                                <NavLink to={"dashboard/reportes/cobros"}>Pagos</NavLink>
                             </div>
                         </div>
                     </div>

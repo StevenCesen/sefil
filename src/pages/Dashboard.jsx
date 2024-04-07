@@ -9,6 +9,7 @@ import Gestion from "./Gestion";
 import Garantes from "./Garantes";
 import Home from "./Home";
 import Reports from "./Reports";
+import Me from "./Me";
 
 const data=[
     {
@@ -110,36 +111,40 @@ export default function Dashboard({rol}){
                     ?
                         <Cobranza/>
                     :
-                        (page.action==='garantes')
+                        (page.action==='me')
                         ?
-                            <Garantes/>
+                            <Me/>
                         :
-                            (page.action==='comprobantes')
+                            (page.action==='garantes')
                             ?
-                                <Comprobantes />
+                                <Garantes/>
                             :
-                                (page.action==='reportes')
+                                (page.action==='comprobantes')
                                 ?
-                                    <Reports/>
+                                    <Comprobantes />
                                 :
-                                    (page.action==='cobranza')
+                                    (page.action==='reportes')
                                     ?
-                                        <Gestion/>
+                                        <Reports/>
                                     :
-                                        (page.action==='usuarios')
+                                        (page.action==='cobranza')
                                         ?
-                                            <Usuarios/>
+                                            <Gestion/>
                                         :
-                                            (page.action==='configuracion')
+                                            (page.action==='usuarios')
                                             ?
-                                                <Setting/>
-                                            :   
-                                                (localStorage.getItem('rol')==='administrador') ?
-                                                    <Home/>
-                                                :
-                                                    (localStorage.getItem('rol')!=='super')? 
-                                                        <Consulta/>
-                                                    :   <Setting/>
+                                                <Usuarios/>
+                                            :
+                                                (page.action==='configuracion')
+                                                ?
+                                                    <Setting/>
+                                                :   
+                                                    (localStorage.getItem('rol')==='administrador') ?
+                                                        <Home/>
+                                                    :
+                                                        (localStorage.getItem('rol')!=='super')? 
+                                                            <Consulta/>
+                                                        :   <Setting/>
             }
         </div>
     );

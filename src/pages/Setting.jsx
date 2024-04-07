@@ -93,6 +93,7 @@ export default function Setting(){
                                 <label>Cartera</label>
                                 <label>Subir pagos</label>
                                 <label>Estado</label>
+                                <label>En proceso</label>
                                 <label>Acciones</label>
                             </div>
 

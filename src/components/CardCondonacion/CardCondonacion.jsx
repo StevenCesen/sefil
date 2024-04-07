@@ -42,15 +42,6 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                         <p>$ {credit.capital} USD</p>
                     </div>
                     <div>
-                        <p>Mora</p>
-                        <p>$ {mora} USD</p>
-                        <input type="number" onChange={(e)=>{setValues({
-                            ...credit,
-                            mora:(Number(mora)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
-                        })}} placeholder="0.00" min={0} step={0.1}/>
-                        <p>$ {credit.mora} USD</p>
-                    </div>
-                    <div>
                         <p>Interés</p>
                         <p>$ {interes} USD</p>
                         <input type="number" onChange={(e)=>{setValues({
@@ -58,6 +49,15 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                             interes:(Number(interes)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.interes} USD</p>
+                    </div>
+                    <div>
+                        <p>Mora</p>
+                        <p>$ {mora} USD</p>
+                        <input type="number" onChange={(e)=>{setValues({
+                            ...credit,
+                            mora:(Number(mora)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                        })}} placeholder="0.00" min={0} step={0.1}/>
+                        <p>$ {credit.mora} USD</p>
                     </div>
                     <div>
                         <p>Seguro desgravamen</p>

@@ -4,8 +4,9 @@ import { PDFViewer } from "@react-pdf/renderer";
 import PDF from "../PDF";
 import usePrelacion from "../../hooks/usePrelacion";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
+import useUpdateCredit from "../../hooks/useUpdateCredit";
 
-export default function CardPay({setPay,data,id,cartera,setGastos,setPDF}){
+export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCredit}){
 
     const [pay,setData]=useState();
 
@@ -430,8 +431,6 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF}){
 
                                 //Compruebo si no existe el mismo codigo de deposito
                                 if(data_encode.forma_pago!=='efectivo'){
-                                    
-                                    console.log(data_encode)
 
                                     fetch(`https://sefil.softsen.space/public/api/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
                                             headers: {
@@ -440,7 +439,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF}){
                                         })
                                             .then((response) => response.json())  
                                             .then(async (data) => {
-
+                                                /*========================================================EL CÓDIGO DE DEPOSITO ES ÚNICO Y NO EXISTE AÚN EN BASE================================================*/
                                                 if(data.state===200){
                                                     fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
                                                         method:'PUT',
@@ -452,7 +451,8 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF}){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then(async (data) => {
-                                                            console.log(data)
+                                                            
+                                                            /*========================================================PAGO EXITOSO================================================*/
                                                             if(data.status===200){
 
                                                                 if('id' in data.gasto){
@@ -471,6 +471,8 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF}){
                                                                 e.target.textContent='Pago registrado';
                                                                 title.current.textContent='COMPROBANTE DE PAGO';
                                                                 setActive(false);
+                                                                useUpdateCredit(cartera,id,setCredit);
+
                                                             }else{
                                                                 e.target.textContent='Error, inténtalo de nuevo';
                                                             }
@@ -481,6 +483,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF}){
 
                                             });
                                 }else{
+                                    /*========================================================PAGO EXITOSO================================================*/
                                     fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
                                             method:'PUT',
                                             headers: {
@@ -509,6 +512,8 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF}){
                                                     e.target.textContent='Pago registrado';
                                                     title.current.textContent='COMPROBANTE DE PAGO';
                                                     setActive(false);
+                                                    //Actualizar datos del crédito
+                                                    useUpdateCredit(cartera,id,setCredit);
                                                 }else{
                                                     e.target.textContent='Error, inténtalo de nuevo';
                                                 }

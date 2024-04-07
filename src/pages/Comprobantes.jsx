@@ -9,27 +9,13 @@ import PDF from "../components/PDF.jsx";
 import { PDFViewer } from "@react-pdf/renderer";
 import useSearchVouchers from "../hooks/useSearchVouchers.js";
 import addNotification from "react-push-notification";
+import useFormatterNumber from "../hooks/useFormatterNumber.js";
 
 export default function Comprobantes(){
     const param = useParams();
     const cartera=new URLSearchParams(useLocation().search);
 
-    const [comprobantes,setComprobantes]=useState({
-        current_page:1,
-        data:[],
-        first_page_url:'',
-        from:1,
-        last_page:0,
-        last_page_url:'',
-        links:[],
-        next_page_url:'',
-        path:'',
-        per_page:0,
-        prev_page_url:'',
-        to:0,
-        total:0,
-        acumulado:0,
-    });
+    const [comprobantes,setComprobantes]=useState([]);
     
     const [comprobante,setComprobante]=useState({});
 
@@ -97,7 +83,6 @@ export default function Comprobantes(){
                 setBusiness(data.data);
             });
         setAux("");
-
     },[]);
 
     if(!business) return <></>  
@@ -173,58 +158,69 @@ export default function Comprobantes(){
                 <div className="DetailCredit__comprobantes">
                     <div>
                         <p>ID</p>
-                        <p>Crédito</p>
-                        <p>Cédula</p>
                         <p>Fecha</p>
                         <p>Forma de pago</p>
+                        <p>Capital</p>
+                        <p>Interes</p>
+                        <p>Mora</p>
+                        <p>Seguro</p>
+                        <p>Judicial</p>
+                        <p>Cobranza</p>
                         <p>Monto</p>
                         <p>Acciones</p>
                     </div>
 
                     {
-                        comprobantes.data.map((comprobante,index)=>(
+                        comprobantes.map((comprobante,index)=>(
                             <div key={index}>
                                 <p>{comprobante.id}</p>
-                                <p>{comprobante.credito}</p>
-                                <p></p>
                                 <p>{comprobante.fecha}</p>
-                                <p>{comprobante.forma_pago}</p>
-                                <p>$ {Number(comprobante.valor_recibido)-Number(comprobante.valor_devuelto)} USD</p>
+                                <p>{comprobante.forma_pago.toUpperCase()}</p>
+                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).saldo_capital,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).saldo_capital,currency:'USD'})}</p>
+                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).interes,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).interes,currency:'USD'})}</p>
+                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).mora,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).mora,currency:'USD'})}</p>
+                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).seguro_desgravamen,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).seguro_desgravamen,currency:'USD'})}</p>
+                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_judiciales,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_judiciales,currency:'USD'})}</p>
+                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_cobranza,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_cobranza,currency:'USD'})}</p>
+                                <p>{useFormatterNumber({value:(Number(comprobante.valor_recibido)-Number(comprobante.valor_devuelto)),currency:'USD'})}</p>
                                 <div>
-                                    <button onClick={(e)=>{
-                                        fetch(`https://sefil.softsen.space/public/api/vouchers/${comprobante.id}`,{
-                                            headers: {
-                                                Accept: 'application/json',
-                                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                                            }
-                                        })
-                                            .then((response) => response.json())  
-                                            .then((data) => {
-                                                if('status' in data){
-                                                    addNotification({
-                                                        title: 'No autorizado',
-                                                        subtitle: 'No se pudo recibir información de este comprobante',
-                                                        message: 'Cantidad excedida, se ha notificado al administrador',
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 5000,
+                                    {
+                                        (comprobante.id!=='FACES') &&
+                                            <button onClick={(e)=>{
+                                                fetch(`https://sefil.softsen.space/public/api/vouchers/${comprobante.id}`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        if('status' in data){
+                                                            addNotification({
+                                                                title: 'No autorizado',
+                                                                subtitle: 'No se pudo recibir información de este comprobante',
+                                                                message: 'Cantidad excedida, se ha notificado al administrador',
+                                                                native: false,
+                                                                backgroundTop: '#FF9619',
+                                                                backgroundBottom: '#fdb864',
+                                                                colorTop: 'white',
+                                                                colorBottom: 'white',
+                                                                closeButton: 'Cerrar',
+                                                                duration: 5000,
+                                                            });
+                                                        
+                                                        }else{
+                                                        
+                                                            data.name=data.name[0].name;
+                                                            data.ci=data.ci[0].ci;
+                                                            data.agente=data.agente;
+                                                            
+                                                            setComprobante(data);
+                                                            setView(true);
+                                                        }
                                                     });
-                                                  
-                                                }else{
-                                                  
-                                                    data.name=data.name[0].name;
-                                                    data.ci=data.ci[0].ci;
-                                                    data.agente=data.agente;
-                                                    
-                                                    setComprobante(data);
-                                                    setView(true);
-                                                }
-                                            });
-                                    }}>Reimprimir comprobante</button>
+                                            }}>Reimprimir comprobante</button>
+                                    }
                                 </div>
                             </div> 
                         ))
