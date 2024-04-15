@@ -85,7 +85,7 @@ export default function Comprobantes(){
         setAux("");
     },[]);
 
-    if(!business) return <></>  
+    if(!business) return <></> 
 
     return (
         <div className="pageConsulta">
@@ -98,18 +98,25 @@ export default function Comprobantes(){
                     }}
                 >Regresar</NavLink>
             </div>
+
+            {
+                (cartera.get('cartera')) &&
+                    <p style={{fontSize:'16px',marginBottom:20,fontFamily:'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',fontWeight:'100'}}><strong style={{fontWeight:'600',color:'var(--color-1)'}}>NOMBRE DEL CLIENTE:</strong> {cartera.get('name')}</p>
+            }
+
             <div className="pageConsulta__search">
                 <label>
                     Buscar cliente
                     <input onKeyUp={(e)=>{
                         const ci=e.target.value;
                         useSearch(ci,aux_busines,updateCredits,setCredits);
+                        
                         if(ci.length>2){
                             setCredit(0);
                         }else{
                             setCredit(1);
                         }
-                    }} onChange={(e)=>{setVal(e.target.value)}} value={val} placeholder="Nombre o número de cédula"/>
+                    }} onChange={(e)=>{setVal(e.target.value)}} value={val} placeholder="Número de cédula"/>
                 </label>
 
                 <label>
@@ -132,22 +139,22 @@ export default function Comprobantes(){
                         <div className="pageConsulta__prevResult">
                             {
                                 credits.data.map((credit,index)=>(
-                                    <button key={index} onClick={()=>{
-                                        setCredit(credit.id);
+                                    (credit.ci===val) &&
+                                        <button key={index} onClick={()=>{
+                                            setCredit(credit.id);
 
-                                        if(param.id!==undefined){
-                                            useSearchVouchers(credit.id,cartera.get('cartera'),setComprobantes);
-                                        }else{
-                                            useSearchVouchers(credit.id,aux_busines,setComprobantes);
-                                        }
-                                        
-                                    }}>
-                                        <p>{credit.name}</p>
-                                        <p className="pageConsulta__prevResult--space"> | </p>
-                                        <p>{credit.ci}</p>
-                                        <p className="pageConsulta__prevResult--space"> | </p>
-                                        <p>{credit.credito}</p>
-                                    </button>
+                                            if(param.id!==undefined){
+                                                useSearchVouchers(credit.id,cartera.get('cartera'),setComprobantes);
+                                            }else{
+                                                useSearchVouchers(credit.id,aux_busines,setComprobantes);
+                                            }
+                                        }}>
+                                            <p>{credit.name}</p>
+                                            <p className="pageConsulta__prevResult--space"> | </p>
+                                            <p>{credit.ci}</p>
+                                            <p className="pageConsulta__prevResult--space"> | </p>
+                                            <p>{credit.credito}</p>
+                                        </button>
                                 ))
                             }
                         </div>
@@ -159,7 +166,6 @@ export default function Comprobantes(){
                     <div>
                         <p>ID</p>
                         <p>Fecha</p>
-                        <p>Forma de pago</p>
                         <p>Capital</p>
                         <p>Interes</p>
                         <p>Mora</p>
@@ -167,86 +173,93 @@ export default function Comprobantes(){
                         <p>Judicial</p>
                         <p>Cobranza</p>
                         <p>Monto</p>
+                        
+                        {/* Aquí van gastos de cobranza si tiene */}
+                        {/* Aquí van valores de condonación si tiene */}
+                        {/* Aquí  */}
+
                         <p>Acciones</p>
                     </div>
 
                     {
-                        comprobantes.map((comprobante,index)=>(
-                            <div key={index}>
-                                <p>{comprobante.id}</p>
-                                <p>{comprobante.fecha}</p>
-                                <p>{comprobante.forma_pago.toUpperCase()}</p>
-                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).saldo_capital,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).saldo_capital,currency:'USD'})}</p>
-                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).interes,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).interes,currency:'USD'})}</p>
-                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).mora,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).mora,currency:'USD'})}</p>
-                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).seguro_desgravamen,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).seguro_desgravamen,currency:'USD'})}</p>
-                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_judiciales,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_judiciales,currency:'USD'})}</p>
-                                <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_cobranza,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_cobranza,currency:'USD'})}</p>
-                                <p>{useFormatterNumber({value:(Number(comprobante.valor_recibido)-Number(comprobante.valor_devuelto)),currency:'USD'})}</p>
-                                <div>
-                                    {
-                                        (comprobante.id!=='FACES') &&
-                                            <button onClick={(e)=>{
-                                                fetch(`https://sefil.softsen.space/public/api/vouchers/${comprobante.id}`,{
-                                                    headers: {
-                                                        Accept: 'application/json',
-                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                    }
-                                                })
-                                                    .then((response) => response.json())  
-                                                    .then((data) => {
-                                                        if('status' in data){
-                                                            addNotification({
-                                                                title: 'No autorizado',
-                                                                subtitle: 'No se pudo recibir información de este comprobante',
-                                                                message: 'Cantidad excedida, se ha notificado al administrador',
-                                                                native: false,
-                                                                backgroundTop: '#FF9619',
-                                                                backgroundBottom: '#fdb864',
-                                                                colorTop: 'white',
-                                                                colorBottom: 'white',
-                                                                closeButton: 'Cerrar',
-                                                                duration: 5000,
-                                                            });
-                                                        
-                                                        }else{
-                                                        
-                                                            data.name=data.name[0].name;
-                                                            data.ci=data.ci[0].ci;
-                                                            data.agente=data.agente;
-                                                            
-                                                            setComprobante(data);
-                                                            setView(true);
+                        (comprobantes.length>0) ?
+                            comprobantes.map((comprobante,index)=>(
+                                <div key={index}>
+                                    <p>{comprobante.id}</p>
+                                    <p>{comprobante.fecha}</p>
+                                    {/* <p>{comprobante.forma_pago.toUpperCase()}</p> */}
+                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).saldo_capital,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).saldo_capital,currency:'USD'})}</p>
+                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).interes,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).interes,currency:'USD'})}</p>
+                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).mora,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).mora,currency:'USD'})}</p>
+                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).seguro_desgravamen,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).seguro_desgravamen,currency:'USD'})}</p>
+                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_judiciales,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_judiciales,currency:'USD'})}</p>
+                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_cobranza,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_cobranza,currency:'USD'})}</p>
+                                    <p>{useFormatterNumber({value:(Number(comprobante.valor_recibido)-Number(comprobante.valor_devuelto)),currency:'USD'})}</p>
+                                    <div>
+                                        {
+                                            (comprobante.id!=='FACES') &&
+                                                <button onClick={(e)=>{
+                                                    fetch(`https://sefil.softsen.space/public/api/vouchers/${comprobante.id}`,{
+                                                        headers: {
+                                                            Accept: 'application/json',
+                                                            Authorization: `Bearer ${localStorage.getItem('token')}`
                                                         }
-                                                    });
-                                            }}>Reimprimir comprobante</button>
-                                    }
-                                </div>
-                            </div> 
-                        ))
+                                                    })
+                                                        .then((response) => response.json())  
+                                                        .then((data) => {
+                                                            if('status' in data){
+                                                                addNotification({
+                                                                    title: 'No autorizado',
+                                                                    subtitle: 'No se pudo recibir información de este comprobante',
+                                                                    message: 'Cantidad excedida, se ha notificado al administrador',
+                                                                    native: false,
+                                                                    backgroundTop: '#FF9619',
+                                                                    backgroundBottom: '#fdb864',
+                                                                    colorTop: 'white',
+                                                                    colorBottom: 'white',
+                                                                    closeButton: 'Cerrar',
+                                                                    duration: 5000,
+                                                                });
+                                                            
+                                                            }else{
+                                                            
+                                                                data.name=data.name[0].name;
+                                                                data.ci=data.ci[0].ci;
+                                                                data.agente=data.agente;
+                                                                
+                                                                setComprobante(data);
+                                                                setView(true);
+                                                            }
+                                                        });
+                                                }}>Reimprimir comprobante</button>
+                                        }
+                                    </div>
+                                </div> 
+                            ))
+                        : <div>0 registros</div>
                     }
 
 
                 </div>
 
                 {
-                    (comprobantes.total>10) &&
-                        <div className="DetailCredit__access">
-                            <p>Registros del {comprobantes.from}-{comprobantes.to} de {comprobantes.total}</p>
-                            <div>
-                            {
-                                comprobantes.links.map((button,index)=>(
-                                    (index===0)?
-                                        <NavLink key={index} onClick={()=>{updateData(button.url)}}>Anterior</NavLink>
-                                    : 
-                                        (index===(comprobantes.links.length-1)) ?
-                                            <NavLink key={index} onClick={()=>{updateData(button.url)}}>Siguiente</NavLink>
-                                        :
-                                            <></>
-                                ))
-                            }
-                            </div>
-                        </div>
+                    // (comprobantes.total>10) &&
+                    //     <div className="DetailCredit__access">
+                    //         <p>Registros del {comprobantes.from}-{comprobantes.to} de {comprobantes.total}</p>
+                    //         <div>
+                    //         {
+                    //             comprobantes.links.map((button,index)=>(
+                    //                 (index===0)?
+                    //                     <NavLink key={index} onClick={()=>{updateData(button.url)}}>Anterior</NavLink>
+                    //                 : 
+                    //                     (index===(comprobantes.links.length-1)) ?
+                    //                         <NavLink key={index} onClick={()=>{updateData(button.url)}}>Siguiente</NavLink>
+                    //                     :
+                    //                         <></>
+                    //             ))
+                    //         }
+                    //         </div>
+                    //     </div>
                 }
 
             </div>

@@ -93,6 +93,7 @@ export default function Reports(){
     const [mora,setMoraCredit]=useState();
     const [select_agency_amount,setAgencyAmount]=useState();
     const [select_agency_mora,setAgencyMora]=useState();
+    const [type_unificate,setUnificate]=useState('normal');
 
     const [carteras,setCarteras]=useState();
 
@@ -134,6 +135,7 @@ export default function Reports(){
     const [select_value,setSelect]=useState("all");
 
     useEffect(()=>{
+
         fetch("https://sefil.softsen.space/public/api/vouchers/getTotalMonths",{
             headers: {
                 Accept: 'application/json',
@@ -156,17 +158,20 @@ export default function Reports(){
                 const labels=[];
                 let x_1=[];
                 let x_2=[];
+                let x_3=[];
 
                 data.map((cartera)=>{
                     labels.push(cartera.busine);
                     x_1.push(cartera.original);
                     x_2.push(cartera.actual);
+                    x_3.push(Number(cartera.original)-Number(cartera.actual));
                 });
 
                 setCarteras({
                     labels:labels,
                     x1:x_1,
-                    x2:x_2
+                    x2:x_2,
+                    x3:x_3
                 });
             });
 
@@ -212,6 +217,7 @@ export default function Reports(){
 
         setEmpresa("SEFIL_1");
         setAgencyAmount("catacocha");
+        setUnificate('normal');
 
         fetch(`https://sefil.softsen.space/public/api/cartera/distribution?cartera=${empresa}`,{
             headers: {
@@ -235,7 +241,7 @@ export default function Reports(){
                 setAmount(data.data);
             });
         
-        fetch(`https://sefil.softsen.space/public/api/cartera/mora?cartera=${empresa}&agency=catacocha`,{
+        fetch(`https://sefil.softsen.space/public/api/cartera/mora?cartera=${empresa}&agency=all`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -247,7 +253,7 @@ export default function Reports(){
             });
 
         setSelect("");
-        setProvincia("loja");
+        setProvincia("");
         setCanton("");
         setResults([]);
         setFechaInicio("");
@@ -402,13 +408,25 @@ export default function Reports(){
                                             setEmpresa('SEFIL_1');
                                         }
                                         setAgencyAmount('all');
+
                                         setAgencyMora('all');
+                                        fetch(`https://sefil.softsen.space/public/api/cartera/mora?cartera=${e.target.value}&agency=all`,{
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then((data) => {
+                                                setMoraCredit(data.data);
+                                            });
                                     }}
                                 >
-                                    <option value={''}>--Todos--</option>
+                                    {/* <option value={''}>--Todos--</option> */}
                                     {
                                         business.map((bus,index)=>(
-                                            <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
+                                            (bus.name!=='CARTERA VENDIDA') &&
+                                                <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
                                         ))
                                     }
                                 </select>
@@ -571,6 +589,11 @@ export default function Reports(){
                                                     label:'Monto a recuperar',
                                                     data:carteras.x2,
                                                     backgroundColor: 'rgba(53, 162, 235, 0.5)'
+                                                },
+                                                {
+                                                    label:'Monto recuperado',
+                                                    data:carteras.x3,
+                                                    backgroundColor: 'rgba(0,255,0, 0.3)'
                                                 }
                                             ]
                                         }
@@ -608,6 +631,7 @@ export default function Reports(){
                                             }
                                         }}
                                     />
+
                                     <Line
                                         key={2}
                                         width={"100%"}
@@ -879,7 +903,6 @@ export default function Reports(){
                                     type="date" 
                                     value={fecha_final} 
                                     onChange={(e)=>{
-                                        console.log("estoy aca")
                                         setFechaFinal(e.target.value);
                                     }}/>
                             </label>
@@ -979,8 +1002,21 @@ export default function Reports(){
                                     }
                                 </select>
                             </label>
+
+                            <label className="Reports__filter">
+                                Unificación
+                                <select 
+                                    value={type_unificate}
+                                    onChange={(e)=>{
+                                        setUnificate(e.target.value);
+                                    }}
+                                >
+                                    <option value={'normal'}>Pagos separados</option>
+                                    <option value={'unido'}>Pagos unificados por cliente</option>
+                                </select>
+                            </label>
                             
-                            <NavLink 
+                            <NavLink
                                 className="Reports__button"
                                 
                                 onClick={(e)=>{
@@ -990,8 +1026,7 @@ export default function Reports(){
                                     const splits_final=fecha_final.split('-');
                                     const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
                                     
-                                    //AQUÍ URL PARA VANESSA
-                                    location.href=`https://sefil.softsen.space/public/api/cobros?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                    location.href=`https://sefil.softsen.space/public/api/cobros?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}&unificate=${type_unificate}`;
                                 }}
                             >Generar EXCEL</NavLink>
                         </div>

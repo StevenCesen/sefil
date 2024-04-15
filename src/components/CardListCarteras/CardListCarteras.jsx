@@ -3,6 +3,14 @@ import "./CardListCarteras.css";
 import { useEffect, useState } from "react";
 
 
+function preFormattedUnit(value){
+    if(value>=10){
+        return value;
+    }else{
+        return `0${value}`;
+    }
+}
+
 export default function CardListCarteras({name,fecha_upload,last_update,versions,state}){
     
     const [viewVersions,setView]=useState(false);
@@ -15,6 +23,8 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
     });
 
     const [export_cartera,setExport]=useState();
+    const [date_start,setStart]=useState('');
+    const [date_end,setEnd]=useState(new Date());
 
     useEffect(()=>{
         setView(false);
@@ -25,6 +35,15 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
             versions:versions,
             state:state
         });
+
+        setStart('');
+        
+        const day=new Date().getDate();
+        const month=new Date().getMonth()+1;
+        const year=new Date().getFullYear();
+
+        setEnd(`${year}-${preFormattedUnit(month)}-${preFormattedUnit(day)}`);
+
     },[]);
 
     return(
@@ -59,7 +78,33 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
 
                 <p>{cartera.state}</p>
                 <NavLink to={`https://sefil.softsen.space/public/api/exportar?cartera=${cartera.name}`}>Excel</NavLink>
-                <NavLink to={`https://sefil.softsen.space/public/api/pays?cartera=${cartera.name}`}>Excel</NavLink>
+                <div>
+                    <div>
+                        <label>
+                            Inicio
+                            <input 
+                                type="date"
+                                value={date_start}
+                                onChange={(e)=>{
+                                    setStart(e.target.value)
+                                }}
+                            />
+                        </label>
+
+                        <label>
+                            Fin
+                            <input 
+                                type="date"
+                                value={date_end}
+                                onChange={(e)=>{
+                                    setEnd(e.target.value)
+                                }}
+                            />
+                        </label>
+                    </div>
+                    <NavLink to={`https://sefil.softsen.space/public/api/pays?cartera=${cartera.name}&fecha_inicio=${date_start}&fecha_final=${date_end}`}>Excel</NavLink>
+                </div>
+                
             </div>
         </div>
     );
