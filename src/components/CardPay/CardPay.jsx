@@ -74,6 +74,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
         setData({
             ...pay,
             forma_pago:'efectivo',
+            fecha_pago:`${new Date().getFullYear()}-${((new Date().getMonth()+1)>10) ? new Date().getMonth()+1 : `0${new Date().getMonth()+1}`}-${((new Date().getDate())>10) ? new Date().getDate() : `0${new Date().getDate()}`}`,
             tipo_transaccion:'total',
             institucion_financiera:'Banco de Loja',
             valor_devuelto:0,
@@ -97,6 +98,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
             status:false,
             value:data.gastos_cobranza
         });
+
     },[]);  
 
     if(!pay) return <></>
@@ -196,6 +198,19 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                 }} />
                             </div>
                     }
+
+                    <div>
+                        <p>
+                            <label>Fecha de pago</label>
+                            <label>:</label>
+                        </p>
+                        <input type="date" value={pay.fecha_pago} onChange={(e)=>{
+                            setData({
+                                ...pay,
+                                fecha_pago:e.target.value
+                            });
+                        }} />
+                    </div>
 
                     <div>
                         <p>
