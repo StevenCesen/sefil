@@ -52,6 +52,11 @@ export default function Garantes(){
                     }}
                 >Regresar</NavLink>
             </div>
+
+            {
+                <p style={{fontSize:'16px',marginBottom:20,fontFamily:'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',fontWeight:'100'}}><strong style={{fontWeight:'600',color:'var(--color-1)'}}>NOMBRE DEL CLIENTE:</strong> {cartera.get('name')}</p>
+            }
+
             {
                 garantes.contactos.map((contacto,index)=>(
                     (contacto.name) &&

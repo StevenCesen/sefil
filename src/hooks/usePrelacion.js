@@ -10,6 +10,8 @@ export default function usePrelacion(value,data_original,setPrelacion,setData){
         otros_valores:0.00
     };
 
+    console.log(data_original.otros_valores)
+
     if(calcRestante(Number(value),Number(data_original.mora))){ //El monto abonado si alcanza para cancelar toda la mora
         value=value-Number(data_original.mora);
 
@@ -22,31 +24,45 @@ export default function usePrelacion(value,data_original,setPrelacion,setData){
                 if(calcRestante(Number(value),Number(data_original.gastos_judiciales))){ //El monto abonado si alcanza para cancelar todos los gastos judiciales
                     value=value-Number(data_original.gastos_judiciales);
 
-                    if(calcRestante(Number(value),Number(data_original.saldo_capital))){ //El monto abonado si alcanza para cancelar todo el capital
-                        value=value-Number(data_original.saldo_capital);
-                
-                        if(calcRestante(Number(value),Number(data_original.gastos_cobranza))){ //El monto abonado si alcanza para cancelar todos los gastos de cobranza
-                            value=value-Number(data_original.gastos_cobranza);
-                            //AQUÍ FINALIZA EL PROGRAMA
-                        }else{
-                            prelacion.otros_valores=Number(data_original.gastos_cobranza)-Number(value);
-                            prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza);
-                        }
-                
-                    }else{
-                        prelacion.saldo_capital=Number(data_original.saldo_capital)-Number(value);
-                        prelacion.gastos_cobranza=data_original.gastos_cobranza;
+                    if(calcRestante(Number(value),Number(data_original.otros_valores))){
+                        value=value-Number(data_original.otros_valores);
 
-                        prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza);
+                        if(calcRestante(Number(value),Number(data_original.saldo_capital))){ //El monto abonado si alcanza para cancelar todo el capital
+                            value=value-Number(data_original.saldo_capital);
                     
+                            if(calcRestante(Number(value),Number(data_original.gastos_cobranza))){ //El monto abonado si alcanza para cancelar todos los gastos de cobranza
+                                value=value-Number(data_original.gastos_cobranza);
+                                //AQUÍ FINALIZA EL PROGRAMA
+                            }else{
+                                prelacion.gastos_cobranza=Number(data_original.gastos_cobranza)-Number(value);
+    
+                                prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
+                            }
+                    
+                        }else{
+                            prelacion.saldo_capital=Number(data_original.saldo_capital)-Number(value);
+                            prelacion.gastos_cobranza=data_original.gastos_cobranza;
+    
+                            prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
+                        
+                        }
+
+                    }else{
+                        prelacion.otros_valores=Number(data_original.otros_valores)-Number(value);
+                        prelacion.gastos_cobranza=data_original.gastos_cobranza;
+                        prelacion.saldo_capital=data_original.saldo_capital;
+    
+                        prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
+                        
                     }
 
                 }else{
                     prelacion.gastos_judiciales=Number(data_original.gastos_judiciales)-Number(value);
                     prelacion.saldo_capital=data_original.saldo_capital;
                     prelacion.gastos_cobranza=data_original.gastos_cobranza;
+                    prelacion.otros_valores=data_original.otros_valores;
 
-                    prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza);
+                    prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
                     
                 }
 
@@ -55,8 +71,9 @@ export default function usePrelacion(value,data_original,setPrelacion,setData){
                 prelacion.gastos_judiciales=data_original.gastos_judiciales;
                 prelacion.saldo_capital=data_original.saldo_capital;
                 prelacion.gastos_cobranza=data_original.gastos_cobranza;
+                prelacion.otros_valores=data_original.otros_valores;
 
-                prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza);
+                prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
                 
             }
 
@@ -66,8 +83,9 @@ export default function usePrelacion(value,data_original,setPrelacion,setData){
             prelacion.gastos_judiciales=data_original.gastos_judiciales;
             prelacion.saldo_capital=data_original.saldo_capital;
             prelacion.gastos_cobranza=data_original.gastos_cobranza;
+            prelacion.otros_valores=data_original.otros_valores;
 
-            prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza);
+            prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
             
         }
     }else{
@@ -77,9 +95,10 @@ export default function usePrelacion(value,data_original,setPrelacion,setData){
         prelacion.gastos_judiciales=data_original.gastos_judiciales;
         prelacion.saldo_capital=data_original.saldo_capital;
         prelacion.gastos_cobranza=data_original.gastos_cobranza;
+        prelacion.otros_valores=data_original.otros_valores;
 
       
-        prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza);
+        prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
         
     }
 

@@ -74,9 +74,10 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
         setData({
             ...pay,
             forma_pago:'efectivo',
-            fecha_pago:`${new Date().getFullYear()}-${((new Date().getMonth()+1)>10) ? new Date().getMonth()+1 : `0${new Date().getMonth()+1}`}-${((new Date().getDate())>10) ? new Date().getDate() : `0${new Date().getDate()}`}`,
+            //fecha_pago:`${new Date().getFullYear()}-${((new Date().getMonth()+1)>10) ? new Date().getMonth()+1 : `0${new Date().getMonth()+1}`}-${((new Date().getDate())>10) ? new Date().getDate() : `0${new Date().getDate()}`}`,
+            fecha_pago:'',
             tipo_transaccion:'total',
-            institucion_financiera:'Banco de Loja',
+            institucion_financiera:'Banco de Loja | AHORROS',
             valor_devuelto:0,
             valor_recibido:0,
             codigo_deposito:0,
@@ -177,7 +178,10 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                         institucion_financiera:e.target.value
                                     });   
                                 }}>
-                                    <option value="Banco de Loja">Banco de Loja</option>
+                                    <option value="Banco de Loja | AHORROS">Banco de Loja | AHORROS</option>
+                                    <option value="Banco de Loja | CORRIENTE">Banco de Loja | CORRIENTE</option>
+                                    <option value="SERVIPAGOS_BL">SERVIPAGOS_BL</option>
+                                    <option value="PAGO ÁGIL_BL">PAGO ÁGIL_BL</option>
                                     <option value="CACPE Loja">CACPE Loja</option>
                                     <option value="BanEcuador">BanEcuador</option>
                                 </select>
@@ -201,7 +205,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
 
                     <div>
                         <p>
-                            <label>Fecha de pago</label>
+                            <label>Fecha de depósito</label>
                             <label>:</label>
                         </p>
                         <input type="date" value={pay.fecha_pago} onChange={(e)=>{
@@ -434,6 +438,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             data_encode.prevDates=JSON.stringify(data_encode.prevDates);
                             data_encode.detalle=JSON.stringify(data_encode.detalle);
                             data_encode.cartera=cartera;
+                            data_encode.fecha_pago=pay.fecha_pago;
 
                             // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIEND
                             if(data_encode.forma_pago!=='efectivo' & data_encode.codigo_deposito===0){
@@ -441,12 +446,14 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             }else if(data_encode.tipo_transaccion==='total' & (Number(data_encode.valor_recibido)<Number(data.totalAmount))){
                                 e.target.textContent='Error, valor recibido no es correcto, inténtalo de nuevo.';
                             }else if(data_encode.valor_recibido==='0'){
-                                e.target.textContent='Error, falta valor recibido.'
-                            }else{
-
+                                e.target.textContent='Error, falta valor recibido.';
+                            }else if(data_encode.fecha_pago===''){
+                                e.target.textContent='Error, falta fecha de depósito.';
+                            }else{ 
+                                console.log(data_encode)
                                 //Compruebo si no existe el mismo codigo de deposito
                                 if(data_encode.forma_pago!=='efectivo'){
-
+                                    
                                     fetch(`https://sefil.softsen.space/public/api/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
                                             headers: {
                                                 Accept: 'application/json'

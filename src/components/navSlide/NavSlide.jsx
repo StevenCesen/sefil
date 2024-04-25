@@ -152,13 +152,13 @@ export default function NavSlide({actions,permission}){
         
             {
                 (options.includes('Reportes:all')) ?
-                    <div to={"dashboard/reportes"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,menu,'NavSlide__subOption--active',icon_menu)}}>
+                    <div to={"dashboard/reportes"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,config,'NavSlide__subOption--active',icon_menu)}}>
                         <img src={"./icons/ion_bar-chart.png"}/>
                         <label>Reportes</label>
                         <span>Reportes</span>
                         <div className="NavSlide__option--down">
                             <img src="./icons/arrowDown.png"/>
-                            <div ref={menu}>
+                            <div ref={config}>
                                 {
                                     (options.includes('User:all') | options.includes('User:minimize')) ?
                                         <>
@@ -187,7 +187,7 @@ export default function NavSlide({actions,permission}){
 
             {
                 (options.includes('DB:all')) ?
-                    <div to={"dashboard/configuracion"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,menu,'NavSlide__subOption--active',icon_menu)}}>
+                    <div to={"dashboard/configuracion"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,menu,'NavSlide__subOption--active',menu)}}>
                         <img src={"./icons/mdi_database-cog.png"}/>
                         <label>Configuración</label>
                         <span>Configuración</span>

@@ -25,6 +25,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                         <p><strong>TITULAR:</strong> {pagos.name}</p>
                         <p><strong>CÉDULA:</strong> {pagos.ci}</p>
                         <p><strong>CRÉDITO:</strong> {pagos.credito}</p>
+                        <p><strong>ESTADO:</strong> {pagos.estado}</p>
                     </div>
                     
                     <div className="CardManualPay__cards">
@@ -70,12 +71,12 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                         </div>
                         <div className="CardManualPay__card">
                             <div>
-                                <p>Judicial pagado</p>
-                                <p>{useFormatterNumber({value:pagos.judicial_actual,currency:'USD'})}</p>
+                                <p>Otros valores pagado</p>
+                                <p>{useFormatterNumber({value:pagos.otros_valores_actual,currency:'USD'})}</p>
                             </div>
                             <div>
-                                <p>Judicial adeudado</p>
-                                <p>{useFormatterNumber({value:pagos.judicial_previo,currency:'USD'})}</p>
+                                <p>Otros valores adeudado</p>
+                                <p>{useFormatterNumber({value:pagos.otros_valores_previo,currency:'USD'})}</p>
                             </div>
                         </div>
                     </div>
@@ -84,6 +85,49 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
 
                 <div className="CardManualPay__footer">
                     
+                    {
+                        (pays.prev_page_url!==null) &&
+                            <button style={{marginRight:10,border:'1px solid',color:'var(--color-1)',backgroundColor:"inherit"}}
+                                onClick={(e)=>{
+                                    e.target.textContent="Cargando...";
+
+                                    fetch(`${(pays.prev_page_url)}&cartera=${cartera}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            e.target.textContent="Anterior";
+                                        
+                                            setUpdate(data)
+                                            setPays(data.data[0])
+
+                                        });
+                                }}
+                            >Anterior</button>
+                    }
+
+                    <button style={{marginRight:10,border:'1px solid',color:'var(--color-1)',backgroundColor:"inherit"}}
+                        onClick={(e)=>{
+                            e.target.textContent="Cargando...";
+
+                            fetch(`${(pays.next_page_url)}&cartera=${cartera}`,{
+                                headers: {
+                                    Accept: 'application/json',
+                                }
+                            })
+                                .then((response) => response.json())  
+                                .then((data) => {
+                                    e.target.textContent="Siguiente";
+                                    
+                                    setUpdate(data)
+                                    setPays(data.data[0])
+
+                                });
+                        }}
+                    >Siguiente</button>
+
                     <button
                         onClick={(e)=>{
                             e.target.textContent="Cargando...";
@@ -112,7 +156,6 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     .then((data) => {
                                         
                                         if(data.state===200){
-                                            console.log(data)
                                             //Devuelvo el siguiente pago
                                             fetch(`https://sefil.softsen.space/public/api/pays/denied?page=${(pays.from)-1}&cartera=${cartera}`,{
                                                 headers: {

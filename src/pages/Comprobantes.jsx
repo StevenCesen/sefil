@@ -165,13 +165,15 @@ export default function Comprobantes(){
                 <div className="DetailCredit__comprobantes">
                     <div>
                         <p>ID</p>
-                        <p>Fecha</p>
+                        <p>Fecha pago</p>
+                        <p>Fecha depósito</p>
                         <p>Capital</p>
                         <p>Interes</p>
                         <p>Mora</p>
                         <p>Seguro</p>
                         <p>Judicial</p>
                         <p>Cobranza</p>
+                        <p>Otros valores</p>
                         <p>Monto</p>
                         
                         {/* Aquí van gastos de cobranza si tiene */}
@@ -187,13 +189,15 @@ export default function Comprobantes(){
                                 <div key={index}>
                                     <p>{comprobante.id}</p>
                                     <p>{comprobante.fecha}</p>
+                                    <p>{comprobante.fecha_deposito}</p>
                                     {/* <p>{comprobante.forma_pago.toUpperCase()}</p> */}
-                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).saldo_capital,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).saldo_capital,currency:'USD'})}</p>
+                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:Number(JSON.parse(comprobante.detalle).saldo_capital),currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).saldo_capital,currency:'USD'})}</p>
                                     <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).interes,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).interes,currency:'USD'})}</p>
                                     <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).mora,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).mora,currency:'USD'})}</p>
                                     <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).seguro_desgravamen,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).seguro_desgravamen,currency:'USD'})}</p>
                                     <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_judiciales,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_judiciales,currency:'USD'})}</p>
                                     <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_cobranza,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_cobranza,currency:'USD'})}</p>
+                                    <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).otros_valores,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).otros_valores,currency:'USD'})}</p>
                                     <p>{useFormatterNumber({value:(Number(comprobante.valor_recibido)-Number(comprobante.valor_devuelto)),currency:'USD'})}</p>
                                     <div>
                                         {
@@ -236,7 +240,7 @@ export default function Comprobantes(){
                                     </div>
                                 </div> 
                             ))
-                        : <div>0 registros</div>
+                        : <></>
                     }
 
 

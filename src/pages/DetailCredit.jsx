@@ -369,7 +369,7 @@ export default function DetailCredit(){
                         (localStorage.getItem('permission').split(',').includes("Comprobantes:all")) &&
                             <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}&name=${credit.name}`}>Comprobantes de pago</NavLink>
                     }
-                    <NavLink to={`/dashboard/garantes/${param.get('id')}?cartera=${cartera.id}`}>Garantes</NavLink>
+                    <NavLink to={`/dashboard/garantes/${param.get('id')}?cartera=${cartera.id}&name=${credit.name}`}>Garantes</NavLink>
                 </div>
             
             </div>
@@ -425,11 +425,16 @@ export default function DetailCredit(){
                         <button className="CardCondonacion__close" onClick={()=>{setPDF(false)}}>Volver</button>
                         <PDFViewer width={'500px'} height={'300px'}>
                             <PDFgastos
+                                // nro_voucher={25}
+                                // credito={`${param.get('id')}-${viewGastos.sync}`}
+                                // name={credit.name}
+                                // ci={credit.ci}
+                                // valor_gasto={useFormatterNumber({value:JSON.parse(viewGastos.valor_gasto).value,currency:'USD'})}
                                 nro_voucher={25}
-                                credito={`${param.get('id')}-${viewGastos.sync}`}
-                                name={credit.name}
-                                ci={credit.ci}
-                                valor_gasto={useFormatterNumber({value:JSON.parse(viewGastos.valor_gasto).value,currency:'USD'})}
+                                credito={`6-2028262282`}
+                                name={'STEVEN RAFAEL CESEN'}
+                                ci={'1150575338'}
+                                valor_gasto={useFormatterNumber({value:25.64,currency:'USD'})}
                             />
                         </PDFViewer>
                     </div>

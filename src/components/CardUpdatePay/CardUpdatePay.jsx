@@ -56,13 +56,18 @@ export default function CardUpdatePay({name,state}){
                     {
                         (pays_denied.total>0) 
                         ?
-                            <button
-                                onClick={(e)=>{
-                                    setView(true)
-                                }}
-                            >
-                                Procesar {pays_denied.total}
-                            </button>
+                            <>
+                                <button
+                                    onClick={(e)=>{
+                                        setView(true)
+                                    }}
+                                >
+                                    Procesar {pays_denied.total}
+                                </button>
+                                {/* <button style={{marginLeft:5,padding:5,color:'var(--color-2)',backgroundColor:"inherit",border:'1px solid'}}>
+                                    EXCEL
+                                </button> */}
+                            </>
                         :
                             pays_denied.total
                     }

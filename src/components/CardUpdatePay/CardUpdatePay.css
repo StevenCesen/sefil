@@ -1,5 +1,5 @@
 .CardListUpdate__head{
-    width: 50%;
+    width: 60%;
     height: 40px;
     background-color: var(--bg-alert-error);
     display: grid;
@@ -23,7 +23,7 @@
 }
 
 .CardListUpdateCarteras{
-    width: 50%;
+    width: 60%;
     position: relative;
 }
 

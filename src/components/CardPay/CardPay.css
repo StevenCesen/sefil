@@ -89,6 +89,10 @@
     width: 30px;
 }
 
+.CardPay__detailPay>div>select{
+    width: 100%;
+}
+
 .CardPay__detailPay>div>p:last-child{
     text-align: right;
 }
