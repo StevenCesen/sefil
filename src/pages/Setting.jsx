@@ -24,14 +24,15 @@ export default function Setting(){
             .then((data) => {
                 setCarteras(data.data);
             });
-        location.hash='#/dashboard/configuracion/importdb';
     },[]);
 
     if(!carteras) return <></>
 
     return (
         <div className="pageConsulta">
-
+            {
+                console.log(param.ci)
+            }
             <div className="DetailCredit__head">
                 <NavLink to="" onClick={()=>history.back()}>Regresar</NavLink>
             </div>

@@ -109,9 +109,9 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
         <div className="CardPay">
             <button className="CardCondonacion__close" onClick={()=>{
                 setPay()
-                if(pay.tipo_transaccion==='total' & pay.valor_recibido!==0){
-                    setPDF(true)
-                }
+                // if(pay.tipo_transaccion==='total' & pay.valor_recibido!==0){
+                //     setPDF(true)
+                // }
             }}>Volver</button>
             <div className="CardPay__contentPay">
 
@@ -402,23 +402,23 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
 
                             if(pay.tipo_transaccion==='parcial'){
                                 data_send.tipo_transaccion=pay.tipo_transaccion;
-                                data_send.mora=String(prelacion.mora);
-                                data_send.interes=String(prelacion.interes);
-                                data_send.seguro_desgravamen=String(prelacion.seguro_desgravamen);
-                                data_send.gastos_judiciales=String(prelacion.gastos_judiciales);
-                                data_send.saldo_capital=String(prelacion.saldo_capital);
-                                data_send.gastos_cobranza=String(prelacion.gastos_cobranza);
-                                data_send.totalAmount=String(prelacion.totalAmount);
-                                data_send.otros_valores=String(prelacion.otros_valores);
+                                data_send.mora=String(prelacion.mora.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.interes=String(prelacion.interes.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.seguro_desgravamen=String(prelacion.seguro_desgravamen.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.gastos_judiciales=String(prelacion.gastos_judiciales.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.saldo_capital=String(prelacion.saldo_capital.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.gastos_cobranza=String(prelacion.gastos_cobranza.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.totalAmount=String(prelacion.totalAmount.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.otros_valores=String(prelacion.otros_valores.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
 
-                                data_send.detalle.saldo_capital=String(Number(data.saldo_capital)-Number(prelacion.saldo_capital));
-                                data_send.detalle.interes=String(Number(data.interes)-Number(prelacion.interes));
-                                data_send.detalle.mora=String(Number(data.mora)-Number(prelacion.mora));
-                                data_send.detalle.seguro_desgravamen=String(Number(data.seguro_desgravamen)-Number(prelacion.seguro_desgravamen));
-                                data_send.detalle.gastos_cobranza=String(Number(data.gastos_cobranza)-Number(prelacion.gastos_cobranza));
-                                data_send.detalle.gastos_judiciales=String(Number(data.gastos_judiciales)-Number(prelacion.gastos_judiciales));
-                                data_send.detalle.otros_valores=String(Number(data.otros_valores)-Number(prelacion.otros_valores));
-                                data_send.detalle.totalAmount=String(Number(prelacion.totalAmount));
+                                data_send.detalle.saldo_capital=String((Number(data.saldo_capital)-Number(prelacion.saldo_capital)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.interes=String((Number(data.interes)-Number(prelacion.interes)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.mora=String((Number(data.mora)-Number(prelacion.mora)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.seguro_desgravamen=String((Number(data.seguro_desgravamen)-Number(prelacion.seguro_desgravamen)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.gastos_cobranza=String((Number(data.gastos_cobranza)-Number(prelacion.gastos_cobranza)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.gastos_judiciales=String((Number(data.gastos_judiciales)-Number(prelacion.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.otros_valores=String((Number(data.otros_valores)-Number(prelacion.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.totalAmount=String((Number(prelacion.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
 
                                 data_send.valor_recibido=ref.current.value;
                                 data_send.valor_devuelto=0;
@@ -440,7 +440,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             data_encode.cartera=cartera;
                             data_encode.fecha_pago=pay.fecha_pago;
 
-                            // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIEND
+                            // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIENDO
                             if(data_encode.forma_pago!=='efectivo' & data_encode.codigo_deposito===0){
                                 e.target.textContent='Error, falta código de transacción.'
                             }else if(data_encode.tipo_transaccion==='total' & (Number(data_encode.valor_recibido)<Number(data.totalAmount))){
@@ -448,9 +448,9 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             }else if(data_encode.valor_recibido==='0'){
                                 e.target.textContent='Error, falta valor recibido.';
                             }else if(data_encode.fecha_pago===''){
-                                e.target.textContent='Error, falta fecha de depósito.';
+                                e.target.textContent='Error, falta fecha de pago.';
                             }else{ 
-                                console.log(data_encode)
+                                //console.log(data_encode)
                                 //Compruebo si no existe el mismo codigo de deposito
                                 if(data_encode.forma_pago!=='efectivo'){
                                     
@@ -478,7 +478,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                                             if(data.status===200){
 
                                                                 if('id' in data.gasto){
-                                                                    setPreview(true);
+                                                                    //setPreview(true);
                                                                     setGastos({
                                                                         credito:data.gasto.credito,
                                                                         id:data.gasto.id,
@@ -519,11 +519,13 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                                 if(data.status===200){
 
                                                     if('id' in data.gasto){
-                                                        setPreview(true);
+                                                        //setPreview(true);
                                                         setGastos({
                                                             credito:data.gasto.credito,
                                                             id:data.gasto.id,
-                                                            valor_gasto:data.gasto.postDates
+                                                            valor_gasto:data.gasto.postDates,
+                                                            fecha:'',
+                                                            clave_acceso:''
                                                         });
                                                     }
 
@@ -531,8 +533,10 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                                         id:data.id,
                                                         sync:data.sync
                                                     });
+
                                                     e.target.textContent='Pago registrado';
                                                     title.current.textContent='COMPROBANTE DE PAGO';
+
                                                     setActive(false);
                                                     //Actualizar datos del crédito
                                                     useUpdateCredit(cartera,id,setCredit);

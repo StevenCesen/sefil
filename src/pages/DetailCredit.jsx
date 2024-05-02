@@ -33,7 +33,9 @@ export default function DetailCredit(){
         credito:0,
         id:0,
         valor_gasto:'',
-        sync:''
+        sync:'',
+        fecha:'',
+        clave_acceso:''
     });
 
     const [viewPDFGastos,setPDF]=useState(true);
@@ -51,13 +53,15 @@ export default function DetailCredit(){
     },3000);
 
 
-    const updateGastos=({credito,valor_gasto,id})=>{
+    const updateGastos=({credito,valor_gasto,id,fecha,clave_acceso})=>{
         setGastos({
             ...viewGastos,
             status:true,
             credito:credito,
             id:id,
-            valor_gasto:valor_gasto
+            valor_gasto:valor_gasto,
+            fecha:fecha,
+            clave_acceso:clave_acceso
         });
     }
 
@@ -99,7 +103,9 @@ export default function DetailCredit(){
                         credito:data.id.credito,
                         id:data.id.id,
                         valor_gasto:data.id.postDates,
-                        sync:data.id.sync
+                        sync:data.id.sync,
+                        fecha:'',
+                        clave_acceso:''
                     });
                 }
             });
@@ -302,8 +308,10 @@ export default function DetailCredit(){
                     {
                         (localStorage.getItem('hash')!=='#/dashboard/consulta') &&
                             (viewGastos.status===true) ?
+
                                 <button 
                                     onClick={(e)=>{
+                                        e.target.textContent='Facturando...';
                                         //Aquí actualizamos el estado para que desaparezca el botón
                                         setPDF(true);
 
@@ -317,14 +325,20 @@ export default function DetailCredit(){
                                             .then((response) => response.json())  
                                             .then((data) => {
                                                 if('status' in data){
+                                                    e.target.textContent='Facturado';
                                                     setGastos({
                                                         ...viewGastos,
-                                                        status:false
+                                                        status:false,
+                                                        fecha:data.fecha,
+                                                        clave_acceso:data.clave_acceso
                                                     });
+                                                }else{
+                                                    e.target.textContent='Error, inténtalo de nuevo';
                                                 }
                                             });
                                     }}
                                 >Generar gastos de cobranza</button>
+
                             : (Number(credit.totalAmount)>0.00) &&
                                 <p
                                     style={{marginBottom:10,fontSize:14}}
@@ -423,18 +437,16 @@ export default function DetailCredit(){
                 (viewPDFGastos) &&
                     <div className="CardPay"> 
                         <button className="CardCondonacion__close" onClick={()=>{setPDF(false)}}>Volver</button>
-                        <PDFViewer width={'500px'} height={'300px'}>
+                        <PDFViewer width={'800px'} height={'600px'}>
                             <PDFgastos
-                                // nro_voucher={25}
-                                // credito={`${param.get('id')}-${viewGastos.sync}`}
-                                // name={credit.name}
-                                // ci={credit.ci}
-                                // valor_gasto={useFormatterNumber({value:JSON.parse(viewGastos.valor_gasto).value,currency:'USD'})}
                                 nro_voucher={25}
-                                credito={`6-2028262282`}
-                                name={'STEVEN RAFAEL CESEN'}
-                                ci={'1150575338'}
-                                valor_gasto={useFormatterNumber({value:25.64,currency:'USD'})}
+                                credito={`${param.get('id')}-${viewGastos.sync}`}
+                                name={credit.name}
+                                ci={credit.ci}
+                                direccion={credit.direccion}
+                                fecha={viewGastos.fecha}
+                                clave_acceso={viewGastos.clave_acceso}
+                                valor_gasto={useFormatterNumber({value:JSON.parse(viewGastos.valor_gasto).value,currency:'USD'})}
                             />
                         </PDFViewer>
                     </div>

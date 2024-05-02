@@ -187,7 +187,7 @@ export default function NavSlide({actions,permission}){
 
             {
                 (options.includes('DB:all')) ?
-                    <div to={"dashboard/configuracion"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,menu,'NavSlide__subOption--active',menu)}}>
+                    <div className="NavSlide__option" onClick={(e)=>{useMenu(e.target,menu,'NavSlide__subOption--active',menu)}}>
                         <img src={"./icons/mdi_database-cog.png"}/>
                         <label>Configuración</label>
                         <span>Configuración</span>

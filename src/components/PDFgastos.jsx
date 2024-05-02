@@ -7,344 +7,224 @@ import {
     View,
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
-
+import Barcode from 'react-barcode';
 
   const styles = StyleSheet.create({
     page: {
-      display:"flex",
-      flexDirection:"row",
-      justifyContent:"center",
-      alignItems:"flex-start",
-      backgroundColor: "white",
-      position:'relative'
+      width:'100%',
+      padding:15
     },
-    watermark:{
-      position:'absolute',
-      fontSize:30,
-      color:'rgba(219, 219, 219, 0.514)',
-      zIndex:0
+    sectionHeader:{
+      width:'100%',
+      display:'flex',
+      flexDirection:'row',
+      justifyContent:'center',
+      alignItems:'center',
+      gap:10
     },
-    title: {
-      width:"100%",
-      fontSize: 10,
-      paddingLeft:40,
-      wordWrap:"break-word",
-      textAlign: "justify",
-      fontWeight: "ultrabold",
+    sectionHeaderFac:{
+      width:'35%',
+      paddingTop:15,
+      alignSelf:'flex-start'
     },
-    section: {
-      display: "flex",
-      flexDirection: "row",
-      alignItems:"center",
-      width:"100%",
-      padding: 0,
-      marginTop:40,
+    bold:{
+      fontWeight:'bold'
     },
-    sectionDates: {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent:"space-between",
-      alignItems:"flex-start",
-      width:"100%",
-      //paddingLeft:50,
-      paddingRight:30,
-      fontSize:9,
-      fontWeight:"100",
-      marginBottom:5
+    spacePadding:10,
+    sectionHeaderRuc:{
+      width:'45%',
     },
-    pageNumber: {
-      position: "absolute",
-      fontSize: 12,
-      bottom: 30,
-      left: 0,
-      right: 0,
-      textAlign: "center",
-      color: "grey",
+    logo:{
+      width:'20%',
+      border:'1px solid grey'
     },
-    voucherNumber:{
-      color:"red",
-      width:"50%",
-      fontSize:12,
-      textAlign:"right",
-      marginTop:20,
-      marginBottom:5,
-      paddingRight:40
-    },
-    voucherText:{
-      marginRight:60,
-      width:"80%"
-    },
-    voucherTextBold:{
-      width:"50%",
-      fontWeight:"900"
-    },
-    marginBottom:{
-      marginBottom:10,
-    },  
-    sectionFooter:{
-      display: "flex",
-      flexDirection: "row",
-      justifyContent:"flex-start",
-      alignItems:"flex-start",
-      width:"100%",
-      fontSize:9,
-      fontWeight:"100",
-      paddingLeft:40,
-      paddingRight:40,
-    },
-    nueva:{
-      top:100
-    },
-    //Para mitad de hoja
-    document_render:{
-      width:"50%"
-    },
-    
-    image:{
-      width:"100px",
-      marginRight:0
+    sectionHeaderDiv:{
+      width:'100%',
+      display:'flex',
+      flexDirection:'row',
+      justifyContent:"space-between"
     }
+    
   });
   
-  function PDFgastos({nro_voucher,credito,name,ci,valor_gasto}) {
+  function PDFgastos({nro_voucher,credito,name,ci,direccion,fecha,clave_acceso,valor_gasto}) {
     return (
       <Document>
         <Page style={styles.page}>
         
-          <View style={{padding:20,marginBottom:20}}>
-            <View style={styles.section}>
-              <Text style={styles.title}>
-                FACTURA | Gastos Cobranza
-              </Text>
-              <Image style={styles.image} src={"./icons/logo.png"}/>
+          <View style={styles.sectionHeader}>
+            <Image style={styles.logo} src={"./icons/logo.png"}/>
+
+            {/* DATOS DE LA AUTORIZACIÓN DE FACTURA */}
+            <View style={styles.sectionHeaderFac}>
+              <View style={styles.sectionHeaderDiv}>
+                <Text style={[{fontSize:7,marginBottom:7}]}>AMBIENTE: PRODUCCIÓN</Text>
+                <Text style={[{fontSize:7,marginBottom:7}]}>TIPO DE EMISIÓN: NORMAL</Text>
+              </View>
+
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>NÚMERO DE AUTORIZACIÓN SRI:</Text>
+              <Text style={[{fontSize:7,marginBottom:7}]}>{clave_acceso}</Text>
+
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>FECHA Y HORA DE AUTORIZACIÓN:</Text>
+              <Text style={[{fontSize:7,marginBottom:7}]}>{fecha}</Text>
             </View>
 
-          <View style={{border:'1px solid grey',marginLeft:40,padding:5,marginTop:10,borderRadius:5}}>
-
-            <View style={[styles.sectionDates,{paddingTop:5}]} >
-              <Text style={styles.voucherText}>
-                RAZÓN SOCIAL:
-              </Text>
-              <Text style={[styles.voucherText,{width:'40%',paddingRight:10,paddingLeft:0,textAlign:'left'}]}>
-                SERVICIOS DE ADMINISTRACION INTEGRAL SEFIL S.A.
-              </Text>
-            </View>
-
-            <View style={[styles.sectionDates,{paddingTop:10}]} >
-              <Text style={styles.voucherText}>
-                RUC:
-              </Text>
-              <Text style={styles.voucherText}>
-                1792679443001
-              </Text>
-            </View>
-
-            <View style={[styles.sectionDates,{paddingTop:10}]} >
-              <Text style={styles.voucherText}>
-                NÚMERO DE AUTORIZACIÓN:
-              </Text>
-            </View>
-
-            <View style={[styles.sectionDates,{paddingTop:5,paddingBottom:5}]}>
-              <Text style={[styles.voucherText,{wordWrap:"break-word",fontSize:'7px'}]}>
-                  2304202401115057533800120010010000000092776463011
-              </Text>
-            </View>
-
-            <View style={[styles.sectionDates]} >
-              <Text style={styles.voucherText}>
-                FECHA Y HORA:
-              </Text>
-              <Text style={styles.voucherText}>
-                2024/04/23 10:04:00
-              </Text>
-            </View>
-
-            <View style={[styles.sectionDates]} >
-              <Text style={styles.voucherText}>
-                AMBIENTE:
-              </Text>
-              <Text style={styles.voucherText}>
-                PRODUCCIÓN
-              </Text>
+            {/* DATOS DE LA EMPRESA */}
+            <View style={styles.sectionHeaderRuc}>
+              <Text style={[{fontSize:15,textAlign:"right"}]}>FACTURA ELECTRÓNICA</Text>
+              <View style={[{backgroundColor:'#CBE8EC',padding:5}]}>
+                <Text style={[{fontSize:9,marginBottom:10,color:'#178DAB',fontWeight:"bold"}]}>SERVICIOS DE ADMINISTRACIÓN INTEGRAL SEFIL S.A.</Text>
+                <View>
+                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>Matriz: SERGIO JATIVA N33-99 Y JOSE BOSMEDIANO</Text>
+                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>Sucursal: SERGIO JATIVA N33-99 Y JOSE BOSMEDIANO</Text>
+                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>RUC: 1792679443001</Text>
+                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>Teléfonos: 022988500, 0992707503</Text>
+                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>Email: </Text>
+                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>Web: </Text>
+                </View>
+                <Text style={[{fontSize:8,textAlign:'right',marginTop:10,color:'#178DAB'}]}>OBLIGADO A LLEVAR CONTABILIDAD</Text>
+                <Text style={[{fontSize:8,textAlign:'right',color:'#178DAB'}]}>CONTRIBUYENTE RÉGIMEN RIMPE</Text>
+              </View>
             </View>
           </View>
 
-          <View style={{border:'1px solid grey',marginLeft:40,padding:5,marginTop:5,borderRadius:5}}>
-            <View style={[styles.sectionDates,{paddingTop:5}]} >
-              <Text style={styles.voucherText}>
-                Cliente:
-              </Text>
-              <Text style={styles.voucherText}>
-                {name}
-              </Text>
-            </View>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}> 
-                Cédula:
-              </Text>
-              <Text style={styles.voucherText}>
-                {ci}
-              </Text>
-            </View>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}> 
-                Crédito:
-              </Text>
-              <Text style={styles.voucherText}>
-                {credito}
-              </Text>
-            </View>
 
-          </View>
+          {/* DATOS DEL CLIENTE */}
 
-          
-          <View style={{marginLeft:40,padding:5,marginTop:5,borderRadius:5}}>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}>
-                SUBTOTAL   :
-              </Text>
-              <Text style={[styles.voucherText,{textAlign:'center'}]}>
-                {useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}
-              </Text>
+          <View style={[{marginTop:20,width:'100%'}]}>
+            <View style={{display:'flex',flexDirection:'row',width:'40%',justifyContent:'space-between'}}>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>Sr (a):</Text>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{name}</Text>
             </View>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}>
-                IVA (15%)  :
-              </Text>
-              <Text style={[styles.voucherText,{textAlign:'center'}]}>
-                {useFormatterNumber({value:Number(valor_gasto.substring(1))*0.15,currency:'USD'})}
-              </Text>
+            <View style={{display:'flex',flexDirection:'row',width:'40%',justifyContent:'space-between'}}>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>R.U.C. / C.I.:</Text>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{ci}</Text>
             </View>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}>
-                VALOR TOTAL:
-              </Text>
-              <Text style={[styles.voucherText,{textAlign:'center'}]}>
-                {valor_gasto}
-              </Text>
+            <View style={{display:'flex',flexDirection:'row',width:'40%',justifyContent:'space-between'}}>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>Fecha de emisión (a):</Text>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{fecha.split(' ')[0]}</Text>
+            </View>
+            <View style={{display:'flex',flexDirection:'row',width:'40%',justifyContent:'space-between'}}>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>Dirección:</Text>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800,width:'50%',wordWrap:"break-word"}]}>{direccion}</Text>
+            </View>
+            <View style={{display:'flex',flexDirection:'row',width:'40%',justifyContent:'space-between'}}>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>Nota:</Text>
+              <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{"P/R. GESTIÓN DE COBRANZA"}</Text>
             </View>
           </View>
 
-        </View>
+          {/* DETALLE */}
 
-        <View style={{padding:20}}>
-
-          <View style={styles.section}>
-            <Text style={styles.title}>
-              FACTURA | Gastos Cobranza
-            </Text>
-            <Image style={styles.image} src={"./icons/logo.png"}/>
-          </View>
-
-          <View style={{border:'1px solid grey',marginLeft:40,padding:5,marginTop:10,borderRadius:5}}>
-
-            <View style={[styles.sectionDates,{paddingTop:5}]} >
-              <Text style={styles.voucherText}>
-                RAZÓN SOCIAL:
-              </Text>
-              <Text style={[styles.voucherText,{width:'40%',paddingRight:10,paddingLeft:0,textAlign:'left'}]}>
-                SERVICIOS DE ADMINISTRACION INTEGRAL SEFIL S.A.
-              </Text>
+          <View style={{width:'100%',border:'1px solid black'}}>
+            <Text style={{width:'100%',fontSize:8,textAlign:"center"}}>DETALLE</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
+              <Text style={{width:'10%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>CANTIDAD</Text>
+              <Text style={{width:'50%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>DESCRIPCIÓN</Text>
+              <Text style={{width:'20%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>PRECIO UNITARIO</Text>
+              <Text style={{width:'20%',fontSize:8,textAlign:"center"}}>TOTAL $</Text>
             </View>
-
-            <View style={[styles.sectionDates,{paddingTop:10}]} >
-              <Text style={styles.voucherText}>
-                RUC:
-              </Text>
-              <Text style={styles.voucherText}>
-                1792679443001
-              </Text>
-            </View>
-
-            <View style={[styles.sectionDates,{paddingTop:10}]} >
-              <Text style={styles.voucherText}>
-                NÚMERO DE AUTORIZACIÓN:
-              </Text>
-            </View>
-
-            <View style={[styles.sectionDates,{paddingTop:5,paddingBottom:5}]}>
-              <Text style={[styles.voucherText,{wordWrap:"break-word",fontSize:'7px'}]}>
-                  2304202401115057533800120010010000000092776463011
-              </Text>
-            </View>
-
-            <View style={[styles.sectionDates]} >
-              <Text style={styles.voucherText}>
-                FECHA Y HORA:
-              </Text>
-              <Text style={styles.voucherText}>
-                2024/04/23 10:04:00
-              </Text>
-            </View>
-            
-            <View style={[styles.sectionDates]} >
-              <Text style={styles.voucherText}>
-                AMBIENTE:
-              </Text>
-              <Text style={styles.voucherText}>
-                PRODUCCIÓN
-              </Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
+              <Text style={{width:'10%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>1.00</Text>
+              <Text style={{width:'50%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>GESTIÓN COBRANZA</Text>
+              <Text style={{width:'20%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
+              <Text style={{width:'20%',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
             </View>
           </View>
 
-          <View style={{border:'1px solid grey',marginLeft:40,padding:5,marginTop:5,borderRadius:5}}>
-            <View style={[styles.sectionDates,{paddingTop:5}]} >
-              <Text style={styles.voucherText}>
-                Cliente:
-              </Text>
-              <Text style={styles.voucherText}>
-                {name}
-              </Text>
+          {/* SUBTOTALES, IMPUESTOS Y TOTALES */}
+
+          <View style={{width:'100%',display:'flex',flexDirection:'row',gap:10}}>
+
+            {/* FORMA DE PAGO */}
+            <View style={{width:'50%',marginTop:10}}>
+              <Text style={{width:'100%',fontSize:8,borderTop:'1px solid black',borderLeft:'1px solid black',borderRight:'1px solid black',textAlign:"center"}}>PAGOS</Text>
+              <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
+                <Text style={{width:'50%',borderLeft:'1px solid black',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Forma de pago</Text>
+                <Text style={{width:'20%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Valor</Text>
+                <Text style={{width:'20%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Plazo</Text>
+                <Text style={{width:'10%',fontSize:8,textAlign:"center",borderRight:'1px solid black'}}>Tiempo</Text>
+              </View>
+              <View style={{width:'100%',borderTop:'1px solid black',borderBottom:'1px solid black',display:'flex',flexDirection:'row'}}>
+                <Text style={{width:'50%',borderLeft:'1px solid black',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>OTROS CON UTILIZACIÓN DEL SISTEMA FINANCIERO</Text>
+                <Text style={{width:'20%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{valor_gasto.split('$')[1]}</Text>
+                <Text style={{width:'20%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}></Text>
+                <Text style={{width:'10%',fontSize:8,textAlign:"center",borderRight:'1px solid black'}}></Text>
+              </View>
             </View>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}> 
-                Cédula:
-              </Text>
-              <Text style={styles.voucherText}>
-                {ci}
-              </Text>
-            </View>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}> 
-                Crédito:
-              </Text>
-              <Text style={styles.voucherText}>
-                {credito}
-              </Text>
+
+            {/* VALORES */}
+            <View style={{width:'50%',marginTop:10,paddingLeft:100}}>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL IVA 15%: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL IVA 5%: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL IVA DIFERENCIADO: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL 0%: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL NO OBJETO DE IVA: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL SIN IMPUESTOS: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL EXENTO DE IVA: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>DESCUENTO: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>ICE: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>IVA 15%: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>IVA 5%: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>IVA DIFERENCIADO: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>IRBPNR: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>PROPINA: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>0.00</Text>
+              </View>
+              <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>VALOR TOTAL: </Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{valor_gasto}</Text>
+              </View>
             </View>
 
           </View>
 
-          <View style={{marginLeft:40,padding:5,marginTop:5,borderRadius:5}}>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}>
-                SUBTOTAL   :
-              </Text>
-              <Text style={[styles.voucherText,{textAlign:'center'}]}>
-                {useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}
-              </Text>
-            </View>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}>
-                IVA (15%)  :
-              </Text>
-              <Text style={[styles.voucherText,{textAlign:'center'}]}>
-                {useFormatterNumber({value:Number(valor_gasto.substring(1))*0.15,currency:'USD'})}
-              </Text>
-            </View>
-            <View style={styles.sectionDates}>
-              <Text style={styles.voucherText}>
-                VALOR TOTAL:
-              </Text>
-              <Text style={[styles.voucherText,{textAlign:'center'}]}>
-                {valor_gasto}
-              </Text>
-            </View>
+          <View style={{width:'300px',position:'absolute',bottom:20}}>
+            <Text style={[{fontSize:7,width:'100%',textAlign:'center'}]}>CLAVE DE ACCESO</Text>
+            <Barcode value="hola"/>
+            <Text style={[{fontSize:7,marginBottom:7,textAlign:"center"}]}>{clave_acceso}</Text>
+            <Text style={[{fontSize:7,marginBottom:7,textAlign:"center"}]}>Consulte sus documentos electrónicos en: www.factel.com.ec</Text>
           </View>
-
-        </View>
-
         </Page>
       </Document>
     );
