@@ -348,6 +348,26 @@
     cursor: pointer;
 }
 
+.pageConsulta__monitorHead{
+    width: 100%;
+    display: grid;
+    background-color: var(--bg-alert-error);
+    height: 50px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 5px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    gap: 10;
+}
+
+.pageConsulta__monitorHead>label{
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-3);
+}
 /* =========================== DETAIL CREDIT ========================== */
 .DetailCredit{
     width: 100%;

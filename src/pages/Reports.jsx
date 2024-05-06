@@ -1081,11 +1081,10 @@ export default function Reports(){
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
-                            
                         </div>
                     :
                     <div className="Reports__content">
-                        <h4 className="Reports__title">Histórico de pagos de rama call</h4>
+                        <h4 className="Reports__title">Histórico de pagos para contabilidad</h4>
                         <div className="Reports__filters Reports__filters--columns-5">
 
                             <label className="Reports__filter">

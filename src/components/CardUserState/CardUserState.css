@@ -1,0 +1,50 @@
+.CardUserState{
+    width: 100%;
+    height: 40px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    gap: 10;
+}
+
+.CardUserState>p{
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+}
+
+.CardUserState__complete{
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+} 
+
+.CardUserState__minimize{
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.CardUserState__state{
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    color: var(--color-3);
+    height: 20px;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+.CardUserState__state--active{
+    background-color: #009793;
+}
+
+.CardUserState__state--connect{
+    background-color: #009FE3;
+}
+
+.CardUserState__state--pause{
+    background-color: #FACC15;
+}
+
+.CardUserState__state--disconnect{
+    background-color: #D2006E;
+}
