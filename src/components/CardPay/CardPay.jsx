@@ -402,14 +402,14 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
 
                             if(pay.tipo_transaccion==='parcial'){
                                 data_send.tipo_transaccion=pay.tipo_transaccion;
-                                data_send.mora=String(prelacion.mora.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.interes=String(prelacion.interes.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.seguro_desgravamen=String(prelacion.seguro_desgravamen.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.gastos_judiciales=String(prelacion.gastos_judiciales.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.saldo_capital=String(prelacion.saldo_capital.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.gastos_cobranza=String(prelacion.gastos_cobranza.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.totalAmount=String(prelacion.totalAmount.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.otros_valores=String(prelacion.otros_valores.toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.mora=String(Number(prelacion.mora).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.interes=String(Number(prelacion.interes).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.seguro_desgravamen=String(Number(prelacion.seguro_desgravamen).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.gastos_judiciales=String(Number(prelacion.gastos_judiciales).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.saldo_capital=String(Number(prelacion.saldo_capital).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.gastos_cobranza=String(Number(prelacion.gastos_cobranza).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.totalAmount=String(Number(prelacion.totalAmount).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.otros_valores=String(Number(prelacion.otros_valores).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
 
                                 data_send.detalle.saldo_capital=String((Number(data.saldo_capital)-Number(prelacion.saldo_capital)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
                                 data_send.detalle.interes=String((Number(data.interes)-Number(prelacion.interes)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
