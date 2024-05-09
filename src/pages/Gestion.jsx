@@ -22,6 +22,9 @@ export default function Gestion(){
             <div className="Gestion">
                 <div className="Gestion__head">
                     <div>
+
+                    </div>
+                    <div>
                         <label>Nombre</label>
                     </div>
 
@@ -119,6 +122,139 @@ export default function Gestion(){
                         <input type="date"/>
                     </div>
 
+                </div>
+
+                <div className="Gestion__item">
+                    <button>
+                        <NavLink
+                            to={"/dashboard/gcall/2"}
+                        >
+                            <img src="./icons/go.png"/>
+                        </NavLink>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+
+                <div className="Gestion__item">
+                    <button>
+                        <img src="./icons/go.png"/>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+
+                <div className="Gestion__item">
+                    <button>
+                        <img src="./icons/go.png"/>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+                <div className="Gestion__item">
+                    <button>
+                        <img src="./icons/go.png"/>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+                <div className="Gestion__item">
+                    <button>
+                        <img src="./icons/go.png"/>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+                <div className="Gestion__item">
+                    <button>
+                        <img src="./icons/go.png"/>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+                <div className="Gestion__item">
+                    <button>
+                        <img src="./icons/go.png"/>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+                <div className="Gestion__item">
+                    <button>
+                        <img src="./icons/go.png"/>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+                <div className="Gestion__item">
+                    <button>
+                        <img src="./icons/go.png"/>
+                    </button>
+                    <p>STEVEN CESEN PACCHA</p>
+                    <p>1150575338</p>
+                    <p>LOJA CENTRO</p>
+                    <p>2-5</p>
+                    <p>100-500</p>
+                    <p>2-10</p>
+                    <p>VIGENTE</p>
+                    <p>2024/05/13</p>
+                </div>
+
+            </div>
+
+            <div className="DetailCredit__access">
+                <p>Registros del {}-{} de {}</p>
+                <div>
+                    <NavLink onClick={()=>{}}>Anterior</NavLink>
+                    <NavLink onClick={()=>{}}>Siguiente</NavLink>
                 </div>
             </div>
         </div>

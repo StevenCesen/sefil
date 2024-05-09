@@ -1339,19 +1339,47 @@
 /* ============================================ PÁGINA DE GESTIÓN =========================================== */
 .Gestion{
     width: 100%;
+    margin-bottom: 40px;
 }
 
 .Gestion__head{
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 5% 15% 10% 15% 10% 10% 10% 10% 15%;
     justify-content: center;
     align-items:center;
     padding: 5px;
     background-color: var(--bg-alert-error);
-    gap: 10px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+}
+
+.Gestion__item{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5% 15% 10% 15% 10% 10% 10% 10% 15%;
+    justify-content: center;
+    align-items:center;
+    padding: 5px;
+    font-weight: 100;
+    text-align: center;
+    height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.Gestion__item>button{
+    background-color: var(--bg-alert-successful);
+    height: 35px;
+    border: none;
+    border-radius: 2px;
+    margin: 0 auto;
+    cursor: pointer;
+    width: 35px;
+}
+
+.Gestion__item:nth-child(2n+1){
+    background-color: var(--bg-2);
 }
 
 .Gestion__head>div{
@@ -1363,7 +1391,7 @@
     flex-direction: column;
 }
 
-.Gestion__head>div:nth-child(1),.Gestion__head>div:nth-child(2){
+.Gestion__head>div:nth-child(2),.Gestion__head>div:nth-child(3){
     justify-content: center;
 }
 

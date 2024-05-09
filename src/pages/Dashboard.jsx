@@ -11,6 +11,7 @@ import Home from "./Home";
 import Reports from "./Reports";
 import Me from "./Me";
 import Monitor from "./Monitor";
+import GGestion from "./GGestion";
 
 const data=[
     {
@@ -136,20 +137,24 @@ export default function Dashboard({rol}){
                                             ?
                                                 <Gestion/>
                                             :
-                                                (page.action==='usuarios')
+                                                (page.action==='gcall')
                                                 ?
-                                                    <Usuarios/>
+                                                    <GGestion/>
                                                 :
-                                                    (page.action==='configuracion')
+                                                    (page.action==='usuarios')
                                                     ?
-                                                        <Setting/>
-                                                    :   
-                                                        (localStorage.getItem('rol')==='administrador') ?
-                                                            <Home/>
-                                                        :
-                                                            (localStorage.getItem('rol')!=='super')? 
-                                                                <Consulta/>
-                                                            :   <Setting/>
+                                                        <Usuarios/>
+                                                    :
+                                                        (page.action==='configuracion')
+                                                        ?
+                                                            <Setting/>
+                                                        :   
+                                                            (localStorage.getItem('rol')==='administrador') ?
+                                                                <Home/>
+                                                            :
+                                                                (localStorage.getItem('rol')!=='super')? 
+                                                                    <Consulta/>
+                                                                :   <Setting/>
             }
         </div>
     );
