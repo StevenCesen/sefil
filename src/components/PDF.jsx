@@ -261,7 +261,8 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
 
             <View style={styles.sectionDates}>
               <Text style={styles.voucherText}>
-                {`${forma_pago.substring(0,1).toUpperCase()}${forma_pago.substring(1)}`}:
+                {/* {`${forma_pago.substring(0,1).toUpperCase()}${forma_pago.substring(1)}`}: */}
+                TOTAL:
               </Text>
               <Text style={styles.voucherText}>
                 {useFormatterNumber({value:valor_recibido,currency:'USD'})}

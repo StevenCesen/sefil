@@ -147,7 +147,7 @@ export default function Cobranza(){
                                 <p>Provincia</p>
                                 <p>Canton</p>
                                 <p>Parroquia</p>
-                                <p>Agencia</p>
+                                <p>Estado</p>
                             </div>
 
                             {
@@ -163,7 +163,7 @@ export default function Cobranza(){
                                         <p>{credit.provincia}</p>
                                         <p>{credit.canton}</p>
                                         <p>{credit.parroquia}</p>
-                                        <p>{credit.agency}</p>
+                                        <p>{credit.collectionState}</p>
                                     </div> 
                                 ))
                             }

@@ -11,6 +11,7 @@ import MyMapComponent from "../components/Map/Map";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import { PDFViewer } from "@react-pdf/renderer";
 import PDFgastos from "../components/PDFgastos";
+import PDFcondonacion from "../components/PDFcondonacion";
 
 const render = (status) => {
     return <h1>{status}</h1>;
@@ -23,6 +24,10 @@ export default function DetailCredit(){
     const [pay,setPay]=useState(true);
 
     const [view_condonation,setViewCondonation]=useState(true);
+
+    const [viewPDFCondonation,setPDFcondonation]=useState(false);
+
+    const [value_condonacion,setData]=useState([]);
 
     const [view_reestructurar,setReestructurar]=useState(true);
 
@@ -43,6 +48,10 @@ export default function DetailCredit(){
     const param=new URLSearchParams(useLocation().search);
     const cartera=useParams();
 
+    const view=()=>{
+        setPDFcondonation(true);
+    }
+
     const [prev_gasto,setPrev]=useState(0);
 
     const clean=setInterval(() => {
@@ -52,6 +61,20 @@ export default function DetailCredit(){
         })
     },3000);
 
+
+    const updateCredit=({capital,interes,mora,seguro_desgravamen,gastos_judiciales,gastos_cobranza,otros_valores,totalAmount})=>{
+        setCredit({
+            ...credit,
+            saldo_capital:capital,
+            interes:interes,
+            mora:mora,
+            seguro_desgravamen:seguro_desgravamen,
+            gastos_judiciales:gastos_judiciales,
+            gastos_cobranza:gastos_cobranza,
+            otros_valores:otros_valores,
+            totalAmount:totalAmount
+        });
+    };
 
     const updateGastos=({credito,valor_gasto,id,fecha,clave_acceso})=>{
         setGastos({
@@ -66,9 +89,37 @@ export default function DetailCredit(){
     }
 
     useEffect(()=>{
+
+        setData({
+            ci:"",
+            name:"",
+            credito:"",
+            by_user:"",
+            fecha:"",
+            postDates:JSON.stringify({
+                mora:"",
+                interes:"",
+                capital:"",
+                seguro_desgravamen:"",
+                gastos_cobranza:"",
+                gastos_judiciales:"",
+                otros_valores:""
+            }),
+            prevDates:JSON.stringify({
+                mora:"",
+                interes:"",
+                capital:"",
+                seguro_desgravamen:"",
+                gastos_cobranza:"",
+                gastos_judiciales:"",
+                otros_valores:""
+            })
+        });
+
         setPay(false);
         setReestructurar(false);
         setViewCondonation(false);
+        setPDFcondonation(false);
         setGastos(false);
         setPDF(false);
 
@@ -411,6 +462,9 @@ export default function DetailCredit(){
                         set={setViewCondonation}
                         id={param.get('id')}
                         cartera={cartera.id}
+                        setData={setData}
+                        view={view}
+                        update={updateCredit}
                     />
             }
 
@@ -447,6 +501,23 @@ export default function DetailCredit(){
                                 fecha={viewGastos.fecha}
                                 clave_acceso={viewGastos.clave_acceso}
                                 valor_gasto={useFormatterNumber({value:JSON.parse(viewGastos.valor_gasto).value,currency:'USD'})}
+                            />
+                        </PDFViewer>
+                    </div>
+            }
+            {
+                (viewPDFCondonation) &&
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setPDFcondonation(false)}}>Volver</button>
+                        <PDFViewer width={'800px'} height={'600px'}>
+                            <PDFcondonacion
+                                ci={value_condonacion.ci}
+                                credito={value_condonacion.credito}
+                                name={value_condonacion.name}
+                                fecha={value_condonacion.fecha}
+                                prevDates={value_condonacion.prevDates}
+                                postDates={value_condonacion.postDates}
+                                user_auth={value_condonacion.by_user}
                             />
                         </PDFViewer>
                     </div>

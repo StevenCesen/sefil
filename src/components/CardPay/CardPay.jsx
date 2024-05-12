@@ -450,7 +450,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             }else if(data_encode.fecha_pago===''){
                                 e.target.textContent='Error, falta fecha de pago.';
                             }else{ 
-                                //console.log(data_encode)
+                                console.log(data_encode)
                                 //Compruebo si no existe el mismo codigo de deposito
                                 if(data_encode.forma_pago!=='efectivo'){
                                     
@@ -594,7 +594,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             gastos_cobranza={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).gastos_cobranza : JSON.parse(send.prevDates).gastos_cobranza}
                             otros_valores={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).otros_valores : JSON.parse(send.prevDates).otros_valores}
 
-                            valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial') ? pay.valor_recibido : (send.tipo_transaccion==='total') ? Number(data.totalAmount)+Number(pay.valor_devuelto) : send.valor_recibido}
+                            valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial') ? pay.valor_recibido : (send.tipo_transaccion==='total') ? Number(send.valor_recibido) : send.valor_recibido}
                             valor_devuelto={send.valor_devuelto}
 
                             fecha={new Date().toLocaleDateString()}

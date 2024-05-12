@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./CardCondonacion.css";
 import useCondonation from "../../hooks/useCondonation";
 
-export default function CardCondonacion({total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,set,id,cartera}){
+export default function CardCondonacion({total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,set,id,cartera,setData,view,update}){
 
     const [credit,setValues]=useState();
     const [totalCondonado,setTotal]=useState(0);
@@ -14,7 +14,8 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
             interes:interes,
             seguro_desgravamen:seguro_desgravamen,
             gastos_judiciales:gastos_judiciales,
-            gastos_cobranza:gastos_cobranza
+            gastos_cobranza:gastos_cobranza,
+            otros_valores:0
         });
     },[]);
 
@@ -100,7 +101,9 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
 
                 <button className="CardCondonacion__save" 
                     onClick={(e)=>{
+
                         e.target.textContent='Guardando...';
+
                         const data={
                             prevDates:JSON.stringify({
                                 mora:mora,
@@ -108,7 +111,8 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                                 capital:capital,
                                 seguro_desgravamen:seguro_desgravamen,
                                 gastos_cobranza:gastos_cobranza,
-                                gastos_judiciales:gastos_judiciales
+                                gastos_judiciales:gastos_judiciales,
+                                otros_valores:0
                             }),
                             postDates:JSON.stringify(credit),
                             totalAmount:String(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)),
@@ -128,8 +132,8 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                         => Si lo hace un usuario administrador, la condonación se aplica directamente
                         => Si lo hace un agente de cobranza o gestión, la condonación se aplica cuando un usuario administrador la autorice
                         */
-
-                        useCondonation(data,e.target,id);
+                        
+                        useCondonation(data,e.target,id,setData,view,set,update);
                         
                     }}
                 >Guardar condonación</button>
