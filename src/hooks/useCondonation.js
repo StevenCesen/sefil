@@ -26,7 +26,7 @@ export default async function useCondonation(data,btn,id,setData,view,set,update
             gastos_cobranza:data.gastos_cobranza,
             otros_valores:data.otros_valores,
             totalAmount:data.totalAmount
-        });
+        }); 
 
         setData(data);
         btn.textContent='Condonación guardada';

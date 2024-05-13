@@ -44,6 +44,8 @@ export default function Comprobantes(){
 
     const [business,setBusiness]=useState();
 
+    const [message_nro,setMessage]=useState(true);
+
     const [aux_busines,setAux]=useState("");
 
     const menu=useRef();
@@ -83,6 +85,7 @@ export default function Comprobantes(){
                 setBusiness(data.data);
             });
         setAux("");
+        setMessage(true);
     },[]);
 
     if(!business) return <></> 
@@ -142,6 +145,7 @@ export default function Comprobantes(){
                                     (credit.ci===val) &&
                                         <button key={index} onClick={()=>{
                                             setCredit(credit.id);
+                                            setMessage(false);
 
                                             if(param.id!==undefined){
                                                 useSearchVouchers(credit.id,cartera.get('cartera'),setComprobantes);
@@ -242,6 +246,19 @@ export default function Comprobantes(){
                             ))
                         : <></>
                     }
+
+                    <div>
+                        {
+                            (credits.data.length>0 & message_nro)
+                            ?
+                                (credits.data[0].nro_vouchers===1)
+                                ?
+                                    <p>{credits.data[0].nro_vouchers} comprobante asociado</p>
+                                :
+                                    <p>{credits.data[0].nro_vouchers} comprobantes asociados</p>
+                            : <></>
+                        }
+                    </div>
 
 
                 </div>
