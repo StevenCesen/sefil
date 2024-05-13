@@ -1,0 +1,103 @@
+.CardCall{
+    position: fixed;
+    top: 80px;
+    left: 530px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 100;
+    width:300px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    box-shadow: var(--box-shadow);
+}
+
+.CardCall>img{
+    display: block;
+    width: 50%;
+    margin: 30px auto;
+}
+
+.CardCall>p{
+    background-color: var(--bg-alert-successful);
+    width: 100%;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    height: 50px;
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: bold;
+    color: var(--color-3);
+    font-size: 14px;
+}
+
+.CardCall__count{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.CardCall__count>p{
+    font-size: 25px;
+    font-weight: bold;
+    color: var(--color-2);
+}
+
+.CardCall__options{
+    width: 100%;
+    padding: 0 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.CardCall__options>button{
+    height: 40px;
+    background-color: var(--bg-2);
+    color: var(--color-1);
+    border: 1px solid;
+    border-radius: 2px;
+}
+
+.CardCall__button{
+    border: none;
+    cursor: pointer;
+    color: var(--color-3);
+    font-weight: bold;
+}
+
+.CardCall__button--exit{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #D2006E;
+}
+
+.CardCall__footer{
+    background-color: var(--bg-alert-successful);
+    width: 100%;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    height: 50px;
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: bold;
+    color: var(--color-3);
+    font-size: 14px;
+    margin-top: 30px;
+}
+
+.CardCall__button--save{
+    width: 100px;
+    height: 35px;
+    border-radius:2px;
+    background-color: #008682;
+}
