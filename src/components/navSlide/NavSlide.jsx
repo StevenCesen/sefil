@@ -69,7 +69,7 @@ export default function NavSlide({actions,permission}){
                                     (options.includes('User:all') | options.includes('User:minimize')) ?
                                         <>
                                             <NavLink to={"dashboard/call"}>Gestión</NavLink>
-                                            <NavLink to={"dashboard/monitor"}>Monitor</NavLink>
+                                            <NavLink to={"dashboard/monitor"}>Monitoreo</NavLink>
                                             <NavLink to={"dashboard/campain"}>Campañas</NavLink>
                                             <NavLink to={"dashboard/ccall"}>Configuración de Gestión</NavLink>
                                         </>
