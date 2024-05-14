@@ -10,6 +10,8 @@ import { PDFViewer } from "@react-pdf/renderer";
 import useSearchVouchers from "../hooks/useSearchVouchers.js";
 import addNotification from "react-push-notification";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
+import useRol from "../hooks/useRol.js";
+import CardReverse from "../components/CardReverse/CardReverse.jsx";
 
 export default function Comprobantes(){
     const param = useParams();
@@ -43,6 +45,12 @@ export default function Comprobantes(){
     });
 
     const [business,setBusiness]=useState();
+
+    const [view_reverse,setReverse]=useState(false);
+
+    const updateReverse=()=>{
+        setReverse(false);
+    }
 
     const [message_nro,setMessage]=useState(true);
 
@@ -86,6 +94,7 @@ export default function Comprobantes(){
             });
         setAux("");
         setMessage(true);
+        setReverse(false);
     },[]);
 
     if(!business) return <></> 
@@ -191,7 +200,37 @@ export default function Comprobantes(){
                         (comprobantes.length>0) ?
                             comprobantes.map((comprobante,index)=>(
                                 <div key={index}>
-                                    <p>{comprobante.id}</p>
+                                    {
+                                        (comprobante.id==='FACES') 
+                                        ?
+                                            <p>{comprobante.id}</p>
+                                        :
+                                            <button
+                                                onClick={(e)=>{
+                                                    if(useRol()!=='administrador'){
+                                                        addNotification({
+                                                            title: 'No autorizado',
+                                                            subtitle: 'No puedes acceder a esta opción',
+                                                            message: '',
+                                                            native: false,
+                                                            backgroundTop: '#FF9619',
+                                                            backgroundBottom: '#fdb864',
+                                                            colorTop: 'white',
+                                                            colorBottom: 'white',
+                                                            closeButton: 'Cerrar',
+                                                            duration: 3000,
+                                                        });
+                                                    }else{
+                                                        setReverse(true);
+                                                        setComprobante({
+                                                            id:comprobante.id,
+                                                            name:comprobante.name,
+                                                            fecha:comprobante.fecha
+                                                        })
+                                                    }
+                                                }}
+                                            >{comprobante.id}</button>
+                                    }
                                     <p>{comprobante.fecha}</p>
                                     <p>{comprobante.fecha_deposito}</p>
                                     {/* <p>{comprobante.forma_pago.toUpperCase()}</p> */}
@@ -317,6 +356,19 @@ export default function Comprobantes(){
                                 agente={comprobante.agente.substring(0,1)+'. '+comprobante.agente.split(' ')[1]}
                             />
                         </PDFViewer>
+                    </div>
+            }
+
+            {
+                (view_reverse) &&
+                    <div className="CardPay">
+                        <button onClick={()=>{setReverse(!view_reverse)}}>Volver</button>
+                        <CardReverse
+                            id={comprobante.id}
+                            name={comprobante.name}
+                            fecha={comprobante.fecha}
+                            update={updateReverse}
+                        />
                     </div>
             }
         </div>

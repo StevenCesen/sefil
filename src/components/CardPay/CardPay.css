@@ -18,6 +18,15 @@
     align-items: center;
 }
 
+.CardPay>button{
+    width: 100px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+}
+
 .CardPay__head>img{
     width: 200px;
 }

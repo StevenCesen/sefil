@@ -550,24 +550,26 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
   
                         }}>Registrar pago</button>
                     :
-                        <button 
-                            className="CardPay__button"
-                            onClick={(e)=>{
-                                e.target.textContent="Procesando...";
-                                fetch(`https://sefil.softsen.space/public/api/credit/reverse/${idVouch.id}`,{
-                                    headers: {
-                                        Accept: 'application/json',
-                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                    }
-                                })
-                                    .then((response) => response.json())  
-                                    .then(async (data) => {
-                                        if(data.status===200){
-                                            location.reload();
-                                        }
-                                    });
-                            }}
-                        >Revertir cobro</button>
+                        <></>
+                        // AQUÍ YA NO VA ESTO
+                        // <button 
+                        //     className="CardPay__button"
+                        //     onClick={(e)=>{
+                        //         e.target.textContent="Procesando...";
+                        //         fetch(`https://sefil.softsen.space/public/api/credit/reverse/${idVouch.id}`,{
+                        //             headers: {
+                        //                 Accept: 'application/json',
+                        //                 Authorization: `Bearer ${localStorage.getItem('token')}`
+                        //             }
+                        //         })
+                        //             .then((response) => response.json())  
+                        //             .then(async (data) => {
+                        //                 if(data.status===200){
+                        //                     location.reload();
+                        //                 }
+                        //             });
+                        //     }}
+                        // >Revertir cobro</button>
                 }
 
             </div>
