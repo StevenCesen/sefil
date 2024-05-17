@@ -9,6 +9,12 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
 export default function Cobranza(){
     const param = useParams();
 
+    //Estados para filtro de búsqueda en cabecera
+    const [type_client,setClient]=useState('TITULAR');
+    const [canton_input,setInput]=useState('');
+    const [canton,setCanton]=useState('all');
+    const [parroquia,setParroquia]=useState('all');
+
     const [credits,setCredits]=useState({
         current_page:1,
         data:[],
@@ -52,6 +58,12 @@ export default function Cobranza(){
     }
 
     useEffect(()=>{
+
+        setClient('TITULAR');
+        setInput('');
+        setCanton('all');
+        setParroquia('all');
+
         fetch("https://sefil.softsen.space/public/api/bussines",{
             headers: {
                 Accept: 'application/json',
@@ -139,15 +151,138 @@ export default function Cobranza(){
                             <div>
                                 <p>ID</p>
                                 <p>Crédito</p>
-                                <p>Tipo</p>
+                                <label>
+                                    Tipo
+                                    <select
+                                        value={type_client}
+                                        onChange={(e)=>{
+                                            setClient(e.target.value);
+                                            if(e.target.value==='GARANTE'){
+                                                fetch(`https://sefil.softsen.space/public/api/credit/filterGarante`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        updateCredits(data.data)
+                                                    });
+                                            }else{
+                                                fetch(`https://sefil.softsen.space/public/api/credit?cartera=SEFIL_1`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        updateCredits(data.data)
+                                                    });
+                                            }
+
+                                        }}
+                                    >
+                                        <option value={"TITULAR"}>TITULAR</option>
+                                        <option value={"GARANTE"}>GARANTE</option>
+                                    </select>
+                                </label>
+
                                 <p>Nombre</p>
                                 <p>Monto</p>
                                 <p>Cédula</p>
-                                <p>Compañia</p>
+
+                                <label>
+                                    Compañia
+                                    <select
+                                        value={aux_busines}
+                                        onChange={(e)=>{
+                                            if(e.target.value!=='default'){
+                                                setAux(e.target.value);
+                                                localStorage.setItem('cartera',e.target.value);
+                                                fetch(`https://sefil.softsen.space/public/api/bussines/${e.target.value}`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        setCredits(data);
+                                                    });
+                                            }
+                                        }}
+                                    >
+                                        {
+                                            business.map((bus,index)=>(
+                                                <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </label>
+
                                 <p>Provincia</p>
-                                <p>Canton</p>
+                                <label>
+                                    Cantón
+                                    <input
+                                        value={canton_input}
+                                        type="text" 
+                                        placeholder="Cantón"
+                                        onChange={(e)=>{
+                                            setInput(e.target.value);
+                                            fetch(`https://sefil.softsen.space/public/api/credit/filter?canton=${canton_input}`,{
+                                                headers: {
+                                                    Accept: 'application/json',
+                                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                }
+                                            })
+                                                .then((response) => response.json())  
+                                                .then((data) => {
+                                                    updateCredits(data.data)
+                                                });
+                                        }}
+                                    />
+                            
+                                </label>
                                 <p>Parroquia</p>
-                                <p>Estado</p>
+
+                                <label>
+                                    Estado
+                                    <select
+                                        value={parroquia}
+                                        onChange={(e)=>{
+                                            setParroquia(e.target.value);
+
+                                            if(e.target.value==='vigente'){
+                                                fetch(`https://sefil.softsen.space/public/api/credit/filter?estadoNot=Cancelado`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        updateCredits(data.data)
+                                                    });
+                                            }else{
+                                                fetch(`https://sefil.softsen.space/public/api/credit/filter?estado=Cancelado&canton=${canton_input}&empresa=${aux_busines}`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        updateCredits(data.data)
+                                                    });
+                                            }
+                                        }}
+                                    >
+                                        <option value={"vigente"}>Vigente</option>
+                                        <option value={"cancelado"}>Cancelado</option>
+                                    </select>
+                                </label>
+
                             </div>
 
                             {

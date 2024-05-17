@@ -92,71 +92,70 @@ import Barcode from 'react-barcode';
           {/* DETALLE */}
 
           <View style={{width:'60%',border:'1px solid black'}}>
-            <Text style={{width:'100%',fontSize:8,textAlign:"center"}}>DETALLE</Text>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>DESCRIPCIÓN</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>VALOR ORIGINAL</Text>
+            <View style={{width:'100%',backgroundColor:"#C6EFCE",display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>DESCRIPCIÓN</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>VALOR ORIGINAL</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>VALOR CONDONADO</Text>
             </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Capital</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).capital,currency:'USD'})}</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Capital</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).capital,currency:'USD'})}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
                     useFormatterNumber({value:Number(JSON.parse(prevDates).capital)-Number(JSON.parse(postDates).capital),currency:'USD'})
                 }</Text>
             </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Interés</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).interes,currency:'USD'})}</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Interés</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).interes,currency:'USD'})}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
                     useFormatterNumber({value:Number(JSON.parse(prevDates).interes)-Number(JSON.parse(postDates).interes),currency:'USD'})
                 }</Text>
             </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Mora</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).mora,currency:'USD'})}</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Mora</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).mora,currency:'USD'})}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
                     useFormatterNumber({value:Number(JSON.parse(prevDates).mora)-Number(JSON.parse(postDates).mora),currency:'USD'})
                 }</Text>
             </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Seguro desgravamen</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).seguro_desgravamen,currency:'USD'})}</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Seguro desgravamen</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).seguro_desgravamen,currency:'USD'})}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
                     useFormatterNumber({value:Number(JSON.parse(prevDates).seguro_desgravamen)-Number(JSON.parse(postDates).seguro_desgravamen),currency:'USD'})
                 }</Text>
             </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Gastos judiciales</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_judiciales,currency:'USD'})}</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Gastos judiciales</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_judiciales,currency:'USD'})}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
                     useFormatterNumber({value:Number(JSON.parse(prevDates).gastos_judiciales)-Number(JSON.parse(postDates).gastos_judiciales),currency:'USD'})
                 }</Text>
             </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Gastos cobranza</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_cobranza,currency:'USD'})}</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Gastos cobranza</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_cobranza,currency:'USD'})}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
                     useFormatterNumber({value:Number(JSON.parse(prevDates).gastos_cobranza)-Number(JSON.parse(postDates).gastos_cobranza),currency:'USD'})
                 }</Text>
             </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>Otros valores</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).otros_valores,currency:'USD'})}</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Otros valores</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).otros_valores,currency:'USD'})}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
                     useFormatterNumber({value:Number(JSON.parse(prevDates).otros_valores)-Number(JSON.parse(postDates).otros_valores),currency:'USD'})
                 }</Text>
             </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>TOTAL</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{}</Text>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>TOTAL</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,textAlign:"center"}}>{}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
                     (useFormatterNumber({value:Number(JSON.parse(prevDates).capital)-Number(JSON.parse(postDates).capital)+

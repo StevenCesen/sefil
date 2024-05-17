@@ -3,6 +3,7 @@ import useFilters from "../hooks/useFilters";
 import { useEffect } from "react";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import { NavLink, useParams } from "react-router-dom";
+import ReactPDF, { PDFViewer } from '@react-pdf/renderer';
 import { Line, Bar,Doughnut} from 'react-chartjs-2';
 import "./pages.css";
 
@@ -19,6 +20,7 @@ import {
     Legend,
 } from 'chart.js';
 import addNotification from "react-push-notification";
+import PDFreport from "../components/PDFreport";
 
 ChartJS.register(
     CategoryScale,
@@ -103,6 +105,8 @@ export default function Reports(){
     const [select_agency_mora,setAgencyMora]=useState();
     const [type_unificate,setUnificate]=useState('normal');
 
+    const [pdf_report,setReport]=useState();
+
     const [carteras,setCarteras]=useState();
 
     const [total_months,setTotalMonths]=useState();
@@ -143,6 +147,15 @@ export default function Reports(){
     const [select_value,setSelect]=useState("all");
 
     useEffect(()=>{
+        setReport({
+            status:false,
+            data:['','',''],
+            state_cartera:{},
+            credits_active:{},
+            credits_by_month:{},
+            credits_by_mora:{},
+            filters:{}
+        });
 
         fetch("https://sefil.softsen.space/public/api/vouchers/getTotalMonths",{
             headers: {
@@ -220,6 +233,10 @@ export default function Reports(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                setReport({
+                    ...pdf_report,
+                    state_cartera:data.data.actual
+                });
                 setResults(data);
             });
 
@@ -235,6 +252,10 @@ export default function Reports(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                setReport({
+                    ...pdf_report,
+                    credits_active:data
+                });
                 setNro(data);
             });
         
@@ -246,6 +267,10 @@ export default function Reports(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                setReport({
+                    ...pdf_report,
+                    credits_by_month:data.data
+                });
                 setAmount(data.data);
             });
         
@@ -257,6 +282,10 @@ export default function Reports(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                setReport({
+                    ...pdf_report,
+                    credits_by_mora:data.data
+                });
                 setMoraCredit(data.data);
             });
 
@@ -280,14 +309,17 @@ export default function Reports(){
     if(!nro_credit) return <></>
     if(!total_months) return <></>
     if(!mora) return <></>
+    if(!pdf_report) return <></>
 
     return (
         <div className="Reports">
             {
+
                 (param.ci==='estado')
                 ?
                     <div className="Reports__content">
                         <h4 className="Reports__title">Valores a recuperar</h4>
+                    
                         <div className="Reports__filters Reports__filters--columns-8">
 
                             <label className="Reports__filter">
@@ -504,6 +536,40 @@ export default function Reports(){
 
                                 }}
                             >Aplicar</NavLink>
+
+                            <NavLink
+                                className="Reports__button"
+                                onClick={(e)=>{
+                                    const canvas_1 = document.getElementById('cartera1')
+                                    const img_1    = canvas_1.toDataURL('image/png')
+
+                                    const canvas_2 = document.getElementById('cartera2')
+                                    const img_2    = canvas_2.toDataURL('image/png')
+
+                                    const canvas_3 = document.getElementById('carteras')
+                                    const img_3    = canvas_3.toDataURL('image/png')
+
+                                    setReport({
+                                        ...pdf_report,
+                                        status:true,
+                                        state_cartera:results.data.actual,
+                                        credits_active:nro_credit,
+                                        credits_by_month:amount_credits,
+                                        credits_by_mora:mora,
+                                        data:[img_1,img_2,img_3],
+                                        filters:{
+                                            agency:select_value,
+                                            provincia:provincia,
+                                            canton:canton,
+                                            empresa:empresa
+                                        }
+                                    });
+
+                                }}
+                            >
+                                Descargar PDF
+                            </NavLink>
+
                         </div>
 
                         {
@@ -577,11 +643,18 @@ export default function Reports(){
 
                         <h4 className="Reports__title">Estado de carteras</h4>
                         <div className="Reports__resultGraphic">
-                            <h3>Distribución por cartera</h3>
+                            <div className="Reports__resultFilter">
+                                <h3>Distribución por cartera</h3>
+                                <label>
+                                    Fecha
+                                    <input type="date"/>
+                                </label>
+                            </div>
 
                             <div className="Reports__resumeGraphic">
                                 <Bar
                                     key={1}
+                                    id={"carteras"}
                                     width={"100%"}
                                     height={"30px"}
                                     data={
@@ -615,9 +688,16 @@ export default function Reports(){
 
                                 
                                 <div>
-                                    <h3>Tendencia anual de recuperación</h3>
+                                    <div className="Reports__resultFilter">
+                                        <h3>Tendencia anual de recuperación</h3>
+                                        <label>
+                                            Fecha
+                                            <input type="date"/>
+                                        </label>
+                                    </div>
                                      <Line
                                         key={1}
+                                        id="cartera1"
                                         width={"100%"}
                                         height={"30px"}
                                         data={{
@@ -646,6 +726,7 @@ export default function Reports(){
 
                                     <Line
                                         key={2}
+                                        id="cartera2"
                                         width={"100%"}
                                         height={"30px"}
                                         data={{
@@ -1156,6 +1237,33 @@ export default function Reports(){
                         </div>
                     </div>
                         
+            }
+
+            {
+                (pdf_report.status)
+                ?  
+                    <div className="CardPay">
+                        <button 
+                            className="CardCondonacion__close"
+                            onClick={()=>{
+                                setReport({
+                                    ...pdf_report,
+                                    status:false
+                                });
+                        }}>Volver</button>
+
+                        <PDFViewer width={'700px'} height={'500px'}>
+                            <PDFreport
+                                images={pdf_report.data}
+                                state_cartera={pdf_report.state_cartera}
+                                activos={pdf_report.credits_active}
+                                byMonth={pdf_report.credits_by_month}
+                                byMora={pdf_report.credits_by_mora}
+                                filters={pdf_report.filters}
+                            />  
+                        </PDFViewer>
+                    </div>
+                : <></>
             }
         </div>
     );

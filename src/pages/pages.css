@@ -698,6 +698,10 @@
     border-top-left-radius: 5px;
 }
 
+.DetailCredit__pays>div:first-child{
+    height: initial;
+}
+
 .DetailCredit__pays>div,.DetailCredit__comprobantes>div{
     width: 100%;
     padding: 10px 10px;
@@ -712,6 +716,40 @@
     color: rgb(77, 157, 192);
     text-align: center;
     font-size: 14px;
+}
+
+.DetailCredit__pays>div>label{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-3);
+    font-weight: bold;
+    font-size: 14px;
+    flex-direction: column;
+}
+
+.DetailCredit__pays>div>label>input{
+    width: 100%;
+    height: 30px;
+    background-color: #FEC888;
+    border: none;
+    border-radius: 2px;
+    margin: 5px auto 0;
+}
+
+.DetailCredit__pays>div>label>input:focus{
+    outline: none;
+    padding-left: 5px;
+}
+
+.DetailCredit__pays>div>label>select{
+    width: 100%;
+    height: 30px;
+    background-color: #FEC888;
+    border: none;
+    border-radius: 2px;
+    margin-top: 5px;
 }
 
 .DetailCredit__pays>div>p,.DetailCredit__comprobantes>div>p{
@@ -1212,6 +1250,34 @@
     padding: 10px 10px;
     margin-top: 10px;
     margin-bottom: 20px;
+}
+
+.Reports__resultFilter{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Reports__resultFilter>h3{
+    color: var(--color-2);
+    font-size: 16px;
+}
+
+.Reports__resultFilter>label{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    font-weight: bold;
+    color: var(--color-1);
+}
+
+.Reports__resultFilter>label>input{
+    margin-top: 5px;
+    height: 30px;
+    border: 1px solid rgb(187, 187, 187);
+    border-radius: 2px;
 }
 
 .Reports__resultGraphic>h3,.Reports__resumeGraphic>div>h3{
