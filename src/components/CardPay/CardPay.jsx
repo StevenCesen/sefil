@@ -450,7 +450,6 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             }else if(data_encode.fecha_pago===''){
                                 e.target.textContent='Error, falta fecha de pago.';
                             }else{ 
-                                console.log(data_encode)
                                 //Compruebo si no existe el mismo codigo de deposito
                                 if(data_encode.forma_pago!=='efectivo'){
                                     
