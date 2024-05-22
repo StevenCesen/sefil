@@ -356,6 +356,7 @@ export default function DetailCredit(){
                 
                 <div className="DetailCredit__actions">
                     <h3>Acciones</h3>
+    
                     {
                         (localStorage.getItem('hash')!=='#/dashboard/consulta') &&
                             (viewGastos.status===true) ?
@@ -366,12 +367,22 @@ export default function DetailCredit(){
                                         //Aquí actualizamos el estado para que desaparezca el botón
                                         setPDF(true);
 
+                                        const data={
+                                            name:credit.name,
+                                            ci:credit.ci,
+                                            direccion:credit.direccion,
+                                            telefono:Number(credit.phone),
+                                            email:'steven.cesen@unl.edu.ec'
+                                        };
+
+
                                         fetch(`https://sefil.softsen.space/public/api/gastos/${viewGastos.id}`,{
-                                            method:'PUT',
+                                            method:'POST',
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
-                                            }
+                                            },
+                                            body:new URLSearchParams(data)
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
