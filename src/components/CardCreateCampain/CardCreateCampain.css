@@ -1,12 +1,8 @@
 .CardCreateCampain{
-    position: fixed;
-    top: 80px;
-    left: 530px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    z-index: 100;
     width:450px;
     background-color: var(--bg-2);
     border-radius: 5px;
@@ -68,17 +64,19 @@
 
 .CardCreateCampain__content>label{
     background-color: var(--bg-alert-error);
-    height: 25px;
+    height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 12px;
+    text-align: center;
     color: var(--color-3);
     font-weight: bold;
 }
 
 .CardCreateCampain__content>label>input{
     margin-right: 5px;
+    margin-left: 5px;
 }
 
 .CardCreateCampain__form{

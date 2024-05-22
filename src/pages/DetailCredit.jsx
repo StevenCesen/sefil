@@ -314,6 +314,7 @@ export default function DetailCredit(){
                                         e.target.textContent='Facturando...';
                                         //Aquí actualizamos el estado para que desaparezca el botón
                                         setPDF(true);
+                                        
 
                                         fetch(`https://sefil.softsen.space/public/api/gastos/${viewGastos.id}`,{
                                             method:'PUT',

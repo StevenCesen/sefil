@@ -7,12 +7,38 @@ export default function Campain(){
     const [create,setCreate]=useState(false);
     const [edit,setEdit]=useState(false);
     const [transfer,setTransfer]=useState(false);
+    const [campains,setCampains]=useState();
+
+    const updateCampain=(data)=>{
+
+        const prev=campains.data;
+
+        prev.push(data);
+
+        setCampains({
+            ...campains,
+            data:prev
+        });
+    }
 
     useEffect(()=>{
         setCreate(false);
         setEdit(false);
         setTransfer(false);
+
+        fetch("https://sefil.softsen.space/public/api/campains",{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setCampains(data);
+            });
     },[]);
+
+    if(!campains) return <></>
 
     return (
         <div className="pageConsulta">
@@ -39,7 +65,11 @@ export default function Campain(){
                 <div className="Campain__list">
                     <div className="Campain__access">
                         <h4 className="Campain__subtitle">Campañas</h4>
-                        <button>Nueva campaña</button>
+                        <button
+                            onClick={(e)=>{
+                                setCreate(true);
+                            }}
+                        >Nueva campaña</button>
                     </div>
 
                     <div className="Campain__head">
@@ -51,23 +81,44 @@ export default function Campain(){
                     </div>
 
                     <div className="Campain__items">
-                        <div className="Campain__item">
-                            <label>FACES - Abril 2024</label>
-                            <label>ACTIVA</label>
-                            <label>2024-04-01 19:00:00</label>
-                            <label>2024-04-30 19:00:00</label>
-                            <div>
-                                <button>
-                                    <img title="Editar campaña" src="./icons/edit.png"/>
-                                </button>
-                                <button>
-                                    <img title="Asignar campaña" src="./icons/transfer.png"/>
-                                </button>
-                                <button>
-                                    <img title="Exportar campaña" src="./icons/expor.png"/>
-                                </button>
-                            </div>
-                        </div>
+
+                        {
+                            campains.data.map((campain,index)=>(
+                                <div 
+                                    key={index}
+                                    className="Campain__item"
+                                >
+                                    <label>{campain.name}</label>
+                                    <label>{campain.state}</label>
+                                    <label>{campain.fecha_init}</label>
+                                    <label>{campain.fecha_finish}</label>
+                                    <div>
+                                        <button
+                                            onClick={()=>{
+                                                console.log("Edición de campaña")
+                                            }}
+                                        >
+                                            <img title="Editar campaña" src="./icons/edit.png"/>
+                                        </button>
+                                        <button
+                                            onClick={()=>{
+                                                console.log("Asignación de campaña")
+                                            }}
+                                        >
+                                            <img title="Asignar campaña" src="./icons/transfer.png"/>
+                                        </button>
+                                        <button
+                                            onClick={()=>{
+                                                console.log("Exportación de datos")
+                                            }}
+                                        >
+                                            <img title="Exportar campaña" src="./icons/expor.png"/>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        }
+
                     </div>
 
                 </div>
@@ -76,8 +127,20 @@ export default function Campain(){
 
             {
                 (create)
-                ? <></>
-                : <CardCreateCampain/>
+                ? 
+                    <div className="CardPay">
+                        <button 
+                            className="CardCondonacion__close" 
+                            onClick={()=>{
+                                setCreate(false);
+                            }}>Volver</button>
+
+                            <CardCreateCampain
+                                setData={updateCampain}
+                            />
+
+                    </div>
+                : <></>
             }
             
         </div>
