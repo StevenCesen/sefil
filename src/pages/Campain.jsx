@@ -93,6 +93,7 @@ export default function Campain(){
                                     <label>{campain.fecha_init}</label>
                                     <label>{campain.fecha_finish}</label>
                                     <div>
+
                                         <button
                                             onClick={()=>{
                                                 console.log("Edición de campaña")
@@ -100,6 +101,7 @@ export default function Campain(){
                                         >
                                             <img title="Editar campaña" src="./icons/edit.png"/>
                                         </button>
+
                                         <button
                                             onClick={()=>{
                                                 console.log("Asignación de campaña")
@@ -107,6 +109,7 @@ export default function Campain(){
                                         >
                                             <img title="Asignar campaña" src="./icons/transfer.png"/>
                                         </button>
+
                                         <button
                                             onClick={()=>{
                                                 console.log("Exportación de datos")
@@ -114,6 +117,7 @@ export default function Campain(){
                                         >
                                             <img title="Exportar campaña" src="./icons/expor.png"/>
                                         </button>
+                                        
                                     </div>
                                 </div>
                             ))
