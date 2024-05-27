@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import CardCreateCampain from "../components/CardCreateCampain/CardCreateCampain";
+import CardAssignCampain from "../components/CardAssignCampain/CardAssignCampain";
 
 export default function Campain(){
 
@@ -104,7 +105,7 @@ export default function Campain(){
 
                                         <button
                                             onClick={()=>{
-                                                console.log("Asignación de campaña")
+                                                setTransfer(true);
                                             }}
                                         >
                                             <img title="Asignar campaña" src="./icons/transfer.png"/>
@@ -145,6 +146,24 @@ export default function Campain(){
 
                     </div>
                 : <></>
+            }
+
+            {
+                (transfer)
+                ?
+                    <div className="CardPay">
+                        <button 
+                            className="CardCondonacion__close" 
+                            onClick={()=>{
+                                setTransfer(false);
+                            }}>Volver</button>
+
+                            <CardAssignCampain
+                            
+                            />
+
+                    </div> 
+                :   <></>
             }
             
         </div>
