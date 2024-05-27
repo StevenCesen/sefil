@@ -32,8 +32,10 @@ export default function Consulta(){
     });
 
     const [business,setBusiness]=useState();
-
     const [aux_busines,setAux]=useState("");
+
+    const [found,setFound]=useState([]);
+    const [reference,setReference]=useState("");
 
     const updateData=(url)=>{
         fetch(url,{
@@ -59,6 +61,8 @@ export default function Consulta(){
         setInput('');
         setCanton('all');
         setParroquia('all');
+        setFound([]);
+        setReference("");
 
         fetch("https://sefil.softsen.space/public/api/bussines",{
             headers: {
@@ -107,6 +111,46 @@ export default function Consulta(){
                         }
                         
                     }} placeholder="Ingrese cédula o nombre"/>
+                </label>
+
+                <label>
+                    Buscar referencia
+                    <input
+                        onKeyUp={(e)=>{
+                            const value=e.target.value;
+                            setReference(e.target.value);
+
+                            if(value!==""){
+                                fetch(`https://sefil.softsen.space/public/api/vouchers/search/${value}`,{
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    }
+                                })
+                                    .then((response) => response.json())  
+                                    .then((data) => {
+                                        setFound(data.data);
+                                    });
+                            }
+                        }}
+                        placeholder="Código de referencia"
+                    />
+                    {
+                        (('name' in found) & reference!=="") 
+                        ?
+                            <div>
+                                {
+                                    <NavLink target="_blank" to={`/dashboard/comprobantes/view/${found.ci}?cartera=${found.cartera}&${found.name}`}>{found.name} | {found.institucion_financiera}</NavLink>
+                                }
+                            </div>
+                        : 
+                            (reference!=="")
+                            ?
+                                <div>
+                                    <p>No hay coincidencias</p>
+                                </div>
+                            :   <></>
+                    }
                 </label>
                 
                 <label>

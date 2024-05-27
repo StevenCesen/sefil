@@ -1,0 +1,62 @@
+.CardConfirm{
+    width:300px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+}
+
+.CardConfirm>p{
+    background-color: var(--bg-alert-successful);
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 40px;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    color: var(--color-3);
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.CardConfirm>div{
+    background-color: var(--bg-alert-successful);
+    padding: 5px 5px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
+
+.CardConfirm>div>button{
+    height: 30px;
+    border: none;
+    padding: 0 10px;
+    background-color: #008682;
+    color: var(--color-3);
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.CardConfirm>label{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    margin: 10px 10px;
+}
+
+.CardConfirm>label>input[type=text]{
+    width: 90%;
+}
+
+.CardConfirm>label>input[type=number]{
+    width: 40%;
+}
+
+.CardConfirm>label>input{
+    height: 30px;
+    margin-top: 5px;
+}

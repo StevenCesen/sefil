@@ -16,6 +16,7 @@ import {
 
 import { useEffect, useState } from "react";
 import useFormatterNumber from "../hooks/useFormatterNumber";
+import CardDataStatics from "../components/CardDataStatics/CardDataStatics";
 
 ChartJS.register(
     CategoryScale,
@@ -119,6 +120,8 @@ export default function Home(){
 
     const [totalMonth,setMonth]=useState(0);
 
+    const [comprobantes,setComprobantes]=useState();
+
     useEffect(()=>{
 
         // fetch("https://sefil.softsen.space/public/api/vouchers/reportAnual",{
@@ -196,10 +199,22 @@ export default function Home(){
         //     .then((response) => response.json())  
         //     .then((data) => setUsers(data));
 
+        fetch("https://sefil.softsen.space/public/api/bussines/vouchers",{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setComprobantes(data.data);
+            });
+
     },[]);
 
     if(!vouchers) return <></>
     if(!totalMonth) return <></>
+    if(!comprobantes) return <></>
     // if(!condonations) return <></>
     // if(!restruct) return <></>
     // if(!data) return <></>
@@ -222,6 +237,10 @@ export default function Home(){
                         />
                     ))
                 }
+
+                <CardDataStatics
+                    data={comprobantes}
+                />
 
                 {
                     // users.data.map((user,index)=>(

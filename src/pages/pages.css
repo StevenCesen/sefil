@@ -210,6 +210,21 @@
     flex-direction: column;
     color: var(--color-2);
     font-size: 15px;
+    position: relative;
+}
+
+.pageConsulta__search>label>div{
+    background-color: var(--bg-2);
+    border-radius: 2px;
+    padding: 10px 10px;
+    position: absolute;
+    bottom: -60%;
+    width: 100%;
+    box-shadow: var(--box-shadow);
+}
+
+.pageConsulta__search>label>div>a{
+    color: black;
 }
 
 .pageConsulta__search>label>input{
