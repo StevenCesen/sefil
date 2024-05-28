@@ -3,17 +3,31 @@ import "./CardAssignCampain.css";
 import { useEffect } from "react";
 import FilterRange from "../FilterRange/FilterRange";
 
-export default function CardAssignCampain({id_campain,agents,data}){
+export default function CardAssignCampain({data}){
 
     const [transfer,setTransfer]=useState(false);
     const [mode,setMode]=useState('manual');
     const [view_agencies,setView]=useState(false);
+    const [business,setBusiness]=useState();
 
     useEffect(()=>{
         setMode('manual');
         setTransfer(false);
         setView(false);
+
+        fetch("https://sefil.softsen.space/public/api/bussines",{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setBusiness(data.data);
+            });
     },[]);
+
+    if(!business) return <></>
 
     return (
         <div className="CardAssignCampain">
@@ -23,11 +37,19 @@ export default function CardAssignCampain({id_campain,agents,data}){
                 <label>
                     Agente
                     <select>
-                        <option value={"Cecibel Torres"}>Cecibel Torres</option>
+                        <option value={""}>--Seleccionar--</option>
+                        {
+                            JSON.parse(data.agents).map((agent,index)=>(
+                                <option 
+                                    key={index}
+                                    value={agent.id}
+                                >{agent.name}</option>
+                            ))
+                        }
                     </select>
                 </label>
                 {
-                    (transfer)
+                    (transfer & mode!=='assoc')
                     ?   
                         <>
                             <p>a</p>
@@ -38,7 +60,10 @@ export default function CardAssignCampain({id_campain,agents,data}){
                                 </select>
                             </label>
                         </>
-                    :   <></>
+                    :   (mode==='assoc') 
+                        ?
+                            <></>
+                        :   <></>
                 }
             </div>
             
@@ -58,6 +83,33 @@ export default function CardAssignCampain({id_campain,agents,data}){
                         }}
                     />
                     Manual
+                </label>
+
+                <label>
+                    <input 
+                        type="radio"
+                        name="mode"
+                        value={"assoc"}
+                        onChange={(e)=>{
+                            if(e.target.checked){
+                                setMode(e.target.value);
+                            }
+                        }}
+                    />
+                    Asociar cartera
+                    {
+                        (mode==='assoc')
+                        ?
+                            <select>
+                            <option value={""}>--Seleccionar--</option>
+                            {
+                                business.map((cartera,index)=>(
+                                    <option value={cartera.name}>{cartera.name}</option>
+                                ))
+                            }
+                            </select>
+                        :   <></>
+                    }
                 </label>
 
                 <label>

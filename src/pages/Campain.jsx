@@ -9,6 +9,7 @@ export default function Campain(){
     const [edit,setEdit]=useState(false);
     const [transfer,setTransfer]=useState(false);
     const [campains,setCampains]=useState();
+    const [data_currently,setData]=useState();
 
     const updateCampain=(data)=>{
 
@@ -26,6 +27,7 @@ export default function Campain(){
         setCreate(false);
         setEdit(false);
         setTransfer(false);
+        setData({});
 
         fetch("https://sefil.softsen.space/public/api/campains",{
             headers: {
@@ -105,6 +107,7 @@ export default function Campain(){
 
                                         <button
                                             onClick={()=>{
+                                                setData(campain);
                                                 setTransfer(true);
                                             }}
                                         >
@@ -159,7 +162,7 @@ export default function Campain(){
                             }}>Volver</button>
 
                             <CardAssignCampain
-                            
+                                data={data_currently}
                             />
 
                     </div> 
