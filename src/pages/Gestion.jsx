@@ -1,11 +1,53 @@
 import { NavLink } from "react-router-dom";
 import "./pages.css";
-import { useEffect, useState } from "react";
+import {useEffect, useState } from "react";
+import CardGestion from "../components/CardGestion/CardGestion";
 
 export default function Gestion(){
+
+    const [campain,setCampain]=useState('');
+    const [campains,setCampains]=useState();
+
+    const [data,setData]=useState(); //Aquí tenemos todos los créditos
+    const [view_form,setForm]=useState(false); //Este es para ver el formulario de gestión
+    const [next_credit,setNext]=useState(); //Este es para setear el siguiente registro
+    const [index,setIndex]=useState(); //Este es para llevar el indice actual
+    const [credit_actual,setCurrenly]=useState();
+
+    const updateNav=(index)=>{
+        setCurrenly(data.distribution[index+1]);
+        setNext(data.distribution[index+2]);
+        setIndex(index+1);
+    }
+
     useEffect(()=>{
-        
+        setForm(false);
+        setNext(0);
+        setIndex(0);
+
+        fetch(`https://sefil.softsen.space/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setCampains(data);
+                setCampain(data[0].id);
+                
+                const credits=JSON.parse(data[0].distributions);
+
+                credits.map((items)=>{
+                    if(items.agent_id===localStorage.getItem('temp_uS')){
+                        setData(items);
+                    }
+                });
+            });
     },[]);
+
+    if(!campains) return <></>
+    if(!data) return <></>
 
     return (
         <div className="pageConsulta">
@@ -17,13 +59,44 @@ export default function Gestion(){
                         history.go(-1) 
                     }}
                 >Regresar</NavLink>
+
+                <label>
+                    Campaña
+                    <select value={campain} onChange={(e)=>{
+                        if(e.target.value!==''){
+                            
+                            localStorage.setItem('campain',e.target.value);
+                            setCampain(e.target.value);
+
+                            fetch(`https://sefil.softsen.space/public/api/bussines/${e.target.value}`,{
+                                headers: {
+                                    Accept: 'application/json',
+                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                }
+                            })
+                                .then((response) => response.json())  
+                                .then((data) => {
+                                    setCampains(data);
+                                });
+                        }
+                    }}>
+                            <option value={""}>--Seleccionar--</option>
+                        {
+                            campains.map((bus,index)=>(
+                                <option key={index} value={bus.id}>{bus.name.toUpperCase()}</option>
+                            ))
+                        }
+                    </select>
+                </label>
             </div>
 
             <div className="Gestion">
+
                 <div className="Gestion__head">
                     <div>
 
                     </div>
+                    
                     <div>
                         <label>Nombre</label>
                     </div>
@@ -123,140 +196,66 @@ export default function Gestion(){
                     </div>
 
                 </div>
-
-                <div className="Gestion__item">
-                    <button>
-                        <NavLink
-                            to={"/dashboard/gcall/2"}
-                        >
-                            <img src="./icons/go.png"/>
-                        </NavLink>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
-
-                <div className="Gestion__item">
-                    <button>
-                        <img src="./icons/go.png"/>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
-
-                <div className="Gestion__item">
-                    <button>
-                        <img src="./icons/go.png"/>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
-                <div className="Gestion__item">
-                    <button>
-                        <img src="./icons/go.png"/>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
-                <div className="Gestion__item">
-                    <button>
-                        <img src="./icons/go.png"/>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
-                <div className="Gestion__item">
-                    <button>
-                        <img src="./icons/go.png"/>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
-                <div className="Gestion__item">
-                    <button>
-                        <img src="./icons/go.png"/>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
-                <div className="Gestion__item">
-                    <button>
-                        <img src="./icons/go.png"/>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
-                <div className="Gestion__item">
-                    <button>
-                        <img src="./icons/go.png"/>
-                    </button>
-                    <p>STEVEN CESEN PACCHA</p>
-                    <p>1150575338</p>
-                    <p>LOJA CENTRO</p>
-                    <p>2-5</p>
-                    <p>100-500</p>
-                    <p>2-10</p>
-                    <p>VIGENTE</p>
-                    <p>2024/05/13</p>
-                </div>
+                
+                {
+                    data.distribution.map((credit,index,credits)=>(
+                        <div className="Gestion__item">
+                            <button
+                                onClick={()=>{
+                                    setCurrenly(credit);
+                                    setForm(true);
+                                    setNext(credits[index++])
+                                    setIndex(index-1)
+                                }}
+                            >
+                                <img src="./icons/go.png"/>
+                            </button>
+                            <p>{credit.name}</p>
+                            <p>{credit.ci}</p>
+                            <p>{credit.agency}</p>
+                            <p>{credit.dias_vencidos}</p>
+                            <p>{credit.totalAmount}</p>
+                            <p>{credit.pendingFees}</p>
+                            <p>{credit.collectionState}</p>
+                            <p>{"N/D"}</p>
+                        </div>
+                    ))
+                }
 
             </div>
 
-            <div className="DetailCredit__access">
+            {/* <div className="DetailCredit__access">
                 <p>Registros del {}-{} de {}</p>
                 <div>
                     <NavLink onClick={()=>{}}>Anterior</NavLink>
                     <NavLink onClick={()=>{}}>Siguiente</NavLink>
                 </div>
-            </div>
+            </div> */}
+
+            {
+                (view_form)
+                ?   
+                    <div className="CardPay">
+                        <button 
+                            className="CardCondonacion__close" 
+                            onClick={()=>{
+                                setForm(false);
+                            }}
+                        >
+                            Volver
+                        </button>
+
+                        <CardGestion
+                            currently={credit_actual}
+                            next={next_credit}
+                            index={index}
+                            setNext={updateNav}
+                            id_campain={campain}
+                        /> 
+                    </div>
+                :   <></>
+            }
+
         </div>
     );
 }

@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import "./CardCreateCampain.css"
+import "./CardEditCampain.css"
 
-export default function CardCreateCampain({setData}){
+export default function CardEditCampain({data_campain}){
 
     const [campain,setCampain]=useState({
         name:"",
+        id:"",
+        agents:[],
         fecha_init:"",
         fecha_finish:"",
         data:[],
-        cartera:""
+        cartera:"",
+        distributions:[]
     });
 
     const [agents,setAgents]=useState();
@@ -16,11 +19,14 @@ export default function CardCreateCampain({setData}){
 
     useEffect(()=>{
         setCampain({
-            name:"",
-            fecha_init:"",
-            fecha_finish:"",
+            id:data_campain.id,
+            name:data_campain.name,
+            agents:JSON.parse(data_campain.agents),
+            fecha_init:data_campain.fecha_init,
+            fecha_finish:data_campain.fecha_finish,
             data:[],
-            cartera:"SEFIL_1"
+            cartera:data_campain.cartera,
+            distributions:data_campain.distributions
         });
 
         //Bajamos los agentes
@@ -34,11 +40,18 @@ export default function CardCreateCampain({setData}){
             .then((data) => {
 
                 const data_prev=data;
-
                 data_prev.map(agent=> {
                     agent.status=false
                 });
-
+                
+                JSON.parse(data_campain.agents).map((agent_campain)=>{
+                    data_prev.map(agent=> {
+                        if(agent.id===agent_campain.id){
+                            agent.status=true
+                        }
+                    });
+                })
+            
                 setAgents(data_prev);
             });
         
@@ -61,7 +74,7 @@ export default function CardCreateCampain({setData}){
 
     return (
         <div className="CardCreateCampain">
-            <p>Crear campaña</p>
+            <p>Editar campaña</p>
 
             <label className="CardCreateCampain__input">
                 Nombre
@@ -84,6 +97,7 @@ export default function CardCreateCampain({setData}){
 
                     {
                         agents.map((agent,index)=>(
+
                             <label key={index}>
                                 <input 
                                     key={index}
@@ -100,10 +114,12 @@ export default function CardCreateCampain({setData}){
 
                                     value={agent.id}
                                     type="checkbox"
-                                    
+                                    defaultChecked={agent.status}
                                 />
+                                
                                 {agent.name}
                             </label>
+
                         ))
                     }
 
@@ -132,16 +148,8 @@ export default function CardCreateCampain({setData}){
                         }
                     </select>
                 </label>
-
-                <label className="CardCreateCampain__input">
-                    Cargar datos
-                    <input 
-                        onChange={(e)=>{
-
-                        }}
-                        type="text"
-                    />
-                </label>
+                
+                <label></label>
 
                 <label className="CardCreateCampain__input">
                     Fecha de inicio
@@ -174,7 +182,9 @@ export default function CardCreateCampain({setData}){
             <div className="CardCreateCampain__footer">
                 <button 
                     onClick={(e)=>{
-                        
+
+                        e.target.textContent="Actualizando...";
+
                         const agents_select=[];
 
                         agents.map(agent=>{
@@ -192,11 +202,11 @@ export default function CardCreateCampain({setData}){
                             cartera:campain.cartera,
                             fecha_init:campain.fecha_init,
                             fecha_finish:campain.fecha_finish,
-                            distributions:JSON.stringify([])
+                            distributions:campain.distributions
                         };
 
-                        fetch("https://sefil.softsen.space/public/api/campains",{
-                            method:'POST',
+                        fetch(`https://sefil.softsen.space/public/api/campains/${campain.id}`,{
+                            method:'PUT',
                             headers: {
                                 Accept: 'application/json',
                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -205,14 +215,7 @@ export default function CardCreateCampain({setData}){
                         })
                             .then((response) => response.json())  
                             .then((data) => {
-                                setData(data.data);
-                                setCampain({
-                                    name:"",
-                                    fecha_init:"",
-                                    fecha_finish:"",
-                                    data:[],
-                                    cartera:"SEFIL_1"
-                                });
+                                e.target.textContent="Actualizado";
                             });
 
                     }}

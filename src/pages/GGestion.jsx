@@ -1,16 +1,22 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import CardCall from "../components/CardCall/CardCall";
+import { GestionContext } from "../contexts/GestionContext";
 
 export default function GGestion(){
     const param=useParams();
 
     const [call,setCall]=useState(false);
+    const [credit,setCredit]=useState();
+    const data_context=useContext(GestionContext);
 
     useEffect(()=>{
-        console.log(param.ci)
         setCall(false);
-    });
+        data_context.searchCredit(param.ci);
+        setCredit(data_context.credit);
+    },[]);
+
+    if(!credit) return <></>
 
     return (
         <div className="pageConsulta">
@@ -26,9 +32,18 @@ export default function GGestion(){
 
             <div className="Ggestion">
                 <div className="Ggestion__dates">
+                    {
+                        console.log(credit)
+                    }
                     <label>
                         <select>
-                            <option value={"289"}>TITULAR | 2020283736</option>
+                            <option value={credit.id}>{credit.name} | TITULAR</option>
+                            {
+                                JSON.parse(credit.contactos).map((contact,index)=>(
+                                    (contact.name!=='') &&
+                                        <option value={credit.id}>{contact.name} | GARANTE</option>
+                                ))
+                            }
                         </select>
                     </label>
 
@@ -37,23 +52,23 @@ export default function GGestion(){
                         <div className="DetailCredit__table">
                             <div>
                                 <p className="Head">NOMBRE</p>
-                                <span>{"STEVEN RAFAEL CESEN"}</span>
+                                <span>{credit.name}</span>
                             </div>
                             <div>
                                 <p className="Head">CÉDULA</p>
-                                <span>{"1150575338"}</span>
+                                <span>{credit.ci}</span>
                             </div>
                             <div>
                                 <p className="Head">GÉNERO</p>
-                                <span>{"MASCULINO"}</span>
+                                <span>{credit.genero}</span>
                             </div>
                             <div>
                                 <p className="Head">PROVINCIA</p>
-                                <span>{"LOJA"}</span>
+                                <span>{credit.provincia}</span>
                             </div>
                             <div>
                                 <p className="Head">CANTÓN</p>
-                                <span>{"LOJA"}</span>
+                                <span>{credit.canton}</span>
                             </div>
                         </div>
                     </div>
@@ -63,27 +78,27 @@ export default function GGestion(){
                         <div className="DetailCredit__table">
                             <div>
                                 <p className="Head">VALOR PENDIENTE</p>
-                                <span>{"$ 235.35"}</span>
+                                <span>{credit.monthlyFeeAmount}</span>
                             </div>
                             <div>
                                 <p className="Head">DÍAS DE MORA</p>
-                                <span>{"15"}</span>
+                                <span>{credit.dias_vencidos}</span>
                             </div>
                             <div>
                                 <p className="Head">FECHA DE PAGO</p>
-                                <span>{"2024/8/5"}</span>
+                                <span>{credit.paymentDate}</span>
                             </div>
                             <div>
                                 <p className="Head">CUOTAS PENDIENTES</p>
-                                <span>{"2"}</span>
+                                <span>{credit.pendingFees}</span>
                             </div>
                             <div>
                                 <p className="Head">CUOTAS PAGADAS</p>
-                                <span>{"10"}</span>
+                                <span>{credit.paidFees}</span>
                             </div>
                             <div>
                                 <p className="Head">TOTAL ADEUDADO</p>
-                                <span>{"$ 470.7"}</span>
+                                <span>{credit.totalAmount}</span>
                             </div>
                         </div>
                     </div>
@@ -95,42 +110,79 @@ export default function GGestion(){
                     <div className="Ggestion__principal">
                         <div>
                             <h3 className="Ggestion__title">Contactos</h3>
+                            
                             <button className="Ggestion__button">Agregar nuevo</button>
                             <div>
                                 <p className="Ggestion__subtitle">3 contactos registrados</p>
-                                <div className="Ggestion__contact">
-                                    <p>0978950498</p>
-                                    <div>
-                                        <button>
-                                            <img src="./icons/call.png"/>
-                                        </button>
-                                        <button>
-                                            <img src="./icons/send_waps.png"/>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="Ggestion__contact">
-                                    <p>0978950498</p>
-                                    <div>
-                                        <button>
-                                            <img src="./icons/call.png"/>
-                                        </button>
-                                        <button>
-                                            <img src="./icons/send_waps.png"/>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className="Ggestion__contact">
-                                    <p>0978950498</p>
-                                    <div>
-                                        <button>
-                                            <img src="./icons/call.png"/>
-                                        </button>
-                                        <button>
-                                            <img src="./icons/send_waps.png"/>
-                                        </button>
-                                    </div>
-                                </div>
+                                
+                                {
+                                    (credit.phone!=='N/D')
+                                    ?
+                                        <div className="Ggestion__contact">
+                                            <p>{credit.phone}</p>
+                                            <div>
+                                                <button>
+                                                    <img src="./icons/call.png"/>
+                                                </button>
+                                                <button>
+                                                    <img src="./icons/send_waps.png"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    :   <></>
+                                }
+
+                                {
+                                    (credit.phone2!=='N/D')
+                                    ?
+                                        <div className="Ggestion__contact">
+                                            <p>{credit.phone2}</p>
+                                            <div>
+                                                <button>
+                                                    <img src="./icons/call.png"/>
+                                                </button>
+                                                <button>
+                                                    <img src="./icons/send_waps.png"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    :   <></>
+                                }
+
+                                {
+                                    (credit.phone3!=='N/D')
+                                    ?
+                                        <div className="Ggestion__contact">
+                                            <p>{credit.phone3}</p>
+                                            <div>
+                                                <button>
+                                                    <img src="./icons/call.png"/>
+                                                </button>
+                                                <button>
+                                                    <img src="./icons/send_waps.png"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    :   <></>
+                                }
+
+                                {
+                                    (credit.phone4!=='N/D')
+                                    ?
+                                        <div className="Ggestion__contact">
+                                            <p>{credit.phone4}</p>
+                                            <div>
+                                                <button>
+                                                    <img src="./icons/call.png"/>
+                                                </button>
+                                                <button>
+                                                    <img src="./icons/send_waps.png"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    :   <></>
+                                }
+                                
                             </div>
                         </div>
 
@@ -141,7 +193,7 @@ export default function GGestion(){
 
                                     <label className="Ggestion__input">
                                         Nombre del contacto
-                                        <input type="text" placeholder="STEVEN RAFAEL CESEN"/>
+                                        <input type="text" placeholder="STEVEN RAFAEL CESEN" value={credit.name}/>
                                     </label>
 
                                     <label className="Ggestion__select">
@@ -230,8 +282,9 @@ export default function GGestion(){
 
             {
                 (call) 
-                ? <></>
-                : <CardCall/>
+                ? 
+                    <CardCall/>
+                :   <></>
             }
             
         </div>

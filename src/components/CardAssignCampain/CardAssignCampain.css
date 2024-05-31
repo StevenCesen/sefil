@@ -1,5 +1,7 @@
 .CardAssignCampain{
-    width: 450px;
+    width: 600px;
+    height: 600px;
+    overflow-y: auto;
     background-color: var(--bg-2);
     border-radius: 5px;
     box-shadow: var(--box-shadow);
@@ -119,7 +121,7 @@
 }
 .CardAssignCampain__file>div{
     cursor: pointer;
-    height: 40px;
+    padding: 10px 10px;
     border-radius: 2px;
     margin: 5px 10px;
     border: 1px solid rgb(188, 188, 188);
@@ -127,7 +129,7 @@
 
 .CardAssignCampain__filters{
     width: 100%;
-    height: 150px;
+    height: 192px;
     overflow-y: auto;
     padding: 0 10px;
 }
@@ -207,4 +209,41 @@
 
 .CardAssignCampain__selects>label>div>div>label>input{
     margin-right: 10px;
+}
+
+.CardAssignCampain__headCharge{
+    width: 100%;
+    height: 40px;
+    background-color: var(--bg-alert-error);
+    display: grid;
+    grid-template-columns: 5% 25% 11.66% 11.66% 11.66% 11.66% 11.66% 11.66%;
+}
+
+.CardAssignCampain__itemCharge{
+    width: 100%;
+    height: 40px;
+    background-color: var(--bg-2);
+    display: grid;
+    grid-template-columns: 5% 25% 11.66% 11.66% 11.66% 11.66% 11.66% 11.66%;
+}
+
+.CardAssignCampain__headCharge>label,.CardAssignCampain__itemCharge>label{
+    font-size: 12px;
+    color: var(--color-6);
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    text-align: center;
+}
+
+.CardAssignCampain__headCharge>label{
+    font-weight: bold;
+}
+
+.CardAssignCampain__itemCharge>label{
+    font-weight: 100;
+}
+
+.CardAssignCampain__headCharge>input,.CardAssignCampain__itemCharge>input{
+    margin: 0 auto;
 }

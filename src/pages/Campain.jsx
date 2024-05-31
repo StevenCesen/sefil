@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import CardCreateCampain from "../components/CardCreateCampain/CardCreateCampain";
 import CardAssignCampain from "../components/CardAssignCampain/CardAssignCampain";
+import CardEditCampain from "../components/CardEdirCampain/CardEditCampain";
 
 export default function Campain(){
 
@@ -99,7 +100,8 @@ export default function Campain(){
 
                                         <button
                                             onClick={()=>{
-                                                console.log("Edición de campaña")
+                                                setData(campain);
+                                                setEdit(true);
                                             }}
                                         >
                                             <img title="Editar campaña" src="./icons/edit.png"/>
@@ -149,6 +151,23 @@ export default function Campain(){
 
                     </div>
                 : <></>
+            }
+
+            {
+                (edit)
+                ?
+                    <div className="CardPay">
+                        <button 
+                            className="CardCondonacion__close" 
+                            onClick={()=>{
+                                setEdit(false);
+                        }}>Volver</button>
+
+                        <CardEditCampain
+                            data_campain={data_currently}
+                        />
+                    </div>
+                :   <></>
             }
 
             {

@@ -1,6 +1,7 @@
 import "./CardCall.css"
 
-export default function CardCall({}){
+export default function CardCall({close,phone}){
+    
     return (
         <div className="CardCall">
             <p>Disponible</p>
@@ -24,7 +25,12 @@ export default function CardCall({}){
             </button>
 
             <div className="CardCall__footer">
-                <button className="CardCall__button CardCall__button--save">Guardar</button>
+                <button 
+                    onClick={()=>{
+                        close()
+                    }}
+                    className="CardCall__button CardCall__button--save"
+                >Guardar</button>
             </div>
         </div>
     );

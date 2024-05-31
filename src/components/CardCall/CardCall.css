@@ -1,7 +1,7 @@
 .CardCall{
     position: fixed;
     top: 80px;
-    left: 530px;
+    left: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
