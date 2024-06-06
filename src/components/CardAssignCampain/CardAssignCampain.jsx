@@ -46,6 +46,7 @@ export default function CardAssignCampain({data}){
             .then((data) => {
                 setBusiness(data.data);
             });
+        
     },[]);
 
     if(!business) return <></>
@@ -61,7 +62,26 @@ export default function CardAssignCampain({data}){
                     Agente
                     <select
                         onChange={(e)=>{
-                            setAgents(e.target.value)
+                            setAgents(e.target.value);
+                            fetch(`https://sefil.softsen.space/public/api/gestion/campains?id=${e.target.value}`,{
+                                headers: {
+                                    Accept: 'application/json',
+                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                }
+                            })
+                                .then((response) => response.json())  
+                                .then((data) => {
+                                    const credits=JSON.parse(data[0].distributions);
+                                    credits.map((items)=>{
+                                        if(items.agent_id===e.target.value){
+                                            setCharge({
+                                                ...charge,
+                                                data:items.distribution,
+                                                total:items.distribution.length
+                                            });
+                                        }
+                                    });
+                                });
                         }}
                         value={agent}
                     >
@@ -175,6 +195,12 @@ export default function CardAssignCampain({data}){
                 className="CardAssignCampain__file">
                 Cargar datos ({charge.total})
                 {/* <input id="campain" type="file"/> */}
+                {
+                    (charge.total>0)
+                    ?
+                        <input type="text" placeholder="Ingrese nombre o cédula"/>
+                    :   <></>
+                }
                 <div>
                     {
                         (charge.total>0)

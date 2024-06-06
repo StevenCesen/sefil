@@ -1,13 +1,13 @@
 .CardCall{
     position: fixed;
     top: 80px;
-    left: 10px;
+    left: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     z-index: 100;
-    width:300px;
+    width:280px;
     background-color: var(--bg-2);
     border-radius: 5px;
     box-shadow: var(--box-shadow);
@@ -70,6 +70,11 @@
     cursor: pointer;
     color: var(--color-3);
     font-weight: bold;
+}
+
+.CardCall__options>button:hover,.CardCall__options>button:focus{
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
 }
 
 .CardCall__button--exit{

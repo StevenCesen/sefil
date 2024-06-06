@@ -13,6 +13,7 @@ import Me from "./Me";
 import Monitor from "./Monitor";
 import GGestion from "./GGestion";
 import Campain from "./Campain";
+import Template from "./Template";
 
 const data=[
     {
@@ -138,28 +139,32 @@ export default function Dashboard({rol}){
                                             ?
                                                 <Gestion/>
                                             :
-                                                (page.action==='gcall')
+                                                (page.action==='ccall')
                                                 ?
                                                     <GGestion/>
                                                 :
-                                                    (page.action==='campain')
+                                                    (page.action==='templates')
                                                     ?
-                                                        <Campain/>
+                                                        <Template/>
                                                     :
-                                                        (page.action==='usuarios')
+                                                        (page.action==='campain')
                                                         ?
-                                                            <Usuarios/>
+                                                            <Campain/>
                                                         :
-                                                            (page.action==='configuracion')
+                                                            (page.action==='usuarios')
                                                             ?
-                                                                <Setting/>
-                                                            :   
-                                                                (localStorage.getItem('rol')==='administrador') ?
-                                                                    <Home/>
-                                                                :
-                                                                    (localStorage.getItem('rol')!=='super')? 
-                                                                        <Consulta/>
-                                                                    :   <Setting/>
+                                                                <Usuarios/>
+                                                            :
+                                                                (page.action==='configuracion')
+                                                                ?
+                                                                    <Setting/>
+                                                                :   
+                                                                    (localStorage.getItem('rol')==='administrador') ?
+                                                                        <Home/>
+                                                                    :
+                                                                        (localStorage.getItem('rol')!=='super')? 
+                                                                            <Consulta/>
+                                                                        :   <Setting/>
             }
         </div>
     );

@@ -2,6 +2,9 @@ import { NavLink } from "react-router-dom";
 import "./pages.css";
 import {useEffect, useState } from "react";
 import CardGestion from "../components/CardGestion/CardGestion";
+import addNotification from "react-push-notification";
+import useWindows from "../hooks/useWindows";
+import useFormatterNumber from "../hooks/useFormatterNumber";
 
 export default function Gestion(){
 
@@ -14,6 +17,12 @@ export default function Gestion(){
     const [index,setIndex]=useState(); //Este es para llevar el indice actual
     const [credit_actual,setCurrenly]=useState();
 
+
+    const [state_call,setStateCall]=useState(false);
+    const [state_gestion,setStateGestion]=useState(false);
+
+    const [structure,setStructure]=useState();
+
     const updateNav=(index)=>{
         setCurrenly(data.distribution[index+1]);
         setNext(data.distribution[index+2]);
@@ -21,9 +30,13 @@ export default function Gestion(){
     }
 
     useEffect(()=>{
+
         setForm(false);
+        setStateCall(true);
+        setStateGestion(true);
         setNext(0);
         setIndex(0);
+        useWindows();
 
         fetch(`https://sefil.softsen.space/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}`,{
             headers: {
@@ -44,10 +57,37 @@ export default function Gestion(){
                     }
                 });
             });
+
+        fetch(`https://sefil.softsen.space/public/api/templates`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                data.map((struc)=>{
+                    if(struc.status==="EN USO"){
+                        setStructure(struc.structure);
+                    }
+                })
+            });
+
+        const onBeforeUnload = (ev) => {
+            ev.returnValue = "Anything you wanna put here!";
+            return "Anything here as well, doesn't matter!";
+        };
+        
+        window.addEventListener("beforeunload", onBeforeUnload);
+        
+        return () => {
+            window.removeEventListener("beforeunload", onBeforeUnload);
+        };
     },[]);
 
     if(!campains) return <></>
     if(!data) return <></>
+    if(!structure) return <></>
 
     return (
         <div className="pageConsulta">
@@ -214,7 +254,7 @@ export default function Gestion(){
                             <p>{credit.ci}</p>
                             <p>{credit.agency}</p>
                             <p>{credit.dias_vencidos}</p>
-                            <p>{credit.totalAmount}</p>
+                            <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                             <p>{credit.pendingFees}</p>
                             <p>{credit.collectionState}</p>
                             <p>{"N/D"}</p>
@@ -239,7 +279,39 @@ export default function Gestion(){
                         <button 
                             className="CardCondonacion__close" 
                             onClick={()=>{
-                                setForm(false);
+                                if(state_call){
+                                    if(state_gestion){
+                                        setForm(false);
+                                    }else{
+                                        addNotification({
+                                            title: 'Gestión en curso',
+                                            subtitle: 'Se ha realizado una llamada y no se ha guardado gestión',
+                                            message: 'Por favor, guarde la gestión',
+                                            native: false,
+                                            backgroundTop: '#FF9619',
+                                            backgroundBottom: '#fdb864',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration: 3000,
+                                        });
+                                    }
+                                    
+                                }else{
+                                
+                                    addNotification({
+                                        title: 'Gestión en curso',
+                                        subtitle: 'Se ha realizado una llamada y no se ha guardado',
+                                        message: 'Por favor, guarde la llamada',
+                                        native: false,
+                                        backgroundTop: '#FF9619',
+                                        backgroundBottom: '#fdb864',
+                                        colorTop: 'white',
+                                        colorBottom: 'white',
+                                        closeButton: 'Cerrar',
+                                        duration: 3000,
+                                    });
+                                }
                             }}
                         >
                             Volver
@@ -251,6 +323,10 @@ export default function Gestion(){
                             index={index}
                             setNext={updateNav}
                             id_campain={campain}
+                            setCancel={setStateCall}
+                            setStatusGestion={setStateGestion}
+                            state_gestion={state_gestion}
+                            structure={structure}
                         /> 
                     </div>
                 :   <></>

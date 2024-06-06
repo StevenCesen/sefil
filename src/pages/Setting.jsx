@@ -30,9 +30,6 @@ export default function Setting(){
 
     return (
         <div className="pageConsulta">
-            {
-                console.log(param.ci)
-            }
             <div className="DetailCredit__head">
                 <NavLink to="" onClick={()=>history.back()}>Regresar</NavLink>
             </div>

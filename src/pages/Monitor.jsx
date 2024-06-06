@@ -6,8 +6,11 @@ import CardUserState from "../components/CardUserState/CardUserState.jsx";
 
 export default function Monitor(){
 
+    const [agents,setAgents]=useState();
+
     useEffect(()=>{
-        fetch("https://sefil.softsen.space/public/api/bussines",{
+
+        fetch(`https://sefil.softsen.space/public/api/users?role=gestor`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -15,10 +18,19 @@ export default function Monitor(){
         })
             .then((response) => response.json())  
             .then((data) => {
-               
+
+                const data_prev=data;
+
+                data_prev.map(agent=> {
+                    agent.status='DESCONECTADO'
+                });
+
+                setAgents(data_prev);
             });
 
     },[]);
+
+    if(!agents) return <></>
 
     return (
         <div className="pageConsulta">
@@ -59,25 +71,20 @@ export default function Monitor(){
                     <label>Cob. Gest. Pagos</label>
                 </div>
 
-                <CardUserState
-                    name={"STEVEN CESEN"}
-                    state={"EN LLAMADA"}
-                    time={"00:10:00"}
-                    nro_calls={70}
-                    name_campain={"SEFIL-001"}
-                    total_do={12}
-                    mode={"complete"}
-                />
-
-                <CardUserState
-                    name={"PATRICIO PAÉZ"}
-                    state={"DESCONECTADO"}
-                    time={"00:10:00"}
-                    nro_calls={70}
-                    name_campain={"SEFIL-001"}
-                    total_do={12}
-                    mode={"complete"}
-                />
+                {
+                    agents.map((agent,index)=>(
+                        <CardUserState
+                            key={index}
+                            name={agent.name}
+                            state={agent.status}
+                            time={"00:00:00"}
+                            nro_calls={0}
+                            name_campain={"N/D"}
+                            total_do={0}
+                            mode={"complete"}
+                        />
+                    ))
+                }
 
             </div>
         </div>
