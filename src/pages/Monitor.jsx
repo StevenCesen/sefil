@@ -3,12 +3,15 @@ import "./pages.css";
 import { useEffect, useState } from "react";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
 import CardUserState from "../components/CardUserState/CardUserState.jsx";
+import useReceiveState from "../hooks/useReceiveState.js";
 
 export default function Monitor(){
 
     const [agents,setAgents]=useState();
 
     useEffect(()=>{
+
+        useReceiveState();
 
         fetch(`https://sefil.softsen.space/public/api/users?role=gestor`,{
             headers: {

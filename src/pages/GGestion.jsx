@@ -1,9 +1,18 @@
 import { useContext, useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
+import CardNewTemplate from "../components/CardNewTemplate/CardNewTemplate";
 
 export default function GGestion(){
 
     const [templates,setTemplates]=useState();
+    const [view_form,setView]=useState(false);
+
+    const add_template=(template)=>{
+        const copy=templates;
+        copy.push(template);
+
+        setTemplates(templates);
+    }
 
     useEffect(()=>{
         fetch(`https://sefil.softsen.space/public/api/templates`,{
@@ -16,6 +25,8 @@ export default function GGestion(){
             .then((data) => {
                 setTemplates(data);
             });
+        setView(false);
+
     },[]);
 
     if(!templates) return <></>
@@ -35,7 +46,11 @@ export default function GGestion(){
             <div className="Templates">
                 <div className="Templates__init">
                     <h4 className="Reports__title">Plantillas de gestión</h4>
-                    <button>Agregar nueva</button>
+                    <button
+                        onClick={(e)=>{
+                            setView(true);
+                        }}
+                    >Agregar nueva</button>
                 </div>
                 <div className="Templates__items">
                     
@@ -50,7 +65,7 @@ export default function GGestion(){
                     {
                         templates.map((template,index)=>(
                             <div key={index} className="Templates__item">
-                                <NavLink to={`/dashboard/templates/${template.id}`}>1</NavLink>
+                                <NavLink to={`/dashboard/templates/${template.id}`}>{template.id}</NavLink>
                                 <label>{template.name}</label>
                                 <label>
                                     {
@@ -71,6 +86,28 @@ export default function GGestion(){
                     }
                 </div>
             </div>
+
+            {
+                (view_form)
+                ?   
+                    <div className="CardPay">
+                        <button 
+                            className="CardCondonacion__close" 
+                            onClick={()=>{
+                                setView(false);
+                            }}
+                        >
+                            Volver
+                        </button>
+
+                        <CardNewTemplate
+                            form={setView}
+                            add_template={add_template}
+                        />
+
+                    </div>
+                :   <></>
+            }
             
         </div>
     );
