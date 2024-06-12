@@ -1,37 +1,19 @@
 import { NavLink } from "react-router-dom";
 import "./pages.css";
-import { useEffect, useState } from "react";
-import useFormatterNumber from "../hooks/useFormatterNumber.js";
+import { useContext, useEffect, useState } from "react";
 import CardUserState from "../components/CardUserState/CardUserState.jsx";
-import useReceiveState from "../hooks/useReceiveState.js";
+import { GestionContext } from "../contexts/GestionContext.jsx";
 
 export default function Monitor(){
 
     const [agents,setAgents]=useState();
+    const data=useContext(GestionContext);
 
     useEffect(()=>{
 
-        useReceiveState();
-
-        fetch(`https://sefil.softsen.space/public/api/users?role=gestor`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
-
-                const data_prev=data;
-
-                data_prev.map(agent=> {
-                    agent.status='DESCONECTADO'
-                });
-
-                setAgents(data_prev);
-            });
-
-    },[]);
+        setAgents(data.agents);
+        
+    },[data.agents]);
 
     if(!agents) return <></>
 
@@ -79,7 +61,7 @@ export default function Monitor(){
                         <CardUserState
                             key={index}
                             name={agent.name}
-                            state={agent.status}
+                            state={agent.state}
                             time={"00:00:00"}
                             nro_calls={0}
                             name_campain={"N/D"}

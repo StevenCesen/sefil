@@ -182,10 +182,14 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 (credit.phone!=='N/D')
                                 ?
                                     <div className="Ggestion__contact">
-                                        <p>{(credit.phone.length<8) ? `07${credit.phone}` : credit.phone}</p>
+                                        {/* <p>{(credit.phone.length<8) ? `07${credit.phone}` : credit.phone}</p> */}
+                                        <p>0978950498</p>
                                         <div>
                                             <button
-                                                onClick={(e)=>{
+                                                onClick={async (e)=>{
+                                                    const request=await fetch(`originate.php?exten=0978950498&id=9`);
+                                                    const response=await request.json();
+                                                    console.log(response)
                                                     setPhone(credit.phone)
                                                     setCall(true);
                                                     setCancel(false);
@@ -206,10 +210,14 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 (credit.phone2!=='N/D')
                                 ?
                                     <div className="Ggestion__contact">
-                                        <p>{(credit.phone2.length<8) ? `07${credit.phone2}` : credit.phone2}</p>
+                                        {/* <p>{(credit.phone2.length<8) ? `07${credit.phone2}` : credit.phone2}</p> */}
+                                        <p>0989822835</p>
                                         <div>
                                             <button
-                                                onClick={(e)=>{
+                                                onClick={async (e)=>{
+                                                    const request=await fetch(`originate.php?exten=0989822835&id=9`);
+                                                    const response=await request.json();
+                                                    console.log(response);
                                                     setPhone(credit.phone2)
                                                     setCall(true);
                                                     setCancel(false);
