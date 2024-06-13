@@ -7,7 +7,6 @@ import {
     View,
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
-import Barcode from 'react-barcode';
 
   const styles = StyleSheet.create({
     page: {
@@ -221,7 +220,6 @@ import Barcode from 'react-barcode';
 
           <View style={{width:'300px',position:'absolute',bottom:20}}>
             <Text style={[{fontSize:7,width:'100%',textAlign:'center'}]}>CLAVE DE ACCESO</Text>
-            <Barcode value="hola"/>
             <Text style={[{fontSize:7,marginBottom:7,textAlign:"center"}]}>{clave_acceso}</Text>
             <Text style={[{fontSize:7,marginBottom:7,textAlign:"center"}]}>Consulte sus documentos electrónicos en: www.factel.com.ec</Text>
           </View>

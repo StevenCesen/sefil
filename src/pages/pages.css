@@ -363,6 +363,26 @@
     cursor: pointer;
 }
 
+.pageConsulta__monitorHead{
+    width: 100%;
+    display: grid;
+    background-color: var(--bg-alert-error);
+    height: 50px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 5px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    gap: 10;
+}
+
+.pageConsulta__monitorHead>label{
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-3);
+}
 /* =========================== DETAIL CREDIT ========================== */
 .DetailCredit{
     width: 100%;
@@ -1397,7 +1417,435 @@
     position: relative;
 } */
 
+/* ============================================ PÁGINA DE GESTIÓN =========================================== */
+.Gestion{
+    width: 100%;
+    margin-bottom: 40px;
+}
 
+.Gestion__head{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5% 15% 10% 15% 10% 10% 10% 10% 15%;
+    justify-content: center;
+    align-items:center;
+    padding: 5px;
+    background-color: var(--bg-alert-error);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.Gestion__item{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5% 15% 10% 15% 10% 10% 10% 10% 15%;
+    justify-content: center;
+    align-items:center;
+    padding: 5px;
+    font-weight: 100;
+    text-align: center;
+    height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.Gestion__item>button{
+    background-color: var(--bg-alert-successful);
+    height: 35px;
+    border: none;
+    border-radius: 2px;
+    margin: 0 auto;
+    cursor: pointer;
+    width: 35px;
+}
+
+.Gestion__item:nth-child(2n+1){
+    background-color: var(--bg-2);
+}
+
+.Gestion__head>div{
+    width: 100%;
+    height: 60px;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.Gestion__head>div:nth-child(2),.Gestion__head>div:nth-child(3){
+    justify-content: center;
+}
+
+.Gestion__head>div>label{
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--color-3);
+}
+
+.Gestion__head>div>select,.Gestion__head>div>input{
+    width: 90%;
+    height: 35px;
+    background-color: #FEC888;
+    border: none;
+    border-radius: 2px;
+}
+
+.Gestion__head>div>div{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Gestion__head>div>div>div{
+    width: 50%;
+}
+
+.Gestion__head>div>div>div>label{
+    font-size: 12px;
+    display: block;
+    font-weight: bold;
+    color: var(--color-3);
+}
+
+.Gestion__head>div>div>div>input{
+    width: 100%;
+    background-color: #FEC888;
+    border: none;
+    margin-top: 5px;
+}
+
+/* ============================================== CAMPAÑAS ================================================ */
+
+.Campain__content{
+    width: 60%;
+}
+
+.Campain__title,.Campain__subtitle{
+    color: var(--color-1);
+}
+
+.Campain__title{
+    margin-bottom: 20px;
+}
+
+.Campain__subtitle{
+    margin-bottom: 10px;
+}
+
+.Campain__sincronice{
+    width: 100%;
+}
+
+.Campain__sincronice>div{
+    width: 100%;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    height: 150px;
+    margin-bottom: 10px;
+}
+
+.Campain__list{
+    width: 100%;
+}
+
+.Campain__access{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Campain__access>button{
+    width: 150px;
+    height: 40px;
+    color: var(--color-3);
+    background-color: var(--bg-alert-successful);
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 2px;
+}
+
+.Campain__head{
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    background-color: var(--bg-alert-error);
+    height: 40px;
+    margin-top: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.Campain__head>label{
+    text-align: center;
+    color: var(--color-3);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.Campain__item{
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    height: 40px;
+    margin-top: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.Campain__item>label{
+    font-weight: 100;
+    text-align: center;
+}
+
+.Campain__item>div{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.Campain__item>div>button{
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: var(--bg-alert-successful);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.Campain__item>div>button>img{
+    width: 20px;
+}
+
+/* =========================================== PLANTILLAS DE GESTIÓN ================================================== */
+
+.Templates{
+    width: 70%;
+}
+
+.Templates__init{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.Templates__init>button{
+    height: 40px;
+    padding: 0 10px;
+    background-color: var(--bg-alert-successful);
+    border: none;
+    color: var(--color-3);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.Templates__items{
+    width: 100%;
+}
+
+.Templates__head{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 10% 15% 40% 15% 20%;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-alert-error);
+    height: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.Templates__head>label{
+    color: var(--color-3);
+    font-weight: bold;
+    text-align: center;
+}
+
+.Templates__item{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 10% 15% 40% 15% 20%;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+}
+
+.Templates__item>a{
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.Templates__item>label{
+    width: 100%;
+    font-weight: 100;
+    text-align: center;
+}
+
+/* ================================================ TEMPLATE ============================================ */
+.Template{
+    width: 60%;
+}
+
+.Template__structure{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.Template__inputText,.Template__inputDate,.Template__inputTextArea,.Template__Select{
+    width: 100%;
+    display: flex;
+    font-weight: 100;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.Template__inputText>input{
+    width: 100%;
+    margin-top: 5px;
+    padding-left: 10px;
+    border-radius: 2px;
+    border: 1px solid rgb(199, 199, 199);
+    height: 40px;
+}
+
+.Template__inputDate>input{
+    width: 100%;
+    margin-top: 5px;
+    height: 40px;
+}
+
+.Template__inputTextArea>textarea{
+    width: 100%;
+    margin-top: 5px;
+    height: 60px;
+}
+
+.Template__Select>select{
+    width: 100%;
+    border-radius: 2px;
+    border: 1px solid rgb(199, 199, 199);
+    margin-top: 5px;
+    height: 40px;
+}
+
+.Template__Select>label,.Template__Select>span{
+    height: 40px;
+    padding: 5px 5px;
+    background-color: var(--bg-2);
+    border-radius: 2px;
+    width: 100%;
+    margin-bottom: 5px;
+    font-size: 14px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.Template__Select>label>span{
+    width: 80%;
+}
+
+.Template__Select>label>img{
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    justify-self: flex-end;
+}
+
+.Template__Select>input{
+    width: 100%;
+    height: 40px;
+    border-radius: 2px;
+    padding-left: 10px;
+    border: 1px solid rgb(196, 196, 196);
+}
+
+.Template__Select>div{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.Template__Select>div>button{
+    height: 35px;
+    border-radius: 2px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.option--check{
+    background-color: var(--bg-alert-error) !important;
+    color: var(--color-3) !important;
+    font-weight: 600;
+}
+
+.view--button{
+    display: block !important;
+}
+
+.view--subbutton{
+    display: block !important;
+}
+
+.Template__buttons{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.Template__button{
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 2px;
+    background-color: var(--bg-alert-successful);
+    border: none;
+    color: var(--color-3);
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.Template__button--secondary{
+    background-color: inherit !important;
+    color: var(--color-1) !important;
+    border: 1px solid;
+}
 
 @media screen and (min-width:300px) and (max-width:540px) {
     .Login{

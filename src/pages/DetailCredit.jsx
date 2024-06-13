@@ -429,7 +429,6 @@ export default function DetailCredit(){
                         : 
                             <></>
                     }
-                   
                     {
                         (localStorage.getItem('permission').split(',').includes("Comprobantes:all")) &&
                             <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}&name=${credit.name}`}>Comprobantes de pago</NavLink>

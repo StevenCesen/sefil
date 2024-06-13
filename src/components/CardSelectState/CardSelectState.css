@@ -1,0 +1,50 @@
+.CardSelectState{
+    width: 100%;
+}
+
+.CardSelectState>div{
+    width: 100%;
+}
+
+.CardSelectState__contentSelect{
+    width: 100%;
+    position: relative;
+}
+
+.CardSelectState__contentSelect>label{
+    width: 100%;
+    border: 1px solid rgb(180, 180, 180);
+    padding: 5px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.CardSelectState__select{
+    top: 30px;
+    background-color: var(--bg-2);
+    padding: 10px 10px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    box-shadow: var(--box-shadow);
+}
+
+.CardSelectState__select>label{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 100;
+    height: 30px;
+    color: black;
+    border-radius: 2px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+
+.CardSelectState__select>label:hover{
+    background-color: var(--bg-alert-error);
+}

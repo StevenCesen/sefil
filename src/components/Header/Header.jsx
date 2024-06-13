@@ -3,6 +3,7 @@ import useSessions from "../../hooks/useSessions.js";
 import "./Header.css";
 import MenuUser from "../MenuUser/MenuUser.jsx";
 import MenuNotifier from "../MenuNotifier/MenuNotifier.jsx";
+import CardSelectState from "../CardSelectState/CardSelectState.jsx";
 
 export default function Header(){
     return(
@@ -11,7 +12,15 @@ export default function Header(){
             {
                 (useSessions()) && 
                     <>
-                        <div></div>
+                        {
+                            (localStorage.getItem('rol')==='gestor') 
+                            ?
+                                <CardSelectState
+                                    mode={"select"}
+                                    current_option={"CONECTADO"}
+                                />
+                            :   <div></div>
+                        }
                         {
                             (localStorage.getItem('rol')==='administrador') &&
                                 <MenuNotifier/>
