@@ -7,7 +7,7 @@ import {
     View,
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
-import Barcode from 'react-barcode';
+
 
   const styles = StyleSheet.create({
     page: {
