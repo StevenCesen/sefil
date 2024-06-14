@@ -22,6 +22,7 @@ export default function Setting(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                console.log(data.data);
                 setCarteras(data.data);
             });
     },[]);
@@ -30,9 +31,6 @@ export default function Setting(){
 
     return (
         <div className="pageConsulta">
-            {
-                console.log(param.ci)
-            }
             <div className="DetailCredit__head">
                 <NavLink to="" onClick={()=>history.back()}>Regresar</NavLink>
             </div>
@@ -56,8 +54,7 @@ export default function Setting(){
                                 <label>Cartera</label>
                                 <label>Subida</label>
                                 <label>Última actualización</label>
-                                <label>Versiones</label>
-                                <label>Acciones</label>
+                                <label>Última carga</label>
                                 <label>Estado</label>
                                 <label>Descargar cartera</label>
                                 <label>Descargar pagos</label>
@@ -70,6 +67,7 @@ export default function Setting(){
                                         name={cartera.name}
                                         fecha_upload={cartera.created_at.substr(0,10)}
                                         last_update={cartera.last_update}
+                                        fecha_carga={cartera.fecha_carga}
                                         // versions={JSON.parse(cartera.versions)}
                                         versions={[]}
                                         state={cartera.status}
@@ -94,6 +92,7 @@ export default function Setting(){
                                 <label>Cartera</label>
                                 <label>Subir pagos</label>
                                 <label>Estado</label>
+                                <label>Última carga</label>
                                 <label>En proceso</label>
                                 <label>Acciones</label>
                             </div>
@@ -102,6 +101,7 @@ export default function Setting(){
                                 carteras.map((cartera,index)=>(
                                     <CardUpdatePay
                                         key={index}
+                                        fecha_carga={cartera.fecha_carga}
                                         name={cartera.name}
                                         state={cartera.status}
                                     />

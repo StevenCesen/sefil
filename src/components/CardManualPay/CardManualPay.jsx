@@ -26,6 +26,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                         <p><strong>CÉDULA:</strong> {pagos.ci}</p>
                         <p><strong>CRÉDITO:</strong> {pagos.credito}</p>
                         <p><strong>ESTADO:</strong> {pagos.estado}</p>
+                        <p><strong>FECHA DE PAGO:</strong>{pagos.paymentDay_actual.split(' ')[0]}</p>
                     </div>
                     
                     <div className="CardManualPay__cards">
@@ -108,25 +109,28 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                             >Anterior</button>
                     }
 
-                    <button style={{marginRight:10,border:'1px solid',color:'var(--color-1)',backgroundColor:"inherit"}}
-                        onClick={(e)=>{
-                            e.target.textContent="Cargando...";
+                    {
+                        (pays.next_page_url!==null) &&
+                            <button style={{marginRight:10,border:'1px solid',color:'var(--color-1)',backgroundColor:"inherit"}}
+                                onClick={(e)=>{
+                                    e.target.textContent="Cargando...";
 
-                            fetch(`${(pays.next_page_url)}&cartera=${cartera}`,{
-                                headers: {
-                                    Accept: 'application/json',
-                                }
-                            })
-                                .then((response) => response.json())  
-                                .then((data) => {
-                                    e.target.textContent="Siguiente";
-                                    
-                                    setUpdate(data)
-                                    setPays(data.data[0])
+                                    fetch(`${(pays.next_page_url)}&cartera=${cartera}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            e.target.textContent="Siguiente";
+                                            
+                                            setUpdate(data)
+                                            setPays(data.data[0])
 
-                                });
-                        }}
-                    >Siguiente</button>
+                                        });
+                                }}
+                            >Siguiente</button>
+                    }
 
                     <button
                         onClick={(e)=>{

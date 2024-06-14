@@ -5,7 +5,7 @@ import addNotification from "react-push-notification";
 import CardManualPay from "../CardManualPay/CardManualPay";
 
 
-export default function CardUpdatePay({name,state}){
+export default function CardUpdatePay({name,fecha_carga,state}){
     
     const [viewManual,setView]=useState(false);
     const [pays_denied,setPays]=useState([]);
@@ -24,6 +24,7 @@ export default function CardUpdatePay({name,state}){
         setView(false);
         setCartera({
             name:name,
+            fecha_carga:fecha_carga,
             state:state
         });
 
@@ -52,11 +53,12 @@ export default function CardUpdatePay({name,state}){
                     <input type="file" id={`pays-${name}`}/>
                 </label>
                 <p>{cartera.state}</p>
+                <p>{cartera.fecha_carga}</p>
                 <p>
                     {
                         (pays_denied.total>0) 
                         ?
-                            <>
+                            <div>
                                 <button
                                     onClick={(e)=>{
                                         setView(true)
@@ -64,10 +66,15 @@ export default function CardUpdatePay({name,state}){
                                 >
                                     Procesar {pays_denied.total}
                                 </button>
-                                {/* <button style={{marginLeft:5,padding:5,color:'var(--color-2)',backgroundColor:"inherit",border:'1px solid'}}>
+                                <button 
+                                    onClick={(e)=>{
+                                        location.href='https://sefil.softsen.space/public/api/pays/denegados?cartera=SEFIL_2';
+                                    }}
+                                    style={{marginLeft:5,padding:5,color:'var(--color-2)',backgroundColor:"inherit",border:'1px solid'}}
+                                >
                                     EXCEL
-                                </button> */}
-                            </>
+                                </button>
+                            </div>
                         :
                             pays_denied.total
                     }

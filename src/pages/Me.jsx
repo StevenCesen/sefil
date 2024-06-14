@@ -1,12 +1,14 @@
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { useEffect, useRef, useState } from "react";
+import Eye from "../components/Eye/Eye";
 
 export default function Me(){
     const param = useParams();
     const cartera=new URLSearchParams(useLocation().search);
 
     const [password,setPassword]=useState('');
+    const pass=useRef();
 
     useEffect(()=>{
         setPassword('');
@@ -33,6 +35,7 @@ export default function Me(){
                         <label>
                             Contraseña
                             <input 
+                                ref={pass}
                                 type="password" 
                                 placeholder="*******" 
                                 value={password}
@@ -41,6 +44,9 @@ export default function Me(){
                                         setPassword(e.target.value);
                                     }
                                 }}
+                            />
+                            <Eye
+                                input={pass}
                             />
                         </label>
                         <button

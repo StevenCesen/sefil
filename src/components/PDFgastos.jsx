@@ -126,8 +126,8 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
             <View style={{width:'100%',borderTop:'1px solid black',display:'flex',flexDirection:'row'}}>
               <Text style={{width:'10%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>1.00</Text>
               <Text style={{width:'50%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>GESTIÓN COBRANZA</Text>
-              <Text style={{width:'20%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
-              <Text style={{width:'20%',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
+              <Text style={{width:'20%',borderRight:'1px solid black',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:Number(valor_gasto.substring(1))/1.15,currency:'USD'})}</Text>
+              <Text style={{width:'20%',fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:Number(valor_gasto.substring(1))/1.15,currency:'USD'})}</Text>
             </View>
           </View>
 
@@ -156,7 +156,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
             <View style={{width:'50%',marginTop:10,paddingLeft:100}}>
               <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
                 <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL IVA 15%: </Text>
-                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))/1.15,currency:'USD'})}</Text>
               </View>
               <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
                 <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL IVA 5%: </Text>
@@ -176,7 +176,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
               </View>
               <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
                 <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL SIN IMPUESTOS: </Text>
-                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))/1.15,currency:'USD'})}</Text>
               </View>
               <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
                 <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>SUBTOTAL EXENTO DE IVA: </Text>
@@ -192,7 +192,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
               </View>
               <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
                 <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>IVA 15%: </Text>
-                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))*0.15,currency:'USD'})}</Text>
+                <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>{useFormatterNumber({value:Number(valor_gasto.substring(1))-Number(valor_gasto.substring(1))/1.15,currency:'USD'})}</Text>
               </View>
               <View style={{display:'flex',flexDirection:'row',width:'100%',justifyContent:'space-between'}}>
                 <Text style={[{fontSize:7,marginBottom:7,fontWeight:800}]}>IVA 5%: </Text>

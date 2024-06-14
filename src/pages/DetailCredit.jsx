@@ -386,7 +386,6 @@ export default function DetailCredit(){
                                         //Aquí actualizamos el estado para que desaparezca el botón
                                         // setPDF(true);
                                         setEdit(true);
-
                                     }}
                                 >Generar gastos de cobranza</button>
 

@@ -285,7 +285,7 @@
 }
 
 .pageConsulta__userDates{
-    width: 50%;
+    width: 400px;
     margin: 20px auto;
     display: flex;
     justify-content: center;
@@ -306,6 +306,7 @@
 }
 
 .pageConsulta__userDates>div{
+    width: 100%;
     background-color: var(--bg-2);
     padding: 40px 40px;
     border-radius: 5px;
@@ -332,19 +333,24 @@
 }
 
 .pageConsulta__userDates>div>div>label{
+    width: 100%;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
     margin-bottom: 5px;
     font-size: 14px;
+    position: relative;
+    border: 1px solid rgb(198, 198, 198);
+    padding: 5px;
+    border-radius: 5px;
 }
 
 .pageConsulta__userDates>div>div>label>input{
     width: 200px;
-    height: 30px;
+    height: 25px;
     border-radius: 2px;
-    border: 1px solid var(--color-4);
+    border: none;
     margin-top: 5px;
 }
 
@@ -353,7 +359,7 @@
 }
 
 .pageConsulta__userDates>div>div>button{
-    height: 30px;
+    height: 40px;
     width: 100%;
     border: none;
     border-radius: 2px;

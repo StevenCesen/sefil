@@ -3,7 +3,7 @@
     height: 40px;
     background-color: var(--bg-alert-error);
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
     margin-top: 10px;
@@ -31,7 +31,7 @@
     width: 100%;
     height: 40px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -62,16 +62,23 @@
     text-align:center !important;
 }
 
-.CardListUpdateCarteras>div>p>button{
+.CardListUpdateCarteras>div>p>div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.CardListUpdateCarteras>div>p>div>button{
     height: 30px;
     border-radius: 2px;
     border: none;
+    font-weight: bold;
     background-color: var(--bg-alert-error);
     cursor: pointer;
     font-size: 12px;
 }
 
-.CardListUpdateCarteras>div>p>button:hover{
+.CardListUpdateCarteras>div>p>div>button:hover{
     background-color: #f9aa4a;
 }
 

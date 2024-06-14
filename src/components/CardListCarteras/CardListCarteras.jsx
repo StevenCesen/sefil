@@ -11,13 +11,14 @@ function preFormattedUnit(value){
     }
 }
 
-export default function CardListCarteras({name,fecha_upload,last_update,versions,state}){
+export default function CardListCarteras({name,fecha_upload,last_update,versions,fecha_carga,state}){
     
     const [viewVersions,setView]=useState(false);
     const [cartera,setCartera]=useState({
         name:'',
         fecha_upload:'',
         last_update:'',
+        fecha_carga:fecha_carga,
         versions:[],
         state:''
     });
@@ -33,6 +34,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
             fecha_upload:fecha_upload,
             last_update:last_update,
             versions:versions,
+            fecha_carga:fecha_carga,
             state:state
         });
 
@@ -52,7 +54,8 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                 <p>{cartera.name}</p>
                 <p>{cartera.fecha_upload}</p>
                 <p>{cartera.last_update}</p>
-                <button onClick={(e)=>{
+                <p>{cartera.fecha_carga}</p>
+                {/* <button onClick={(e)=>{
                     setView(!viewVersions);
 
                     if(!viewVersions){
@@ -74,7 +77,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                             }
                         </div>
                     :   <></>
-                }
+                } */}
 
                 <p>{cartera.state}</p>
                 <NavLink to={`https://sefil.softsen.space/public/api/exportar?cartera=${cartera.name}`}>Excel</NavLink>

@@ -180,6 +180,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                 }}>
                                     <option value="Banco de Loja | AHORROS">Banco de Loja | AHORROS</option>
                                     <option value="Banco de Loja | CORRIENTE">Banco de Loja | CORRIENTE</option>
+                                    <option value="Banco Pichincha | AHORROS">Banco Pichincha | AHORROS</option>
                                     <option value="SERVIPAGOS_BL">SERVIPAGOS_BL</option>
                                     <option value="PAGO ÁGIL_BL">PAGO ÁGIL_BL</option>
                                     <option value="CACPE Loja">CACPE Loja</option>
