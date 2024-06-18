@@ -93,3 +93,34 @@
     cursor: pointer;
     font-size: 12px;
 }
+
+.CardFail{
+    width: 500px !important;
+    height: initial !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px 16px;
+    box-shadow: var(--box-shadow);
+    border-radius: 5px;
+    position: fixed !important;
+    top: 200px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border: 1px solid rgb(203, 203, 203);
+    background-color: var(--bg-2) !important;
+}
+
+.CardFail>button{
+    width: 100px !important;
+}
+
+.CardFail>div{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 10px !important;
+    flex-direction: column;
+}

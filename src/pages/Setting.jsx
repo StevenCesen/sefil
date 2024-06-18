@@ -22,7 +22,6 @@ export default function Setting(){
         })
             .then((response) => response.json())  
             .then((data) => {
-                console.log(data.data);
                 setCarteras(data.data);
             });
     },[]);

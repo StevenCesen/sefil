@@ -14,6 +14,9 @@ export default function CardUpdatePay({name,fecha_carga,state}){
         state:''
     });
 
+    const [viewFallas,setViewFallas]=useState();
+    const [fallas,setFallas]=useState();
+
     const label_ref=useRef();
 
     const updateView=()=>{
@@ -22,6 +25,8 @@ export default function CardUpdatePay({name,fecha_carga,state}){
 
     useEffect(()=>{
         setView(false);
+        setViewFallas(false);
+        setFallas([]);
         setCartera({
             name:name,
             fecha_carga:fecha_carga,
@@ -38,6 +43,8 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                 setPays(data);
             });
     },[]);
+
+    if(!fallas) return <></>
 
     return(
         <div className="CardListUpdateCarteras">
@@ -113,34 +120,58 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                             })
                                 .then((response) => response.json())  
                                 .then((data) => {
-                                    e.target.textContent='Importación correcta';
-                                    if(data.pagos_erroneos.length>0){
-                                        setPays(data);
+                                    if(!('fallas' in data)){
+                                        if(data.pagos_erroneos.data.length>0){
+                                            setPays(data.pagos_erroneos);
+                                            addNotification({
+                                                title: 'Pagos subidos',
+                                                subtitle: 'Carga completa, con pendientes',
+                                                message: 'Se han encontrado pagos con diferencias',
+                                                native: false,
+                                                backgroundTop: '#FF9619',
+                                                backgroundBottom: '#fdb864',
+                                                colorTop: 'white',
+                                                colorBottom: 'white',
+                                                closeButton: 'Cerrar',
+                                                duration: 4000,
+                                            });
+
+                                            e.target.textContent='Subido con pagos erróneos';
+
+                                        }else{
+                                            addNotification({
+                                                title: 'Pagos subidos',
+                                                subtitle: 'Carga completa sin pendientes',
+                                                message: '',
+                                                native: false,
+                                                backgroundTop: '#009793',
+                                                backgroundBottom: '#459d9a',
+                                                colorTop: 'white',
+                                                colorBottom: 'white',
+                                                closeButton: 'Cerrar',
+                                                duration: 4000,
+                                            });
+
+                                            e.target.textContent='Importación correcta';
+                                        }
+                                    }else{
                                         addNotification({
-                                            title: 'Pagos subidos',
-                                            subtitle: 'Carga completa, con pendientes',
-                                            message: 'Se han encontrado pagos con diferencias',
+                                            title: 'Error',
+                                            subtitle: 'Formato incorrecto',
+                                            message: 'El archivo cargado no cumple con el formato',
                                             native: false,
                                             backgroundTop: '#FF9619',
                                             backgroundBottom: '#fdb864',
                                             colorTop: 'white',
                                             colorBottom: 'white',
                                             closeButton: 'Cerrar',
-                                            duration: 4000,
+                                            duration: 3000,
                                         });
-                                    }else{
-                                        addNotification({
-                                            title: 'Pagos subidos',
-                                            subtitle: 'Carga completa sin pendientes',
-                                            message: '',
-                                            native: false,
-                                            backgroundTop: '#009793',
-                                            backgroundBottom: '#459d9a',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 4000,
-                                        });
+
+                                        e.target.textContent='Intentar de nuevo';
+                                        setFallas(data.fallas)
+                                        setViewFallas(true);
+                                        
                                     }
                                 });
                         }
@@ -160,6 +191,24 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                 :
                     <>
                     </>
+            }
+
+            {
+                (viewFallas)
+                ?   
+                    <div className="CardFail">
+                        <button className="CardCondonacion__close" onClick={()=>{setViewFallas(false)}}>Volver</button>
+                        {
+                            fallas.map((falla,index)=>(
+                                <div key={index}>
+                                    <p>Fila: {falla.row}</p>
+                                    <p>Atributo: {falla.attribute}</p>
+                                    <p>Error: {falla.errors[0]}</p>
+                                </div>
+                            ))
+                        }
+                    </div>
+                :   <></>
             }
             
         </div>
