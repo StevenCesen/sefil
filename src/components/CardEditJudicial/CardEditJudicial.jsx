@@ -1,17 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./CardEditJudicial.css";
+import useFormatterNumber from "../../hooks/useFormatterNumber";
 
-export default function CardEditJudicial({id,name,gastos_judiciales,setNew,close}){
+export default function CardEditJudicial({id,cartera,totalAmount,gastos_judiciales,setNew,close}){
 
     const [gastos,setGastos]=useState();
+
+    const aumento=useRef();
 
     useEffect(()=>{
         setGastos({
             actual:gastos_judiciales,
-            aumento:0,
-            final:gastos_judiciales
+            aumento:0.00,
+            final:gastos_judiciales,
+            detail:'',
+            id:id,
+            cartera:cartera,
+            totalAmount:totalAmount
         });
-        console.log(gastos)
+      
     },[]);
 
     if(!gastos) return <></>
@@ -20,20 +27,31 @@ export default function CardEditJudicial({id,name,gastos_judiciales,setNew,close
         <div className="CardEditJudicial">
             <p className="CardEditJudicial__header">Editar Gastos Judiciales</p>
             <div className="CardEditJudicial__labels">
+                
                 <label>
-                    Valor actual
-                    <input 
-                        type="number" 
-                        min={0}
-                        value={gastos.actual}
-                        disabled
-                    />
+                    Motivo
+                    <select
+                        value={gastos.detail}
+                        onChange={(e)=>{
+                            setGastos({
+                                ...gastos,
+                                detail:e.target.value
+                            });
+                        }}
+                    >
+                        <option value={""}>--Seleccionar--</option>
+                        <option value="GASTOS NOTARÍA">GASTOS NOTARÍA</option>
+                        <option value="GASTOS CERTIFICADOS">GASTOS CERTIFICADOS</option>
+                    </select>
                 </label>
+                
                 <label>
                     Aumento
                     <input 
                         type="number" 
+                        ref={aumento}
                         value={gastos.aumento}
+                        step={0.01}
                         onChange={(e)=>{
                             setGastos({
                                 ...gastos,
@@ -43,20 +61,66 @@ export default function CardEditJudicial({id,name,gastos_judiciales,setNew,close
                         }}
                     />
                 </label>
+                
             </div>
-            <label>
-                Valor final
-                <input 
-                    type="text"  
-                    disabled
-                    value={gastos.final}
-                />
-            </label>
+
+            <div className="CardEditJudicial__details">
+                <div>
+                    <p>Valor actual: </p>
+                    <p>{useFormatterNumber({value:gastos.actual,currency:'USD'})}</p>
+                </div>
+                <div>
+                    <p>Valor agregado: </p>
+                    <p>{useFormatterNumber({value:gastos.aumento,currency:'USD'})}</p>
+                </div>
+                <div>
+                    <p>Valor final: </p>
+                    <p>{useFormatterNumber({value:gastos.final,currency:'USD'})}</p>
+                </div>
+            </div>
+            
             <div className="CardEditJudicial__footer">
                 <button
                     onClick={(e)=>{
-                        close(false);
-                        setNew(gastos.final);
+        
+                        if(gastos.final>0 & gastos.detail!==''){
+
+                            e.target.textContent='Actualizando...';
+                            const new_total_amount=Number(totalAmount)+Number(aumento.current.value);
+
+                            const data={
+                                actual:gastos.actual,
+                                aumento:gastos.aumento,
+                                final:gastos.final,
+                                detail:gastos.detail,
+                                id:Number(gastos.id),
+                                cartera:gastos.cartera,
+                                totalAmount:new_total_amount
+                            };
+                        
+                            fetch(`https://sefil.softsen.space/public/api/judicial`,{
+                                method:'POST',
+                                headers: {
+                                    Accept: 'application/json',
+                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                },
+                                body:new URLSearchParams(data)
+                            })
+                                .then((response) => response.json())  
+                                .then((data) => {
+                                    if(data.state===200){
+                                        
+                                        setNew(gastos.final,new_total_amount);
+                                        close(false);
+
+                                    }else{
+                                        e.target.textContent='Error, inténtalo de nuevo';
+                                    }
+                                });
+                        }else{
+                            e.target.textContent='Error, datos incompletos';
+                        }
+
                     }}
                 >Actualizar</button>
             </div>

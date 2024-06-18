@@ -453,6 +453,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             }else{ 
                                 //Compruebo si no existe el mismo codigo de deposito
                                 if(data_encode.forma_pago!=='efectivo'){
+
                                     
                                     fetch(`https://sefil.softsen.space/public/api/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
                                             headers: {

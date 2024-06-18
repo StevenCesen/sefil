@@ -60,10 +60,11 @@ export default function DetailCredit(){
         setPDFcondonation(true);
     }
 
-    const updateGastosJudiciales=(value)=>{
+    const updateGastosJudiciales=(value,total)=>{
         setCredit({
             ...credit,
-            gastos_judiciales:value
+            gastos_judiciales:value,
+            totalAmount:total
         });
     }
 
@@ -567,9 +568,10 @@ export default function DetailCredit(){
                         <button className="CardCondonacion__close" onClick={()=>{setEditJudicial(false)}}>Volver</button>
                         
                         <CardEditJudicial
-                            id={credit.id}
-                            name={credit.name}
+                            id={param.get('id')}
+                            cartera={cartera.id}
                             gastos_judiciales={credit.gastos_judiciales}
+                            totalAmount={credit.totalAmount}
                             setNew={updateGastosJudiciales}
                             close={setEditJudicial}
                         />

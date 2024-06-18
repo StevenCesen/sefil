@@ -45,7 +45,7 @@
     flex-direction: column;
 }
 
-.CardEditJudicial__labels>label>input{
+.CardEditJudicial__labels>label>input,.CardEditJudicial__labels>label>select{
     width: 100%;
     margin-top: 5px;
     height: 40px;
@@ -54,6 +54,24 @@
 .CardEditJudicial>label{
     padding-left: 10px;
     margin-top: 10px;
+}
+
+.CardEditJudicial__details{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+.CardEditJudicial__details>div{
+    padding-right: 10px;
+    margin-top: 10px;
+    font-weight: 100;
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .CardEditJudicial>label>input{
