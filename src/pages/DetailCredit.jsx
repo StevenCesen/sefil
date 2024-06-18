@@ -13,6 +13,7 @@ import { PDFViewer } from "@react-pdf/renderer";
 import PDFgastos from "../components/PDFgastos";
 import PDFcondonacion from "../components/PDFcondonacion";
 import CardConfirm from "../components/CardConfirm/CardConfirm";
+import CardEditJudicial from "../components/CardEditJudicial/CardEditJudicial";
 
 const render = (status) => {
     return <h1>{status}</h1>;
@@ -48,6 +49,8 @@ export default function DetailCredit(){
 
     const [viewPDFGastos,setPDF]=useState(true);
 
+    const [edit_judicial,setEditJudicial]=useState();
+
     const [pre_edit,setEdit]=useState(false);
 
     const param=new URLSearchParams(useLocation().search);
@@ -55,6 +58,13 @@ export default function DetailCredit(){
 
     const view=()=>{
         setPDFcondonation(true);
+    }
+
+    const updateGastosJudiciales=(value)=>{
+        setCredit({
+            ...credit,
+            gastos_judiciales:value
+        });
     }
 
     const [prev_gasto,setPrev]=useState(0);
@@ -140,6 +150,7 @@ export default function DetailCredit(){
         setGastos(false);
         setPDF(false);
         setEdit(false);
+        setEditJudicial(false);
 
         fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
             headers: {
@@ -297,9 +308,16 @@ export default function DetailCredit(){
                             <p className="Head">Gastos de cobranza</p>
                             <span>{useFormatterNumber({value:credit.gastos_cobranza,currency:'USD'})}</span>
                         </div>
-                        <div>   
+                        <div className="Details__newbutton">   
                             <p className="Head">Gastos judiciales</p>
                             <span>{useFormatterNumber({value:credit.gastos_judiciales,currency:'USD'})}</span>
+                            <div
+                                onClick={(e)=>{
+                                    setEditJudicial(true);
+                                }}
+                            >
+
+                            </div>
                         </div>
                         <div>
                             <p className="Head">Otros valores</p>
@@ -540,6 +558,22 @@ export default function DetailCredit(){
                                 user_auth={value_condonacion.by_user}
                             />
                         </PDFViewer>
+                    </div>
+            }
+
+            {
+                (edit_judicial) &&
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setEditJudicial(false)}}>Volver</button>
+                        
+                        <CardEditJudicial
+                            id={credit.id}
+                            name={credit.name}
+                            gastos_judiciales={credit.gastos_judiciales}
+                            setNew={updateGastosJudiciales}
+                            close={setEditJudicial}
+                        />
+                    
                     </div>
             }
         </div>

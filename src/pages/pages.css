@@ -536,6 +536,33 @@
     justify-content: center;
     align-items: center;
     grid-template-columns: 35% 65%;
+    position: relative;
+}
+
+.DetailCredit__table>div>div{
+    width: 30px;
+    height: 30px;
+    background-color: var(--bg-alert-successful);
+    border-radius: 2px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.DetailCredit__table>div>div::before{
+    content:'';
+    border-left: 6px solid transparent;
+    border-right:6px solid transparent;
+    border-top: 6px solid var(--bg-2);
+    position: absolute;   
+    cursor: pointer;   
+    transition: all 0.2s ease-in-out;    
+    transform: rotate(0deg);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 }
 
 .DetailCredit__table>div:first-child{

@@ -1,0 +1,87 @@
+.CardEditJudicial{
+    width: 300px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+}
+
+.CardEditJudicial__header{
+    height: 50px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    padding-left: 10px;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    margin-bottom: 10px;
+}
+
+.CardEditJudicial__labels{
+    width: 100%;
+    padding: 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.CardEditJudicial__labels>label{
+    width: 100% !important;
+    display:flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.CardEditJudicial>label{
+    width: 100% !important;
+    display:flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.CardEditJudicial__labels>label>input{
+    width: 100%;
+    margin-top: 5px;
+    height: 40px;
+}
+
+.CardEditJudicial>label{
+    padding-left: 10px;
+    margin-top: 10px;
+}
+
+.CardEditJudicial>label>input{
+    margin-top: 5px;
+    height: 40px;
+}
+
+.CardEditJudicial__footer{
+    height: 50px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 10px;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    margin-top: 10px;
+}
+
+.CardEditJudicial__footer>button{
+    height: 35px;
+    color: var(--color-3);
+    border: none;
+    background-color: #037874;
+    border-radius: 2px;
+    cursor: pointer;
+    padding: 0 10px;
+    font-weight: bold;
+    font-size: 14px;
+}
