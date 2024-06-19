@@ -164,6 +164,7 @@ export default function NavSlide({actions,permission}){
                                         <>
                                             <NavLink to={"dashboard/reportes/estado"}>Estado de cartera</NavLink>
                                             <NavLink to={"dashboard/reportes/actividad"}>Cierre de caja</NavLink>
+                                            <NavLink to={"dashboard/reportes/judicial"}>Gastos judiciales</NavLink>
                                         </>
                                     :
                                         <></>

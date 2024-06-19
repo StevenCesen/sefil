@@ -5,6 +5,7 @@ import useFormatterNumber from "../../hooks/useFormatterNumber";
 export default function CardEditJudicial({id,cartera,totalAmount,gastos_judiciales,setNew,close}){
 
     const [gastos,setGastos]=useState();
+    const [judiciales,setJudiciales]=useState();
 
     const aumento=useRef();
 
@@ -18,14 +19,45 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
             cartera:cartera,
             totalAmount:totalAmount
         });
+
+        fetch(`https://sefil.softsen.space/public/api/judicial?cartera=${cartera}&credito=${id}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                console.log(data);
+                setJudiciales(data.judiciales);
+            });
       
     },[]);
 
     if(!gastos) return <></>
+    if(!judiciales) return <></>
 
     return (
         <div className="CardEditJudicial">
             <p className="CardEditJudicial__header">Editar Gastos Judiciales</p>
+            
+            <h3>Historial</h3>
+            <div className="CardEditJudicial__prevs">
+                
+                {
+                    (judiciales.length>0)
+                    ?
+                        judiciales.map((judicial,index)=>(
+                            <div key={index} className="CardEditJudicial__prev">
+                                <p>{judicial.modify}</p>
+                                <p>{useFormatterNumber({value:judicial.total_value,currency:'USD'})}</p>
+                            </div>
+                        ))
+                    :   <p>Sin registros</p>
+                }
+            </div>
+
+            <h3>Generar nuevo</h3>
             <div className="CardEditJudicial__labels">
                 
                 <label>
