@@ -1,5 +1,5 @@
 export default function useReceiveState(update){
-    Pusher.logToConsole = false;
+    Pusher.logToConsole = true;
 
     let pusher = new Pusher('72f41397173889c67e4e', {
         cluster: 'us2'

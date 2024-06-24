@@ -68,16 +68,17 @@ export default function NavSlide({actions,permission}){
                                 {
                                     (options.includes('Gestion:all')) ?
                                         <>
-                                            <NavLink to={"dashboard/call"}>Gestión</NavLink>
                                             {
                                                 (options.includes('User:all') | options.includes('User:minimize'))
                                                 ?
                                                     <>
+                                                        <NavLink to={"dashboard/glist"}>Historial de gestiones</NavLink>
                                                         <NavLink to={"dashboard/monitor"}>Monitoreo</NavLink>
                                                         <NavLink to={"dashboard/campain"}>Campañas</NavLink>
                                                         <NavLink to={"dashboard/ccall"}>Configuración de Gestión</NavLink>
                                                     </>
-                                                :   <></>
+
+                                                :   <NavLink to={"dashboard/call"}>Gestión</NavLink>
                                             }
                                         </>
                                     :
