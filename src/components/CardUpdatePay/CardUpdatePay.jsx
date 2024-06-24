@@ -42,6 +42,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
             .then((data) => {
                 setPays(data);
             });
+            
     },[]);
 
     if(!fallas) return <></>
@@ -86,6 +87,8 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                             pays_denied.total
                     }
                 </p>
+                
+                <NavLink to={`https://sefil.softsen.space/public/api/nopays?cartera=${name}`}>Descargar</NavLink>
 
                 <button
                     onClick={(e)=>{

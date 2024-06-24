@@ -93,6 +93,7 @@ export default function Setting(){
                                 <label>Estado</label>
                                 <label>Última carga</label>
                                 <label>En proceso</label>
+                                <label>Créditos sin pagos</label>
                                 <label>Acciones</label>
                             </div>
 
