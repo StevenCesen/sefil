@@ -167,8 +167,15 @@ export default function Dashboard({rol}){
                                                                         (localStorage.getItem('rol')==='administrador') ?
                                                                             <Home/>
                                                                         :
-                                                                            (localStorage.getItem('rol')!=='super')? 
-                                                                                <Consulta/>
+                                                                            (localStorage.getItem('rol')!=='super')
+                                                                            ? 
+
+                                                                                (localStorage.getItem('rol')==='cobranza' | localStorage.getItem('rol')==='consulta')
+                                                                                ?
+                                                                                    <Consulta/>
+                                                                                : 
+                                                                                    <Gestion/>
+
                                                                             :   <Setting/>
             }
         </div>

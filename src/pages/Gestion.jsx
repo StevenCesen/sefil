@@ -31,6 +31,8 @@ export default function Gestion(){
 
     useEffect(()=>{
 
+        location.hash='/dashboard/call';
+        
         setForm(false);
         setStateCall(true);
         setStateGestion(true);

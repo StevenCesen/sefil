@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./CardAssignCampain.css";
 import { useEffect } from "react";
 import FilterRange from "../FilterRange/FilterRange";
+import useAssignSearch from "../../hooks/useAssignSearch";
 
 export default function CardAssignCampain({data}){
 
@@ -12,6 +13,42 @@ export default function CardAssignCampain({data}){
     const [charge,setCharge]=useState();
     const [agent,setAgents]=useState();
     const [distributions,setDistributions]=useState();
+    const [item_filter,setItems]=useState();
+    const [coincidence,setCoincidence]=useState();
+
+    const update=(data)=>{
+        setCharge(data);
+    }
+
+    const setInit=()=>{
+        let copy=charge;
+
+        copy.map(item=>{
+            item.search=true;
+        });
+
+        setCharge(copy);
+
+    }
+
+    const calcTotal=(data)=>{
+        let count=0;
+
+        data.map((item)=>{
+            (item.search) && count++
+        })
+
+        return count;
+    }
+
+    const updateRange=(key,value)=>{
+        let copy=item_filter;
+
+        copy[key]=value;
+        setItems(item_filter);
+
+        useAssignSearch(charge,'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
+    }
 
     useEffect(()=>{
         setMode('manual');
@@ -19,21 +56,16 @@ export default function CardAssignCampain({data}){
         setView(false);
         setAgents('');
         setDistributions(JSON.parse(data.distributions));
-        setCharge({
-            current_page:1,
-            data:[],
-            first_page_url:'',
-            from:1,
-            last_page:0,
-            last_page_url:'',
-            links:[],
-            next_page_url:'',
-            path:'',
-            per_page:0,
-            prev_page_url:'',
-            to:0,
-            total:0,
-            acumulado:0,
+        setCharge([]);
+        setCoincidence('1');
+        setItems({
+            filter:false,
+            mode:'',
+            mora:'',
+            cuota:'',
+            monto:'',
+            estado:'',
+            agencia:''
         });
 
         fetch("https://sefil.softsen.space/public/api/bussines",{
@@ -151,7 +183,7 @@ export default function CardAssignCampain({data}){
                             <select
                                 onChange={(e)=>{
                                     if(e.target.value!==""){
-                                        fetch(`https://sefil.softsen.space/public/api/credit?cartera=${e.target.value}&estado=Cancelado`,{
+                                        fetch(`https://sefil.softsen.space/public/api/credit/all?cartera=${e.target.value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -159,6 +191,10 @@ export default function CardAssignCampain({data}){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
+                                                data.map((credit)=>{
+                                                    credit.search=true;
+                                                });
+
                                                 setCharge(data)
                                             });
                                     }
@@ -193,24 +229,42 @@ export default function CardAssignCampain({data}){
 
             <label 
                 className="CardAssignCampain__file">
-                Cargar datos ({charge.total})
+                Cargar datos ({calcTotal(charge)})
                 {/* <input id="campain" type="file"/> */}
                 {
-                    (charge.total>0)
+                    (charge.length>0)
                     ?
-                        <input type="text" placeholder="Ingrese nombre o cédula"/>
+                        <input 
+                            onChange={(e)=>{
+                                // DATA, VALOR A BUSCAR, FUNCION DE ACTUALIZACIÓN, FILTER_MODO,MODO, DIAS_MORA, CUOTAS, MONTO, ESTADO, AGENCIA
+                                useAssignSearch(
+                                    charge,
+                                    e.target.value,
+                                    update,
+                                    item_filter.filter,
+                                    item_filter.mode,
+                                    item_filter.mora,
+                                    item_filter.cuota,
+                                    item_filter.monto,
+                                    item_filter.estado,
+                                    item_filter.agencia
+                                );
+                            }}
+                            type="text" 
+                            placeholder="Ingrese nombre o cédula"
+                        />
                     :   <></>
                 }
                 <div>
                     {
-                        (charge.total>0)
+                        (charge.length>0)
                         ?   
                             <>
                                 <div className="CardAssignCampain__headCharge">
                                     <input 
                                         type="checkbox"
                                         onChange={(e)=>{
-                                            const prev_charge=charge.data;
+                                            const prev_charge=charge;
 
                                             if(e.target.checked){
                                                 prev_charge.map((credit)=>{
@@ -238,20 +292,23 @@ export default function CardAssignCampain({data}){
                                     <label>Estado</label>
                                 </div>
                                 {
-                                    charge.data.map((credit,index)=>(
-                                        <div className="CardAssignCampain__itemCharge">
-                                            <input 
-                                                type="checkbox"
-                                                checked={credit.select}
-                                            />
-                                            <label>{credit.name}</label>
-                                            <label>{credit.ci}</label>
-                                            <label>{credit.credito}</label>
-                                            <label>{credit.totalAmount}</label>
-                                            <label>{credit.pendingFees}</label>
-                                            <label>{credit.dias_vencidos}</label>
-                                            <label>{credit.collectionState}</label>
-                                        </div>
+                                    charge.map((credit,index)=>(
+                                        (credit.search===true)
+                                        ?
+                                            <div className="CardAssignCampain__itemCharge">
+                                                <input 
+                                                    type="checkbox"
+                                                    checked={credit.select}
+                                                />
+                                                <label>{credit.name}</label>
+                                                <label>{credit.ci}</label>
+                                                <label>{credit.credito}</label>
+                                                <label>{credit.totalAmount}</label>
+                                                <label>{credit.pendingFees}</label>
+                                                <label>{credit.dias_vencidos}</label>
+                                                <label>{credit.collectionState}</label>
+                                            </div>
+                                        :   <></>
                                     ))
                                 }
 
@@ -267,13 +324,16 @@ export default function CardAssignCampain({data}){
                 <label>
                     <input 
                         type="radio"
-                        name="mode"
-                        value={"manual"}
+                        name="coincidence"
+                        value={1}
                         onChange={(e)=>{
                             if(e.target.checked){
-                            
+                                setInit();
+                                setCoincidence(e.target.value);
+                                useAssignSearch(charge,'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
                         }}
+                        defaultChecked
                     />
                     Coincidir
                 </label>
@@ -281,11 +341,13 @@ export default function CardAssignCampain({data}){
                 <label>
                     <input 
                         type="radio"
-                        name="mode"
-                        value={"transfer"}
+                        name="coincidence"
+                        value={2}
                         onChange={(e)=>{
                             if(e.target.checked){
-                                
+                                setInit();
+                                setCoincidence(e.target.value);
+                                useAssignSearch(charge,'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
                         }}
                     />
@@ -297,12 +359,20 @@ export default function CardAssignCampain({data}){
                 
                 <div className="CardAssignCampain__ranges">
                     <FilterRange
+                        filter={updateRange}
+                        key_val={"mora"}
                         title={"Días de mora"}
                     />
+
                     <FilterRange
+                        filter={updateRange}
+                        key_val={"cuota"}
                         title={"Cuotas pendientes"}
                     />
+                    
                     <FilterRange
+                        filter={updateRange}
+                        key_val={"monto"}
                         title={"Monto total"}
                     />
                 </div>
@@ -364,12 +434,18 @@ export default function CardAssignCampain({data}){
                         
                         e.target.textContent="Asignando...";
 
+                        //Si no hay agente asignado, reparto toda la carga en partes iguales para todos los agentes que estén en la campaña
+                        //De toda la carga solo elijo los créditos que tienen el campo SEARCH: true
+
                         const dates={
                             agent_id:agent,
                             total:charge.data.length,
-                            distribution:charge.data
+                            distribution:charge.data,
+                            pending:charge.data, //Créditos que no están gestionados
+                            processed:[], //Créditos que ya han sido gestionados
+                            inprocess:[] //Créditos que se hicieron llamadas pero fueron no efectivas, es decir, si no es CONTACTADO se puede seguir al siguiente crédito sin guardar gestión
                         };
-
+                        
                         const copy_distributions=distributions;
 
                         copy_distributions.push(dates);

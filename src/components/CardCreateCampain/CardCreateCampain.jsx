@@ -24,7 +24,7 @@ export default function CardCreateCampain({setData}){
         });
 
         //Bajamos los agentes
-        fetch(`https://sefil.softsen.space/public/api/users?role=gestor`,{
+        fetch(`https://sefil.softsen.space/public/api/users/agents`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
