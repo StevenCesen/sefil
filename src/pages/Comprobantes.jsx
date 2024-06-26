@@ -242,6 +242,7 @@ export default function Comprobantes(){
                                     <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).gastos_cobranza,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).gastos_cobranza,currency:'USD'})}</p>
                                     <p>{(comprobante.tipo_transaccion==='parcial') ? useFormatterNumber({value:JSON.parse(comprobante.detalle).otros_valores,currency:'USD'}) : useFormatterNumber({value:JSON.parse(comprobante.prevDates).otros_valores,currency:'USD'})}</p>
                                     <p>{useFormatterNumber({value:(Number(comprobante.valor_recibido)-Number(comprobante.valor_devuelto)),currency:'USD'})}</p>
+                                    
                                     <div>
                                         {
                                             (comprobante.id!=='FACES') &&
