@@ -1,5 +1,5 @@
 export default async function useVerifyStruct(id){
-    const request= await fetch(`https://sefil.softsen.space/public/api/credit/verify/restruct/${id}`,{
+    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/verify/restruct/${id}`,{
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`

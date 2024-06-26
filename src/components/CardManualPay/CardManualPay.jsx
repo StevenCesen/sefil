@@ -149,7 +149,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     judicial_actual:pagos.judicial_actual
                                 });
 
-                                fetch(`https://sefil.softsen.space/public/api/pays/edit`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/edit`,{
                                     method:'POST',
                                     headers: {
                                         Accept: 'application/json',
@@ -161,7 +161,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                         
                                         if(data.state===200){
                                             //Devuelvo el siguiente pago
-                                            fetch(`https://sefil.softsen.space/public/api/pays/denied?page=${(pays.from)-1}&cartera=${cartera}`,{
+                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/denied?page=${(pays.from)-1}&cartera=${cartera}`,{
                                                 headers: {
                                                     Accept: 'application/json',
                                                 }
@@ -189,7 +189,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     judicial_actual:pagos.judicial_actual
                                 });
 
-                                fetch(`https://sefil.softsen.space/public/api/pays/edit`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/edit`,{
                                     method:'POST',
                                     headers: {
                                         Accept: 'application/json',

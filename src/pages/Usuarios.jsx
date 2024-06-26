@@ -18,7 +18,7 @@ export default function Usuarios(){
     });
 
     useEffect(()=>{
-        fetch("https://sefil.softsen.space/public/api/users",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -125,7 +125,7 @@ export default function Usuarios(){
 
                             e.target.textContent='Guardando...';
 
-                            fetch("https://sefil.softsen.space/public/api/register",{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/register`,{
                                 method:'POST',
                                 body:new_data,
                                 headers: {

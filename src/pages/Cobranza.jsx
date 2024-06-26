@@ -64,7 +64,7 @@ export default function Cobranza(){
         setCanton('all');
         setParroquia('all');
 
-        fetch("https://sefil.softsen.space/public/api/bussines",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -83,7 +83,7 @@ export default function Cobranza(){
 
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null){
             setAux(localStorage.getItem('cartera'));
-            fetch(`https://sefil.softsen.space/public/api/bussines/${localStorage.getItem('cartera')}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -119,7 +119,7 @@ export default function Cobranza(){
                                 if(e.target.value!=='default'){
                                     setAux(e.target.value);
                                     localStorage.setItem('cartera',e.target.value);
-                                    fetch(`https://sefil.softsen.space/public/api/bussines/${e.target.value}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -158,7 +158,7 @@ export default function Cobranza(){
                                         onChange={(e)=>{
                                             setClient(e.target.value);
                                             if(e.target.value==='GARANTE'){
-                                                fetch(`https://sefil.softsen.space/public/api/credit/filterGarante`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filterGarante`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -169,7 +169,7 @@ export default function Cobranza(){
                                                         updateCredits(data.data)
                                                     });
                                             }else{
-                                                fetch(`https://sefil.softsen.space/public/api/credit?cartera=SEFIL_1`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit?cartera=SEFIL_1`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -200,7 +200,7 @@ export default function Cobranza(){
                                             if(e.target.value!=='default'){
                                                 setAux(e.target.value);
                                                 localStorage.setItem('cartera',e.target.value);
-                                                fetch(`https://sefil.softsen.space/public/api/bussines/${e.target.value}`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -230,7 +230,7 @@ export default function Cobranza(){
                                         placeholder="Cantón"
                                         onChange={(e)=>{
                                             setInput(e.target.value);
-                                            fetch(`https://sefil.softsen.space/public/api/credit/filter?canton=${canton_input}`,{
+                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?canton=${canton_input}`,{
                                                 headers: {
                                                     Accept: 'application/json',
                                                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -254,7 +254,7 @@ export default function Cobranza(){
                                             setParroquia(e.target.value);
 
                                             if(e.target.value==='vigente'){
-                                                fetch(`https://sefil.softsen.space/public/api/credit/filter?estadoNot=Cancelado`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estadoNot=Cancelado`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -265,7 +265,7 @@ export default function Cobranza(){
                                                         updateCredits(data.data)
                                                     });
                                             }else{
-                                                fetch(`https://sefil.softsen.space/public/api/credit/filter?estado=Cancelado&canton=${canton_input}&empresa=${aux_busines}`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=Cancelado&canton=${canton_input}&empresa=${aux_busines}`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`

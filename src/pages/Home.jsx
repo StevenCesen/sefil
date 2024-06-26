@@ -145,7 +145,7 @@ export default function Home(){
         //         });
         //     });
 
-        fetch(`https://sefil.softsen.space/public/api/vouchers?fecha=2024/02&order`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers?fecha=2024/02&order`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -172,7 +172,7 @@ export default function Home(){
         //     .then((response) => response.json())  
         //     .then((data) => setRestruct(data.data));
 
-        fetch("https://sefil.softsen.space/public/api/vouchers/getTotalDay",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalDay`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -181,7 +181,7 @@ export default function Home(){
             .then((response) => response.json())  
             .then((data) => setTotal(data));
         
-        fetch("https://sefil.softsen.space/public/api/vouchers/getTotalMonth",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalMonth`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -199,7 +199,7 @@ export default function Home(){
         //     .then((response) => response.json())  
         //     .then((data) => setUsers(data));
 
-        fetch("https://sefil.softsen.space/public/api/bussines/vouchers",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/vouchers`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`

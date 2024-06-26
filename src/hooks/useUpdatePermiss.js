@@ -1,8 +1,7 @@
 import addNotification from "react-push-notification";
 
-
 export default async function useUpdatePermiss(data,id){
-    const request= await fetch(`https://sefil.softsen.space/public/api/users/edit/${id}`,{
+    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/edit/${id}`,{
         method:'PUT',
         body:new URLSearchParams(data),
         headers: {

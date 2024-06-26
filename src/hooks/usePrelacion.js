@@ -10,8 +10,6 @@ export default function usePrelacion(value,data_original,setPrelacion,setData){
         otros_valores:0.00
     };
 
-    console.log(data_original.otros_valores)
-
     if(calcRestante(Number(value),Number(data_original.mora))){ //El monto abonado si alcanza para cancelar toda la mora
         value=value-Number(data_original.mora);
 

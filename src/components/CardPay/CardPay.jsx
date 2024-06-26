@@ -318,7 +318,6 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                             
                                         }else{
                                             if(pay.forma_pago==='efectivo'){
-                                                console.log(data.totalAmount)
                                                 setData({
                                                     ...pay,
                                                     valor_recibido:e.target.value,
@@ -453,9 +452,8 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             }else{ 
                                 //Compruebo si no existe el mismo codigo de deposito
                                 if(data_encode.forma_pago!=='efectivo'){
-
                                     
-                                    fetch(`https://sefil.softsen.space/public/api/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
                                             headers: {
                                                 Accept: 'application/json'
                                             }
@@ -464,7 +462,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                             .then(async (data) => {
                                                 /*========================================================EL CÓDIGO DE DEPOSITO ES ÚNICO Y NO EXISTE AÚN EN BASE================================================*/
                                                 if(data.state===200){
-                                                    fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/pay/${id}`,{
                                                         method:'PUT',
                                                         headers: {
                                                             Accept: 'application/json',
@@ -507,7 +505,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                             });
                                 }else{
                                     /*========================================================PAGO EXITOSO================================================*/
-                                    fetch(`https://sefil.softsen.space/public/api/credit/pay/${id}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/pay/${id}`,{
                                             method:'PUT',
                                             headers: {
                                                 Accept: 'application/json',

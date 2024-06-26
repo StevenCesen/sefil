@@ -1,7 +1,7 @@
 export default function useSearch(string,cartera,setData,setTotal){
     if(string.length>4){
         if(/^[A-Za-z ]+/.test(string)){
-            fetch(`https://sefil.softsen.space/public/api/credit/filter?nombre=${string}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?nombre=${string}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -12,7 +12,7 @@ export default function useSearch(string,cartera,setData,setTotal){
                     setData(data.data)
                 });
         }else{
-            fetch(`https://sefil.softsen.space/public/api/credit/filter?cedula=${string}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?cedula=${string}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -24,7 +24,7 @@ export default function useSearch(string,cartera,setData,setTotal){
                 });
         }
     }else if(string===''){
-        fetch(`https://sefil.softsen.space/public/api/credit?cartera=SEFIL_1`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit?cartera=SEFIL_1`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`

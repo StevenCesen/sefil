@@ -26,7 +26,7 @@ export default function Garantes(){
     }
     
     useEffect(()=>{
-        fetch(`https://sefil.softsen.space/public/api/credit/view?credit=${param.ci}&cartera=${cartera.get('cartera')}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/view?credit=${param.ci}&cartera=${cartera.get('cartera')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -69,7 +69,7 @@ export default function Garantes(){
                                 <div>
                                     <p>Créditos asociados</p>
                                     <select onChange={(e)=>{
-                                        fetch(`https://sefil.softsen.space/public/api/credit/${e.target.value}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/${e.target.value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`

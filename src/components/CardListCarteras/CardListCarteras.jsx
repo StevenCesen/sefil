@@ -78,9 +78,9 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                         </div>
                     :   <></>
                 } */}
-
+                
                 <p>{cartera.state}</p>
-                <NavLink to={`https://sefil.softsen.space/public/api/exportar?cartera=${cartera.name}`}>Excel</NavLink>
+                <NavLink to={`${import.meta.env.VITE_URL_BASE}/public/api/exportar?cartera=${cartera.name}`}>Excel</NavLink>
                 <div>
                     <div>
                         <label>
@@ -105,7 +105,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                             />
                         </label>
                     </div>
-                    <NavLink to={`https://sefil.softsen.space/public/api/pays?cartera=${cartera.name}&fecha_inicio=${date_start}&fecha_final=${date_end}`}>Excel</NavLink>
+                    <NavLink to={`${import.meta.env.VITE_URL_BASE}/public/api/pays?cartera=${cartera.name}&fecha_inicio=${date_start}&fecha_final=${date_end}`}>Excel</NavLink>
                 </div>
                 
             </div>

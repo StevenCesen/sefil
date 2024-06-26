@@ -20,7 +20,7 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
             totalAmount:totalAmount
         });
 
-        fetch(`https://sefil.softsen.space/public/api/judicial?cartera=${cartera}&credito=${id}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/judicial?cartera=${cartera}&credito=${id}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -28,7 +28,6 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
         })
             .then((response) => response.json())  
             .then((data) => {
-                console.log(data);
                 setJudiciales(data.judiciales);
             });
       
@@ -130,7 +129,7 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
                                 totalAmount:new_total_amount
                             };
                         
-                            fetch(`https://sefil.softsen.space/public/api/judicial`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/judicial`,{
                                 method:'POST',
                                 headers: {
                                     Accept: 'application/json',

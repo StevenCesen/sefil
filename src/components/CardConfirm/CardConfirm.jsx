@@ -68,7 +68,7 @@ export default function CardConfirm({id,value,email,name,ci,direccion,telefono,s
                         //     clave_acceso:"NO/D"
                         // });
 
-                        fetch(`https://sefil.softsen.space/public/api/gastos/${dates.id}`,{
+                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gastos/${dates.id}`,{
                             method:'POST',
                             headers: {
                                 Accept: 'application/json',

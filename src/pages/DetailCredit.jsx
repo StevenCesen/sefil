@@ -153,7 +153,7 @@ export default function DetailCredit(){
         setEdit(false);
         setEditJudicial(false);
 
-        fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -164,7 +164,7 @@ export default function DetailCredit(){
                 setCredit(data);
             });
         
-        fetch(`https://sefil.softsen.space/public/api/gastos?credito=${param.get('id')}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gastos?credito=${param.get('id')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -192,7 +192,7 @@ export default function DetailCredit(){
                 }
             });
         
-        fetch(`https://sefil.softsen.space/public/api/genGastos?cartera=${cartera.id}&credito=${param.get('id')}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/genGastos?cartera=${cartera.id}&credito=${param.get('id')}`,{
             method:'GET',
             headers: {
                 Accept: 'application/json'
@@ -234,7 +234,7 @@ export default function DetailCredit(){
                 <div>
                     <p>Créditos asociados</p>
                     <select onChange={(e)=>{
-                        fetch(`https://sefil.softsen.space/public/api/credit/view?cartera=${cartera.id}&credit=${e.target.value}`,{
+                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/view?cartera=${cartera.id}&credit=${e.target.value}`,{
                             headers: {
                                 Accept: 'application/json',
                                 Authorization: `Bearer ${localStorage.getItem('token')}`

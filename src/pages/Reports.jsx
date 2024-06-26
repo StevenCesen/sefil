@@ -157,7 +157,7 @@ export default function Reports(){
             filters:{}
         });
 
-        fetch("https://sefil.softsen.space/public/api/vouchers/getTotalMonths",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalMonths`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -168,7 +168,7 @@ export default function Reports(){
                 setTotalMonths(data);
             });
 
-        fetch("https://sefil.softsen.space/public/api/busines/estado",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/busines/estado`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -196,7 +196,7 @@ export default function Reports(){
                 });
             });
 
-        fetch("https://sefil.softsen.space/public/api/users/departament?role=cobranza",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/departament?role=cobranza`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -205,7 +205,7 @@ export default function Reports(){
             .then((response) => response.json())  
             .then((data) => setAgents(data));
 
-        fetch("https://sefil.softsen.space/public/api/bussines",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -216,7 +216,7 @@ export default function Reports(){
                 setBusiness(data.data);
             });
         
-        fetch("https://sefil.softsen.space/public/api/report/pays",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/report/pays`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -225,7 +225,7 @@ export default function Reports(){
             .then((response) => response.json())  
             .then((data) => setReports(data));
         
-        fetch(`https://sefil.softsen.space/public/api/cartera/estado?cartera=${empresa}&agencia=${""}&provincia=${""}&canton=${""}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/estado?cartera=${empresa}&agencia=${""}&provincia=${""}&canton=${""}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -244,7 +244,7 @@ export default function Reports(){
         setAgencyAmount("catacocha");
         setUnificate('normal');
 
-        fetch(`https://sefil.softsen.space/public/api/cartera/distribution?cartera=${empresa}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/distribution?cartera=${empresa}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -259,7 +259,7 @@ export default function Reports(){
                 setNro(data);
             });
         
-        fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}&agencia=catacocha`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/amounts?cartera=${empresa}&agencia=catacocha`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -274,7 +274,7 @@ export default function Reports(){
                 setAmount(data.data);
             });
         
-        fetch(`https://sefil.softsen.space/public/api/cartera/mora?cartera=${empresa}&agency=all`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/mora?cartera=${empresa}&agency=all`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -454,7 +454,7 @@ export default function Reports(){
                                         setAgencyAmount('all');
 
                                         setAgencyMora('all');
-                                        fetch(`https://sefil.softsen.space/public/api/cartera/mora?cartera=${e.target.value}&agency=all`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/mora?cartera=${e.target.value}&agency=all`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -479,7 +479,7 @@ export default function Reports(){
                             <NavLink 
                                 className="Reports__button"
                                 onClick={(e)=>{
-                                    fetch(`https://sefil.softsen.space/public/api/cartera/estado?cartera=${empresa}&agencia=${select_value}&provincia=${provincia}&canton=${canton}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/estado?cartera=${empresa}&agencia=${select_value}&provincia=${provincia}&canton=${canton}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -489,7 +489,7 @@ export default function Reports(){
                                         .then((data) => {
                                             setResults(data);
                                         });
-                                    fetch(`https://sefil.softsen.space/public/api/cartera/distribution?cartera=${empresa}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/distribution?cartera=${empresa}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -500,7 +500,7 @@ export default function Reports(){
                                             setNro(data);
                                         });
                                     
-                                    fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/amounts?cartera=${empresa}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -511,7 +511,7 @@ export default function Reports(){
                                             setAmount(data.data);
                                         });
 
-                                    fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}&agencia=${select_agency_amount}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/amounts?cartera=${empresa}&agencia=${select_agency_amount}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -793,7 +793,7 @@ export default function Reports(){
                                 <select 
                                     onChange={(e)=>{
                                         setAgencyAmount(e.target.value);
-                                        fetch(`https://sefil.softsen.space/public/api/cartera/amounts?cartera=${empresa}&agencia=${e.target.value}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/amounts?cartera=${empresa}&agencia=${e.target.value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -846,7 +846,7 @@ export default function Reports(){
                                 <select 
                                     onChange={(e)=>{
                                         setAgencyMora(e.target.value);
-                                        fetch(`https://sefil.softsen.space/public/api/cartera/mora?cartera=${empresa}&agency=${e.target.value}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/mora?cartera=${empresa}&agency=${e.target.value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -1045,7 +1045,7 @@ export default function Reports(){
                                         const splits_final=fecha_final.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`https://sefil.softsen.space/public/api/cierre?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}&agente=${agent}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/cierre?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}&agente=${agent}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1102,7 +1102,7 @@ export default function Reports(){
                                         const splits_final=fecha_final_1.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`https://sefil.softsen.space/public/api/condonaciones?cartera=${empresa_1}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/condonaciones?cartera=${empresa_1}&fecha_inicio=${inicio}&fecha_final=${final}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1158,7 +1158,7 @@ export default function Reports(){
                                         const splits_final=fecha_final_2.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`https://sefil.softsen.space/public/api/gcobranza?cartera=${empresa_2}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/gcobranza?cartera=${empresa_2}&fecha_inicio=${inicio}&fecha_final=${final}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1186,7 +1186,6 @@ export default function Reports(){
                                     type="date" 
                                     value={fecha_final} 
                                     onChange={(e)=>{
-                                        console.log("estoy aca")
                                         setFechaFinal(e.target.value);
                                     }}/>
                             </label>
@@ -1231,7 +1230,7 @@ export default function Reports(){
                                     const splits_final=fecha_final.split('-');
                                     const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
                                     
-                                    location.href=`https://sefil.softsen.space/public/api/cobros?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}&unificate=${type_unificate}`;
+                                    location.href=`${import.meta.env.VITE_URL_BASE}/public/api/cobros?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}&unificate=${type_unificate}`;
                                 }}
                             >Generar EXCEL</NavLink>
                         </div>

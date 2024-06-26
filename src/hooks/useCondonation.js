@@ -1,5 +1,5 @@
 export default async function useCondonation(data,btn,id,setData,view,set,update){
-    const request= await fetch(`https://sefil.softsen.space/public/api/credit/condonar/${id}`,{
+    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/condonar/${id}`,{
         method:'POST',
         body:new URLSearchParams(data),
         headers: {

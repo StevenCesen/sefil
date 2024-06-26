@@ -52,8 +52,8 @@ export default function Me(){
                         <button
                             onClick={(e)=>{
                                 e.target.textContent='Actualizando...';
-                                console.log(password)
-                                fetch(`https://sefil.softsen.space/public/api/users/password/${localStorage.getItem('temp_uS')}`,{
+                            
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/password/${localStorage.getItem('temp_uS')}`,{
                                     method:'PUT',
                                     headers: {
                                         Accept: 'application/json',

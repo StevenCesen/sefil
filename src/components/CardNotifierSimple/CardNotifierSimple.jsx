@@ -15,7 +15,7 @@ export default function CardNotifierSimple({message,byUser,id}){
                 className="CardNotifierSimple__button"
                 onClick={(e)=>{
                     e.target.textContent='Autorizando...';
-                    fetch(`https://sefil.softsen.space/public/api/vouchers/reprint/${id}`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/reprint/${id}`,{
                         headers: {
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`

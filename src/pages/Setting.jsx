@@ -14,7 +14,7 @@ export default function Setting(){
     const [carteras,setCarteras]=useState();
 
     useEffect(()=>{
-        fetch("https://sefil.softsen.space/public/api/bussines",{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`

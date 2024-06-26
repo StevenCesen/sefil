@@ -225,7 +225,7 @@ export default function CardNotifierModify({title,message,credito,cartera,user_g
                         data.cartera=cartera;
                         data.credito=credito;
 
-                        fetch(`https://sefil.softsen.space/public/api/credit/estructurar/${id}`,{
+                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/estructurar/${id}`,{
                             method:'PUT',
                             body:new URLSearchParams(data),
                             headers: {

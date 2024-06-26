@@ -1,6 +1,6 @@
 
 export default async function useLogin(data,tag,btn){
-    const request= await fetch('https://sefil.softsen.space/public/api/login',{
+    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/login`,{
         method:'POST',
         body:data 
     });
