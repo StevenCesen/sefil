@@ -8,7 +8,7 @@ export default function Eye({input}){
     const [state,setState]=useState(false);
 
     return (
-        <button className="Eye" onClick={(e)=>{
+        <span className="Eye" onClick={(e)=>{
             e.preventDefault();
             setState(!state)
             if(state){
@@ -24,6 +24,6 @@ export default function Eye({input}){
                 :
                     <img src={eye_off}/>       
             }
-        </button>
+        </span>
     )
 }

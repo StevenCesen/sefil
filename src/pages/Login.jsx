@@ -35,13 +35,14 @@ export default function Login(){
     
                     <form className="Login__form" autoComplete="off" onSubmit={e=>{
                         e.preventDefault();
-                        login()
+                        login();
                     }}>
                         <label>
                             Email
                             <input
-                                type="email"
+                                type="text"
                                 name="ci"
+                                required
                                 placeholder="example@dominio.com"
                                 value={user.ci}
                                 onChange={(e)=>{
@@ -61,6 +62,7 @@ export default function Login(){
                                 name="password"
                                 placeholder="********"
                                 value={user.password}
+                                required
                                 onChange={(e)=>{
                                     setUser({
                                         ...user,
