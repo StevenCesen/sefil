@@ -164,11 +164,9 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div className="Ggestion__regist">
-
                 <div className="Ggestion__principal">
                     <div>
                         <h3 className="Ggestion__title">Contactos</h3>
@@ -478,7 +476,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         }}
                     >Guardar</button>
                 </div>
-            
             </div>
             
             {

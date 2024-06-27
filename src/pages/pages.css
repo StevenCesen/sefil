@@ -907,6 +907,17 @@
     cursor: pointer;
 }
 
+.DetailCredit__head>label{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.DetailCredit__head>label>select{
+    margin-top: 5px;
+}
+
 .DetailCredit__activity{
     width: 100%;
     padding: 10px 10px;
@@ -1420,7 +1431,7 @@
 /* ============================================ PÁGINA DE GESTIÓN =========================================== */
 .Gestion{
     width: 100%;
-    margin-bottom: 40px;
+    padding-bottom: 60px !important;
 }
 
 .Gestion__head{

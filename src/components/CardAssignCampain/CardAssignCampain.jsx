@@ -3,6 +3,7 @@ import "./CardAssignCampain.css";
 import { useEffect } from "react";
 import FilterRange from "../FilterRange/FilterRange";
 import useAssignSearch from "../../hooks/useAssignSearch";
+import useFormatterNumber from "../../hooks/useFormatterNumber";
 
 export default function CardAssignCampain({data}){
 
@@ -48,6 +49,29 @@ export default function CardAssignCampain({data}){
         setItems(item_filter);
 
         useAssignSearch(charge,'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
+    }
+
+    function chunckArrayInGroups(arr, size) {
+        let nro_arry=arr.length/size; //Aquí tengo la cantidad de créditos por array
+        let arrays=[];
+        let count=0;
+        let array=[];
+    
+        for (let i= 0; i < arr.length; i++) {
+            if(count<Math.round(nro_arry)){
+                array.push(arr[i]);
+                count++;
+            }else{
+                array.push(arr[i])
+                count=0;
+                arrays.push(array);
+                array=[]
+            }    
+        }
+
+        arrays.push(arr.slice(Math.round(nro_arry)*(size-1)+2))
+
+        return arrays;
     }
 
     useEffect(()=>{
@@ -265,22 +289,21 @@ export default function CardAssignCampain({data}){
                                         type="checkbox"
                                         onChange={(e)=>{
                                             const prev_charge=charge;
+                                            let results=[];
 
                                             if(e.target.checked){
                                                 prev_charge.map((credit)=>{
                                                     credit.select=true;
-                                                })
+                                                    results.push(credit);
+                                                });
                                             }else{
                                                 prev_charge.map((credit)=>{
                                                     credit.select=false;
-                                                })
+                                                    results.push(credit);
+                                                });
                                             }
                                             
-                                            setCharge({
-                                                ...charge,
-                                                data:prev_charge
-                                            });
-
+                                            setCharge(results);
                                         }}
                                     />
                                     <label>Nombre</label>
@@ -303,7 +326,7 @@ export default function CardAssignCampain({data}){
                                                 <label>{credit.name}</label>
                                                 <label>{credit.ci}</label>
                                                 <label>{credit.credito}</label>
-                                                <label>{credit.totalAmount}</label>
+                                                <label>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</label>
                                                 <label>{credit.pendingFees}</label>
                                                 <label>{credit.dias_vencidos}</label>
                                                 <label>{credit.collectionState}</label>
@@ -434,21 +457,36 @@ export default function CardAssignCampain({data}){
                         
                         e.target.textContent="Asignando...";
 
-                        //Si no hay agente asignado, reparto toda la carga en partes iguales para todos los agentes que estén en la campaña
                         //De toda la carga solo elijo los créditos que tienen el campo SEARCH: true
+                        let results=[];
+                        charge.map((credit)=>{
+                            if(credit.search){
+                                results.push(credit);
+                            }
+                        });
 
-                        const dates={
-                            agent_id:agent,
-                            total:charge.data.length,
-                            distribution:charge.data,
-                            pending:charge.data, //Créditos que no están gestionados
-                            processed:[], //Créditos que ya han sido gestionados
-                            inprocess:[] //Créditos que se hicieron llamadas pero fueron no efectivas, es decir, si no es CONTACTADO se puede seguir al siguiente crédito sin guardar gestión
-                        };
-                        
-                        const copy_distributions=distributions;
+                        let data_agent=[];
 
-                        copy_distributions.push(dates);
+                        //Si no hay agente asignado, reparto toda la carga en partes iguales para todos los agentes que estén en la campaña
+                        if(agent===''){
+                            let agents=JSON.parse(data.agents);
+
+                            const data_per_agent=chunckArrayInGroups(results,JSON.parse(data.agents).length);
+
+                            data_per_agent.map((data,n)=>{
+                                data_agent.push({
+                                    agent_id:agents[n].id,
+                                    total:data.length,
+                                    distribution:data,
+                                    pending:data, //Créditos que no están gestionados
+                                    processed:[], //Créditos que ya han sido gestionados
+                                    inprocess:[] //Créditos que se hicieron llamadas pero fueron no efectivas, es decir, si no es CONTACTADO se puede seguir al siguiente crédito sin guardar gestión
+                                });
+                            });  
+
+                        }else{
+
+                        }
                         
                         fetch(`https://sefil.softsen.space/public/api/campains/${data.id}`,{
                             method:'PUT',
@@ -456,7 +494,10 @@ export default function CardAssignCampain({data}){
                                 Accept: 'application/json',
                                 Authorization: `Bearer ${localStorage.getItem('token')}`
                             },
-                            body:new URLSearchParams({distributions:JSON.stringify(copy_distributions)})
+                            body:new URLSearchParams({
+                                distributions:JSON.stringify(data_agent),
+                                charge_inicial:JSON.stringify(charge)
+                            })
                         })
                             .then((response) => response.json())  
                             .then((data) => {

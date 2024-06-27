@@ -52,9 +52,10 @@ export default function Gestion(){
                 setCampain(data[0].id);
                 
                 const credits=JSON.parse(data[0].distributions);
+                console.log(credits)
 
                 credits.map((items)=>{
-                    if(items.agent_id===localStorage.getItem('temp_uS')){
+                    if(Number(items.agent_id)===Number(localStorage.getItem('temp_uS'))){
                         setData(items);
                     }
                 });
@@ -318,7 +319,7 @@ export default function Gestion(){
                         >
                             Volver
                         </button>
-
+                        
                         <CardGestion
                             currently={credit_actual}
                             next={next_credit}
