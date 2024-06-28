@@ -199,7 +199,7 @@ export default function Comprobantes(){
                     {
                         (comprobantes.length>0) ?
                             comprobantes.map((comprobante,index)=>(
-                                <div key={index}>
+                                <div className={`${(comprobante.status==='revertido') ? "Comprobante__revert" : ""}`} key={index}>
                                     {
                                         (comprobante.id==='FACES') 
                                         ?
@@ -274,6 +274,7 @@ export default function Comprobantes(){
                                                                 data.name=data.name[0].name;
                                                                 data.ci=data.ci[0].ci;
                                                                 data.agente=data.agente;
+                                                                data.status=comprobante.status;
                                                                 
                                                                 setComprobante(data);
                                                                 setView(true);
@@ -330,10 +331,11 @@ export default function Comprobantes(){
                 
                     <div className="CardPay">
                         <button onClick={()=>{setView(!view)}}>Volver</button>
+                        {console.log(comprobante)}
                         <PDFViewer width={'500px'} height={'500px'}>
                             <PDF 
                                 nro_voucher={comprobante.id}
-                                type_print={"ORIGINAL"}
+                                type_print={(comprobante.status==='revertido') ? 'REVERTIDO' : 'COPIA'}
                                 credito={comprobante.sync}
                                 forma_pago={comprobante.forma_pago}
                                 insitucion_financiera={comprobante.institucion_financiera}

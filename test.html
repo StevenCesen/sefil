@@ -1,18 +1,23 @@
-<button 
-    className="CardPay__button"
-    onClick={(e)=>{
-        e.target.textContent="Procesando...";
-        fetch(`https://sefil.softsen.space/public/api/credit/reverse/${idVouch.id}`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then(async (data) => {
-                if(data.status===200){
-                    location.reload();
-                }
-            });
-    }}
->Revertir cobro</button>
+nro_voucher={idVouch.id}
+type_print={"ORIGINAL"}
+tipo_transaccion={send.tipo_transaccion}
+forma_pago={send.forma_pago}
+insitucion_financiera={send.institucion_financiera}
+codigo_deposito={send.codigo_deposito}
+name={data.name}
+ci={data.ci}
+credito={idVouch.sync}
+
+mora={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).mora : JSON.parse(send.prevDates).mora}
+interes={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).interes : JSON.parse(send.prevDates).interes}
+seguro_desgravamen={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).seguro_desgravamen : JSON.parse(send.prevDates).seguro_desgravamen}
+gastos_judiciales={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).gastos_judiciales : JSON.parse(send.prevDates).gastos_judiciales}
+saldo_capital={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).saldo_capital : JSON.parse(send.prevDates).saldo_capital}
+gastos_cobranza={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).gastos_cobranza : JSON.parse(send.prevDates).gastos_cobranza}
+otros_valores={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).otros_valores : JSON.parse(send.prevDates).otros_valores}
+
+valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial') ? pay.valor_recibido : (send.tipo_transaccion==='total') ? Number(send.valor_recibido) : send.valor_recibido}
+valor_devuelto={send.valor_devuelto}
+
+fecha={new Date().toLocaleDateString()}
+agente={localStorage.getItem('name').substring(0,1)+localStorage.getItem('name').split(' ')[1]}

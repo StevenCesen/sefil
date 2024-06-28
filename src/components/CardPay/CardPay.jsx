@@ -574,8 +574,14 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
             </div>
 
             {
-                (active===false) &&
-                    <PDFViewer width={'500px'} height={'500px'}>
+                (1==1) &&
+                    <PDFViewer 
+                        width={'500px'} 
+                        height={'500px'}
+                        onClick={(e)=>{
+                            console.log(e.target.children)
+                        }}
+                    >
                         <PDF 
                             nro_voucher={idVouch.id}
                             type_print={"ORIGINAL"}
@@ -594,10 +600,10 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             saldo_capital={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).saldo_capital : JSON.parse(send.prevDates).saldo_capital}
                             gastos_cobranza={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).gastos_cobranza : JSON.parse(send.prevDates).gastos_cobranza}
                             otros_valores={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).otros_valores : JSON.parse(send.prevDates).otros_valores}
-
+                            
                             valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial') ? pay.valor_recibido : (send.tipo_transaccion==='total') ? Number(send.valor_recibido) : send.valor_recibido}
                             valor_devuelto={send.valor_devuelto}
-
+                            
                             fecha={new Date().toLocaleDateString()}
                             agente={localStorage.getItem('name').substring(0,1)+localStorage.getItem('name').split(' ')[1]}
                         />

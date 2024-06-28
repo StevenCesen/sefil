@@ -1356,6 +1356,11 @@
     align-items: flex-start;
 }
 
+
+.Comprobante__revert{
+    background-color: rgba(241, 120, 120, 0.391) !important;
+}
+
 /* .Reports>div{
     width: 100%;
     overflow-x: auto;
