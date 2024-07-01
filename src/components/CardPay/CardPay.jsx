@@ -574,7 +574,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
             </div>
 
             {
-                (active) &&
+                (active===false) &&
                     <PDFViewer 
                         width={'500px'} 
                         height={'500px'}
