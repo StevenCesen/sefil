@@ -13,7 +13,7 @@ function GestionContextProvider({children}){
     useEffect(()=>{
 
         if(localStorage.getItem('rol')==='administrador'){
-            fetch(`https://sefil.softsen.space/public/api/users/agents`,{
+            fetch(`https://sefil.softsen.space/public/api/users`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`

@@ -371,7 +371,7 @@
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     padding: 5px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
     gap: 10;

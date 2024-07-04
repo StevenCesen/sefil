@@ -12,6 +12,7 @@ export default function Monitor(){
     useEffect(()=>{
 
         setAgents(data.agents);
+        console.log(data.agents)
         
     },[data.agents]);
 
@@ -47,13 +48,12 @@ export default function Monitor(){
                     <label>Usuario</label>
                     <label>Estado</label>
                     <label>Tiempo</label>
-                    <label>Llamadas</label>
                     <label>Campaña</label>
-                    <label>Total</label>
-                    <label>Cob. pendientes</label>
-                    <label>Cob. gestionados</label>
-                    <label>Cob. Gest. Agente</label>
-                    <label>Cob. Gest. Pagos</label>
+                    <label>Nro. créditos</label>
+                    <label>Nro. créditos gestionados</label>
+                    <label>Nro. llamadas</label>
+                    <label>Nro. llamadas efec.</label>
+                    <label>Nro. llamadas no efec.</label>
                 </div>
 
                 {
@@ -63,10 +63,15 @@ export default function Monitor(){
                             name={agent.name}
                             state={agent.state}
                             time={"00:00:00"}
-                            nro_calls={0}
                             name_campain={"N/D"}
-                            total_do={0}
                             mode={"complete"}
+                            data={{
+                                nro_credits:20,
+                                nro_gestions:8,
+                                nro_calls:15,
+                                nro_efec:8,
+                                nro_no_efec:1
+                            }}
                         />
                     ))
                 }

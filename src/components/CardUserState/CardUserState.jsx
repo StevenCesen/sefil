@@ -1,6 +1,6 @@
 import "./CardUserState.css";
 
-export default function CardUserState({name,state,time,nro_calls,name_campain,total_do,detail_cobranza,mode}){
+export default function CardUserState({name,state,time,mode,data}){
 
     return (
         <div className={`CardUserState ${(mode==='complete') ? "CardUserState__complete" : ""}`}>
@@ -10,29 +10,29 @@ export default function CardUserState({name,state,time,nro_calls,name_campain,to
                 className={`
                     CardUserState__state
                     ${
-                        (state==='EN LLAMADA') 
-                        ?  "CardUserState__state--active"
-                        : (state==='DISPONIBLE')
+                        (state==='FUERA DE LÍNEA') 
+                        ?  "CardUserState__state--disconnect"
+                        : (state==='CONECTADO')
                             ? "CardUserState__state--connect"
-                            : (state==='EN PAUSA')
+                            : (state==='EN PAUSA'  | state==='EN RECESO' | state==='EN ALMUERZO' | state==='EN REUNIÓN')
                                 ? "CardUserState__state--pause"
-                                : (state==='DESCONECTADO') 
-                                    ? "CardUserState__state--disconnect"
-                                    : ""
+                                : "CardUserState__state--active"
                     
                     }
                 `}
             >{state}</p>
 
             <p>{time}</p>
-            <p>{nro_calls}</p>
-            <p>{name_campain}</p>
-            <p>{total_do}</p>
+            <p>{"SEFIL_2"}</p>
             {
                 (mode==='complete') 
                 ?
                     <>
-                        <p>Modo completo</p>
+                        <p>{data.nro_credits}</p>
+                        <p>{data.nro_gestions}</p>
+                        <p>{data.nro_calls}</p>
+                        <p>{data.nro_efec}</p>
+                        <p>{data.nro_no_efec}</p>
                     </>
                 : 
                     <></>

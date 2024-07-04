@@ -133,14 +133,12 @@ export default function CardCreateCampain({setData}){
                     </select>
                 </label>
 
-                <label className="CardCreateCampain__input">
+                <label className="CardCreateCampain__select">
                     Cargar datos
-                    <input 
-                        onChange={(e)=>{
-
-                        }}
-                        type="text"
-                    />
+                    <select>
+                        <option value={"manual"}>Carga manual</option>
+                        <option value={"api"}>Sincronización | Web Service</option>
+                    </select>
                 </label>
 
                 <label className="CardCreateCampain__input">

@@ -15,9 +15,17 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [data_gestion,setDataGestion]=useState();
     const [historial,setHistorial]=useState();
     const [phone_actual,setPhone]=useState();
+    const [data_phones,setPhones]=useState();
 
     const close=()=>{
         setCall(false);
+    }
+
+    const changeNro=(index)=>{
+        setPhone({
+            nro:data_phones[index+1].nro,
+            index:index+1
+        });
     }
 
     const add_id_call=(id)=>{
@@ -58,7 +66,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             });
         
         setCall(false);
-        setPhone('');
         setCredit(currently);
         setInfo({
             id:currently.id,
@@ -72,7 +79,27 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             totalAmount:currently.totalAmount
         });
         setContacts(JSON.parse(currently.contactos));
-        console.log(structure)
+        
+        //Introducimos la información de contactos
+        setPhones([
+            {
+                nro:'0978950498',
+                efec:2
+            },
+            {
+                nro:'0989822835',
+                efec:0
+            },
+            {
+                nro:'0997381310',
+                efec:1
+            }
+        ]);
+
+        setPhone({
+            nro:'0978950498',
+            index:0
+        });
 
     },[currently]);
 
@@ -108,66 +135,27 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         }
                     </select>
                 </label>
-
-                <div className="DetailCredit__general" style={{marginBottom:'10px',marginTop:'10px'}}>
-                    <h3 style={{marginBottom:'-10px'}}>Información del cliente</h3>
-                    <div className="DetailCredit__table">
-                        <div>
-                            <p className="Head">NOMBRE</p>
-                            <span>{credit.name}</span>
-                        </div>
-                        <div>
-                            <p className="Head">CÉDULA</p>
-                            <span>{credit.ci}</span>
-                        </div>
-                        <div>
-                            <p className="Head">GÉNERO</p>
-                            <span>{credit.genero}</span>
-                        </div>
-                        <div>
-                            <p className="Head">PROVINCIA</p>
-                            <span>{credit.provincia}</span>
-                        </div>
-                        <div>
-                            <p className="Head">CANTÓN</p>
-                            <span>{credit.canton}</span>
-                        </div>
+                    
+                <div className="DetailCredit__detail">
+                    <div className="DetailCredit__detHead">
+                        <p>{credit.ci}</p>
+                    </div>
+                    <div className="DetailCredit__body">
+                        <h3>{credit.name}</h3>
+                        <h3>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</h3>
+                    </div>
+                    <div className="DetailCredit__info">
+                        <p>DÍAS DE MORA: {info_credit.dias_vencidos}</p>
+                        <p>FECHA DE PAGO: {info_credit.paymentDate.split(' ')[0]}</p>
+                        <p>CUOTAS PENDIENTES: {info_credit.pendingFees}</p>
+                    </div>
+                    <div className="DetailCredit__footer">
+                        <p>AG. {credit.agency}</p>
+                        <p>Vencido</p>
                     </div>
                 </div>
 
-                <div className="DetailCredit__general">
-                    <h3 style={{marginBottom:'-10px'}}>Información del crédito</h3>
-                    <div className="DetailCredit__table">
-                        <div>
-                            <p className="Head">VALOR PENDIENTE</p>
-                            <span>{useFormatterNumber({value:info_credit.monthlyFeeAmount,currency:'USD'})}</span>
-                        </div>
-                        <div>
-                            <p className="Head">DÍAS DE MORA</p>
-                            <span>{info_credit.dias_vencidos}</span>
-                        </div>
-                        <div>
-                            <p className="Head">FECHA DE PAGO</p>
-                            <span>{info_credit.paymentDate}</span>
-                        </div>
-                        <div>
-                            <p className="Head">CUOTAS PENDIENTES</p>
-                            <span>{info_credit.pendingFees}</span>
-                        </div>
-                        <div>
-                            <p className="Head">CUOTAS PAGADAS</p>
-                            <span>{info_credit.paidFees}</span>
-                        </div>
-                        <div>
-                            <p className="Head">TOTAL ADEUDADO</p>
-                            <span>{useFormatterNumber({value:info_credit.totalAmount,currency:'USD'})}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="Ggestion__regist">
-                <div className="Ggestion__principal">
+                <div className="DetailCredit__dial">
                     <div>
                         <h3 className="Ggestion__title">Contactos</h3>
                         
@@ -177,18 +165,19 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             {/* <p className="Ggestion__subtitle">3 contactos registrados</p> */}
                             
                             {
-                                (credit.phone!=='N/D')
-                                ?
-                                    <div className="Ggestion__contact">
+                                data_phones.map((phone,index)=>(
+                                    <div key={index} className="Ggestion__contact">
                                         {/* <p>{(credit.phone.length<8) ? `07${credit.phone}` : credit.phone}</p> */}
-                                        <p>0978950498</p>
+                                        <p>{phone.nro} ({phone.efec})</p>
                                         <div>
                                             <button
                                                 onClick={async (e)=>{
-                                                    const request=await fetch(`originate.php?exten=0978950498&id=9`);
+                                                    const request=await fetch(`originate.php?exten=${phone.nro}&id=9`);
                                                     const response=await request.json();
-                                                    console.log(response)
-                                                    setPhone(credit.phone)
+                                                    setPhone({
+                                                        nro:phone.nro,
+                                                        index:index
+                                                    });
                                                     setCall(true);
                                                     setCancel(false);
                                                     setStatusGestion(false);
@@ -201,90 +190,53 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                             </button>
                                         </div>
                                     </div>
-                                :   <></>
-                            }
-
-                            {
-                                (credit.phone2!=='N/D')
-                                ?
-                                    <div className="Ggestion__contact">
-                                        {/* <p>{(credit.phone2.length<8) ? `07${credit.phone2}` : credit.phone2}</p> */}
-                                        <p>0989822835</p>
-                                        <div>
-                                            <button
-                                                onClick={async (e)=>{
-                                                    const request=await fetch(`originate.php?exten=0989822835&id=9`);
-                                                    const response=await request.json();
-                                                    console.log(response);
-                                                    setPhone(credit.phone2)
-                                                    setCall(true);
-                                                    setCancel(false);
-                                                    setStatusGestion(false);
-                                                }}
-                                            >
-                                                <img src="./icons/call.png"/>
-                                            </button>
-                                            <button>
-                                                <img src="./icons/send_waps.png"/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                :   <></>
-                            }
-
-                            {
-                                (credit.phone3!=='N/D')
-                                ?
-                                    <div className="Ggestion__contact">
-                                        <p>{(credit.phone3.length<8) ? `07${credit.phone3}` : credit.phone3}</p>
-                                        <div>
-                                            <button
-                                                onClick={(e)=>{
-                                                    setPhone(credit.phone3)
-                                                    setCall(true);
-                                                    setCancel(false);
-                                                    setStatusGestion(false);
-                                                }}
-                                            >
-                                                <img src="./icons/call.png"/>
-                                            </button>
-                                            <button>
-                                                <img src="./icons/send_waps.png"/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                :   <></>
-                            }
-
-                            {
-                                (credit.phone4!=='N/D')
-                                ?
-                                    <div className="Ggestion__contact">
-                                        <p>{(credit.phone4.length<8) ? `07${credit.phone4}` : credit.phone4}</p>
-                                        <div>
-                                            <button
-                                                onClick={(e)=>{
-                                                    setPhone(credit.phone4)
-                                                    setCall(true);
-                                                    setCancel(false);
-                                                    setStatusGestion(false);
-                                                }}
-                                            >
-                                                <img src="./icons/call.png"/>
-                                            </button>
-                                            <button>
-                                                <img src="./icons/send_waps.png"/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                :   <></>
+                                ))
                             }
                             
                         </div>
                     </div>
 
+                    <CardCall
+                        phone={phone_actual}
+                        channel={"SIP/101"}
+                        id_campain={id_campain}
+                        id_credit={info_credit.id}
+                        change={changeNro}
+                        setCancel={setCancel}
+                        addCall={add_id_call}
+                    />
+                </div>
+            </div>
+
+            <div className="Ggestion__regist">
+                <div className="Ggestion__principal">
                     <div>
-                        <h3 className="Ggestion__title">Estado de gestión</h3>
+                        <div className="Ggestion__principalHead">
+                            <h3 className="Ggestion__title">Gestión</h3>
+                            <button
+                                className="Ggestion__buttons--blank"
+                                onClick={(e)=>{
+                                    if(state_gestion){
+                                        setNext(index);
+                                    }else{
+                                        addNotification({
+                                            title: 'Gestión en curso',
+                                            subtitle: 'Se ha realizado una llamada y no se ha guardado gestión',
+                                            message: 'Por favor, guarde la gestión',
+                                            native: false,
+                                            backgroundTop: '#FF9619',
+                                            backgroundBottom: '#fdb864',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration: 3000,
+                                        });
+                                    }
+                                }}
+                            >
+                                Seguir sin guardar
+                            </button>
+                        </div>
                         <div className="Ggestion__form">
                             <div className="Ggestion__threeGroup">
 
@@ -402,29 +354,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                 <div className="Ggestion__buttons">
                     <button
-                        className="Ggestion__buttons--blank"
-                        onClick={(e)=>{
-                            if(state_gestion){
-                                setNext(index);
-                            }else{
-                                addNotification({
-                                    title: 'Gestión en curso',
-                                    subtitle: 'Se ha realizado una llamada y no se ha guardado gestión',
-                                    message: 'Por favor, guarde la gestión',
-                                    native: false,
-                                    backgroundTop: '#FF9619',
-                                    backgroundBottom: '#fdb864',
-                                    colorTop: 'white',
-                                    colorBottom: 'white',
-                                    closeButton: 'Cerrar',
-                                    duration: 3000,
-                                });
-                            }
-                        }}
-                    >
-                        Seguir sin guardar
-                    </button>
-                    <button
                         className="Ggestion__buttons--save"
                         onClick={(e)=>{
 
@@ -476,22 +405,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         }}
                     >Guardar</button>
                 </div>
-            </div>
-            
-            {
-                (call) 
-                ? 
-                    <CardCall
-                        phone={phone_actual}
-                        id_campain={id_campain}
-                        id_credit={info_credit.id}
-                        close={close}
-                        setCancel={setCancel}
-                        addCall={add_id_call}
-                    />
-                :   <></>
-            }
-            
+            </div>    
         </div>
     );
 }

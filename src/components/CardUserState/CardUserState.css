@@ -14,7 +14,7 @@
 }
 
 .CardUserState__complete{
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 } 
 
 .CardUserState__minimize{

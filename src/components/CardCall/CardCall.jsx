@@ -6,22 +6,50 @@ const states_call=[
     'NO CONTACTADO',
     'CONTACTADO',
     'SUSPENDIDO POR FALTA DE PAGO',
-    'NÚMERO NO EXISTE',
-    'REENVÍO A IVR'
+    'NÚMERO NO EXISTE'
 ];
 
-export default function CardCall({close,phone,id_credit,id_campain,setCancel,addCall}){
+export default function CardCall({change,phone,channel,id_credit,id_campain,setCancel,addCall}){
     
     const [data_call,setDataCall]=useState();
     const [time,setTime]=useState();
     const [call_state,setState]=useState();
     const [continue_call,setContinue]=useState();
     const [end_session,setEnd]=useState(false);
+    const [view_states,setView]=useState(false);
+
+    const init = ()=>{
+        let second=0;
+        let minutos=0;
+        
+        setContinue(
+            setInterval(() => {
+                second++;
+    
+                if(second<60){
+                    setTime({
+                        ...time,
+                        second:(second<10) ? `0${second}` : second,
+                        minutes:(minutos<10) ? `0${minutos}` : minutos
+                    });
+                }else{
+                    second=0;
+                    minutos++;
+                    
+                    setTime({
+                        ...time,
+                        minutes:(minutos<10) ? `0${minutos}` : minutos,
+                        second:(second<10) ? `0${second}` : second
+                    })
+                }
+            }, 1000)
+        )
+    }
 
     useEffect(()=>{
 
         setDataCall({
-            phone:phone,
+            phone:phone.nro,
             state:'',
             duration:'',
             id_credit:id_credit,
@@ -36,35 +64,12 @@ export default function CardCall({close,phone,id_credit,id_campain,setCancel,add
         })
 
         setState('');
+        setView(false);
         setEnd(false);
 
-        let second=0;
-        let minutos=0;
-        
-        setContinue(setInterval(() => {
-            second++;
-
-            if(second<60){
-                setTime({
-                    ...time,
-                    second:(second<10) ? `0${second}` : second,
-                    minutes:(minutos<10) ? `0${minutos}` : minutos
-                });
-            }else{
-                second=0;
-                minutos++;
-                
-                setTime({
-                    ...time,
-                    minutes:(minutos<10) ? `0${minutos}` : minutos,
-                    second:(second<10) ? `0${second}` : second
-                })
-            }
-        }, 1000));
+        setContinue();
 
         return () => clearInterval(continue_call);
-        
-
     },[]);
 
     if(!time) return <></>
@@ -72,9 +77,19 @@ export default function CardCall({close,phone,id_credit,id_campain,setCancel,add
 
     return (
         <div className="CardCall">
-            <p>Disponible</p>
+            {/* <p>Disponible</p> */}
 
-            <img src="./icons/logo.png"/>
+            {/* <img src="./icons/logo.png"/> */}
+
+            <label>
+                <span>{phone.nro}</span>
+                {
+                    (data_call.state)
+                    ?  
+                        '(Llamando)'
+                    :   '(Llamar)'
+                }
+            </label>
 
             <div className="CardCall__count">
                 <p>{`${time.minutes}:${time.second}`}</p>
@@ -82,28 +97,65 @@ export default function CardCall({close,phone,id_credit,id_campain,setCancel,add
 
             <div className="CardCall__options">
                 {
-                    states_call.map((state,index)=>(
-                        <button
-                            key={index}
-                            onClick={(e)=>{
-                                setState(state);
-                            }}
-                        >{state}</button>
-                    ))
+                    (view_states)
+                    ?   
+                        states_call.map((state,index)=>(
+                            <button
+                                key={index}
+                                onClick={(e)=>{
+                                    setState(state);
+                                }}
+                            >{state}</button>
+                        ))
+                    :   <></>
                 }
             </div>
 
-            <button 
-                onClick={(e)=>{
-                    clearInterval(continue_call);
-                    setEnd(true);
-                }} 
-                className="CardCall__button CardCall__button--exit"
-            >
-                <img
-                    src="./icons/phone.png"
-                />
-            </button>
+            <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                {/* COLGAR */}
+                {
+                    (!view_states)
+                    ?
+                        <button 
+                            onClick={async (e)=>{
+                                const request=await fetch(`hangup.php?exten=${data_call.phone}&channel=${channel}`);
+                                const response=await request.json();
+                                clearInterval(continue_call);
+                                setEnd(true);
+                                setView(true);
+                            }} 
+                            className="CardCall__button CardCall__button--exit"
+                        >
+                            <img
+                                src="./icons/phone.png"
+                            />
+                        </button>
+                    : <></>
+                }
+                {/* LLAMAR */}
+                {
+                    (!data_call.state)
+                    ?
+                        <button 
+                            style={{marginLeft:'10px'}}
+                            onClick={async (e)=>{
+                                const request=await fetch(`originate.php?exten=${data_call.phone}&id=9`);
+                                const response=await request.json();
+                                init();
+                                setDataCall({
+                                    ...data_call,
+                                    state:true
+                                });
+                            }} 
+                            className="CardCall__button CardCall__button--call"
+                        >
+                            <img
+                                src="./icons/call.png"
+                            />
+                        </button>
+                    :   <></>
+                }
+            </div>
 
             <div className="CardCall__footer">
                 {
@@ -137,8 +189,6 @@ export default function CardCall({close,phone,id_credit,id_campain,setCancel,add
                                     id_campain:data_call.id_campain
                                 };
 
-                                console.log(data_send);
-
                                 fetch(`https://sefil.softsen.space/public/api/calls`,{
                                     method:'POST',
                                     headers: {
@@ -152,8 +202,21 @@ export default function CardCall({close,phone,id_credit,id_campain,setCancel,add
                                         if(data.state===200){
                                             addCall(data.id_call);
                                             setCancel(true);
-                                            close();
+                                            setView(false);
+                                            setTime({
+                                                second:0,
+                                                minutes:0
+                                            });
+
+                                            //Función para tomar el siguiente número
+                                            change(phone.index);
+                                            setDataCall({
+                                                ...data_call,
+                                                state:false
+                                            });
+
                                             e.target.textContent="Guardado";
+
                                         }else{
                                             e.target.textContent="Intentar de nuevo";
                                         }

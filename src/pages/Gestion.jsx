@@ -259,7 +259,7 @@ export default function Gestion(){
                             <p>{credit.dias_vencidos}</p>
                             <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                             <p>{credit.pendingFees}</p>
-                            <p>{credit.collectionState}</p>
+                            <p>{(credit.collectionState==='Cartera Vendida') ? 'VENCIDO' : credit.collectionState}</p>
                             <p>{"N/D"}</p>
                         </div>
                     ))
