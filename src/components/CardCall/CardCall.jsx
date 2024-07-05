@@ -9,7 +9,7 @@ const states_call=[
     'NÚMERO NO EXISTE'
 ];
 
-export default function CardCall({change,phone,channel,id_credit,id_campain,setCancel,addCall}){
+export default function CardCall({change,phone,channel,id_credit,id_campain,setCancel,addCall,addStates}){
     
     const [data_call,setDataCall]=useState();
     const [time,setTime]=useState();
@@ -77,7 +77,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
 
     return (
         <div className="CardCall">
-            {/* <p>Disponible</p> */}
+            <p>Marcador</p>
 
             {/* <img src="./icons/logo.png"/> */}
 
@@ -118,8 +118,9 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                     ?
                         <button 
                             onClick={async (e)=>{
-                                const request=await fetch(`hangup.php?exten=${data_call.phone}&channel=${channel}`);
+                                const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
                                 const response=await request.json();
+                                console.log(response)
                                 clearInterval(continue_call);
                                 setEnd(true);
                                 setView(true);
@@ -139,7 +140,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                         <button 
                             style={{marginLeft:'10px'}}
                             onClick={async (e)=>{
-                                const request=await fetch(`originate.php?exten=${data_call.phone}&id=9`);
+                                const request=await fetch(`originate.php?exten=${phone.nro}&id=9`);
                                 const response=await request.json();
                                 init();
                                 setDataCall({
@@ -201,6 +202,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                                     .then((data) => {
                                         if(data.state===200){
                                             addCall(data.id_call);
+                                            addStates(call_state);
                                             setCancel(true);
                                             setView(false);
                                             setTime({

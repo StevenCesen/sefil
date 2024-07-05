@@ -52,7 +52,6 @@ export default function Gestion(){
                 setCampain(data[0].id);
                 
                 const credits=JSON.parse(data[0].distributions);
-                console.log(credits)
 
                 credits.map((items)=>{
                     if(Number(items.agent_id)===Number(localStorage.getItem('temp_uS'))){
@@ -94,6 +93,9 @@ export default function Gestion(){
 
     return (
         <div className="pageConsulta">
+            {
+                console.log(data)
+            }
             <div className="DetailCredit__head">
                 <NavLink
                     to="" 
@@ -103,34 +105,49 @@ export default function Gestion(){
                     }}
                 >Regresar</NavLink>
 
-                <label>
-                    Campaña
-                    <select value={campain} onChange={(e)=>{
-                        if(e.target.value!==''){
+                <div className="DetailCredit__head--label">
+                    <label>
+                        Bandeja
+                        <select onChange={(e)=>{
+                            if(e.target.value!==''){
                             
-                            localStorage.setItem('campain',e.target.value);
-                            setCampain(e.target.value);
+                            }
+                        }}>
+                                <option value={""}>Pendientes ({data.pending.length})</option>
+                                <option value={""}>En proceso ({data.inprocess.length})</option>
+                                <option value={""}>Gestionados ({data.processed.length})</option>
+                        </select>
+                    </label>
 
-                            fetch(`https://sefil.softsen.space/public/api/bussines/${e.target.value}`,{
-                                headers: {
-                                    Accept: 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                }
-                            })
-                                .then((response) => response.json())  
-                                .then((data) => {
-                                    setCampains(data);
-                                });
-                        }
-                    }}>
-                            <option value={""}>--Seleccionar--</option>
-                        {
-                            campains.map((bus,index)=>(
-                                <option key={index} value={bus.id}>{bus.name.toUpperCase()}</option>
-                            ))
-                        }
-                    </select>
-                </label>
+                    <label>
+                        Campaña
+                        <select value={campain} onChange={(e)=>{
+                            if(e.target.value!==''){
+                                
+                                localStorage.setItem('campain',e.target.value);
+                                setCampain(e.target.value);
+
+                                fetch(`https://sefil.softsen.space/public/api/bussines/${e.target.value}`,{
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    }
+                                })
+                                    .then((response) => response.json())  
+                                    .then((data) => {
+                                        setCampains(data);
+                                    });
+                            }
+                        }}>
+                                <option value={""}>--Seleccionar--</option>
+                            {
+                                campains.map((bus,index)=>(
+                                    <option key={index} value={bus.id}>{bus.name.toUpperCase()}</option>
+                                ))
+                            }
+                        </select>
+                    </label>
+                </div>
             </div>
 
             <div className="Gestion">
@@ -241,7 +258,7 @@ export default function Gestion(){
                 </div>
                 
                 {
-                    data.distribution.map((credit,index,credits)=>(
+                    data.pending.map((credit,index,credits)=>(
                         <div className="Gestion__item">
                             <button
                                 onClick={()=>{

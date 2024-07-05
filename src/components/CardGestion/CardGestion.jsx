@@ -16,6 +16,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [historial,setHistorial]=useState();
     const [phone_actual,setPhone]=useState();
     const [data_phones,setPhones]=useState();
+    const [states,setStates]=useState();
 
     const close=()=>{
         setCall(false);
@@ -36,6 +37,12 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             ...data_gestion,
             id_calls_extras:extras
         });
+    }
+
+    const add_state_call=(state)=>{
+        let copy=states;
+        copy.push(state);
+        setStates(copy);
     }
 
     useEffect(()=>{
@@ -78,6 +85,9 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             paidFees:currently.paidFees,
             totalAmount:currently.totalAmount
         });
+        
+        setStates([]);
+
         setContacts(JSON.parse(currently.contactos));
         
         //Introducimos la información de contactos
@@ -136,20 +146,29 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     </select>
                 </label>
                     
-                <div className="DetailCredit__detail">
-                    <div className="DetailCredit__detHead">
+                <div className={`DetailCredit__detail ${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnTm" : ""}`}>
+                    {/* <div className="DetailCredit__detHead">
                         <p>{credit.ci}</p>
-                    </div>
-                    <div className="DetailCredit__body">
+                    </div> */}
+                    <div className={`DetailCredit__body ${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnCo" : ""}`}>
                         <h3>{credit.name}</h3>
                         <h3>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</h3>
                     </div>
                     <div className="DetailCredit__info">
-                        <p>DÍAS DE MORA: {info_credit.dias_vencidos}</p>
-                        <p>FECHA DE PAGO: {info_credit.paymentDate.split(' ')[0]}</p>
-                        <p>CUOTAS PENDIENTES: {info_credit.pendingFees}</p>
+                        <div className={`${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                            <label>Días de mora</label>
+                            <p>{info_credit.dias_vencidos}</p>
+                        </div>
+                        <div className={`${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                            <label>Fecha de pago</label>
+                            <p>{info_credit.paymentDate.split(' ')[0]}</p>
+                        </div>
+                        <div className={`${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                            <label>Cuotas pendientes</label>
+                            <p>{info_credit.pendingFees}</p>
+                        </div>
                     </div>
-                    <div className="DetailCredit__footer">
+                    <div className={`DetailCredit__footer ${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? 'DetailCredit__footer--warn' : "DetailCredit__footer--success"}`}>
                         <p>AG. {credit.agency}</p>
                         <p>Vencido</p>
                     </div>
@@ -204,6 +223,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         change={changeNro}
                         setCancel={setCancel}
                         addCall={add_id_call}
+                        addStates={add_state_call}
                     />
                 </div>
             </div>
@@ -213,25 +233,63 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     <div>
                         <div className="Ggestion__principalHead">
                             <h3 className="Ggestion__title">Gestión</h3>
+                            {/* En este botón se hace verificación de estados de llamadas para guardar en bandeja de "EN PROCESO" */}
                             <button
                                 className="Ggestion__buttons--blank"
                                 onClick={(e)=>{
-                                    if(state_gestion){
-                                        setNext(index);
-                                    }else{
-                                        addNotification({
-                                            title: 'Gestión en curso',
-                                            subtitle: 'Se ha realizado una llamada y no se ha guardado gestión',
-                                            message: 'Por favor, guarde la gestión',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3000,
+
+                                    let count=0;
+
+                                    if(states.length>0){
+                                        states.map((state)=>{
+                                            if(state==='CONTACTADO'){
+                                                count++;
+                                            }
                                         });
+    
+                                        if(count===0){
+                                            console.log("Se hicieron llamadas y todas fueron no CONTACTADO");
+
+                                            const data={
+                                                id_campain:data_gestion.id_campain,
+                                                id_credit:data_gestion.id_credit
+                                            };
+                                            
+                                            console.log(data);
+
+                                            fetch(`https://sefil.softsen.space/public/api/trays`,{
+                                                method:'POST',
+                                                headers: {
+                                                    Accept: 'application/json',
+                                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                },
+                                                body:new URLSearchParams(data)
+                                            })
+                                                .then((response) => response.json())  
+                                                .then((data) => {
+                                                    if(data.status===200){
+                                                        setNext(index);
+                                                    }
+                                                });
+
+                                        }else{
+                                            addNotification({
+                                                title: 'Gestión en curso',
+                                                subtitle: 'Se ha realizado una llamada con estado CONTACTADO y no se ha guardado gestión',
+                                                message: 'Por favor, guarde la gestión',
+                                                native: false,
+                                                backgroundTop: '#FF9619',
+                                                backgroundBottom: '#fdb864',
+                                                colorTop: 'white',
+                                                colorBottom: 'white',
+                                                closeButton: 'Cerrar',
+                                                duration: 3500
+                                            });
+                                        }
+                                    }else{
+                                        setNext(index);
                                     }
+            
                                 }}
                             >
                                 Seguir sin guardar
@@ -379,9 +437,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 setStatusGestion(true);
 
                                 const data_send=data_gestion;
+                                data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
                                 data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
-
-                                console.log(data_send);
 
                                 fetch(`https://sefil.softsen.space/public/api/managments`,{
                                     method:'POST',

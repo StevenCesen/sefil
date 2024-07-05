@@ -437,6 +437,26 @@
     padding-left: 10px;
 }
 
+.DetailCredit__head--label{
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    flex-direction: row !important;
+}
+
+.DetailCredit__head--label>label{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 16px !important;
+}
+
+.DetailCredit__head--label>label>select{
+    margin-top: 5px;
+    height: 40px;
+}
+
 .DetailCredit__functions{
     width: 100%;
     display: grid !important;
