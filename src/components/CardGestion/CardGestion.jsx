@@ -83,6 +83,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             paymentDate:currently.paymentDate,
             pendingFees:currently.pendingFees,
             paidFees:currently.paidFees,
+            collectionState:currently.collectionState,
             totalAmount:currently.totalAmount
         });
         
@@ -146,31 +147,31 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     </select>
                 </label>
                     
-                <div className={`DetailCredit__detail ${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnTm" : ""}`}>
+                <div className={`DetailCredit__detail ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm" : ""}`}>
                     {/* <div className="DetailCredit__detHead">
                         <p>{credit.ci}</p>
                     </div> */}
-                    <div className={`DetailCredit__body ${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnCo" : ""}`}>
+                    <div className={`DetailCredit__body ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
                         <h3>{credit.name}</h3>
-                        <h3>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</h3>
+                        <h3>{useFormatterNumber({value:info_credit.totalAmount,currency:'USD'})}</h3>
                     </div>
                     <div className="DetailCredit__info">
-                        <div className={`${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                        <div className={`${(credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                             <label>Días de mora</label>
                             <p>{info_credit.dias_vencidos}</p>
                         </div>
-                        <div className={`${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                        <div className={`${(credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                             <label>Fecha de pago</label>
                             <p>{info_credit.paymentDate.split(' ')[0]}</p>
                         </div>
-                        <div className={`${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                        <div className={`${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                             <label>Cuotas pendientes</label>
                             <p>{info_credit.pendingFees}</p>
                         </div>
                     </div>
-                    <div className={`DetailCredit__footer ${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido') ? 'DetailCredit__footer--warn' : "DetailCredit__footer--success"}`}>
-                        <p>AG. {credit.agency}</p>
-                        <p>Vencido</p>
+                    <div className={`DetailCredit__footer ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? 'DetailCredit__footer--warn' : "DetailCredit__footer--success"}`}>
+                        <p>AG. {info_credit.agency}</p>
+                        <p>{info_credit.collectionState}</p>
                     </div>
                 </div>
 

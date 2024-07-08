@@ -109,6 +109,7 @@ export default function Campain(){
 
                                         <button
                                             onClick={()=>{
+                                                console.log(campain)
                                                 setData(campain);
                                                 setTransfer(true);
                                             }}

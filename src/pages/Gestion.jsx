@@ -23,6 +23,8 @@ export default function Gestion(){
 
     const [structure,setStructure]=useState();
 
+    const [tray,setTray]=useState();
+
     const updateNav=(index)=>{
         setCurrenly(data.distribution[index+1]);
         setNext(data.distribution[index+2]);
@@ -39,6 +41,8 @@ export default function Gestion(){
         setNext(0);
         setIndex(0);
         useWindows();
+        setTray('pending');
+
 
         fetch(`https://sefil.softsen.space/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}`,{
             headers: {
@@ -110,12 +114,12 @@ export default function Gestion(){
                         Bandeja
                         <select onChange={(e)=>{
                             if(e.target.value!==''){
-                            
+                                setTray(e.target.value)
                             }
                         }}>
-                                <option value={""}>Pendientes ({data.pending.length})</option>
-                                <option value={""}>En proceso ({data.inprocess.length})</option>
-                                <option value={""}>Gestionados ({data.processed.length})</option>
+                                <option value={"pending"}>Pendientes ({data.pending.length})</option>
+                                <option value={"inprocess"}>En proceso ({data.inprocess.length})</option>
+                                <option value={"processed"}>Gestionados ({data.processed.length})</option>
                         </select>
                     </label>
 
@@ -258,28 +262,86 @@ export default function Gestion(){
                 </div>
                 
                 {
-                    data.pending.map((credit,index,credits)=>(
-                        <div className="Gestion__item">
-                            <button
-                                onClick={()=>{
-                                    setCurrenly(credit);
-                                    setForm(true);
-                                    setNext(credits[index++])
-                                    setIndex(index-1)
-                                }}
-                            >
-                                <img src="./icons/go.png"/>
-                            </button>
-                            <p>{credit.name}</p>
-                            <p>{credit.ci}</p>
-                            <p>{credit.agency}</p>
-                            <p>{credit.dias_vencidos}</p>
-                            <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
-                            <p>{credit.pendingFees}</p>
-                            <p>{(credit.collectionState==='Cartera Vendida') ? 'VENCIDO' : credit.collectionState}</p>
-                            <p>{"N/D"}</p>
-                        </div>
-                    ))
+                    (tray==='pending')
+                    ?
+                        data.pending.map((credit,index,credits)=>(
+                            <div className="Gestion__item">
+                                <button
+                                    onClick={()=>{
+                                        setCurrenly(credit);
+                                        setForm(true);
+                                        setNext(credits[index++])
+                                        setIndex(index-1)
+                                    }}
+                                >
+                                    <img src="./icons/go.png"/>
+                                </button>
+                                <p>{credit.name}</p>
+                                <p>{credit.ci}</p>
+                                {
+                                    console.log(credit)
+                                }
+                                <p>{credit.agency}</p>
+                                <p>{credit.dias_vencidos}</p>
+                                <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
+                                <p>{credit.pendingFees}</p>
+                                <p>{(credit.collectionState==='Cartera Vendida') ? 'VENCIDO' : credit.collectionState}</p>
+                                <p>{"N/D"}</p>
+                            </div>
+                        ))
+                    :   (tray==='inprocess')
+                        ?
+                            data.inprocess.map((credit,index,credits)=>(
+                                <div className="Gestion__item">
+                                    <button
+                                        onClick={()=>{
+                                            setCurrenly(credit);
+                                            setForm(true);
+                                            setNext(credits[index++])
+                                            setIndex(index-1)
+                                        }}
+                                    >
+                                        <img src="./icons/go.png"/>
+                                    </button>
+                                    <p>{credit.name}</p>
+                                    <p>{credit.ci}</p>
+                                    {
+                                        console.log(credit)
+                                    }
+                                    <p>{credit.agency}</p>
+                                    <p>{credit.dias_vencidos}</p>
+                                    <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
+                                    <p>{credit.pendingFees}</p>
+                                    <p>{(credit.collectionState==='Cartera Vendida') ? 'VENCIDO' : credit.collectionState}</p>
+                                    <p>{"N/D"}</p>
+                                </div>
+                            ))
+                        :
+                            data.processed.map((credit,index,credits)=>(
+                                <div className="Gestion__item">
+                                    <button
+                                        onClick={()=>{
+                                            setCurrenly(credit);
+                                            setForm(true);
+                                            setNext(credits[index++])
+                                            setIndex(index-1)
+                                        }}
+                                    >
+                                        <img src="./icons/go.png"/>
+                                    </button>
+                                    <p>{credit.name}</p>
+                                    <p>{credit.ci}</p>
+                                    {
+                                        console.log(credit)
+                                    }
+                                    <p>{credit.agency}</p>
+                                    <p>{credit.dias_vencidos}</p>
+                                    <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
+                                    <p>{credit.pendingFees}</p>
+                                    <p>{(credit.collectionState==='Cartera Vendida') ? 'VENCIDO' : credit.collectionState}</p>
+                                    <p>{"N/D"}</p>
+                                </div>
+                            ))
                 }
 
             </div>

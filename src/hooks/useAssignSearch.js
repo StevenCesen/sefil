@@ -49,14 +49,38 @@ export default function useAssignSearch(data_original,value,update,filter,mode,m
         }else{
             let data=data_original;
 
-            data.map((credit)=>{
-                if(credit.ci.includes(value)){
-                    credit.search=true;
-                }else{
+            if(value.includes(' ')){
+
+                // Aquí tenemos todo el array de créditos que hay que activar
+                let values=value.split(' ');
+
+                data.map((credit)=>{
                     credit.search=false;
-                }
-                results.push(credit);
-            });
+                });
+
+                values.map((credit_s)=>{
+                    let credito=[];
+                    data.map((credit)=>{
+                        if(credit.ci===credit_s){
+                            credit.search=true;
+                            credito=credit;
+                        }
+                    });
+                    results.push(credito);
+                });
+
+                console.log(data);
+                
+            }else{
+                data.map((credit)=>{
+                    if(credit.ci.includes(value)){
+                        credit.search=true;
+                    }else{
+                        credit.search=false;
+                    }
+                    results.push(credit);
+                });
+            }
 
             update(results);
         }

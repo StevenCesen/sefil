@@ -13,6 +13,7 @@ export default function CardCreateCampain({setData}){
 
     const [agents,setAgents]=useState();
     const [business,setBusiness]=useState();
+    const [new_business,setNew]=useState();
 
     useEffect(()=>{
         setCampain({
@@ -23,6 +24,8 @@ export default function CardCreateCampain({setData}){
             cartera:"SEFIL_1"
         });
 
+        setNew(false);
+        
         //Bajamos los agentes
         fetch(`https://sefil.softsen.space/public/api/users/agents`,{
             headers: {
@@ -120,6 +123,12 @@ export default function CardCreateCampain({setData}){
                                 ...campain,
                                 cartera:e.target.value
                             });
+                            
+                            if(e.target.value==="OTRA"){
+                                setNew(true);
+                            }else{
+                                setNew(false);
+                            }
                         }}
                     >
                         {
@@ -130,7 +139,26 @@ export default function CardCreateCampain({setData}){
                                 : <></>
                             ))
                         }
+                        <option value={"OTRA"}>--OTRA EMPRESA--</option>
                     </select>
+                    {
+                        (new_business)
+                        ?   
+                            <label>
+                                Nueva empresa
+                                <input 
+                                    type="text" 
+                                    value={campain.cartera}
+                                    onChange={(e)=>{
+                                        setCampain({
+                                            ...campain,
+                                            cartera:e.target.value
+                                        });
+                                    }}
+                                />
+                            </label>
+                        :   <></>
+                    }
                 </label>
 
                 <label className="CardCreateCampain__select">
@@ -174,12 +202,22 @@ export default function CardCreateCampain({setData}){
                     onClick={(e)=>{
                         
                         const agents_select=[];
+                        const distributions=[];
 
                         agents.map(agent=>{
                             if(agent.status){
                                 agents_select.push({
                                     id:agent.id,
                                     name:agent.name
+                                });
+
+                                distributions.push({
+                                    agent_id:agent.id,
+                                    total:0,
+                                    distribution:[],
+                                    pending:[],
+                                    processed:[],
+                                    inprocess:[]
                                 });
                             }
                         });
@@ -190,9 +228,10 @@ export default function CardCreateCampain({setData}){
                             cartera:campain.cartera,
                             fecha_init:campain.fecha_init,
                             fecha_finish:campain.fecha_finish,
-                            distributions:JSON.stringify([])
+                            distributions:JSON.stringify(distributions),
+                            charge_inicial:JSON.stringify([])
                         };
-
+                        
                         fetch("https://sefil.softsen.space/public/api/campains",{
                             method:'POST',
                             headers: {

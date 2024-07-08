@@ -102,7 +102,6 @@ export default function CardAssignCampain({data}){
             .then((data) => {
                 setBusiness(data.data);
             });
-        
     },[]);
 
     if(!business) return <></>
@@ -111,7 +110,7 @@ export default function CardAssignCampain({data}){
 
     return (
         <div className="CardAssignCampain">
-            <p className="CardAssignCampain__head">Asignación de campaña</p>
+            <p className="CardAssignCampain__head">Asignación de campaña | {data.name}</p>
             
             <div className="CardAssignCampain__agents">
                 <label>
@@ -485,7 +484,20 @@ export default function CardAssignCampain({data}){
                             });  
 
                         }else{
+                            const distribution=JSON.parse(data.distributions);
+                            
+                            // console.log(data)
+                            // console.log(agent);
+                            // console.log(results);
 
+                            distribution.map((dis)=>{
+                                if(Number(dis.agent_id)===Number(agent)){
+                                    dis.distribution=results;
+                                    dis.pending=results;
+                                }
+                            });
+
+                            data_agent=distribution;
                         }
                         
                         fetch(`https://sefil.softsen.space/public/api/campains/${data.id}`,{
