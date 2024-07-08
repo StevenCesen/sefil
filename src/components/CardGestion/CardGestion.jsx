@@ -84,7 +84,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             pendingFees:currently.pendingFees,
             paidFees:currently.paidFees,
             collectionState:currently.collectionState,
-            totalAmount:currently.totalAmount
+            totalAmount:currently.totalAmount,
+            agency:currently.agency
         });
         
         setStates([]);
@@ -156,15 +157,15 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         <h3>{useFormatterNumber({value:info_credit.totalAmount,currency:'USD'})}</h3>
                     </div>
                     <div className="DetailCredit__info">
-                        <div className={`${(credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                        <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                             <label>Días de mora</label>
                             <p>{info_credit.dias_vencidos}</p>
                         </div>
-                        <div className={`${(credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                        <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                             <label>Fecha de pago</label>
                             <p>{info_credit.paymentDate.split(' ')[0]}</p>
                         </div>
-                        <div className={`${(credit.collectionState==='Cartera Vendida' | credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                        <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                             <label>Cuotas pendientes</label>
                             <p>{info_credit.pendingFees}</p>
                         </div>
@@ -255,8 +256,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 id_campain:data_gestion.id_campain,
                                                 id_credit:data_gestion.id_credit
                                             };
-                                            
-                                            console.log(data);
 
                                             fetch(`https://sefil.softsen.space/public/api/trays`,{
                                                 method:'POST',
@@ -269,6 +268,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 .then((response) => response.json())  
                                                 .then((data) => {
                                                     if(data.status===200){
+                                                        console.log(data)
                                                         setNext(index);
                                                     }
                                                 });
@@ -452,6 +452,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     .then((response) => response.json())  
                                     .then((data) => {
                                         if(data.state===200){
+                                            console.log(data);
                                             //setNext(index);
                                             e.target.textContent="Guardado";
                                         }else{

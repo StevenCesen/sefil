@@ -117,6 +117,7 @@ export default function Usuarios(){
                                 <option value="administrador">Administrador</option>
                                 <option value="call">Gestor | Call Center</option>
                                 <option value="campo">Gestor | Campo</option>
+                                <option value="campo">Gestor | Judicial</option>
                                 <option value="cobranza">Cobranza</option>
                                 <option value="consulta">Consulta</option>
                             </select>

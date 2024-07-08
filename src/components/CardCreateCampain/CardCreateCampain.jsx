@@ -61,7 +61,6 @@ export default function CardCreateCampain({setData}){
     if(!agents) return <></>
     if(!business) return <></>
 
-
     return (
         <div className="CardCreateCampain">
             <p>Crear campaña</p>
