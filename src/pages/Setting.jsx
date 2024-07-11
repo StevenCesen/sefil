@@ -14,8 +14,6 @@ export default function Setting(){
     const [carteras,setCarteras]=useState();
 
     useEffect(()=>{
-        console.log(param.ci)
-
         fetch("https://sefil.softsen.space/public/api/bussines",{
             headers: {
                 Accept: 'application/json',
@@ -26,7 +24,6 @@ export default function Setting(){
             .then((data) => {
                 setCarteras(data.data);
             });
-
     },[]);
 
     if(!carteras) return <></>

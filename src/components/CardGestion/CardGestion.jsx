@@ -45,6 +45,19 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setStates(copy);
     }
 
+    const update_phones=(phones)=>{
+        let new_phones=[];
+
+        phones.map(phone=>{
+            if(phone.nro!=="N/D"){
+                new_phones.push(phone);
+            }
+        });
+
+        setPhones(new_phones);
+        setPhone(new_phones[0]);
+    }
+
     useEffect(()=>{
     
         setDataGestion({
@@ -93,25 +106,43 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setContacts(JSON.parse(currently.contactos));
         
         //Introducimos la información de contactos
-        setPhones([
+        // setPhones([
+        //     {
+        //         nro:'0978950498',
+        //         efec:2
+        //     },
+        //     {
+        //         nro:'0989822835',
+        //         efec:0
+        //     },
+        //     {
+        //         nro:'0997381310',
+        //         efec:1
+        //     }
+        // ]);
+
+        console.log(structure);
+
+        const phones_c=[
             {
-                nro:'0978950498',
-                efec:2
-            },
-            {
-                nro:'0989822835',
+                nro:currently.phone,
                 efec:0
             },
             {
-                nro:'0997381310',
-                efec:1
+                nro:currently.phone2,
+                efec:0
+            },
+            {
+                nro:currently.phone3,
+                efec:0
+            },
+            {
+                nro:currently.phone4,
+                efec:0
             }
-        ]);
+        ];
 
-        setPhone({
-            nro:'0978950498',
-            index:0
-        });
+        update_phones(phones_c)
 
     },[currently]);
 
@@ -129,9 +160,52 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         onChange={(e)=>{
                             if(e.target.value==='TITULAR'){
                                 setCredit(currently)
+
+                                const phones_c=[
+                                    {
+                                        nro:currently.phone,
+                                        efec:0
+                                    },
+                                    {
+                                        nro:currently.phone2,
+                                        efec:0
+                                    },
+                                    {
+                                        nro:currently.phone3,
+                                        efec:0
+                                    },
+                                    {
+                                        nro:currently.phone4,
+                                        efec:0
+                                    }
+                                ];
+                        
+                                update_phones(phones_c)
+                                
                             }else{
                                 contacts.map((garante,index)=>{
                                     if(garante.ci===e.target.value){
+                                        const phones_c=[
+                                            {
+                                                nro:garante.phone,
+                                                efec:0
+                                            },
+                                            {
+                                                nro:garante.phone2,
+                                                efec:0
+                                            },
+                                            {
+                                                nro:garante.phone3,
+                                                efec:0
+                                            },
+                                            {
+                                                nro:garante.phone4,
+                                                efec:0
+                                            }
+                                        ];
+                                
+                                        update_phones(phones_c)
+                                        
                                         setCredit(garante);
                                     }
                                 });
@@ -195,6 +269,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 onClick={async (e)=>{
                                                     const request=await fetch(`originate.php?exten=${phone.nro}&id=9`);
                                                     const response=await request.json();
+
                                                     setPhone({
                                                         nro:phone.nro,
                                                         index:index
