@@ -16,6 +16,7 @@ export default async function useLogin(data,tag,btn){
         localStorage.setItem('name',response.name);
         localStorage.setItem('rol',response.rol);
         localStorage.setItem('temp_uS',response.id);
+        localStorage.setItem('extension',response.extension);
         location.href='./'
     }
 

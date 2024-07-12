@@ -4,5 +4,6 @@ export default async function useLogout(){
     localStorage.removeItem('temp_uS');
     localStorage.removeItem('permission');
     localStorage.removeItem('name');
+    localStorage.removeItem('extension');
     location.href='./'
 }

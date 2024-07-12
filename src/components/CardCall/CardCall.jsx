@@ -140,7 +140,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                         <button 
                             style={{marginLeft:'10px'}}
                             onClick={async (e)=>{
-                                const request=await fetch(`originate.php?exten=${phone.nro}&id=9`);
+                                const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
                                 const response=await request.json();
                                 init();
                                 setDataCall({

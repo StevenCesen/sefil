@@ -341,3 +341,31 @@
 .Ggestion__textarea>textarea:focus,.Ggestion__input>input{
     outline: none;
 }
+
+.CardGestion__buttonDetails{
+    width: 100%;
+    background-color: inherit;
+    border:none;
+    text-align: left;
+    padding-left:10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: var(--color-1);
+    cursor: pointer;
+}
+
+
+.CardGestion__Details{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 0 0 10px 10px;
+}
+
+.CardGestion__Details>p{
+    width: 100%;
+    margin-bottom: 5px;
+}

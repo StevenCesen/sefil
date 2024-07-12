@@ -25,10 +25,37 @@ export default function Gestion(){
 
     const [tray,setTray]=useState();
 
+    const updateTray=(tray)=>{
+        let copy=data;
+
+        tray.data.map((agent)=>{
+            if(localStorage.getItem('temp_uS')===agent.agent_id){
+
+                copy.pending=agent.pending;
+                copy.inprocess=agent.inprocess;
+                copy.processed=agent.processed;
+
+                setData(copy);
+            }
+        });
+
+    }
+
+    // Para pasar al siguiente crédito
     const updateNav=(index)=>{
-        setCurrenly(data.distribution[index+1]);
-        setNext(data.distribution[index+2]);
-        setIndex(index+1);
+        if(tray==='pending'){
+            setCurrenly(data.pending[index+1]);
+            setNext(data.pending[index+2]);
+            setIndex(index+1);
+        }else if(tray==='inprocess'){
+            setCurrenly(data.inprocess[index+1]);
+            setNext(data.inprocess[index+2]);
+            setIndex(index+1);
+        }else if(tray==='processed'){
+            setCurrenly(data.processed[index+1]);
+            setNext(data.processed[index+2]);
+            setIndex(index+1);
+        }
     }
 
     useEffect(()=>{
@@ -72,11 +99,13 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                const templates=[];
                 data.map((struc)=>{
                     if(struc.status==="EN USO"){
-                        setStructure(struc.structure);
+                        templates.push(struc.structure);
                     }
-                })
+                });
+                setStructure(templates);
             });
 
         const onBeforeUnload = (ev) => {
@@ -171,7 +200,7 @@ export default function Gestion(){
 
                     <div>
                         <label>Agencia</label>
-                        <select>
+                        {/* <select>
                             <option value={''}>--Todos--</option>
                             <option value={"catacocha"}>CATACOCHA</option>
                             <option value={"palanda"}>PALANDA</option>
@@ -198,12 +227,13 @@ export default function Gestion(){
                             <option value={"naranjal"}>NARANJAL</option>
                             <option value={"quinche"}>QUINCHE</option>
                             <option value={"quininde"}>QUININDE</option>
-                        </select>
+                        </select> */}
+                        
                     </div>
 
                     <div>
                         <label>Días de mora</label>
-                        <div>
+                        {/* <div>
                             <div>
                                 <label>Min</label>
                                 <input type="number"/>
@@ -212,12 +242,12 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input type="number"/>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div>
                         <label>Monto</label>
-                        <div>
+                        {/* <div>
                             <div>
                                 <label>Min</label>
                                 <input type="number"/>
@@ -226,12 +256,12 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input type="number"/>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div>
                         <label>Cuotas</label>
-                        <div>
+                        {/* <div>
                             <div>
                                 <label>Min</label>
                                 <input type="number"/>
@@ -240,23 +270,23 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input type="number"/>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div>
                         <label>Estado</label>
-                        <select>
+                        {/* <select>
                             <option value={"all"}>--Todos--</option>
                             <option value={"Vencido"}>Vencidos</option>
                             <option value={"Vigente"}>Vigentes</option>
                             <option value={"Judicial"}>Judicial</option>
                             <option value={"Prejudicial"}>Prejudicial</option>
-                        </select>
+                        </select> */}
                     </div>
 
                     <div>
                         <label>Compromiso</label>
-                        <input type="date"/>
+                        {/* <input type="date"/> */}
                     </div>
 
                 </div>
@@ -270,17 +300,14 @@ export default function Gestion(){
                                     onClick={()=>{
                                         setCurrenly(credit);
                                         setForm(true);
-                                        setNext(credits[index++])
-                                        setIndex(index-1)
+                                        setNext(credits[index++]);
+                                        setIndex(index-1);
                                     }}
                                 >
                                     <img src="./icons/go.png"/>
                                 </button>
                                 <p>{credit.name}</p>
                                 <p>{credit.ci}</p>
-                                {
-                                    console.log(credit)
-                                }
                                 <p>{credit.agency}</p>
                                 <p>{credit.dias_vencidos}</p>
                                 <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
@@ -409,6 +436,7 @@ export default function Gestion(){
                             setStatusGestion={setStateGestion}
                             state_gestion={state_gestion}
                             structure={structure}
+                            updateTrays={updateTray}
                         /> 
                     </div>
                 :   <></>
