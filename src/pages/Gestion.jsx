@@ -27,6 +27,7 @@ export default function Gestion(){
 
     const updateTray=(tray)=>{
         let copy=data;
+        console.log(tray)
 
         tray.data.map((agent)=>{
             if(localStorage.getItem('temp_uS')===agent.agent_id){
@@ -228,7 +229,7 @@ export default function Gestion(){
                             <option value={"quinche"}>QUINCHE</option>
                             <option value={"quininde"}>QUININDE</option>
                         </select> */}
-                        
+
                     </div>
 
                     <div>
@@ -290,6 +291,10 @@ export default function Gestion(){
                     </div>
 
                 </div>
+
+                {
+                    console.log(data)
+                }
                 
                 {
                     (tray==='pending')

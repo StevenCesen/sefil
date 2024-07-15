@@ -117,7 +117,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
         const phones_c=[
             {
-                nro:'0978950498',
+                // nro:'0978950498',
+                nro:currently.phone,
                 efec:0
             },
             {
