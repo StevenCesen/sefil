@@ -166,7 +166,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                 substates:temp.default[2].suboptions
             });
         }
-
+        
         setDataGestion({
             id_campain:id_campain,
             id_call:'', //Llamada con gestión
@@ -370,6 +370,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         addCall={add_id_call}
                         addStates={add_state_call}
                     />
+                    
                 </div>
             </div>
 
@@ -615,8 +616,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
-                                        if(data.state===200){
-                                            console.log(data);
+                                        if(data.status===200){
                                             addNotification({
                                                 title: 'Éxito',
                                                 subtitle: 'Gestión guardada correctamente',

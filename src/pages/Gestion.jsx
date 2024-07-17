@@ -17,7 +17,6 @@ export default function Gestion(){
     const [index,setIndex]=useState(); //Este es para llevar el indice actual
     const [credit_actual,setCurrenly]=useState();
 
-
     const [state_call,setStateCall]=useState(false);
     const [state_gestion,setStateGestion]=useState(false);
 
@@ -27,7 +26,6 @@ export default function Gestion(){
 
     const updateTray=(tray)=>{
         let copy=data;
-        console.log(tray)
 
         tray.data.map((agent)=>{
             if(localStorage.getItem('temp_uS')===agent.agent_id){
@@ -39,23 +37,34 @@ export default function Gestion(){
                 setData(copy);
             }
         });
-
     }
 
     // Para pasar al siguiente crédito
     const updateNav=(index)=>{
         if(tray==='pending'){
-            setCurrenly(data.pending[index+1]);
-            setNext(data.pending[index+2]);
-            setIndex(index+1);
+            if(index<(data.pending.length-1)){
+                setCurrenly(data.pending[index+1]);
+                setNext(data.pending[index+2]);
+                setIndex(index+1);
+            }else{
+                setForm(false);
+            }
         }else if(tray==='inprocess'){
-            setCurrenly(data.inprocess[index+1]);
-            setNext(data.inprocess[index+2]);
-            setIndex(index+1);
+            if(index<(data.inprocess.length-1)){
+                setCurrenly(data.inprocess[index+1]);
+                setNext(data.inprocess[index+2]);
+                setIndex(index+1);
+            }else{
+                setForm(false);
+            }
         }else if(tray==='processed'){
-            setCurrenly(data.processed[index+1]);
-            setNext(data.processed[index+2]);
-            setIndex(index+1);
+            if(index<(data.processed.length-1)){
+                setCurrenly(data.processed[index+1]);
+                setNext(data.processed[index+2]);
+                setIndex(index+1);
+            }else{
+                setForm(false);
+            }
         }
     }
 
@@ -444,6 +453,7 @@ export default function Gestion(){
                             updateTrays={updateTray}
                         /> 
                     </div>
+
                 :   <></>
             }
 

@@ -47,7 +47,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
     }
 
     useEffect(()=>{
-
+        console.log(phone);
         setDataCall({
             phone:phone.nro,
             state:'',
@@ -61,7 +61,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
         setTime({
             second:0,
             minutes:0
-        })
+        });
 
         setState('');
         setView(false);
@@ -70,7 +70,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
         setContinue();
 
         return () => clearInterval(continue_call);
-    },[]);
+    },[phone]);
 
     if(!time) return <></>
     if(!data_call) return <></>
@@ -189,6 +189,8 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                                     id_credit:data_call.id_credit,
                                     id_campain:data_call.id_campain
                                 };
+
+                                console.log(data_send);
 
                                 fetch(`https://sefil.softsen.space/public/api/calls`,{
                                     method:'POST',
