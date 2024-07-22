@@ -1,0 +1,30 @@
+{
+    // Para la base de datos de contactos
+    "credito":20,
+    "cartera":"SEFIL_2",
+    "contactos":{
+        "principal":{
+            "parentesco":"PERSONAL",
+            "phone":"0978950498",
+            "nro_sucessful":10,
+            "nro_failed":2,
+            "status":"ACTIVO"
+        },
+        "secundarios":[
+            {
+                "parentesco": "ESPOSA",
+                "phone": "0987567845",
+                "nro_sucessful":12,
+                "nro_failed":7,
+                "status":"ACTIVO"
+            },
+            {
+                "parentesco": "HERMANO",
+                "phone": "0987567845",
+                "nro_sucessful":2,
+                "nro_failed":18,
+                "status":"INACTIVO"
+            }
+        ]
+    }
+}

@@ -11,7 +11,7 @@ export default function useSearch(string,cartera,setData,setTotal){
                 .then((data) => {
                     setData(data.data)
                 });
-        }else{
+        }else{  //Búscamos por número de cédula
             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?cedula=${string}`,{
                 headers: {
                     Accept: 'application/json',
