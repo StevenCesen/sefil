@@ -934,6 +934,13 @@
     flex-direction: column;
 }
 
+.DetailCredit__head--label>button{
+    height: 40px;
+    align-self: flex-end;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
 .DetailCredit__head>label>select{
     margin-top: 5px;
 }

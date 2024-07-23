@@ -6,7 +6,8 @@ const states_call=[
     'NO CONTACTADO',
     'CONTACTADO',
     'SUSPENDIDO POR FALTA DE PAGO',
-    'NÚMERO NO EXISTE'
+    'NÚMERO NO EXISTE',
+    'FUERA DE COBERTURA'
 ];
 
 export default function CardCall({change,phone,channel,id_credit,id_campain,setCancel,addCall,addStates}){
@@ -47,7 +48,6 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
     }
 
     useEffect(()=>{
-        console.log(phone);
         setDataCall({
             phone:phone.nro,
             state:'',

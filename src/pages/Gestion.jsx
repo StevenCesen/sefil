@@ -149,18 +149,26 @@ export default function Gestion(){
                 >Regresar</NavLink>
 
                 <div className="DetailCredit__head--label">
-                    <label>
-                        Bandeja
-                        <select onChange={(e)=>{
-                            if(e.target.value!==''){
-                                setTray(e.target.value)
-                            }
-                        }}>
-                                <option value={"pending"}>Pendientes ({data.pending.length})</option>
-                                <option value={"inprocess"}>En proceso ({data.inprocess.length})</option>
-                                <option value={"processed"}>Gestionados ({data.processed.length})</option>
-                        </select>
-                    </label>
+                    <button
+                        onClick={()=>{
+                            setTray('pending')
+                        }}
+                    >Pendientes ({data.pending.length})</button>
+                    <button
+                        onClick={()=>{
+                            setTray('inprocess')
+                        }}
+                    >En proceso ({data.inprocess.length})</button>
+                    <button
+                        onClick={()=>{
+                            setTray('processed')
+                        }}
+                    >Gestionados ({data.processed.length})</button>
+                    {/* <button
+                        onClick={()=>{
+                            setTray('processed')
+                        }}
+                    >Supervisión ({data.processed.length})</button> */}
 
                     <label>
                         Campaña

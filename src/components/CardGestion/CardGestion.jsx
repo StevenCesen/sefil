@@ -265,7 +265,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     </div> */}
                     <div className={`DetailCredit__body ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
                         <h3>{credit.name}</h3>
-                        {/* <h3>{useFormatterNumber({value:info_credit.totalAmount,currency:'USD'})}</h3> */}
+                        <h3>{credit.ci}</h3>
                     </div>
 
                     <div className="DetailCredit__info">
@@ -283,7 +283,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         </div>
                     </div>
 
-                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
+                    <div style={{display:"grid",gridTemplateColumns:"35% 65%"}}>
                         {/* <button 
                             className="CardGestion__buttonDetails"
                             onClick={(e)=>{
@@ -314,7 +314,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     {
                                         contacts.map((contact,index)=>(
                                             (contact.name!=='') &&
-                                                <p key={index}> Nro.{index+1}: {contact.name}</p>
+                                                <p key={index}> Nro.{index+1}: {contact.name} - {contact.ci}</p>
                                         ))
                                     }
                                 </div>
@@ -641,6 +641,21 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 duration:3000,
                                             });
                                             //setNext(index);
+
+                                            setDataGestion({
+                                                id_campain:id_campain,
+                                                id_call:'',
+                                                id_calls_extras:[],
+                                                id_credit:currently.id,
+                                                state_gestion:'',
+                                                substate_gestion:'',
+                                                date_promise:'',
+                                                observation:'',
+                                                byUser:'',
+                                                fecha:'',
+                                                client_name:currently.name
+                                            });
+
                                             e.target.textContent="Guardado";
                                         }else{
                                             e.target.textContent="Error, inténtalo de nuevo";
