@@ -265,25 +265,26 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     </div> */}
                     <div className={`DetailCredit__body ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
                         <h3>{credit.name}</h3>
-                        <h3>{useFormatterNumber({value:info_credit.totalAmount,currency:'USD'})}</h3>
+                        {/* <h3>{useFormatterNumber({value:info_credit.totalAmount,currency:'USD'})}</h3> */}
                     </div>
+
                     <div className="DetailCredit__info">
                         <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                             <label>Días de mora</label>
                             <p>{info_credit.dias_vencidos}</p>
                         </div>
                         <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
-                            <label>Fecha de pago</label>
+                            <label>Fecha ult. pago.</label>
                             <p>{info_credit.paymentDate.split(' ')[0]}</p>
                         </div>
                         <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
-                            <label>Cuotas pendientes</label>
-                            <p>{info_credit.pendingFees}</p>
+                            <label>Monto total</label>
+                            <p>{info_credit.totalAmount}</p>
                         </div>
                     </div>
 
-                    <div>
-                        <button 
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr"}}>
+                        {/* <button 
                             className="CardGestion__buttonDetails"
                             onClick={(e)=>{
                                 if(view_details){
@@ -297,8 +298,9 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         >Ver detalles del crédito</button>
                         {
                             (view_details)
-                            ?   
+                            ?    */}
                                 <div className="CardGestion__Details">
+                                    <h4>Detalle del crédito</h4>
                                     <p><strong>Capital:</strong> $ {info_credit.capital}</p>
                                     <p><strong>Interés:</strong> $ {info_credit.interes}</p>
                                     <p><strong>Mora: </strong> $ {info_credit.mora}</p>
@@ -307,8 +309,17 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     <p><strong>Gastos de cobranza:</strong> $ {info_credit.gastos}</p>
                                     <p><strong>Otros valores:</strong> $ {info_credit.otros}</p>
                                 </div>
-                            :   <></>
-                        }
+                                <div className="CardGestion__Details">
+                                    <h4>Garantes</h4>
+                                    {
+                                        contacts.map((contact,index)=>(
+                                            (contact.name!=='') &&
+                                                <p key={index}> Nro.{index+1}: {contact.name}</p>
+                                        ))
+                                    }
+                                </div>
+                            {/* :   <></>
+                        } */}
                     </div>
 
                     <div className={`DetailCredit__footer ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? 'DetailCredit__footer--warn' : "DetailCredit__footer--success"}`}>

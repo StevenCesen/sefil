@@ -1878,6 +1878,49 @@
     border: 1px solid;
 }
 
+/* PARA EL HISTORIAL */
+
+.Historial__head{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5% 8% 8% 12% 8% 8% 6% 8% 8% 8% 17%;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-alert-error);
+    height: 50px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    margin-top: 10px;
+}
+
+.Historial__head>label{
+    text-align: center;
+    font-weight: bold;
+    color: var(--color-3);
+}
+
+.Historial__item{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 5% 8% 8% 12% 8% 8% 6% 8% 8% 8% 17%;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid rgb(174, 174, 174);
+}
+.Historial__item>label{
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+}
+
+.Historial__item>button{
+    width: 45px;
+    cursor: pointer;
+    height: 45px;
+    border-radius: 2px;
+}
+
 @media screen and (min-width:300px) and (max-width:540px) {
     .Login{
         width: 90%;

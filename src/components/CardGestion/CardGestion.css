@@ -33,7 +33,6 @@
     font-size: 18px;
     font-weight: bold;
     color: var(--color-1);
-    margin-bottom: 10px;
 }
 
 .DetailCredit__body{
@@ -41,14 +40,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 10px;
+    padding: 10px 10px 0;
 }
 
 .DetailCredit__body>h3{
     font-size: 20px;
     font-weight: bold;
     color: var(--color-1);
-    margin-bottom: 10px;
 }
 
 .DetailCredit__footer{
@@ -92,7 +90,7 @@
 }
 
 .DetailCredit__info>div{
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -357,15 +355,21 @@
 
 
 .CardGestion__Details{
-    width: 50%;
+    width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
     padding: 0 0 10px 10px;
 }
 
+.CardGestion__Details>h4{
+    margin-bottom: 10px;
+    color: var(--color-1);
+}
+
 .CardGestion__Details>p{
     width: 100%;
+    font-size: 14px;
     margin-bottom: 5px;
 }

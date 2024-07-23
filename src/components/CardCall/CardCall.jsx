@@ -120,7 +120,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                             onClick={async (e)=>{
                                 const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
                                 const response=await request.json();
-                                console.log(response)
+                            
                                 clearInterval(continue_call);
                                 setEnd(true);
                                 setView(true);
@@ -140,13 +140,28 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                         <button 
                             style={{marginLeft:'10px'}}
                             onClick={async (e)=>{
-                                const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
-                                const response=await request.json();
-                                init();
-                                setDataCall({
-                                    ...data_call,
-                                    state:true
-                                });
+                                if(phone.nro===''){
+                                    addNotification({
+                                        title: 'Sin número',
+                                        subtitle: 'No hay número para realizar la llamada',
+                                        message: '',
+                                        native: false,
+                                        backgroundTop: '#FF9619',
+                                        backgroundBottom: '#fdb864',
+                                        colorTop: 'white',
+                                        colorBottom: 'white',
+                                        closeButton: 'Cerrar',
+                                        duration: 3000,
+                                    });
+                                }else{
+                                    const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
+                                    const response=await request.json();
+                                    init();
+                                    setDataCall({
+                                        ...data_call,
+                                        state:true
+                                    });
+                                }
                             }} 
                             className="CardCall__button CardCall__button--call"
                         >

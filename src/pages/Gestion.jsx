@@ -300,10 +300,6 @@ export default function Gestion(){
                     </div>
 
                 </div>
-
-                {
-                    console.log(data)
-                }
                 
                 {
                     (tray==='pending')
