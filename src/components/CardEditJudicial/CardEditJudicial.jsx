@@ -17,7 +17,8 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
             detail:'',
             id:id,
             cartera:cartera,
-            totalAmount:totalAmount
+            totalAmount:totalAmount,
+            fecha:''
         });
 
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/judicial?cartera=${cartera}&credito=${id}`,{
@@ -74,9 +75,25 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
                         <option value="GASTOS NOTARÍA">GASTOS NOTARÍA</option>
                         <option value="GASTOS CERTIFICADOS">GASTOS CERTIFICADOS</option>
                         <option value="GASTOS PERITAJE">GASTOS PERITAJE</option>
+                        <option value="GASTOS CITACIÓN">GASTOS CITACIÓN</option>
                     </select>
                 </label>
                 
+                <label>
+                    Fecha
+                    <input 
+                        type="date" 
+                        value={gastos.fecha}
+                        step={0.01}
+                        onChange={(e)=>{
+                            setGastos({
+                                ...gastos,
+                                fecha:e.target.value
+                            });
+                        }}
+                    />
+                </label>
+
                 <label>
                     Aumento
                     <input 
@@ -115,7 +132,7 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
                 <button
                     onClick={(e)=>{
         
-                        if(gastos.final>0 & gastos.detail!==''){
+                        if(gastos.final>0 & gastos.detail!=='' & gastos.fecha!==''){
 
                             e.target.textContent='Actualizando...';
                             const new_total_amount=Number(totalAmount)+Number(aumento.current.value);
@@ -127,7 +144,8 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
                                 detail:gastos.detail,
                                 id:Number(gastos.id),
                                 cartera:gastos.cartera,
-                                totalAmount:new_total_amount
+                                totalAmount:new_total_amount,
+                                fecha:gastos.fecha
                             };
                         
                             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/judicial`,{
