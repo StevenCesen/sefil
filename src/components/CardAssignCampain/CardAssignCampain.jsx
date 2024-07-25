@@ -16,6 +16,7 @@ export default function CardAssignCampain({data}){
     const [distributions,setDistributions]=useState();
     const [item_filter,setItems]=useState();
     const [coincidence,setCoincidence]=useState();
+    const [view_agents,setViewAgents]=useState();
 
     const update=(data)=>{
         setCharge(data);
@@ -78,7 +79,11 @@ export default function CardAssignCampain({data}){
         setMode('manual');
         setTransfer(false);
         setView(false);
-        setAgents('');
+        setViewAgents(false);
+        setAgents({
+            id:'',
+            name:'-- Seleccionar --'
+        });
         setDistributions(JSON.parse(data.distributions));
         setCharge([]);
         setCoincidence('1');
@@ -115,41 +120,59 @@ export default function CardAssignCampain({data}){
             <div className="CardAssignCampain__agents">
                 <label>
                     Agente
-                    <select
-                        onChange={(e)=>{
-                            setAgents(e.target.value);
-                            fetch(`https://sefil.softsen.space/public/api/gestion/campains?id=${e.target.value}`,{
-                                headers: {
-                                    Accept: 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                }
-                            })
-                                .then((response) => response.json())  
-                                .then((data) => {
-                                    const credits=JSON.parse(data[0].distributions);
-                                    credits.map((items)=>{
-                                        if(items.agent_id===e.target.value){
-                                            setCharge({
-                                                ...charge,
-                                                data:items.distribution,
-                                                total:items.distribution.length
-                                            });
-                                        }
-                                    });
-                                });
-                        }}
-                        value={agent}
-                    >
-                        <option value={""}>--Seleccionar--</option>
+
+                    <div className="CardAssignCampain__agentsSelect">
+                        <div 
+                            onClick={(e)=>{
+                                setViewAgents(!view_agents);
+                            }}
+                            className="CardAssignCampain__agentsResult"
+                        >
+                            <label>{agent.name}</label>
+                        </div>
                         {
-                            JSON.parse(data.agents).map((agent,index)=>(
-                                <option 
-                                    key={index}
-                                    value={agent.id}
-                                >{agent.name}</option>
-                            ))
+                            (view_agents)
+                            ?
+                                <div className="CardAssignCampain__agentsOptions">
+                                    {
+                                        JSON.parse(data.agents).map((agent,index)=>(
+                                            <div>
+                                                <label>{agent.name.split(" ")[0].substring(0,1)}. {agent.name.split(" ")[1]}</label>
+                                                <button
+                                                    onClick={(e)=>{
+                                                        setAgents({
+                                                            id:agent.id,
+                                                            name:agent.name
+                                                        });
+                            
+                                                        const credits=JSON.parse(data.distributions);
+                            
+                                                        credits.map((items)=>{
+                                                            if(items.agent_id===Number(agent.id)){
+                                                                setCharge(items.distribution);
+                                                                setViewAgents(false);
+                                                            }
+                                                        });
+                                                    }}
+                                                    title="Ver carga actual"
+                                                >
+                                                    <img src="./icons/view.png"/>
+                                                </button>
+                                                <button
+                                                    onClick={()=>{
+
+                                                    }}
+                                                    title="Agrupar"
+                                                >
+                                                    <img src="./icons/grou.png"/>
+                                                </button>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            :   <></>
                         }
-                    </select>
+                    </div>
                 </label>
                 {
                     (transfer & mode!=='assoc')
@@ -467,38 +490,54 @@ export default function CardAssignCampain({data}){
                         let data_agent=[];
 
                         //Si no hay agente asignado, reparto toda la carga en partes iguales para todos los agentes que estén en la campaña
-                        if(agent===''){
+                        if(agent.id===''){
                             let agents=JSON.parse(data.agents);
 
                             const data_per_agent=chunckArrayInGroups(results,JSON.parse(data.agents).length);
 
-                            data_per_agent.map((data,n)=>{
-                                data_agent.push({
-                                    agent_id:agents[n].id,
-                                    total:data.length,
-                                    distribution:data,
-                                    pending:data, //Créditos que no están gestionados
-                                    processed:[], //Créditos que ya han sido gestionados
-                                    inprocess:[] //Créditos que se hicieron llamadas pero fueron no efectivas, es decir, si no es CONTACTADO se puede seguir al siguiente crédito sin guardar gestión
+                            data_per_agent.map((datap,n)=>{
+
+                                const distribution=JSON.parse(data.distributions);
+
+                                distribution.map((dis)=>{
+                                    if(Number(dis.agent_id)===Number(agents[n].id)){
+                                        datap.map((result)=>{
+                                            dis.distribution.push(result);
+                                            dis.pending.push(result);
+                                        })
+
+                                        dis.total+=datap.length;
+                                        data_agent.push(dis);
+                                    }
                                 });
+
+                                // data_agent.push({
+                                //     agent_id:agents[n].id,
+                                //     total:data.length,
+                                //     distribution:data,
+                                //     pending:data, //Créditos que no están gestionados
+                                //     processed:[], //Créditos que ya han sido gestionados
+                                //     inprocess:[] //Créditos que se hicieron llamadas pero fueron no efectivas, es decir, si no es CONTACTADO se puede seguir al siguiente crédito sin guardar gestión
+                                // });
                             });  
 
                         }else{
+
                             const distribution=JSON.parse(data.distributions);
-                            
-                            // console.log(data)
-                            // console.log(agent);
-                            // console.log(results);
 
                             distribution.map((dis)=>{
-                                if(Number(dis.agent_id)===Number(agent)){
-                                    dis.distribution=results;
-                                    dis.pending=results;
+                                if(Number(dis.agent_id)===Number(agent.id)){
+                                    results.map((result)=>{
+                                        dis.distribution.push(result);
+                                        dis.pending.push(result);
+                                    })
                                 }
                             });
 
                             data_agent=distribution;
                         }
+                        
+                        console.log(data_agent);
                         
                         fetch(`https://sefil.softsen.space/public/api/campains/${data.id}`,{
                             method:'PUT',

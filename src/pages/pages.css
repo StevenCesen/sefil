@@ -1922,10 +1922,13 @@
 }
 
 .Historial__item>button{
-    width: 45px;
+    width: 40px;
     cursor: pointer;
-    height: 45px;
+    height: 40px;
+    border: none;
     border-radius: 2px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
 }
 
 @media screen and (min-width:300px) and (max-width:540px) {

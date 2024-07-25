@@ -70,6 +70,21 @@
     align-items: center;
 }
 
+.CardAssignCampain__agentsSelect{
+    width: 100%;
+    border: 1px solid grey;
+    padding: 10px 10px;
+    margin-top: 10px;
+}
+
+.CardAssignCampain__agentsResult{
+    width: 100%;
+}
+
+.CardAssignCampain__agentsResult>label{
+    cursor: pointer;
+}
+
 .CardAssignCampain__agents>label{
     width: 33.33%;
     display: flex;
@@ -77,6 +92,33 @@
     align-items: flex-start;
     font-weight: 100;
     flex-direction: column;
+}
+.CardAssignCampain__agentsOptions{
+    width: 100%;
+    margin-top: 20px;
+}
+
+.CardAssignCampain__agentsOptions>div{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 50% 25% 25%;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgb(176, 176, 176);
+    margin-bottom: 5px;
+}
+
+.CardAssignCampain__agentsOptions>div>button{
+    width: 30px;
+    height: 30px;
+    margin: 0 auto;
+    background-color: inherit;
+    border: none;
+    cursor: pointer;
+}
+
+.CardAssignCampain__agentsOptions>div>label{
+    font-size: 14px;
 }
 
 .CardAssignCampain__agents>p{
