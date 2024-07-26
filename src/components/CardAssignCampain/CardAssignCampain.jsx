@@ -473,9 +473,9 @@ export default function CardAssignCampain({data,updateCredits}){
                                 updateRange('estado',e.target.value);
                             }}
                         >
-                            <option value={"Cartera Vendida"}>Vencido</option>
+                            <option value={"Vencido"}>Vencido</option>
                             <option value={"Vigente"}>Vigente</option>
-                            <option value={"JUDICIAL"}>Judicial</option>
+                            <option value={"Judicial"}>Judicial</option>
                         </select>
                     </label>
 

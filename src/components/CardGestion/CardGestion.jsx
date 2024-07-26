@@ -14,12 +14,14 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
     const [data_gestion,setDataGestion]=useState();
     const [historial,setHistorial]=useState();
+    const [pagos,setPagos]=useState();
     const [phone_actual,setPhone]=useState();
     const [data_phones,setPhones]=useState();
     const [states,setStates]=useState();
 
     const [template,setTemplate]=useState();
     const [view_details,setDetails]=useState();
+    const [tray,setTray]=useState();
 
     const close=()=>{
         setCall(false);
@@ -90,6 +92,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setCall(false);
         setDetails(false);
         setCredit(currently);
+        setPagos([]);
+        setTray('Historial');
         setInfo({
             id:currently.id,
             name:currently.name,
@@ -108,9 +112,13 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             seguro:currently.seguro_desgravamen,
             gastos:currently.gastos_cobranza,
             otros:currently.otros_valores,
-            judicial:currently.gastos_judiciales
+            judicial:currently.gastos_judiciales,
+            cartera:currently.cartera
         });
         
+        console.log(currently)
+
+
         setStates([]);
 
         setContacts(JSON.parse(currently.contactos));
@@ -192,10 +200,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     return (
         <div className="Ggestion">
             <div className="Ggestion__dates">
-                <label>
-                    <select
-                        onChange={(e)=>{
-                            if(e.target.value==='TITULAR'){
+                    
+                <div className={`DetailCredit__detail ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm" : ""}`}>
+                    <div className={`DetailCredit__body ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
+                        <h3
+                            onClick={(e)=>{
                                 setCredit(currently)
 
                                 const phones_c=[
@@ -218,108 +227,76 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 ];
                         
                                 update_phones(phones_c)
-                                
-                            }else{
-                                contacts.map((garante,index)=>{
-                                    if(garante.ci===e.target.value){
-                                        const phones_c=[
-                                            {
-                                                nro:garante.phone,
-                                                efec:0
-                                            },
-                                            {
-                                                nro:garante.phone2,
-                                                efec:0
-                                            },
-                                            {
-                                                nro:garante.phone3,
-                                                efec:0
-                                            },
-                                            {
-                                                nro:garante.phone4,
-                                                efec:0
-                                            }
-                                        ];
-                                
-                                        update_phones(phones_c)
-                                        
-                                        setCredit(garante);
-                                    }
-                                });
-                            }
-                        }}
-                    >
-                        <option value={"TITULAR"}>{info_credit.name} | TITULAR</option>
-                        {
-                            contacts.map((contact,index)=>(
-                                (contact.name!=='') &&
-                                    <option key={index} value={contact.ci}>{contact.name} | GARANTE</option>
-                            ))
-                        }
-                    </select>
-                </label>
-                    
-                <div className={`DetailCredit__detail ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm" : ""}`}>
-                    {/* <div className="DetailCredit__detHead">
-                        <p>{credit.ci}</p>
-                    </div> */}
-                    <div className={`DetailCredit__body ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
-                        <h3>{credit.name}</h3>
+                            }}
+                        >{credit.name}</h3>
                         <h3>{credit.ci}</h3>
                     </div>
 
-                    <div className="DetailCredit__info">
-                        <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
-                            <label>Días de mora</label>
-                            <p>{info_credit.dias_vencidos}</p>
-                        </div>
-                        <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
-                            <label>Fecha ult. pago.</label>
-                            <p>{info_credit.paymentDate.split(' ')[0]}</p>
-                        </div>
-                        <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
-                            <label>Monto total</label>
-                            <p>{info_credit.totalAmount}</p>
-                        </div>
+                    <div className="CardGestion__garantes">
+                        {
+                            contacts.map((contact,index)=>(
+                                (contact.name!=='') &&
+                                    <button 
+                                        onClick={(e)=>{
+                                            contacts.map((garante,index)=>{
+                                                if(garante.ci===contact.ci){
+                                                    const phones_c=[
+                                                        {
+                                                            nro:garante.phone,
+                                                            efec:0
+                                                        },
+                                                        {
+                                                            nro:garante.phone2,
+                                                            efec:0
+                                                        },
+                                                        {
+                                                            nro:garante.phone3,
+                                                            efec:0
+                                                        },
+                                                        {
+                                                            nro:garante.phone4,
+                                                            efec:0
+                                                        }
+                                                    ];
+                                                    
+                                                    update_phones(phones_c)
+                                                    
+                                                    setCredit(garante);
+                                                }
+                                            });
+                                        }}
+                                        key={index}
+                                    >{contact.name} | GARANTE - {contact.ci}</button>
+                            ))
+                        }
                     </div>
 
-                    <div style={{display:"grid",gridTemplateColumns:"35% 65%"}}>
-                        {/* <button 
-                            className="CardGestion__buttonDetails"
-                            onClick={(e)=>{
-                                if(view_details){
-                                    e.target.textContent='Ver detalles del crédito';
-                                    setDetails(!view_details);
-                                }else{
-                                    e.target.textContent='Ocultar detalles del crédito';
-                                    setDetails(!view_details);
-                                }
-                            }}
-                        >Ver detalles del crédito</button>
-                        {
-                            (view_details)
-                            ?    */}
-                                <div className="CardGestion__Details">
-                                    <h4>Detalle del crédito</h4>
-                                    <p><strong>Capital:</strong> $ {info_credit.capital}</p>
-                                    <p><strong>Interés:</strong> $ {info_credit.interes}</p>
-                                    <p><strong>Mora: </strong> $ {info_credit.mora}</p>
-                                    <p><strong>Seguro desgravamen:</strong> $ {info_credit.seguro}</p>
-                                    <p><strong>Gastos judiciales:</strong> $ {info_credit.judicial}</p>
-                                    <p><strong>Gastos de cobranza:</strong> $ {info_credit.gastos}</p>
-                                    <p><strong>Otros valores:</strong> $ {info_credit.otros}</p>
-                                </div>
-                                <div className="CardGestion__Details">
-                                    <h4>Garantes</h4>
-                                    {
-                                        contacts.map((contact,index)=>(
-                                            (contact.name!=='') &&
-                                                <p key={index}> Nro.{index+1}: {contact.name} - {contact.ci}</p>
-                                        ))
-                                    }
-                                </div>
-                            {/* :   <></>
-                        } */}
+                    <div className="CardGestion__itemsDetail">
+                        <div className="CardGestion__Details">
+                            <h4>Detalle del crédito</h4>
+                            <p><strong>Capital:</strong> $ {info_credit.capital}</p>
+                            <p><strong>Interés:</strong> $ {info_credit.interes}</p>
+                            <p><strong>Mora: </strong> $ {info_credit.mora}</p>
+                            <p><strong>Seguro desgravamen:</strong> $ {info_credit.seguro}</p>
+                            <p><strong>Gastos judiciales:</strong> $ {info_credit.judicial}</p>
+                            <p><strong>Gastos de cobranza:</strong> $ {info_credit.gastos}</p>
+                            <p><strong>Otros valores:</strong> $ {info_credit.otros}</p>
+                        </div>
+
+                        <div className="DetailCredit__info">
+                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                                <label>Días de mora</label>
+                                <p>{info_credit.dias_vencidos}</p>
+                            </div>
+                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                                <label>Último pago</label>
+                                <p>{info_credit.paymentDate.split(' ')[0]}</p>
+                            </div>
+                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                                <label>Monto adeudado</label>
+                                <p>{useFormatterNumber({value:info_credit.totalAmount,currency:'USD'})}</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div className={`DetailCredit__footer ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? 'DetailCredit__footer--warn' : "DetailCredit__footer--success"}`}>
@@ -336,14 +313,12 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         <button className="Ggestion__button">Agregar nuevo</button>
 
                         <div>
-                            {/* <p className="Ggestion__subtitle">3 contactos registrados</p> */}
                             
                             {
                                 data_phones.map((phone,index)=>(
                                     <div key={index} className="Ggestion__contact">
-                                        {/* <p>{(credit.phone.length<8) ? `07${credit.phone}` : credit.phone}</p> */}
                                         <p>{phone.nro} ({phone.efec})</p>
-                                        <div>
+                                        {/* <div>
                                             <button
                                                 onClick={async (e)=>{
                                                     const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
@@ -363,7 +338,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                             <button>
                                                 <img src="./icons/send_waps.png"/>
                                             </button>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 ))
                             }
@@ -391,6 +366,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         <div className="Ggestion__principalHead">
                             <h3 className="Ggestion__title">Gestión</h3>
                             {/* En este botón se hace verificación de estados de llamadas para guardar en bandeja de "EN PROCESO" */}
+
                             <button
                                 className="Ggestion__buttons--blank"
                                 onClick={(e)=>{
@@ -454,6 +430,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 Seguir
                             </button>
                         </div>
+
                         <div className="Ggestion__form">
                             <div className="Ggestion__threeGroup">
 
@@ -551,35 +528,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     </div>
                 </div>
 
-                <div className="Ggestion__historial">
-                    <h3 className="Ggestion__title">Historial</h3>
-                    <div className="Ggestion__historialHead">
-                        <label>Fecha</label>
-                        <label>Cliente</label>
-                        <label>Estado de gestión</label>
-                        <label>Compromiso</label>
-                        <label>Observación</label>
-                        <label>Agente</label>
-                    </div>
-
-                    {
-                        (historial.length>0)
-                        ?   
-                            historial.map((item,index)=>(
-                                <div key={index} className="Ggestion__historialItem">
-                                    <label>{item.fecha}</label>
-                                    <label>{item.client_name}</label>
-                                    <label>{item.state_gestion}</label>
-                                    <label>{item.date_promise}</label>
-                                    <label>{item.observation}</label>
-                                    <label>{item.byUser}</label>
-                                </div>
-                            ))
-                        :   <></>
-                    }
-                    
-                </div>
-
                 <div className="Ggestion__buttons">
                     <button
                         className="Ggestion__buttons--save"
@@ -665,6 +613,79 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                         }}
                     >Guardar</button>
+                </div>
+
+                <div className="Ggestion__historial">
+                    <div>
+                        <button
+                            onClick={(e)=>{
+                                setTray('Historial');
+                            }}
+                        >Historial</button>
+                        <button
+                            onClick={(e)=>{
+                                fetch(`https://sefil.softsen.space/public/api/vouchers/group/${info_credit.id}?cartera=${info_credit.cartera}`,{
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    }
+                                })
+                                    .then((response) => response.json())  
+                                    .then((data) => {
+                                        console.log(data)
+                                        setPagos(data);
+                                    });
+                                setTray('Pagos');
+                            }}
+                        >Pagos</button>
+                    </div>
+                    <div className="Ggestion__historialHead">
+                        {
+                            (tray==='Historial')
+                            ?
+                                <>
+                                    <label>Fecha</label>
+                                    <label>Cliente</label>
+                                    <label>Estado de gestión</label>
+                                    <label>Fecha compromiso</label>
+                                    <label>Observación</label>
+                                    <label>Agente</label>
+                                </>
+                            :
+                                <>
+                                    <label>Fecha pago</label>
+                                    <label>Tipo de pago</label>
+                                    <label>Monto</label>
+                                </>
+                        }
+                    </div>
+
+                    {
+                        (historial.length>0 | tray==='Historial')
+                        ?   
+                            historial.map((item,index)=>(
+                                <div key={index} className="Ggestion__historialItem">
+                                    <label>{item.fecha}</label>
+                                    <label>{item.client_name}</label>
+                                    <label>{item.state_gestion}</label>
+                                    <label>{item.date_promise}</label>
+                                    <label>{item.observation}</label>
+                                    <label>{item.byUser}</label>
+                                </div>
+                            ))
+                        :   
+                            (tray==='Pagos')
+                            ?
+                                pagos.map((item,index)=>(
+                                    <div key={index} className="Ggestion__historialItem">
+                                        <label>{item.fecha}</label>
+                                        <label>{item.forma_pago}</label>
+                                        <label>{useFormatterNumber({value:item.valor_recibido,currency:'USD'})}</label>
+                                    </div>
+                                ))
+                            :   <></>
+                    }
+                    
                 </div>
             </div>    
         </div>

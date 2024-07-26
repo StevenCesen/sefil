@@ -405,6 +405,10 @@ export default function Gestion(){
                     <div className="CardPay">
                         <button 
                             className="CardCondonacion__close" 
+                            style={{
+                                top:"10px",
+                                right:"10px"
+                            }}
                             onClick={()=>{
                                 if(state_call){
                                     if(state_gestion){
