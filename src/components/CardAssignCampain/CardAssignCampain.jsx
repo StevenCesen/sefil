@@ -543,19 +543,55 @@ export default function CardAssignCampain({data,updateCredits}){
                                 const dtsn=agent_dtsn;
 
                                 const distribution=distributions;
-                                let carga=[];
+                                let carga=charge;
 
                                 // Copio lo que tiene el origen
                                 distribution.map((dis)=>{
                                     if(Number(dis.agent_id)===Number(agent_origin)){
-                                        carga=dis.distribution;
-                                        dis.distribution=[];
-                                        dis.pending=[];
-                                        dis.inprocess=[];
-                                        dis.processed=[];
-                                        dis.total=0;
+
+                                        let distribution=[];
+                                        let pending=[];
+                                        let inprocess=[];
+                                        let processed=[];
+
+                                        let ids=[];
+
+                                        carga.map((car)=>{
+                                            ids.push(car.id)
+                                        });
+
+                                        dis.distribution.map((item)=>{
+                                            if(ids.includes(item.id)===false){
+                                                distribution.push(item);
+                                               
+                                            }
+                                        })
+
+                                        dis.pending.map((item)=>{
+                                            if(ids.includes(item.id)===false){
+                                                pending.push(item);
+                                            }
+                                        })
+                                        dis.inprocess.map((item)=>{
+                                            if(ids.includes(item.id)===false){
+                                                inprocess.push(item);
+                                            }
+                                        })
+                                        dis.processed.map((item)=>{
+                                            if(ids.includes(item.id)===false){
+                                                processed.push(item);
+                                            }
+                                        })
+
+                                        dis.distribution=distribution;
+                                        dis.pending=pending;
+                                        dis.inprocess=inprocess;
+                                        dis.processed=processed;
+                                        dis.total=distribution.length;
                                     }
                                 });
+
+                                console.log(distribution);
 
                                 //Actualizo el destino
                                 distribution.map((dis)=>{
