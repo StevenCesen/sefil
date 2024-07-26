@@ -4,8 +4,39 @@ import { useEffect } from "react";
 import FilterRange from "../FilterRange/FilterRange";
 import useAssignSearch from "../../hooks/useAssignSearch";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
+import CardItemCharge from "../CardItemCharge/CardItemCharge";
 
-export default function CardAssignCampain({data}){
+
+const agencias=[
+    "-- Todas --",
+    "catacocha",
+    "palanda",
+    "cariamanga",
+    "zamora",
+    "zumba",
+    "piñas",
+    "celica",
+    "catamayo",
+    "malacatos",
+    "santa rosa",
+    "oficina las pitas",
+    "oficina centro",
+    "oficina norte",
+    "san miguel de los bancos",
+    "milagro",
+    "santo domingo",
+    "el carmen",
+    "cayambe",
+    "pasaje",
+    "tumbaco",
+    "la troncal",
+    "amaguaña",
+    "naranjal",
+    "quinche",
+    "quininde"
+];
+
+export default function CardAssignCampain({data,updateCredits}){
 
     const [transfer,setTransfer]=useState(false);
     const [mode,setMode]=useState('manual');
@@ -13,10 +44,12 @@ export default function CardAssignCampain({data}){
     const [business,setBusiness]=useState();
     const [charge,setCharge]=useState();
     const [agent,setAgents]=useState();
+    const [agent_dtsn,setDtsn]=useState();
     const [distributions,setDistributions]=useState();
     const [item_filter,setItems]=useState();
     const [coincidence,setCoincidence]=useState();
     const [view_agents,setViewAgents]=useState();
+    const [prev_agencies,setPrevAgencies]=useState();
 
     const update=(data)=>{
         setCharge(data);
@@ -30,7 +63,6 @@ export default function CardAssignCampain({data}){
         });
 
         setCharge(copy);
-
     }
 
     const calcTotal=(data)=>{
@@ -43,13 +75,17 @@ export default function CardAssignCampain({data}){
         return count;
     }
 
+    // Para setear los rangos en filtros
     const updateRange=(key,value)=>{
         let copy=item_filter;
 
         copy[key]=value;
         setItems(item_filter);
 
-        useAssignSearch(charge,'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
+        // Usamos el seleccionar de créditos
+        // 1) Primero debemos saber cual es modo
+        // 2) Enviamos la data del filtro correspondiente: Si es asociaación de cartera entonces es filt, si es transferencia, es user_filt
+        useAssignSearch((mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
     }
 
     function chunckArrayInGroups(arr, size) {
@@ -71,7 +107,6 @@ export default function CardAssignCampain({data}){
         }
 
         arrays.push(arr.slice(Math.round(nro_arry)*(size-1)+2))
-
         return arrays;
     }
 
@@ -80,6 +115,8 @@ export default function CardAssignCampain({data}){
         setTransfer(false);
         setView(false);
         setViewAgents(false);
+        setPrevAgencies([]);
+        setDtsn('');
         setAgents({
             id:'',
             name:'-- Seleccionar --'
@@ -93,8 +130,8 @@ export default function CardAssignCampain({data}){
             mora:'',
             cuota:'',
             monto:'',
-            estado:'',
-            agencia:''
+            estado:'Cartera Vendida',
+            agencia:[]
         });
 
         fetch("https://sefil.softsen.space/public/api/bussines",{
@@ -134,6 +171,17 @@ export default function CardAssignCampain({data}){
                             (view_agents)
                             ?
                                 <div className="CardAssignCampain__agentsOptions">
+                                        <div>
+                                            <label
+                                                style={{height:"30px",display:"flex",justifyContent:"center",alignItems:"center",cursor:"pointer"}}
+                                                onClick={(e)=>{
+                                                    setAgents({
+                                                        id:'',
+                                                        name:'-- Todos --'
+                                                    });
+                                                }}
+                                            >-- Todos --</label>
+                                        </div>
                                     {
                                         JSON.parse(data.agents).map((agent,index)=>(
                                             <div>
@@ -145,10 +193,11 @@ export default function CardAssignCampain({data}){
                                                             name:agent.name
                                                         });
                             
-                                                        const credits=JSON.parse(data.distributions);
+                                                        const credits=distributions;
                             
                                                         credits.map((items)=>{
                                                             if(items.agent_id===Number(agent.id)){
+                                                                localStorage.setItem('user_filt',JSON.stringify(items.distribution));
                                                                 setCharge(items.distribution);
                                                                 setViewAgents(false);
                                                             }
@@ -156,7 +205,7 @@ export default function CardAssignCampain({data}){
                                                     }}
                                                     title="Ver carga actual"
                                                 >
-                                                    <img src="./icons/view.png"/>
+                                                    <img src="/icons/view.png"/>
                                                 </button>
                                                 <button
                                                     onClick={()=>{
@@ -164,7 +213,7 @@ export default function CardAssignCampain({data}){
                                                     }}
                                                     title="Agrupar"
                                                 >
-                                                    <img src="./icons/grou.png"/>
+                                                    <img src="/icons/grou.png"/>
                                                 </button>
                                             </div>
                                         ))
@@ -179,10 +228,24 @@ export default function CardAssignCampain({data}){
                     ?   
                         <>
                             <p>a</p>
+                            
                             <label>
                                 Agente
-                                <select>
-                                    <option value={"Cecibel Torres"}>Cecibel Torres</option>
+                                <select
+                                    value={agent_dtsn}
+                                    onChange={(e)=>{
+                                        setDtsn(e.target.value);
+                                    }}
+                                >
+                                    <option value={""}>-- Seleccionar --</option>
+                                    {
+                                        JSON.parse(data.agents).map((agent_a,index)=>(
+                                            (agent.id!==agent_a.id)
+                                            ?
+                                                <option value={agent_a.id}>{agent_a.name}</option>
+                                            :   <></>
+                                        ))
+                                    }
                                 </select>
                             </label>
                         </>
@@ -200,25 +263,11 @@ export default function CardAssignCampain({data}){
                     <input 
                         type="radio"
                         name="mode"
-                        value={"manual"}
-                        onChange={(e)=>{
-                            if(e.target.checked){
-                                setMode(e.target.value);
-                                setTransfer(false);
-                            }
-                        }}
-                    />
-                    Manual
-                </label>
-
-                <label>
-                    <input 
-                        type="radio"
-                        name="mode"
                         value={"assoc"}
                         onChange={(e)=>{
                             if(e.target.checked){
                                 setMode(e.target.value);
+                                setTransfer(false);
                             }
                         }}
                     />
@@ -237,11 +286,9 @@ export default function CardAssignCampain({data}){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                data.map((credit)=>{
-                                                    credit.search=true;
-                                                });
-
                                                 setCharge(data)
+                                                // Cacheo los créditos de cartera por si se necesitan para filtrado
+                                                localStorage.setItem('filt',JSON.stringify(data));
                                             });
                                     }
                                 }}
@@ -272,34 +319,37 @@ export default function CardAssignCampain({data}){
                     Transferir carga
                 </label>
             </div>
-
+            
             <label 
                 className="CardAssignCampain__file">
-                Cargar datos ({calcTotal(charge)})
+                Cargar datos ({charge.length})
                 {/* <input id="campain" type="file"/> */}
                 {
-                    (charge.length>0)
-                    ?
-                        <input 
-                            onChange={(e)=>{
-                                // DATA, VALOR A BUSCAR, FUNCION DE ACTUALIZACIÓN, FILTER_MODO,MODO, DIAS_MORA, CUOTAS, MONTO, ESTADO, AGENCIA
-                                useAssignSearch(
-                                    charge,
-                                    e.target.value,
-                                    update,
-                                    item_filter.filter,
-                                    item_filter.mode,
-                                    item_filter.mora,
-                                    item_filter.cuota,
-                                    item_filter.monto,
-                                    item_filter.estado,
-                                    item_filter.agencia
-                                );
-                            }}
-                            type="text" 
-                            placeholder="Ingrese nombre o cédula"
-                        />
-                    :   <></>
+                    // (charge.length>0)
+                    // ?
+                        <>
+                            <input 
+                                onChange={(e)=>{
+                                    useAssignSearch(
+                                        (mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')), // Esta es la data que le pasamos para que filtre
+                                        e.target.value, //Este es el texto {nombre del cliente o cédula}
+                                        update, //Método para actualizar la carga
+                                        //================> Listado de filtros
+                                        item_filter.filter,
+                                        item_filter.mode,
+                                        item_filter.mora,
+                                        item_filter.cuota,
+                                        item_filter.monto,
+                                        item_filter.estado,
+                                        item_filter.agencia
+                                    );
+                                }}
+                                type="text" 
+                                placeholder="Ingrese nombre o cédula"
+                            />
+                            {/* <button>Limpiar</button> */}
+                        </>
+                    // :   <></>
                 }
                 <div>
                     {
@@ -332,28 +382,15 @@ export default function CardAssignCampain({data}){
                                     <label>Cédula</label>
                                     <label>Crédito</label>
                                     <label>Monto</label>
-                                    <label>Cuotas penientes</label>
+                                    <label>Cuotas pendientes</label>
                                     <label>Días mora</label>
                                     <label>Estado</label>
                                 </div>
                                 {
                                     charge.map((credit,index)=>(
-                                        (credit.search===true)
-                                        ?
-                                            <div className="CardAssignCampain__itemCharge">
-                                                <input 
-                                                    type="checkbox"
-                                                    checked={credit.select}
-                                                />
-                                                <label>{credit.name}</label>
-                                                <label>{credit.ci}</label>
-                                                <label>{credit.credito}</label>
-                                                <label>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</label>
-                                                <label>{credit.pendingFees}</label>
-                                                <label>{credit.dias_vencidos}</label>
-                                                <label>{credit.collectionState}</label>
-                                            </div>
-                                        :   <></>
+                                        <CardItemCharge
+                                            item={credit}
+                                        />
                                     ))
                                 }
 
@@ -375,7 +412,7 @@ export default function CardAssignCampain({data}){
                             if(e.target.checked){
                                 setInit();
                                 setCoincidence(e.target.value);
-                                useAssignSearch(charge,'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
+                                useAssignSearch((mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
                         }}
                         defaultChecked
@@ -392,7 +429,7 @@ export default function CardAssignCampain({data}){
                             if(e.target.checked){
                                 setInit();
                                 setCoincidence(e.target.value);
-                                useAssignSearch(charge,'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
+                                useAssignSearch((mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
                         }}
                     />
@@ -425,10 +462,20 @@ export default function CardAssignCampain({data}){
                 <div className="CardAssignCampain__selects">
                     <label>
                         Estado
-                        <select>
-                            <option>Vencido</option>
-                            <option>Vigente</option>
-                            <option>Judicial</option>
+                        <select
+                            value={item_filter.estado}
+                            onChange={(e)=>{
+                                setItems({
+                                    ...item_filter,
+                                    estado:e.target.value
+                                });
+
+                                updateRange('estado',e.target.value);
+                            }}
+                        >
+                            <option value={"Cartera Vendida"}>Vencido</option>
+                            <option value={"Vigente"}>Vigente</option>
+                            <option value={"JUDICIAL"}>Judicial</option>
                         </select>
                     </label>
 
@@ -444,26 +491,39 @@ export default function CardAssignCampain({data}){
                                 (view_agencies)
                                 ?
                                     <div>
-                                        <label>
-                                            
-                                            <input
-                                                type="checkbox"
-                                            />
-                                            OFICINA LOJA CENTRO
-                                        </label>
+                                        {
+                                            agencias.map((agencia,index)=>(
+                                                <label key={index}>
+                                                    <input
+                                                        value={agencia}
+                                                        type="checkbox"
+                                                        onChange={(e)=>{
+                                                            if(e.target.checked){
+                                                                // Lo agrego
+                                                                let copy=prev_agencies;
+                                                                copy.push(e.target.value);
+                                                                setPrevAgencies(copy);
+                                                            }else{
+                                                                // Lo quito
+                                                                let copy=prev_agencies;
+                                                                let new_copy=[];
 
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                            />
-                                            OFICINA LAS PITAS
-                                        </label>
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                            />
-                                            GUALAQUIZA
-                                        </label>
+                                                                copy.map((agency)=>{
+                                                                    if(agency!==e.target.value){
+                                                                        new_copy.push(agency);
+                                                                    }
+                                                                })
+                                                                setPrevAgencies(new_copy);
+                                                            }
+
+                                                            useAssignSearch((mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,prev_agencies);
+                                                        
+                                                        }}
+                                                    />
+                                                    {agencia.toUpperCase()}
+                                                </label> 
+                                            ))
+                                        }          
                                     </div>
                                 :   <></>
                             }
@@ -474,89 +534,141 @@ export default function CardAssignCampain({data}){
             </div>
 
             <div className="CardAssignCampain__footer">
-                <button
-                    onClick={(e)=>{
-                        
-                        e.target.textContent="Asignando...";
+                {
+                    (transfer)
+                    ?
+                        <button
+                            onClick={(e)=>{
+                                const agent_origin=agent.id;
+                                const dtsn=agent_dtsn;
 
-                        //De toda la carga solo elijo los créditos que tienen el campo SEARCH: true
-                        let results=[];
-                        charge.map((credit)=>{
-                            if(credit.search){
-                                results.push(credit);
-                            }
-                        });
+                                const distribution=distributions;
+                                let carga=[];
 
-                        let data_agent=[];
-
-                        //Si no hay agente asignado, reparto toda la carga en partes iguales para todos los agentes que estén en la campaña
-                        if(agent.id===''){
-                            let agents=JSON.parse(data.agents);
-
-                            const data_per_agent=chunckArrayInGroups(results,JSON.parse(data.agents).length);
-
-                            data_per_agent.map((datap,n)=>{
-
-                                const distribution=JSON.parse(data.distributions);
-
+                                // Copio lo que tiene el origen
                                 distribution.map((dis)=>{
-                                    if(Number(dis.agent_id)===Number(agents[n].id)){
-                                        datap.map((result)=>{
-                                            dis.distribution.push(result);
-                                            dis.pending.push(result);
-                                        })
-
-                                        dis.total+=datap.length;
-                                        data_agent.push(dis);
+                                    if(Number(dis.agent_id)===Number(agent_origin)){
+                                        carga=dis.distribution;
+                                        dis.distribution=[];
+                                        dis.pending=[];
+                                        dis.inprocess=[];
+                                        dis.processed=[];
+                                        dis.total=0;
                                     }
                                 });
 
-                                // data_agent.push({
-                                //     agent_id:agents[n].id,
-                                //     total:data.length,
-                                //     distribution:data,
-                                //     pending:data, //Créditos que no están gestionados
-                                //     processed:[], //Créditos que ya han sido gestionados
-                                //     inprocess:[] //Créditos que se hicieron llamadas pero fueron no efectivas, es decir, si no es CONTACTADO se puede seguir al siguiente crédito sin guardar gestión
-                                // });
-                            });  
+                                //Actualizo el destino
+                                distribution.map((dis)=>{
+                                    if(Number(dis.agent_id)===Number(dtsn)){
+                                        carga.map((cred)=>{
+                                            dis.pending.push(cred);
+                                            dis.distribution.push(cred);
+                                        });
 
-                        }else{
+                                        dis.total+=Number(carga.length);
+                                    }
+                                });
 
-                            const distribution=JSON.parse(data.distributions);
+                                e.target.textContent="Transfiriendo...";
 
-                            distribution.map((dis)=>{
-                                if(Number(dis.agent_id)===Number(agent.id)){
-                                    results.map((result)=>{
-                                        dis.distribution.push(result);
-                                        dis.pending.push(result);
+                                fetch(`https://sefil.softsen.space/public/api/campains/${data.id}`,{
+                                    method:'PUT',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    },
+                                    body:new URLSearchParams({
+                                        distributions:JSON.stringify(distribution),
+                                        charge_inicial:JSON.stringify(distribution)
                                     })
+                                })
+                                    .then((response) => response.json())  
+                                    .then((data) => {
+                                        setDistributions(distribution);
+                                        updateCredits(data.data);
+                                        e.target.textContent="Transferencia correcta";
+                                    });
+                            }}
+                        >
+                            Transferir carga
+                        </button>
+                    :
+                        <button
+                            onClick={(e)=>{
+                                
+                                e.target.textContent="Asignando...";
+
+                                //De toda la carga solo elijo los créditos que tienen el campo SEARCH: true
+                                let results=charge;
+
+                                let data_agent=[];
+
+                                //Si no hay agente asignado, reparto toda la carga en partes iguales para todos los agentes que estén en la campaña
+                                if(agent.id===''){
+                                    let agents=JSON.parse(data.agents);
+                                    console.log(agents)
+
+                                    const data_per_agent=chunckArrayInGroups(results,agents.length);
+
+                                    console.log(data_per_agent);
+
+                                    data_per_agent.map((datap,n)=>{
+
+                                        const distribution=distributions;
+
+                                        distribution.map((dis)=>{
+                                            if(Number(dis.agent_id)===Number(agents[n].id)){
+                                                datap.map((result)=>{
+                                                    dis.distribution.push(result);
+                                                    dis.pending.push(result);
+                                                })
+
+                                                dis.total+=datap.length;
+                                                data_agent.push(dis);
+                                            }
+                                        });
+                                    });  
+
+                                }else{
+
+                                    const distribution=distributions;
+
+                                    distribution.map((dis)=>{
+                                        if(Number(dis.agent_id)===Number(agent.id)){
+                                            results.map((result)=>{
+                                                dis.distribution.push(result);
+                                                dis.pending.push(result);
+                                            })
+                                        }
+                                    });
+
+                                    data_agent=distribution;
                                 }
-                            });
 
-                            data_agent=distribution;
-                        }
-                        
-                        console.log(data_agent);
-                        
-                        fetch(`https://sefil.softsen.space/public/api/campains/${data.id}`,{
-                            method:'PUT',
-                            headers: {
-                                Accept: 'application/json',
-                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                            },
-                            body:new URLSearchParams({
-                                distributions:JSON.stringify(data_agent),
-                                charge_inicial:JSON.stringify(charge)
-                            })
-                        })
-                            .then((response) => response.json())  
-                            .then((data) => {
-                                e.target.textContent="Asignado";
-                            });
+                                // Aquí debo comprobar que no se este asignando créditos que ya están asignados a otros agentes
+                                console.log(data_agent);
 
-                    }}
-                >Asignar</button>
+                                fetch(`https://sefil.softsen.space/public/api/campains/${data.id}`,{
+                                    method:'PUT',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    },
+                                    body:new URLSearchParams({
+                                        distributions:JSON.stringify(data_agent),
+                                        charge_inicial:JSON.stringify(charge)
+                                    })
+                                })
+                                    .then((response) => response.json())  
+                                    .then((data) => {
+                                        setDistributions(data_agent);
+                                        updateCredits(data.data);
+                                        e.target.textContent="Asignado";
+                                    });
+
+                            }}
+                        >Asignar</button>
+                }
             </div>
         </div>
     );

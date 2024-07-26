@@ -21,7 +21,8 @@ export default function CardCreateCampain({setData}){
             fecha_init:"",
             fecha_finish:"",
             data:[],
-            cartera:"SEFIL_1"
+            cartera:"SEFIL_1",
+            type_assign:'manual'
         });
 
         setNew(false);
@@ -60,6 +61,7 @@ export default function CardCreateCampain({setData}){
 
     if(!agents) return <></>
     if(!business) return <></>
+    if(!campain) return <></>
 
     return (
         <div className="CardCreateCampain">
@@ -162,7 +164,15 @@ export default function CardCreateCampain({setData}){
 
                 <label className="CardCreateCampain__select">
                     Cargar datos
-                    <select>
+                    <select
+                        value={campain.type_assign}
+                        onChange={(e)=>{
+                            setCampain({
+                                ...campain,
+                                type_assign:e.target.value
+                            });
+                        }}
+                    >
                         <option value={"manual"}>Carga manual</option>
                         <option value={"api"}>Sincronización | Web Service</option>
                     </select>
@@ -228,7 +238,8 @@ export default function CardCreateCampain({setData}){
                             fecha_init:campain.fecha_init,
                             fecha_finish:campain.fecha_finish,
                             distributions:JSON.stringify(distributions),
-                            charge_inicial:JSON.stringify([])
+                            charge_inicial:JSON.stringify([]),
+                            type_assign:campain.type_assign
                         };
                         
                         fetch("https://sefil.softsen.space/public/api/campains",{
@@ -247,12 +258,15 @@ export default function CardCreateCampain({setData}){
                                     fecha_init:"",
                                     fecha_finish:"",
                                     data:[],
-                                    cartera:"SEFIL_1"
+                                    cartera:"SEFIL_1",
+                                    type_assign:"manual"
                                 });
                             });
 
                     }}
+
                     className="CardCreateCampain__button CardCreateCampain__button--save"
+
                 >Guardar</button>
             </div>
         </div>

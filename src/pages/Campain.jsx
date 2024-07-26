@@ -24,6 +24,23 @@ export default function Campain(){
         });
     }
 
+    const updateCreditsCampain=(data)=>{
+        const prev=campains.data;
+
+        prev.map((campain)=>{
+            if(campain.id===data.id){
+                campain=data;
+            }
+        })
+
+        console.log(prev)
+
+        setCampains({
+            ...campains,
+            data:prev
+        });
+    }
+
     useEffect(()=>{
         setCreate(false);
         setEdit(false);
@@ -183,6 +200,7 @@ export default function Campain(){
 
                             <CardAssignCampain
                                 data={data_currently}
+                                updateCredits={updateCreditsCampain}
                             />
 
                     </div> 
