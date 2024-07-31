@@ -8,7 +8,6 @@ import {
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 
-
   const styles = StyleSheet.create({
     page: {
       width:'100%',

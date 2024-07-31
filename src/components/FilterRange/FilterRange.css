@@ -1,0 +1,27 @@
+.FilterRange{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.FilterRange>span{
+    font-size: 16px;
+    font-weight: 100;
+    margin-bottom: 5px;
+}
+
+.FilterRange>div{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.FilterRange>div>label{
+    width: 50%;
+    font-size: 14px;
+    font-weight: 100;
+}
+.FilterRange>div>label>input{
+    width: 90%;
+    height: 35px;
+    margin-top: 5px;
+}

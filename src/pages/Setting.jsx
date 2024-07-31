@@ -35,7 +35,7 @@ export default function Setting(){
             </div>
 
             {
-                (param.ci!==null | param.ci!=="") 
+                (param.ci!==undefined) 
                 ?
                     (param.ci==='importdb')
                     ?
@@ -110,7 +110,10 @@ export default function Setting(){
                         </>
 
                         :  <></>
-                : <CardCreateCartera/>
+                : 
+                    (
+                        location.hash='/dashboard/configuracion/importdb'
+                    )
             }
         </div>
     );

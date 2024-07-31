@@ -80,7 +80,12 @@ export default function Usuarios(){
                                     permiss[0].permission=[];
                                     permiss[0].permission.push('Consulta:all');
                                     permiss[0].permission.push('Gestion:all');
-                                    
+                                
+                                }else if(e.target.value==='campo'){
+                                    permiss[0].permission=[];
+                                    permiss[0].permission.push('Consulta:all');
+                                    permiss[0].permission.push('Gestion:all');
+
                                 }else if(e.target.value==='administrador'){
                                     permiss[0].permission=[];
                                     permiss[0].permission.push('Consulta:all');
@@ -107,10 +112,12 @@ export default function Usuarios(){
                             }}>
                                 {
                                     (localStorage.getItem('rol')==='super') &&
-                                        <option value="gestor">Super usuario</option>
+                                        <option value="super">Super usuario</option>
                                 }
                                 <option value="administrador">Administrador</option>
-                                <option value="gestor">Gestor</option>
+                                <option value="call">Gestor | Call Center</option>
+                                <option value="campo">Gestor | Campo</option>
+                                <option value="campo">Gestor | Judicial</option>
                                 <option value="cobranza">Cobranza</option>
                                 <option value="consulta">Consulta</option>
                             </select>

@@ -9,86 +9,12 @@ export default function NavSlide({actions,permission}){
     const menu=useRef();
     const config=useRef();
     const icon_menu=useRef();
+    const gestion=useRef();
 
     const [options,setOptions]=useState([]);
 
     useEffect(()=>{
         const permission=localStorage.getItem('permission').split(',');
-        // permission.map((permiso)=>{
-        //     if(permiso==='Consulta:all'){
-        //         array_links.push({
-        //             link:'dashboard/consulta',
-        //             text:'Consulta',
-        //             icon:'./icons/ic_round-search.png'
-        //         });
-        //     }else if(permiso==='Cobranza:all'){
-        //         array_links.push({
-        //             link:'dashboard/recaudacion',
-        //             text:'Recaudación',
-        //             icon:'./icons/solar_cart-bold.png'
-        //         });
-        //     }else if(permiso==='Comprobantes:all'){
-        //         array_links.push({
-        //             link:'dashboard/comprobantes',
-        //             text:'Comprobantes',
-        //             icon:'./icons/ic_baseline-receipt-long.png'
-        //         });
-        //     }else if(permiso==='Reportes:all'){
-
-        //         array_links.push({
-        //             link:'dashboard/reportes',
-        //             text:'Reportes',
-        //             icon:'./icons/ion_bar-chart.png',
-        //             sublinks:[
-        //                 {
-        //                     link:'dashboard/reportes/estado',
-        //                     text:'Estado de cartera'
-        //                 },
-        //                 {
-        //                     link:'dashboard/reportes/actividad',
-        //                     text:'Cierre de caja'
-        //                 }
-        //             ]
-        //         });
-
-        //     }else if(permiso.substring(0,4)==='User'){
-        //         array_links.push({
-        //             link:'dashboard/usuarios',
-        //             text:'Usuarios',
-        //             icon:'./icons/ph_user-bold.png'
-        //         });
-
-        //     }else if(permiso==='Gestion:all'){
-
-        //         array_links.push({
-        //             link:'dashboard/cobranza',
-        //             text:'Cobranza',
-        //             icon:'./icons/zoiper.png'
-        //         });
-
-        //     }else if(permiso==='DB:all'){
-        //         array_links.push({
-        //             link:'dashboard/configuracion',
-        //             text:'Configuración',
-        //             icon:'./icons/mdi_database-cog.png',
-        //             sublinks:[
-        //                 {
-        //                     link:'dashboard/configuracion/importdb',
-        //                     text:'Carteras'
-        //                 },
-        //                 // {
-        //                 //     link:'dashboard/configuracion/exportdb',
-        //                 //     text:'Pagos'
-        //                 // },
-        //                 // {
-        //                 //     link:'dashboard/configuracion/backup',
-        //                 //     text:'Copias de seguridad'
-        //                 // }
-        //             ]
-        //         });
-        //     }
-
-        // });
 
         setOptions(permission);
 
@@ -132,11 +58,41 @@ export default function NavSlide({actions,permission}){
 
             {
                 (options.includes('Gestion:all')) ?
-                    <NavLink to="dashboard/cobranza" className="NavSlide__option">
+                    <div to="dashboard/cobranza" className="NavSlide__option" onClick={(e)=>{useMenu(e.target,gestion,'NavSlide__subOption--active',gestion)}}>
                         <img src="./icons/zoiper.png"/>
                         <label>Cobranza</label>
                         <span>Cobranza</span>
-                    </NavLink>
+                        <div className="NavSlide__option--down">
+                            <img src="./icons/arrowDown.png"/>
+                            <div ref={gestion}>
+                                {
+                                    (options.includes('Gestion:all')) ?
+                                        <>
+                                            {
+                                                (options.includes('User:all') | options.includes('User:minimize'))
+                                                ?
+                                                    <>
+                                                        <NavLink to={"dashboard/glist"}>Historial de gestiones</NavLink>
+                                                        {
+                                                            (options.includes('Gestion:all'))
+                                                            ?
+                                                                <NavLink to={"dashboard/call"}>Gestión</NavLink>
+                                                            : <></>
+                                                        }
+                                                        <NavLink to={"dashboard/monitor"}>Monitoreo</NavLink>
+                                                        <NavLink to={"dashboard/campain"}>Campañas</NavLink>
+                                                        <NavLink to={"dashboard/ccall"}>Configuración de Gestión</NavLink>
+                                                    </>
+
+                                                :   <NavLink to={"dashboard/call"}>Gestión</NavLink>
+                                            }
+                                        </>
+                                    :
+                                        <></>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 :<></>
             }
 
@@ -152,13 +108,13 @@ export default function NavSlide({actions,permission}){
         
             {
                 (options.includes('Reportes:all')) ?
-                    <div to={"dashboard/reportes"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,config,'NavSlide__subOption--active',icon_menu)}}>
+                    <div to={"dashboard/reportes"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,icon_menu,'NavSlide__subOption--active',icon_menu)}}>
                         <img src={"./icons/ion_bar-chart.png"}/>
                         <label>Reportes</label>
                         <span>Reportes</span>
                         <div className="NavSlide__option--down">
                             <img src="./icons/arrowDown.png"/>
-                            <div ref={config}>
+                            <div ref={icon_menu}>
                                 {
                                     (options.includes('User:all') | options.includes('User:minimize')) ?
                                         <>

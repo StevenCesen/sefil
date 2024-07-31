@@ -1162,7 +1162,6 @@ export default function Reports(){
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
-                            
                         </div>
 
                     :

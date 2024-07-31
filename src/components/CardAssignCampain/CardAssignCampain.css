@@ -1,0 +1,323 @@
+.CardAssignCampain{
+    width: 600px;
+    height: 600px;
+    overflow-y: auto;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    position: relative;
+    box-shadow: var(--box-shadow);
+}
+
+.CardAssignCampain>span{
+    display: block;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    font-weight: 100;
+}
+
+.CardAssignCampain__head{
+    width: 100%;
+    height: 50px;
+    background-color: var(--bg-alert-successful);
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+    color: var(--color-3);
+    font-weight: bold;
+    font-size: 14px;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    align-items: center;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+}
+
+.CardAssignCampain__footer{
+    width: 100%;
+    height: 50px;
+    background-color: var(--bg-alert-successful);
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-end;
+    color: var(--color-3);
+    font-weight: bold;
+    font-size: 14px;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    align-items: center;
+    margin-top: 10px;
+    position: sticky;
+    bottom: 0;
+}
+
+.CardAssignCampain__footer>button{
+    width: 100px;
+    color: var(--color-3);
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    height: 35px;
+    border-radius:2px;
+    background-color: #008682;
+}
+
+.CardAssignCampain__agents{
+    width: 100%;
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.CardAssignCampain__agentsSelect{
+    width: 100%;
+    border: 1px solid grey;
+    padding: 10px 10px;
+    margin-top: 10px;
+    position: relative;
+}
+
+.CardAssignCampain__agentsResult{
+    width: 100%;
+}
+
+.CardAssignCampain__agentsResult>label{
+    cursor: pointer;
+}
+
+.CardAssignCampain__agents>label{
+    width: 33.33%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-weight: 100;
+    flex-direction: column;
+}
+.CardAssignCampain__agentsOptions{
+    width: 100%;
+    margin-top: 20px;
+    position: absolute;
+    background-color: var(--bg-1);
+    top: 20px;
+    left: 0;
+    box-shadow: var(--box-shadow);
+}
+
+.CardAssignCampain__agentsOptions>div{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 50% 25% 25%;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgb(176, 176, 176);
+}
+
+.CardAssignCampain__agentsOptions>div>button{
+    width: 30px;
+    height: 30px;
+    margin: 0 auto;
+    background-color: inherit;
+    border: none;
+    cursor: pointer;
+}
+
+.CardAssignCampain__agentsOptions>div>label{
+    font-size: 14px;
+    padding-left: 10px;
+}
+
+.CardAssignCampain__agents>p{
+    width: 33.33%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.CardAssignCampain__agents>label>select{
+    width: 100%;
+    height: 40px;
+    margin-top: 5px;
+    border: 1px solid rgb(188, 188, 188);
+    border-radius: 2px;
+    font-weight: 100;
+}
+
+.CardAssignCampain__radius{
+    width: 100%;
+    padding: 10px 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.CardAssignCampain__radius>label{
+    width: 50%;
+    text-align: center;
+    font-weight: 100;
+}
+
+.CardAssignCampain__radius>label>input{
+    margin-right: 10px;
+}
+
+.CardAssignCampain__file{
+    width: 100%;
+    padding: 0 10px;
+    font-weight: 100;
+}
+
+.CardAssignCampain__file>input{
+    /* display: none; */
+    margin-left: 10px;
+    border: none;
+    padding-left: 10px;
+    background-color: rgb(237, 237, 237);
+    height: 35px;
+}
+
+.CardAssignCampain__file>button{
+    margin-left:10px;
+    height: 35px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.CardAssignCampain__file>input:focus{
+    outline: none;
+}
+
+.CardAssignCampain__file>div{
+    height: 200px;
+    overflow-y: auto;
+    cursor: pointer;
+    padding: 10px 10px;
+    border-radius: 2px;
+    margin: 5px 10px;
+    border: 1px solid rgb(188, 188, 188);
+}
+
+.CardAssignCampain__filters{
+    width: 100%;
+    height: 192px;
+    overflow-y: auto;
+    padding: 0 10px;
+}
+
+.CardAssignCampain__selects{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.CardAssignCampain__selects>label{
+    width: 100%;
+    display: flex;
+    font-weight: 100;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.CardAssignCampain__selects>label>select{
+    width: 100%;
+    height: 40px;
+    margin-top: 5px;
+    border: 1px solid rgb(188, 188, 188);
+    border-radius: 2px;
+    font-weight: 100;
+}
+
+.CardAssignCampain__selects>label>div{
+    width: 100%;
+    margin-top: 5px;
+    position: relative;
+}
+
+.CardAssignCampain__ranges{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.CardAssignCampain__selects>label>div>button{
+    width: 100%;
+    height: 40px;
+    border: 1px solid rgb(188, 188, 188);
+    border-radius: 2px;
+    font-weight: 100;
+}
+
+.CardAssignCampain__selects>label>div>div{
+    position: absolute;
+    width: 100%;
+    height: 200px;
+    overflow-y: auto;
+    bottom: 100%;
+    left: 0px;
+    background-color: rgb(241, 241, 241);
+    border-radius: 2px;
+    box-shadow: var(--box-shadow);
+    padding: 10px 10px 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.CardAssignCampain__selects>label>div>div>label{
+    width: 100%;
+    font-weight: 100;
+    font-size: 14px;
+    padding: 5px 5px;
+    cursor: 2px;
+}
+
+.CardAssignCampain__selects>label>div>div>label:hover{
+    background-color: rgb(212, 212, 212);
+}
+
+.CardAssignCampain__selects>label>div>div>label>input{
+    margin-right: 10px;
+}
+
+.CardAssignCampain__headCharge{
+    width: 100%;
+    height: 40px;
+    background-color: var(--bg-alert-error);
+    display: grid;
+    grid-template-columns: 5% 25% 11.66% 11.66% 11.66% 11.66% 11.66% 11.66%;
+}
+
+.CardAssignCampain__itemCharge{
+    width: 100%;
+    height: 40px;
+    background-color: var(--bg-2);
+    display: grid;
+    grid-template-columns: 5% 25% 11.66% 11.66% 11.66% 11.66% 11.66% 11.66%;
+}
+
+.CardAssignCampain__headCharge>label,.CardAssignCampain__itemCharge>label{
+    font-size: 12px;
+    color: var(--color-6);
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    text-align: center;
+}
+
+.CardAssignCampain__headCharge>label{
+    font-weight: bold;
+}
+
+.CardAssignCampain__itemCharge>label{
+    font-weight: 100;
+}
+
+.CardAssignCampain__headCharge>input,.CardAssignCampain__itemCharge>input{
+    margin: 0 auto;
+}
