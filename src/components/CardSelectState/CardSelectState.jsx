@@ -5,19 +5,21 @@ export default function CardSelectState({mode,current_option}){
     
     const [current,setCurrent]=useState();
     const [view,setView]=useState(false);
+
     const options=[
-        'DISPONIBLE',
-        'DESCONECTADO',
+        'CONECTADO',
+        // 'FUERA DE LÍNEA',
         'EN PAUSA',
-        'EN LLAMADA',
         'EN RECESO',
         'EN REUNIÓN'
     ];
 
+
     useEffect(()=>{
         setView(false);
         setCurrent(current_option);
-    },[]);
+
+    },[current_option]);
 
     return (
         <div className="CardSelectState">
@@ -39,6 +41,7 @@ export default function CardSelectState({mode,current_option}){
                                             <label 
                                                 key={index}
                                                 onClick={(e)=>{
+                                                    setView(!view)
                                                     setCurrent(option);
                                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/broadcast/${localStorage.getItem('temp_uS')}?state=${option}`,{
                                                         headers: {
@@ -48,7 +51,7 @@ export default function CardSelectState({mode,current_option}){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then((data) => {
-                                                            console.log(data)
+                                                        
                                                         });
                                                 }}
                                             >{option}</label>

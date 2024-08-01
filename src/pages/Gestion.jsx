@@ -246,7 +246,6 @@ export default function Gestion(){
                             <option value={"quinche"}>QUINCHE</option>
                             <option value={"quininde"}>QUININDE</option>
                         </select> */}
-
                     </div>
 
                     <div>

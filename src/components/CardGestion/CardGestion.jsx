@@ -22,6 +22,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [template,setTemplate]=useState();
     const [view_details,setDetails]=useState();
     const [tray,setTray]=useState();
+    const [message_state,setMessage]=useState();
+    const [phones_secondaries,setSecondaries]=useState();
 
     const close=()=>{
         setCall(false);
@@ -94,6 +96,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setCredit(currently);
         setPagos([]);
         setTray('Historial');
+        setMessage('No gestionado aún');
         setInfo({
             id:currently.id,
             name:currently.name,
@@ -115,9 +118,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             judicial:currently.gastos_judiciales,
             cartera:currently.cartera
         });
-        
-        console.log(currently)
-
 
         setStates([]);
 
@@ -144,6 +144,27 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         ];
 
         update_phones(phones_c);
+
+        setSecondaries([
+            {
+                // nro:'0978950498',
+                nro:'0978950498',
+                parentesco:'Hermano-TITULAR',
+                efec:0
+            },
+            {
+                // nro:'0978950498',
+                nro:'0978950498',
+                parentesco:'Esposa-TITULAR',
+                efec:0
+            },
+            {
+                // nro:'0978950498',
+                nro:'0978950498',
+                parentesco:'Esposa-TITULAR',
+                efec:0
+            }
+        ]);
 
         let temp=[];
 
@@ -174,7 +195,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                 substates:temp.default[2].suboptions
             });
         }
-        
+
         setDataGestion({
             id_campain:id_campain,
             id_call:'', //Llamada con gestión
@@ -186,7 +207,10 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             observation:'',
             byUser:'',
             fecha:'',
-            client_name:currently.name
+            client_name:currently.name,
+            client_ci:currently.ci,
+            type:currently.tipo,
+            dias_vencidos:currently.dias_vencidos
         });
 
     },[currently]);
@@ -196,6 +220,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     if(!contacts) return <></>
     if(!data_gestion) return <></>
     if(!template) return <></>
+    if(!message_state) return <></> 
 
     return (
         <div className="Ggestion">
@@ -262,6 +287,12 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                     update_phones(phones_c)
                                                     
                                                     setCredit(garante);
+                                                    setDataGestion({
+                                                        ...data_gestion,
+                                                        client_name:garante.name,
+                                                        client_ci:garante.ci,
+                                                        type:garante.tipo
+                                                    });
                                                 }
                                             });
                                         }}
@@ -308,12 +339,15 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                 <div className="DetailCredit__dial">
                     <div>
-                        <h3 className="Ggestion__title">Contactos</h3>
+                        <div className="DetailCredit__dial__addPhone">
+                            <h3 className="Ggestion__title">Contactos</h3>
+                            <button className="Ggestion__button">
+                                <img src="./icons/add.png"/>
+                            </button>
+                        </div>
                         
-                        <button className="Ggestion__button">Agregar nuevo</button>
-
                         <div>
-                            
+                            <p style={{fontWeight:'600'}}>Contactos principales</p>
                             {
                                 data_phones.map((phone,index)=>(
                                     <div key={index} className="Ggestion__contact">
@@ -342,7 +376,18 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     </div>
                                 ))
                             }
-                            
+
+                            <p style={{fontWeight:'600'}}>Contactos secundarios</p>
+                            {
+                                phones_secondaries.map((phone,index)=>(
+                                    <div key={index} className="Ggestion__contact">
+                                        <div className="Ggestion__contactSecond">
+                                            <p>{phone.parentesco}</p>
+                                            <p>{phone.nro} ({phone.efec})</p>
+                                        </div> 
+                                    </div>
+                                ))
+                            }
                         </div>
                     </div>
 
@@ -364,7 +409,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                 <div className="Ggestion__principal">
                     <div>
                         <div className="Ggestion__principalHead">
-                            <h3 className="Ggestion__title">Gestión</h3>
+                            <h3 className="Ggestion__title">Gestión ({message_state})</h3>
                             {/* En este botón se hace verificación de estados de llamadas para guardar en bandeja de "EN PROCESO" */}
 
                             <button
@@ -460,7 +505,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                                 <label className="Ggestion__select">
                                     Subestado
-                                    <select 
+                                    <select
                                         onChange={(e)=>{
                                             setDataGestion({
                                                 ...data_gestion,
@@ -484,7 +529,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             </div>
 
                             <div className="Ggestion__twoGroup">
-                                <label className="Ggestion__input">
+                                <label className="Ggestion__input" style={{width:"calc((100% / 3) - 15px)"}}>
                                     Fecha de compromiso
                                     <input 
                                         onChange={(e)=>{
@@ -564,51 +609,52 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                                 console.log(`URL: https://sefil.softsen.space/public/api/managments`)
                                 console.log(data_send);
+                                setMessage('Gestionado');
 
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
-                                    method:'POST',
-                                    headers: {
-                                        Accept: 'application/json',
-                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                    },
-                                    body:new URLSearchParams(data_send)
-                                })
-                                    .then((response) => response.json())  
-                                    .then((data) => {
-                                        if(data.status===200){
-                                            addNotification({
-                                                title: 'Éxito',
-                                                subtitle: 'Gestión guardada correctamente',
-                                                message: '',
-                                                native: false,
-                                                backgroundTop: '#009793',
-                                                backgroundBottom: '#459d9a',
-                                                colorTop: 'white',
-                                                colorBottom: 'white',
-                                                closeButton: 'Cerrar',
-                                                duration:3000,
-                                            });
-                                            //setNext(index);
+                                // fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
+                                //     method:'POST',
+                                //     headers: {
+                                //         Accept: 'application/json',
+                                //         Authorization: `Bearer ${localStorage.getItem('token')}`
+                                //     },
+                                //     body:new URLSearchParams(data_send)
+                                // })
+                                //     .then((response) => response.json())  
+                                //     .then((data) => {
+                                //         if(data.status===200){
+                                //             addNotification({
+                                //                 title: 'Éxito',
+                                //                 subtitle: 'Gestión guardada correctamente',
+                                //                 message: '',
+                                //                 native: false,
+                                //                 backgroundTop: '#009793',
+                                //                 backgroundBottom: '#459d9a',
+                                //                 colorTop: 'white',
+                                //                 colorBottom: 'white',
+                                //                 closeButton: 'Cerrar',
+                                //                 duration:3000,
+                                //             });
+                                //             //setNext(index);
 
-                                            setDataGestion({
-                                                id_campain:id_campain,
-                                                id_call:'',
-                                                id_calls_extras:[],
-                                                id_credit:currently.id,
-                                                state_gestion:'',
-                                                substate_gestion:'',
-                                                date_promise:'',
-                                                observation:'',
-                                                byUser:'',
-                                                fecha:'',
-                                                client_name:currently.name
-                                            });
+                                //             setDataGestion({
+                                //                 id_campain:id_campain,
+                                //                 id_call:'',
+                                //                 id_calls_extras:[],
+                                //                 id_credit:currently.id,
+                                //                 state_gestion:'',
+                                //                 substate_gestion:'',
+                                //                 date_promise:'',
+                                //                 observation:'',
+                                //                 byUser:'',
+                                //                 fecha:'',
+                                //                 client_name:currently.name
+                                //             });
 
-                                            e.target.textContent="Guardado";
-                                        }else{
-                                            e.target.textContent="Error, inténtalo de nuevo";
-                                        }
-                                    });
+                                //             e.target.textContent="Guardado";
+                                //         }else{
+                                //             e.target.textContent="Error, inténtalo de nuevo";
+                                //         }
+                                //     });
                             }
 
                         }}
@@ -661,7 +707,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     </div>
 
                     {
-                        (historial.length>0 | tray==='Historial')
+                        (historial.length>0 & tray==='Historial')
                         ?   
                             historial.map((item,index)=>(
                                 <div key={index} className="Ggestion__historialItem">
@@ -674,7 +720,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 </div>
                             ))
                         :   
-                            (tray==='Pagos')
+                            (tray==='Pagos' & pagos.length>0)
                             ?
                                 pagos.map((item,index)=>(
                                     <div key={index} className="Ggestion__historialItem">
@@ -683,7 +729,10 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         <label>{useFormatterNumber({value:item.valor_recibido,currency:'USD'})}</label>
                                     </div>
                                 ))
-                            :   <></>
+                            :   
+                                <div className="Ggestion__historialItem">
+                                    <label>Sin pagos</label>
+                                </div>
                     }
                     
                 </div>

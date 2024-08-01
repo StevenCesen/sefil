@@ -12,6 +12,7 @@ export default function GHistorial(){
     const [campain,setCampain]=useState('');
     const [campains,setCampains]=useState();
     const [current,setCurrent]=useState();
+    const [agents,setAgents]=useState();
 
     const [data,setData]=useState(); //Aquí tenemos todos los créditos
     
@@ -27,6 +28,18 @@ export default function GHistorial(){
     }
 
     useEffect(()=>{
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/agents`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                console.log(data)
+                setAgents(data);
+            });
 
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
             headers: {
@@ -47,7 +60,6 @@ export default function GHistorial(){
                 })
                     .then((response) => response.json())  
                     .then((data) => {
-                        console.log(data.data)
                         setData(data);
                     });
             });
@@ -58,6 +70,7 @@ export default function GHistorial(){
     if(!campains) return <></>
     if(!data) return <></>
     if(!current) return <></>
+    if(!agents) return <></>
 
     return (
         <div className="pageConsulta">
@@ -69,38 +82,6 @@ export default function GHistorial(){
                         history.go(-1) 
                     }}
                 >Regresar</NavLink>
-
-                <label>
-                    Campaña
-                    <select 
-                        value={campain.id}
-                        onChange={(e)=>{
-                            if(e.target.value!==''){
-                                
-                                localStorage.setItem('campain',e.target.value);
-                                setCampain(e.target.value);
-
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?campain=${e.target.value}`,{
-                                    headers: {
-                                        Accept: 'application/json',
-                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                    }
-                                })
-                                    .then((response) => response.json())  
-                                    .then((data) => {
-                                        console.log(data);
-                                    });
-                            }
-                    }}>
-                        <option value={""}>--Seleccionar--</option>
-                        {
-                            campains.map((campain,index)=>(
-                                <option value={campain.id} key={index}>{campain.name}</option>
-                            ))
-                        }
-                        
-                    </select>
-                </label>
             </div>
 
             <div style={{paddingBottom:"20px"}}>
@@ -108,15 +89,215 @@ export default function GHistorial(){
                 
                 <div className="Historial__head">
                     <label></label>
-                    <label>Fecha gestión</label>
-                    <label>Empresa</label>
-                    <label>Nombre</label>
-                    <label>Cédula</label>
-                    <label>Tipo</label>
+                    <label>
+                        Fecha gestión
+                        <input type="date"/>
+                    </label>
+                    <label>
+                        Campaña
+                        <select
+                            value={campain.id}
+                            onChange={(e)=>{
+                                if(e.target.value!==''){
+                                    
+                                    localStorage.setItem('campain',e.target.value);
+                                    setCampain(e.target.value);
+    
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?campain=${e.target.value}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            console.log(data);
+                                        });
+                                }
+                            }}
+                        >
+                            <option value={""}>--Seleccionar--</option>
+                            {
+                                campains.map((campain,index)=>(
+                                    <option value={campain.id} key={index}>{campain.name}</option>
+                                ))
+                            }
+                        </select>    
+                    </label>
+                    <label>
+                        Nombre
+                        <input 
+                            type="value"
+                            onChange={(e)=>{
+                                if(e.target.value.length>2){
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?name=${e.target.value}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }else{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }
+                            }}
+                        />
+                    </label>
+                    <label>
+                        Cédula
+                        <input 
+                            type="value"
+                            onChange={(e)=>{
+                                if(e.target.value.length>3){
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?ci=${e.target.value}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }else{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }
+                            }}
+                        />
+
+                    </label>
+                    <label>
+                        Tipo
+                        <select
+                            onChange={(e)=>{
+                                if(e.target.value!==''){
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?type=${e.target.value}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }else{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }
+                            }}
+                        >
+                            <option value={""}>-- Seleccionar --</option>
+                            <option value={"TITULAR"}>TITULAR</option>
+                            <option value={"GARANTE"}>GARANTE</option>
+                        </select>
+                    </label>
                     <label>ID crédito</label>
-                    <label>Estado gestión</label>
-                    <label>Acuerdo</label>
-                    <label>Agente</label>
+                    <label>
+                        Estado gestión
+                        <select>
+                            <option>COMPROMISO DE PAGO</option>
+                            <option>COMPROMISO DE PAGO</option>
+                        </select>
+                    </label>
+                    <label>
+                        Acuerdo
+                        <input 
+                            type="date"
+                            onChange={(e)=>{
+                                if(e.target.value!==''){
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?promise=${e.target.value}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }else{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }
+                            }}
+                        />
+                    </label>
+                    <label>
+                        Agente
+                        <select
+                            onChange={(e)=>{
+                                if(e.target.value!==''){
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?agent=${e.target.value}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }else{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setData(data);
+                                        });
+                                }
+                            }}
+                        >
+                            <option>-- Seleccionar --</option>
+                            {
+                                agents.map((agent)=>(
+                                    <option value={agent.name}>{agent.name}</option>
+                                ))
+                            }
+                            
+                        </select>
+                    </label>
                     <label>Observación</label>
                 </div>
 
@@ -130,10 +311,10 @@ export default function GHistorial(){
                                 }}
                             >Ver</button>
                             <label>{gestion.fecha.split(" ")[0]}</label>
-                            <label>SEFIL_2</label>
+                            <label>{campain.name}</label>
                             <label>{gestion.client_name}</label>
-                            <label>Cédula</label>
-                            <label>Tipo</label>
+                            <label>{gestion.client_ci}</label>
+                            <label>{gestion.type}</label>
                             <label>{gestion.id_credit}</label>
                             <label>{gestion.substate_gestion}</label>
                             <label>{gestion.date_promise}</label>

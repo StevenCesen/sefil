@@ -31,6 +31,7 @@ export default function Monitor(){
             </div>
 
             <div className="pageConsulta__search">
+                <h4 className="Reports__title">Monitoreo</h4>
                 {/* <label>
                     Buscar cliente
                     <input onKeyUp={(e)=>{
@@ -62,15 +63,15 @@ export default function Monitor(){
                             key={index}
                             name={agent.name}
                             state={agent.state}
-                            time={"00:00:00"}
-                            name_campain={"N/D"}
+                            time={agent.tiempo}
+                            name_campain={agent.gestion.campain}
                             mode={"complete"}
                             data={{
-                                nro_credits:20,
-                                nro_gestions:8,
-                                nro_calls:15,
-                                nro_efec:8,
-                                nro_no_efec:1
+                                nro_credits:agent.gestion.total_credits,
+                                nro_gestions:agent.gestion.total_credits_ges,
+                                nro_calls:agent.gestion.nro_llamadas,
+                                nro_efec:agent.gestion.nro_llamadas_efec,
+                                nro_no_efec:agent.gestion.nro_llamadas_no_efec
                             }}
                         />
                     ))

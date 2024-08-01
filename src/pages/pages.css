@@ -1932,7 +1932,8 @@
     justify-content: center;
     align-items: center;
     background-color: var(--bg-alert-error);
-    height: 50px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     margin-top: 10px;
@@ -1941,7 +1942,27 @@
 .Historial__head>label{
     text-align: center;
     font-weight: bold;
+    font-size: 14px;
     color: var(--color-3);
+}
+
+.Historial__head>label>input{
+    width: 95%;
+    margin-top: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: #FEC888;
+}
+
+.Historial__head>label>select{
+    width: 95%;
+    border: none;
+    background-color: #FEC888;
+    margin-top: 5px;
+}
+
+.Historial__head>label>input:focus{
+    outline: none;
 }
 
 .Historial__item{

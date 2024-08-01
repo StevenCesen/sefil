@@ -13,7 +13,7 @@ export default function Header(){
                 (useSessions()) && 
                     <>
                         {
-                            (localStorage.getItem('rol')==='gestor') 
+                            (localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='call' | localStorage.getItem('rol')==='campo') 
                             ?
                                 <CardSelectState
                                     mode={"select"}
@@ -26,7 +26,7 @@ export default function Header(){
                                 <MenuNotifier/>
                         }
                         <MenuUser/>
-                        <button onClick={e=>{useLogout()}}>Cerrar sesión</button>
+                        <button onClick={e=>{useLogout(e)}}>Cerrar sesión</button>
                     </>
             }
             
