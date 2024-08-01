@@ -1,4 +1,4 @@
-nro_voucher={idVouch.id}
+<!-- nro_voucher={idVouch.id}
 type_print={"ORIGINAL"}
 tipo_transaccion={send.tipo_transaccion}
 forma_pago={send.forma_pago}
@@ -20,4 +20,76 @@ valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial
 valor_devuelto={send.valor_devuelto}
 
 fecha={new Date().toLocaleDateString()}
-agente={localStorage.getItem('name').substring(0,1)+localStorage.getItem('name').split(' ')[1]}
+agente={localStorage.getItem('name').substring(0,1)+localStorage.getItem('name').split(' ')[1]} -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="record">Grabar</button>
+    <button id="stopRecord" disabled>Detener</button>
+    <audio id="audio" controls></audio>
+
+    <script>
+        let recorder="", stream;
+
+        function blobToBase64(blob) {
+            return new Promise((resolve, _) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+            const byteCharacters = atob(b64Data);
+            const byteArrays = [];
+
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+                }
+
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+                
+            const blob = new Blob(byteArrays, {type: contentType});
+            return blob;
+        }
+
+        document.getElementById('record').addEventListener('click', async () => {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            recorder = new MediaRecorder(stream);
+            recorder.start();
+
+            document.getElementById('stopRecord').disabled = false;
+            document.getElementById('record').disabled = true;
+
+            recorder.addEventListener('dataavailable',async e => {
+                console.log(e.data)
+                const base=await blobToBase64(e.data);
+                console.log(base)
+                const base64Response = await fetch(`${base}`);
+                const response=await base64Response.blob();
+
+                document.getElementById('audio').src = URL.createObjectURL(response);
+                document.getElementById('audio').controls = true;
+            });
+        });
+
+        document.getElementById('stopRecord').addEventListener('click', () => {
+            recorder.stop();
+            document.getElementById('stopRecord').disabled = true;
+            document.getElementById('record').disabled = false;
+        });
+    </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CardCall.css"
 import addNotification from "react-push-notification";
+import useBlobToBase64 from "../../hooks/useBlobToBase64";
 
 const states_call=[
     'NO CONTACTADO',
@@ -18,6 +19,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
     const [continue_call,setContinue]=useState();
     const [end_session,setEnd]=useState(false);
     const [view_states,setView]=useState(false);
+    const [record,setRecord]=useState();
 
     const init = ()=>{
         let second=0;
@@ -62,7 +64,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
             second:0,
             minutes:0
         });
-
+        setRecord('');
         setState('');
         setView(false);
         setEnd(false);
@@ -118,8 +120,18 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                     ?
                         <button 
                             onClick={async (e)=>{
-                                const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
-                                const response=await request.json();
+                                record.stop();
+                                record.addEventListener('dataavailable',async e => {
+                                    console.log(e.data)
+                                    const base=await useBlobToBase64(e.data);
+
+                                    setDataCall({
+                                        ...data_call,
+                                        id_record:base
+                                    })
+                                });
+                                // const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
+                                // const response=await request.json();
                             
                                 clearInterval(continue_call);
                                 setEnd(true);
@@ -140,6 +152,8 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                         <button 
                             style={{marginLeft:'10px'}}
                             onClick={async (e)=>{
+                                let recorder,stream;
+
                                 if(phone.nro===''){
                                     addNotification({
                                         title: 'Sin número',
@@ -154,14 +168,21 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                                         duration: 3000,
                                     });
                                 }else{
-                                    const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
-                                    const response=await request.json();
+                                    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                                    recorder = new MediaRecorder(stream);
+                                    recorder.start();
+                                    setRecord(recorder);
+                                    // const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
+                                    // const response=await request.json();
+
                                     init();
                                     setDataCall({
                                         ...data_call,
                                         state:true
                                     });
+
                                 }
+
                             }} 
                             className="CardCall__button CardCall__button--call"
                         >
@@ -202,7 +223,8 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                                     duration_call:Number(time.minutes)*60+Number(time.second),	
                                     phone:data_call.phone,	
                                     id_credit:data_call.id_credit,
-                                    id_campain:data_call.id_campain
+                                    id_campain:data_call.id_campain,
+                                    id_record:data_call.id_record
                                 };
 
                                 console.log(data_send);

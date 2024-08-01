@@ -611,50 +611,50 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 console.log(data_send);
                                 setMessage('Gestionado');
 
-                                // fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
-                                //     method:'POST',
-                                //     headers: {
-                                //         Accept: 'application/json',
-                                //         Authorization: `Bearer ${localStorage.getItem('token')}`
-                                //     },
-                                //     body:new URLSearchParams(data_send)
-                                // })
-                                //     .then((response) => response.json())  
-                                //     .then((data) => {
-                                //         if(data.status===200){
-                                //             addNotification({
-                                //                 title: 'Éxito',
-                                //                 subtitle: 'Gestión guardada correctamente',
-                                //                 message: '',
-                                //                 native: false,
-                                //                 backgroundTop: '#009793',
-                                //                 backgroundBottom: '#459d9a',
-                                //                 colorTop: 'white',
-                                //                 colorBottom: 'white',
-                                //                 closeButton: 'Cerrar',
-                                //                 duration:3000,
-                                //             });
-                                //             //setNext(index);
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
+                                    method:'POST',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    },
+                                    body:new URLSearchParams(data_send)
+                                })
+                                    .then((response) => response.json())  
+                                    .then((data) => {
+                                        if(data.status===200){
+                                            addNotification({
+                                                title: 'Éxito',
+                                                subtitle: 'Gestión guardada correctamente',
+                                                message: '',
+                                                native: false,
+                                                backgroundTop: '#009793',
+                                                backgroundBottom: '#459d9a',
+                                                colorTop: 'white',
+                                                colorBottom: 'white',
+                                                closeButton: 'Cerrar',
+                                                duration:3000,
+                                            });
+                                            //setNext(index);
 
-                                //             setDataGestion({
-                                //                 id_campain:id_campain,
-                                //                 id_call:'',
-                                //                 id_calls_extras:[],
-                                //                 id_credit:currently.id,
-                                //                 state_gestion:'',
-                                //                 substate_gestion:'',
-                                //                 date_promise:'',
-                                //                 observation:'',
-                                //                 byUser:'',
-                                //                 fecha:'',
-                                //                 client_name:currently.name
-                                //             });
+                                            setDataGestion({
+                                                id_campain:id_campain,
+                                                id_call:'',
+                                                id_calls_extras:[],
+                                                id_credit:currently.id,
+                                                state_gestion:'',
+                                                substate_gestion:'',
+                                                date_promise:'',
+                                                observation:'',
+                                                byUser:'',
+                                                fecha:'',
+                                                client_name:currently.name
+                                            });
 
-                                //             e.target.textContent="Guardado";
-                                //         }else{
-                                //             e.target.textContent="Error, inténtalo de nuevo";
-                                //         }
-                                //     });
+                                            e.target.textContent="Guardado";
+                                        }else{
+                                            e.target.textContent="Error, inténtalo de nuevo";
+                                        }
+                                    });
                             }
 
                         }}
@@ -707,7 +707,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     </div>
 
                     {
-                        (historial.length>0 & tray==='Historial')
+                        (tray==='Historial')
                         ?   
                             historial.map((item,index)=>(
                                 <div key={index} className="Ggestion__historialItem">

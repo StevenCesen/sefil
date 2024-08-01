@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ReactAudioPlayer from 'react-audio-player';
 import "./CardCurrentGestion.css";
 
 export default function CardCurrentGestion({data}){
@@ -6,6 +7,7 @@ export default function CardCurrentGestion({data}){
     const [calls,setCalls]=useState();
 
     useEffect(()=>{
+        console.log(data)
         const ids=JSON.parse(data.id_calls_extras);
         let prev_calls=[];
         
@@ -51,7 +53,12 @@ export default function CardCurrentGestion({data}){
                         <label>{data.client_name}</label>
                         <label>{call.phone}</label>
                         <label>{call.state_call}</label>
-                        <label>Grabación</label>
+                        <ReactAudioPlayer
+                            style={{width:"100%"}}
+                            src={`https://core.sefil.com.ec/api/public/files/audios/${call.id_record}`}
+                            autoPlay
+                            controls
+                        />
                     </div>
                 ))
             }
