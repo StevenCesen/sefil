@@ -5,7 +5,8 @@ import FilterRange from "../FilterRange/FilterRange";
 import useAssignSearch from "../../hooks/useAssignSearch";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import CardItemCharge from "../CardItemCharge/CardItemCharge";
-
+import useVerifyUnique from "../../hooks/useVerifyUnique";
+import addNotification from "react-push-notification";
 
 const agencias=[
     "-- Todas --",
@@ -192,16 +193,27 @@ export default function CardAssignCampain({data,updateCredits}){
                                                             id:agent.id,
                                                             name:agent.name
                                                         });
-                            
-                                                        const credits=distributions;
-                            
-                                                        credits.map((items)=>{
-                                                            if(items.agent_id===Number(agent.id)){
-                                                                localStorage.setItem('user_filt',JSON.stringify(items.distribution));
-                                                                setCharge(items.distribution);
-                                                                setViewAgents(false);
+
+                                                        // Obtenemos la distribución actual del agente
+                                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/distribution?id_campain=${data.id}&id=${agent.id}`,{
+                                                            headers: {
+                                                                Accept: 'application/json',
+                                                                Authorization: `Bearer ${localStorage.getItem('token')}`
                                                             }
-                                                        });
+                                                        })
+                                                            .then((response) => response.json())  
+                                                            .then((data) => {
+                                                                const credits=JSON.parse(data[0].distributions);
+
+                                                                credits.map((items)=>{
+                                                                    if(items.agent_id===Number(agent.id)){
+                                                                        localStorage.setItem('user_filt',JSON.stringify(items.distribution));
+                                                                        setCharge(items.distribution);
+                                                                        setViewAgents(false);
+                                                                    }
+                                                                });
+                                                            });
+
                                                     }}
                                                     title="Ver carga actual"
                                                 >
@@ -644,53 +656,229 @@ export default function CardAssignCampain({data,updateCredits}){
                                     let agents=JSON.parse(data.agents);
 
                                     const data_per_agent=chunckArrayInGroups(results,agents.length);
-
+                                    
                                     data_per_agent.map((datap,n)=>{
-
                                         const distribution=distributions;
+
+                                        // Créditos que no están asignados aún
+                                        const no_self=[];
+
+                                        // Créditos que ya se encuentran asignados
+                                        const self=[];
 
                                         distribution.map((dis)=>{
                                             if(Number(dis.agent_id)===Number(agents[n].id)){
                                                 datap.map((result)=>{
+                                                    const [state,message]=useVerifyUnique({id_credit:result.id,agent_id:Number(agents[n].id),data_self:dis.distribution,mode:1});
+                                                    
+                                                    if(state){
+                                                        no_self.push(result);
+                                                    }else{
+                                                        self.push(result);
+                                                    }
+                                                })
+                                            }
+                                        });
+
+                                        // Ahora comprobamos que de los créditos no asignados a el agente mismo, no se encuentren asignados en otro agente
+                                        // Créditos asignados a otros agentes
+                                        const other_agent=[];
+
+                                        // Créditos que se pueden asignar al agente actual
+                                        const unique=[];
+                                        const other_datas=[];
+
+                                        distribution.map((dis)=>{
+                                            if(Number(dis.agent_id)!==Number(agents[n].id)){
+                                                other_datas.push(dis.distribution);
+                                            }
+                                        });
+
+                                        no_self.map(result=>{
+                                            const [state,message]=useVerifyUnique({id_credit:result.id,agent_id:Number(agents[n].id),data_self:other_datas,mode:2});
+                                                    
+                                            if(state){
+                                                unique.push(result);
+                                            }else{
+                                                other_agent.push(result);
+                                            }
+                                        });
+
+                                        if(self.length>0){
+                                            if(other_agent.length>0){
+                                                addNotification({
+                                                    title: 'Créditos duplicados',
+                                                    subtitle: `Se encontraron ${self.length} créditos ya asignados al agente y ${other_agent.length} créditos asignados a otros agentes.`,
+                                                    message: `Se asignaron ${unique.length} créditos`,
+                                                    native: false,
+                                                    backgroundTop: '#FF9619',
+                                                    backgroundBottom: '#fdb864',
+                                                    colorTop: 'white',
+                                                    colorBottom: 'black',
+                                                    closeButton: 'Cerrar',
+                                                    duration: 8000,
+                                                });
+                                                
+                                            }else{
+                                                addNotification({
+                                                    title: 'Créditos duplicados',
+                                                    subtitle: `Se encontraron ${self.length} créditos ya asignados al agente.`,
+                                                    message: `Se asignaron ${unique.length} créditos`,
+                                                    native: false,
+                                                    backgroundTop: '#FF9619',
+                                                    backgroundBottom: '#fdb864',
+                                                    colorTop: 'white',
+                                                    colorBottom: 'black',
+                                                    closeButton: 'Cerrar',
+                                                    duration: 8000,
+                                                });
+                                            }
+                                        }else if(other_agent.length>0){
+                                            addNotification({
+                                                title: 'Créditos duplicados',
+                                                subtitle: `Se encontraron ${other_agent.length} créditos asignados a otros agentes.`,
+                                                message: `Se asignaron ${unique.length} créditos`,
+                                                native: false,
+                                                backgroundTop: '#FF9619',
+                                                backgroundBottom: '#fdb864',
+                                                colorTop: 'white',
+                                                colorBottom: 'black',
+                                                closeButton: 'Cerrar',
+                                                duration: 8000,
+                                            });
+                                        }
+
+                                        distribution.map((dis)=>{
+                                            if(Number(dis.agent_id)===Number(agents[n].id)){
+                                                unique.map(result=>{
                                                     dis.distribution.push({
                                                         id:result.id,
                                                         cartera:result.cartera
                                                     });
+        
                                                     dis.pending.push({
                                                         id:result.id,
                                                         cartera:result.cartera
                                                     });
-                                                })
-
-                                                dis.total+=datap.length;
-                                                data_agent.push(dis);
+                                                });
                                             }
                                         });
-
+                                        
+                                        data_agent=distribution;
                                     });
 
                                 }else{
 
                                     const distribution=distributions;
+                                    // Créditos que no están asignados aún
+                                    const no_self=[];
+
+                                    // Créditos que ya se encuentran asignados
+                                    const self=[];
 
                                     distribution.map((dis)=>{
                                         if(Number(dis.agent_id)===Number(agent.id)){
                                             results.map((result)=>{
-                                                dis.distribution.push({
-                                                    id:result.id,
-                                                    cartera:result.cartera
-                                                });
-
-                                                dis.pending.push({
-                                                    id:result.id,
-                                                    cartera:result.cartera
-                                                });
+                                                const [state,message]=useVerifyUnique({id_credit:result.id,agent_id:Number(agent.id),data_self:dis.distribution,mode:1});
+                                                
+                                                if(state){
+                                                    no_self.push(result);
+                                                }else{
+                                                    self.push(result);
+                                                }
                                             })
                                         }
                                     });
 
+                                    // Ahora comprobamos que de los créditos no asignados a el agente mismo, no se encuentren asignados en otro agente
+                                    // Créditos asignados a otros agentes
+                                    const other_agent=[];
+
+                                    // Créditos que se pueden asignar al agente actual
+                                    const unique=[];
+                                    const other_datas=[];
+
+                                    distribution.map((dis)=>{
+                                        if(Number(dis.agent_id)!==Number(agent.id)){
+                                            other_datas.push(dis.distribution);
+                                        }
+                                    });
+
+                                    no_self.map(result=>{
+                                        const [state,message]=useVerifyUnique({id_credit:result.id,agent_id:Number(agent.id),data_self:other_datas,mode:2});
+                                                
+                                        if(state){
+                                            unique.push(result);
+                                        }else{
+                                            other_agent.push(result);
+                                        }
+                                    });
+
+                                    if(self.length>0){
+                                        if(other_agent.length>0){
+                                            addNotification({
+                                                title: 'Créditos duplicados',
+                                                subtitle: `Se encontraron ${self.length} créditos ya asignados al agente y ${other_agent.length} créditos asignados a otros agentes.`,
+                                                message: `Se asignaron ${unique.length} créditos`,
+                                                native: false,
+                                                backgroundTop: '#FF9619',
+                                                backgroundBottom: '#fdb864',
+                                                colorTop: 'white',
+                                                colorBottom: 'black',
+                                                closeButton: 'Cerrar',
+                                                duration: 8000,
+                                            });
+                                            
+                                        }else{
+                                            addNotification({
+                                                title: 'Créditos duplicados',
+                                                subtitle: `Se encontraron ${self.length} créditos ya asignados al agente.`,
+                                                message: `Se asignaron ${unique.length} créditos`,
+                                                native: false,
+                                                backgroundTop: '#FF9619',
+                                                backgroundBottom: '#fdb864',
+                                                colorTop: 'white',
+                                                colorBottom: 'black',
+                                                closeButton: 'Cerrar',
+                                                duration: 8000,
+                                            });
+                                        }
+                                    }else if(other_agent.length>0){
+                                        addNotification({
+                                            title: 'Créditos duplicados',
+                                            subtitle: `Se encontraron ${other_agent.length} créditos asignados a otros agentes.`,
+                                            message: `Se asignaron ${unique.length} créditos`,
+                                            native: false,
+                                            backgroundTop: '#FF9619',
+                                            backgroundBottom: '#fdb864',
+                                            colorTop: 'white',
+                                            colorBottom: 'black',
+                                            closeButton: 'Cerrar',
+                                            duration: 8000,
+                                        });
+                                    }
+
+                                    distribution.map((dis)=>{
+                                        if(Number(dis.agent_id)===Number(agent.id)){
+                                            unique.map(result=>{
+                                                dis.distribution.push({
+                                                    id:result.id,
+                                                    cartera:result.cartera
+                                                });
+    
+                                                dis.pending.push({
+                                                    id:result.id,
+                                                    cartera:result.cartera
+                                                });
+                                            });
+                                        }
+                                    });
+                                    
                                     data_agent=distribution;
+
                                 }
+
+                                console.log(data_agent);
 
                                 // Aquí debo comprobar que no se este asignando créditos que ya están asignados a otros agentes
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
@@ -706,8 +894,6 @@ export default function CardAssignCampain({data,updateCredits}){
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
-                                        console.log("LO QUE ME VIENE DEL BACKEND:")
-                                        console.log(data)
                                         setDistributions(data_agent);
                                         updateCredits(data.data);
                                         e.target.textContent="Asignado";

@@ -1499,13 +1499,19 @@
     padding-bottom: 60px !important;
 }
 
+.Gestion>h4{
+    margin-bottom:10px;
+    font-size: 16px;
+    color: var(--color-1);
+}
+
 .Gestion__head{
     width: 100%;
     display: grid;
     grid-template-columns: 5% 15% 10% 15% 10% 10% 10% 10% 15%;
     justify-content: center;
     align-items:center;
-    padding: 5px;
+    height: 70px;
     background-color: var(--bg-alert-error);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
@@ -1557,6 +1563,15 @@
     font-weight: bold;
     margin-bottom: 5px;
     color: var(--color-3);
+}
+
+.Gestion__head>div>label>input{
+    width: 90%;
+    margin-top: 5px;
+    color: var(--color-3);
+    background-color: #FEC888;
+    border: none;
+    color: black;
 }
 
 .Gestion__head>div>select,.Gestion__head>div>input{

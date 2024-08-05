@@ -12,7 +12,6 @@ export default function Monitor(){
     useEffect(()=>{
 
         setAgents(data.agents);
-        console.log(data.agents)
         
     },[data.agents]);
 

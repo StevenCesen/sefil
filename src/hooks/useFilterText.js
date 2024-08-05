@@ -1,11 +1,17 @@
-export default function useFilterAgency({tray,data_org,value,update,all}){
+export default function useFilterText({tray,data_org,value,update,all}){
     let results=[];
 
     if(tray==='pending'){
         // Buscar en pendientes
         data_org.pending.map((credit)=>{
-            if(credit.agency===value.toUpperCase()){
-                results.push(credit);
+            if(/^[A-Za-z ]+/.test(value)){
+                if(credit.name.toLowerCase().includes(value.toLowerCase())){
+                    results.push(credit);
+                }
+            }else{
+                if(credit.ci.includes(value)){
+                    results.push(credit);
+                }
             }
         });
 

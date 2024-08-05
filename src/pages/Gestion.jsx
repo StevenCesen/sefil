@@ -6,6 +6,7 @@ import addNotification from "react-push-notification";
 import useWindows from "../hooks/useWindows";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import useFilterAgency from "../hooks/useFilterAgency";
+import useFilterText from "../hooks/useFilterText";
 
 export default function Gestion(){
 
@@ -117,6 +118,7 @@ export default function Gestion(){
 
                 setCampains(data);
                 setCampain(data[0].id);
+                localStorage.setItem('campain_name',data[0].name);
                 
                 // Asigno en pantalla principal la primer campaña del array
                 const credits=JSON.parse(data[0].distributions);
@@ -174,6 +176,7 @@ export default function Gestion(){
                 >Regresar</NavLink>
 
                 <div className="DetailCredit__head--label">
+
                     <button
                         onClick={()=>{
                             setTray('pending')
@@ -216,6 +219,7 @@ export default function Gestion(){
                                         
                                         data.map((campa)=>{
                                             if(Number(campa.id)===Number(e.target.value)){
+                                                localStorage.setItem('campain_name',campa.name);
                                                 // console.log(campa)
                                                 const credits=JSON.parse(campa.distributions);
                         
@@ -243,19 +247,76 @@ export default function Gestion(){
 
             <div className="Gestion">
 
+                <h4>Campaña actual: {localStorage.getItem('campain_name').toUpperCase()} - Bandeja actual: {
+                    (tray==='pending')
+                    ?
+                        'PENDIENTES'
+                    :   (tray==='inprocess')
+                        ?
+                            'EN PROCESO'
+                        :   (tray==='processed')
+                            ?   
+                                'GESTIONADOS'
+                            :   ""
+                }</h4>
+
                 <div className="Gestion__head">
                     <div>
-
                     </div>
                     
                     <div>
-                        <label>Nombre</label>
+                        <label>
+                            Nombre
+                            <input
+                                onChange={(e)=>{
+                                    if(e.target.value!==''){
+                                        useFilterText({
+                                            tray:tray,
+                                            data_org:original_data,
+                                            value:e.target.value,
+                                            update:updateCredits,
+                                            all:false
+                                        })
+                                    }else{
+                                        useFilterText({
+                                            tray:tray,
+                                            data_org:original_data,
+                                            value:e.target.value,
+                                            update:updateCredits,
+                                            all:true
+                                        })
+                                    }
+                                }}
+                                placeholder="Nombre"
+                            />
+                        </label>
                     </div>
 
                     <div>
                         <label>
                             Cédula
-
+                            <input
+                                onChange={(e)=>{
+                                    if(e.target.value!==''){
+                                        useFilterText({
+                                            tray:tray,
+                                            data_org:original_data,
+                                            value:e.target.value,
+                                            update:updateCredits,
+                                            all:false
+                                        })
+                                    }else{
+                                        useFilterText({
+                                            tray:tray,
+                                            data_org:original_data,
+                                            value:e.target.value,
+                                            update:updateCredits,
+                                            all:true
+                                        })
+                                    }
+                                }}
+                                placeholder="Cédula"
+                            />
                         </label>
                     </div>
 
@@ -272,7 +333,13 @@ export default function Gestion(){
                                         all:false
                                     });
                                 }else{
-
+                                    useFilterAgency({
+                                        tray:tray,
+                                        data_org:original_data,
+                                        value:e.target.value,
+                                        update:updateCredits,
+                                        all:true
+                                    });
                                 }
                             }}
                         >
@@ -307,7 +374,7 @@ export default function Gestion(){
 
                     <div>
                         <label>Días de mora</label>
-                        {/* <div>
+                        <div>
                             <div>
                                 <label>Min</label>
                                 <input type="number"/>
@@ -316,12 +383,12 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input type="number"/>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
 
                     <div>
                         <label>Monto</label>
-                        {/* <div>
+                        <div>
                             <div>
                                 <label>Min</label>
                                 <input type="number"/>
@@ -330,12 +397,12 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input type="number"/>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
 
                     <div>
                         <label>Cuotas</label>
-                        {/* <div>
+                        <div>
                             <div>
                                 <label>Min</label>
                                 <input type="number"/>
@@ -344,23 +411,23 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input type="number"/>
                             </div>
-                        </div> */}
+                        </div>
                     </div>
 
                     <div>
                         <label>Estado</label>
-                        {/* <select>
+                        <select>
                             <option value={"all"}>--Todos--</option>
                             <option value={"Vencido"}>Vencidos</option>
                             <option value={"Vigente"}>Vigentes</option>
                             <option value={"Judicial"}>Judicial</option>
                             <option value={"Prejudicial"}>Prejudicial</option>
-                        </select> */}
+                        </select>
                     </div>
 
                     <div>
                         <label>Compromiso</label>
-                        {/* <input type="date"/> */}
+                        <input type="date"/>
                     </div>
 
                 </div>
