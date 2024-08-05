@@ -14,7 +14,7 @@ export default function Campain(){
 
     const updateCampain=(data)=>{
 
-        const prev=campains.data;
+        let prev=campains.data;
 
         prev.push(data);
 
@@ -25,19 +25,19 @@ export default function Campain(){
     }
 
     const updateCreditsCampain=(data)=>{
-        const prev=campains.data;
+        let prev=campains.data;
+        let new_campain=[];
 
         prev.map((campain)=>{
             if(campain.id===data.id){
                 campain=data;
             }
-        })
-
-        console.log(prev)
+            new_campain.push(campain);
+        });
 
         setCampains({
             ...campains,
-            data:prev
+            data:new_campain
         });
     }
 
@@ -166,7 +166,6 @@ export default function Campain(){
                             <CardCreateCampain
                                 setData={updateCampain}
                             />
-
                     </div>
                 : <></>
             }
@@ -196,13 +195,12 @@ export default function Campain(){
                             className="CardCondonacion__close" 
                             onClick={()=>{
                                 setTransfer(false);
-                            }}>Volver</button>
+                        }}>Volver</button>
 
                             <CardAssignCampain
                                 data={data_currently}
                                 updateCredits={updateCreditsCampain}
                             />
-
                     </div> 
                 :   <></>
             }

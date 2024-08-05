@@ -11,7 +11,7 @@ const states_call=[
     'FUERA DE COBERTURA'
 ];
 
-export default function CardCall({change,phone,channel,id_credit,id_campain,setCancel,addCall,addStates}){
+export default function CardCall({change,phone,channel,id_credit,cartera,id_campain,setCancel,addCall,addStates}){
     
     const [data_call,setDataCall]=useState();
     const [time,setTime]=useState();
@@ -57,7 +57,8 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
             id_credit:id_credit,
             id_campain:id_campain,
             id_record:'',
-            id_gestion:''
+            id_gestion:'',
+            cartera:cartera
         });
 
         setTime({
@@ -130,6 +131,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                                         id_record:base
                                     })
                                 });
+
                                 // const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
                                 // const response=await request.json();
                             
@@ -180,7 +182,6 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                                         ...data_call,
                                         state:true
                                     });
-
                                 }
 
                             }} 
@@ -213,7 +214,7 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                                     backgroundBottom: '#fdb864',
                                     colorTop: 'white',
                                     colorBottom: 'white',
-                                    closeButton: 'Cerrar',
+                                    closeButton: 'Cerrar',  
                                     duration: 3000,
                                 });
                             }else{
@@ -224,7 +225,8 @@ export default function CardCall({change,phone,channel,id_credit,id_campain,setC
                                     phone:data_call.phone,	
                                     id_credit:data_call.id_credit,
                                     id_campain:data_call.id_campain,
-                                    id_record:data_call.id_record
+                                    id_record:data_call.id_record,
+                                    cartera:data_call.cartera
                                 };
 
                                 console.log(data_send);

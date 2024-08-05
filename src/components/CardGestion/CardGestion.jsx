@@ -72,15 +72,17 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         });
 
         setPhones(new_phones);
+
         setPhone({
-            nro:new_phones[0].nro,
+            nro:(new_phones.length) ? new_phones[0].nro : 0,
             index:0
         });
+
     }
 
     useEffect(()=>{
-
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_campain=${id_campain}&id_credit=${currently.id}`,{
+        // Seleccionamos el historial de gestiones del crédito actual
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_credit=${currently.id}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -119,53 +121,45 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             cartera:currently.cartera
         });
 
-        setStates([]);
+        console.log(currently)
 
+        setStates([]);
         setContacts(JSON.parse(currently.contactos));
 
-        const phones_c=[
-            {
-                // nro:'0978950498',
-                nro:currently.phone,
-                efec:0
-            },
-            {
-                nro:currently.phone2,
-                efec:0
-            },
-            {
-                nro:currently.phone3,
-                efec:0
-            },
-            {
-                nro:currently.phone4,
-                efec:0
-            }
-        ];
+        const phones_c=[];
+
+        const phones_titular=currently.phones;
+        phones_titular.map(phone=>{
+            phones_c.push({
+                nro:phone.numero,
+                efec:phone.nro_efectivo
+            });
+        });
 
         update_phones(phones_c);
 
-        setSecondaries([
-            {
-                // nro:'0978950498',
-                nro:'0978950498',
-                parentesco:'Hermano-TITULAR',
-                efec:0
-            },
-            {
-                // nro:'0978950498',
-                nro:'0978950498',
-                parentesco:'Esposa-TITULAR',
-                efec:0
-            },
-            {
-                // nro:'0978950498',
-                nro:'0978950498',
-                parentesco:'Esposa-TITULAR',
-                efec:0
-            }
-        ]);
+        // setSecondaries([
+        //     {
+        //         // nro:'0978950498',
+        //         nro:'0978950498',
+        //         parentesco:'Hermano-TITULAR',
+        //         efec:0
+        //     },
+        //     {
+        //         // nro:'0978950498',
+        //         nro:'0978950498',
+        //         parentesco:'Esposa-TITULAR',
+        //         efec:0
+        //     },
+        //     {
+        //         // nro:'0978950498',
+        //         nro:'0978950498',
+        //         parentesco:'Esposa-TITULAR',
+        //         efec:0
+        //     }
+        // ]);
 
+        // Seleccionamos la plantilla
         let temp=[];
 
         if(localStorage.getItem('rol')==='super' | localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='call'){
@@ -196,6 +190,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             });
         }
 
+        // Esto se envía al backend para guardar la gestión
         setDataGestion({
             id_campain:id_campain,
             id_call:'', //Llamada con gestión
@@ -210,7 +205,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             client_name:currently.name,
             client_ci:currently.ci,
             type:currently.tipo,
-            dias_vencidos:currently.dias_vencidos
+            dias_vencidos:currently.dias_vencidos,
+            cartera:currently.cartera
         });
 
     },[currently]);
@@ -232,26 +228,18 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             onClick={(e)=>{
                                 setCredit(currently)
 
-                                const phones_c=[
-                                    {
-                                        nro:currently.phone,
-                                        efec:0
-                                    },
-                                    {
-                                        nro:currently.phone2,
-                                        efec:0
-                                    },
-                                    {
-                                        nro:currently.phone3,
-                                        efec:0
-                                    },
-                                    {
-                                        nro:currently.phone4,
-                                        efec:0
-                                    }
-                                ];
+                                const phones_c=[];
+
+                                const phones_titular=currently.phones;
+                                phones_titular.map(phone=>{
+                                    phones_c.push({
+                                        nro:phone.numero,
+                                        efec:phone.nro_efectivo
+                                    });
+                                });
+
+                                update_phones(phones_c);
                         
-                                update_phones(phones_c)
                             }}
                         >{credit.name}</h3>
                         <h3>{credit.ci}</h3>
@@ -265,26 +253,17 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         onClick={(e)=>{
                                             contacts.map((garante,index)=>{
                                                 if(garante.ci===contact.ci){
-                                                    const phones_c=[
-                                                        {
-                                                            nro:garante.phone,
-                                                            efec:0
-                                                        },
-                                                        {
-                                                            nro:garante.phone2,
-                                                            efec:0
-                                                        },
-                                                        {
-                                                            nro:garante.phone3,
-                                                            efec:0
-                                                        },
-                                                        {
-                                                            nro:garante.phone4,
-                                                            efec:0
-                                                        }
-                                                    ];
-                                                    
-                                                    update_phones(phones_c)
+                                                    const phones_c=[];
+
+                                                    const phones_titular=garante.phones;
+                                                    phones_titular.map(phone=>{
+                                                        phones_c.push({
+                                                            nro:phone.numero,
+                                                            efec:phone.nro_efectivo
+                                                        });
+                                                    });
+
+                                                    update_phones(phones_c);
                                                     
                                                     setCredit(garante);
                                                     setDataGestion({
@@ -305,6 +284,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     <div className="CardGestion__itemsDetail">
                         <div className="CardGestion__Details">
                             <h4>Detalle del crédito</h4>
+                            <p><strong>ID crédito: </strong>{currently.credito}</p>
                             <p><strong>Capital:</strong> $ {info_credit.capital}</p>
                             <p><strong>Interés:</strong> $ {info_credit.interes}</p>
                             <p><strong>Mora: </strong> $ {info_credit.mora}</p>
@@ -352,32 +332,36 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 data_phones.map((phone,index)=>(
                                     <div key={index} className="Ggestion__contact">
                                         <p>{phone.nro} ({phone.efec})</p>
-                                        {/* <div>
+                                        <div>
+
                                             <button
                                                 onClick={async (e)=>{
-                                                    const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
-                                                    const response=await request.json();
+                                                    // const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
+                                                    // const response=await request.json();
 
                                                     setPhone({
                                                         nro:phone.nro,
                                                         index:index
                                                     });
-                                                    setCall(true);
-                                                    setCancel(false);
-                                                    setStatusGestion(false);
+
+                                                    // setCall(true);
+                                                    // setCancel(false);
+                                                    // setStatusGestion(false);
                                                 }}
                                             >
                                                 <img src="./icons/call.png"/>
                                             </button>
-                                            <button>
+
+                                            {/* <button>
                                                 <img src="./icons/send_waps.png"/>
-                                            </button>
-                                        </div> */}
+                                            </button> */}
+
+                                        </div>
                                     </div>
                                 ))
                             }
 
-                            <p style={{fontWeight:'600'}}>Contactos secundarios</p>
+                            {/* <p style={{fontWeight:'600'}}>Contactos secundarios</p>
                             {
                                 phones_secondaries.map((phone,index)=>(
                                     <div key={index} className="Ggestion__contact">
@@ -387,7 +371,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         </div> 
                                     </div>
                                 ))
-                            }
+                            } */}
                         </div>
                     </div>
 
@@ -396,6 +380,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         channel={localStorage.getItem('extension')}
                         id_campain={id_campain}
                         id_credit={info_credit.id}
+                        cartera={data_gestion.cartera}
                         change={changeNro}
                         setCancel={setCancel}
                         addCall={add_id_call}
@@ -443,8 +428,9 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                             })
                                                 .then((response) => response.json())  
                                                 .then((data) => {
-                                                    if(data.status===200){
-                                                        console.log(data)
+                                                    updateTrays(data);
+
+                                                    if(data.state===200){
                                                         setNext(index);
                                                     }
                                                 });
@@ -607,8 +593,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     data_send.observation='.';
                                 }
 
-                                console.log(`URL: https://sefil.softsen.space/public/api/managments`)
-                                console.log(data_send);
                                 setMessage('Gestionado');
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
@@ -621,6 +605,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
+                                        console.log(data);
                                         if(data.status===200){
                                             addNotification({
                                                 title: 'Éxito',
@@ -635,6 +620,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 duration:3000,
                                             });
                                             //setNext(index);
+
+                                            updateTrays(data);
 
                                             setDataGestion({
                                                 id_campain:id_campain,
@@ -663,14 +650,16 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                 <div className="Ggestion__historial">
                     <div>
+
                         <button
                             onClick={(e)=>{
                                 setTray('Historial');
                             }}
                         >Historial</button>
+
                         <button
                             onClick={(e)=>{
-                                fetch(`${import.meta.env.VITE_URL_BASE}/api/vouchers/group/${info_credit.id}?cartera=${info_credit.cartera}`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/group/${info_credit.id}?cartera=${info_credit.cartera}`,{
                                     headers: {
                                         Accept: 'application/json',
                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -702,6 +691,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     <label>Fecha pago</label>
                                     <label>Tipo de pago</label>
                                     <label>Monto</label>
+                                    <label>Estado</label>
                                 </>
                         }
                     </div>
@@ -727,6 +717,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         <label>{item.fecha}</label>
                                         <label>{item.forma_pago}</label>
                                         <label>{useFormatterNumber({value:item.valor_recibido,currency:'USD'})}</label>
+                                        <label>{item.status.toUpperCase()}</label>
                                     </div>
                                 ))
                             :   

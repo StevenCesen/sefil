@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./CardCreateCampain.css"
+import addNotification from "react-push-notification";
 
 export default function CardCreateCampain({setData}){
 
@@ -210,6 +211,7 @@ export default function CardCreateCampain({setData}){
                 <button 
                     onClick={(e)=>{
                         
+                        e.target.textContent='Creando campaña...';
                         const agents_select=[];
                         const distributions=[];
 
@@ -242,27 +244,62 @@ export default function CardCreateCampain({setData}){
                             type_assign:campain.type_assign
                         };
                         
-                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
-                            method:'POST',
-                            headers: {
-                                Accept: 'application/json',
-                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                            },
-                            body:new URLSearchParams(data)
-                        })
-                            .then((response) => response.json())  
-                            .then((data) => {
-                                setData(data.data);
-                                setCampain({
-                                    name:"",
-                                    fecha_init:"",
-                                    fecha_finish:"",
-                                    data:[],
-                                    cartera:"SEFIL_1",
-                                    type_assign:"manual"
+                        if(campain.name!=='' & campain.fecha_init!='' & campain.fecha_finish!=''){
+                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+                                method:'POST',
+                                headers: {
+                                    Accept: 'application/json',
+                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                },
+                                body:new URLSearchParams(data)
+                            })
+                                .then((response) => response.json())  
+                                .then((data) => {
+    
+                                    e.target.textContent='Campaña creada';
+    
+                                    setData(data.data);
+                                    setCampain({
+                                        name:"",
+                                        fecha_init:"",
+                                        fecha_finish:"",
+                                        data:[],
+                                        cartera:"SEFIL_1",
+                                        type_assign:"manual"
+                                    });
+    
                                 });
+
+                            addNotification({
+                                title: 'Éxito',
+                                subtitle: 'Campaña creada correctamente',
+                                message: '',
+                                native: false,
+                                backgroundTop: '#009793',
+                                backgroundBottom: '#459d9a',
+                                colorTop: 'white',
+                                colorBottom: 'white',
+                                closeButton: 'Cerrar',
+                                duration:3000,
                             });
 
+                        }else{
+                            e.target.textContent='Guardar';
+
+                            addNotification({
+                                title: 'Datos imcompletos',
+                                subtitle: 'Por favor, llene todos los datos de la nueva campaña',
+                                message: '',
+                                native: false,
+                                backgroundTop: '#FF9619',
+                                backgroundBottom: '#fdb864',
+                                colorTop: 'white',
+                                colorBottom: 'white',
+                                closeButton: 'Cerrar',
+                                duration: 3000,
+                            });
+                            
+                        }
                     }}
 
                     className="CardCreateCampain__button CardCreateCampain__button--save"

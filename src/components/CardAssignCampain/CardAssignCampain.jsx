@@ -130,7 +130,7 @@ export default function CardAssignCampain({data,updateCredits}){
             mora:'',
             cuota:'',
             monto:'',
-            estado:'Cartera Vendida',
+            estado:'Vencido',
             agencia:[]
         });
 
@@ -320,7 +320,7 @@ export default function CardAssignCampain({data,updateCredits}){
                 </label>
             </div>
             
-            <label 
+            <label
                 className="CardAssignCampain__file">
                 Cargar datos ({charge.length})
                 {/* <input id="campain" type="file"/> */}
@@ -460,6 +460,7 @@ export default function CardAssignCampain({data,updateCredits}){
                 </div>
                 
                 <div className="CardAssignCampain__selects">
+
                     <label>
                         Estado
                         <select
@@ -529,6 +530,7 @@ export default function CardAssignCampain({data,updateCredits}){
                             }
                         </div>
                     </label>
+
                 </div>
 
             </div>
@@ -591,8 +593,6 @@ export default function CardAssignCampain({data,updateCredits}){
                                     }
                                 });
 
-                                console.log(distribution);
-
                                 //Actualizo el destino
                                 distribution.map((dis)=>{
                                     if(Number(dis.agent_id)===Number(dtsn)){
@@ -642,11 +642,8 @@ export default function CardAssignCampain({data,updateCredits}){
                                 //Si no hay agente asignado, reparto toda la carga en partes iguales para todos los agentes que estén en la campaña
                                 if(agent.id===''){
                                     let agents=JSON.parse(data.agents);
-                                    console.log(agents)
 
                                     const data_per_agent=chunckArrayInGroups(results,agents.length);
-
-                                    console.log(data_per_agent);
 
                                     data_per_agent.map((datap,n)=>{
 
@@ -655,15 +652,22 @@ export default function CardAssignCampain({data,updateCredits}){
                                         distribution.map((dis)=>{
                                             if(Number(dis.agent_id)===Number(agents[n].id)){
                                                 datap.map((result)=>{
-                                                    dis.distribution.push(result);
-                                                    dis.pending.push(result);
+                                                    dis.distribution.push({
+                                                        id:result.id,
+                                                        cartera:result.cartera
+                                                    });
+                                                    dis.pending.push({
+                                                        id:result.id,
+                                                        cartera:result.cartera
+                                                    });
                                                 })
 
                                                 dis.total+=datap.length;
                                                 data_agent.push(dis);
                                             }
                                         });
-                                    });  
+
+                                    });
 
                                 }else{
 
@@ -672,8 +676,15 @@ export default function CardAssignCampain({data,updateCredits}){
                                     distribution.map((dis)=>{
                                         if(Number(dis.agent_id)===Number(agent.id)){
                                             results.map((result)=>{
-                                                dis.distribution.push(result);
-                                                dis.pending.push(result);
+                                                dis.distribution.push({
+                                                    id:result.id,
+                                                    cartera:result.cartera
+                                                });
+
+                                                dis.pending.push({
+                                                    id:result.id,
+                                                    cartera:result.cartera
+                                                });
                                             })
                                         }
                                     });
@@ -682,8 +693,6 @@ export default function CardAssignCampain({data,updateCredits}){
                                 }
 
                                 // Aquí debo comprobar que no se este asignando créditos que ya están asignados a otros agentes
-                                console.log(data_agent);
-
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
                                     method:'PUT',
                                     headers: {
@@ -692,11 +701,13 @@ export default function CardAssignCampain({data,updateCredits}){
                                     },
                                     body:new URLSearchParams({
                                         distributions:JSON.stringify(data_agent),
-                                        charge_inicial:JSON.stringify(charge)
+                                        charge_inicial:JSON.stringify([])
                                     })
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
+                                        console.log("LO QUE ME VIENE DEL BACKEND:")
+                                        console.log(data)
                                         setDistributions(data_agent);
                                         updateCredits(data.data);
                                         e.target.textContent="Asignado";

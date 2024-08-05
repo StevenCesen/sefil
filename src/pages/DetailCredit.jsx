@@ -475,6 +475,7 @@ export default function DetailCredit(){
                         seguro_desgravamen={credit.seguro_desgravamen}
                         gastos_judiciales={credit.gastos_judiciales}
                         gastos_cobranza={credit.gastos_cobranza}
+                        otros_valores={credit.otros_valores}
                         total={Number(credit.totalAmount)}
                         set={setViewCondonation}
                         id={param.get('id')}

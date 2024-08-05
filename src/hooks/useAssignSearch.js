@@ -95,7 +95,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     let credito=[];
 
                     data.map((credit)=>{
-                        if(credit.ci===credit_s){
+                        if(credit.credito===credit_s){
                             credito=credit;
                         }
                     });
@@ -109,7 +109,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 let results=[];
 
                 data.map((credit)=>{
-                    if(credit.ci.includes(value)){
+                    if(credit.credito.includes(value)){
                         results.push(credit);
                     }
                 });

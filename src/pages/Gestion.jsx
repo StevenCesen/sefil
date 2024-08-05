@@ -5,6 +5,7 @@ import CardGestion from "../components/CardGestion/CardGestion";
 import addNotification from "react-push-notification";
 import useWindows from "../hooks/useWindows";
 import useFormatterNumber from "../hooks/useFormatterNumber";
+import useFilterAgency from "../hooks/useFilterAgency";
 
 export default function Gestion(){
 
@@ -16,6 +17,7 @@ export default function Gestion(){
     const [next_credit,setNext]=useState(); //Este es para setear el siguiente registro
     const [index,setIndex]=useState(); //Este es para llevar el indice actual
     const [credit_actual,setCurrenly]=useState();
+    const [original_data,setOriginal]=useState();
 
     const [state_call,setStateCall]=useState(false);
     const [state_gestion,setStateGestion]=useState(false);
@@ -27,9 +29,11 @@ export default function Gestion(){
     const updateTray=(tray)=>{
         let copy=data;
 
-        tray.data.map((agent)=>{
-            if(localStorage.getItem('temp_uS')===agent.agent_id){
+        let trays=JSON.parse(tray.data[0].distributions);
 
+        trays.map((agent)=>{
+            
+            if(Number(localStorage.getItem('temp_uS'))===agent.agent_id){
                 copy.pending=agent.pending;
                 copy.inprocess=agent.inprocess;
                 copy.processed=agent.processed;
@@ -37,6 +41,8 @@ export default function Gestion(){
                 setData(copy);
             }
         });
+
+        
     }
 
     // Para pasar al siguiente crédito
@@ -68,6 +74,25 @@ export default function Gestion(){
         }
     }
 
+    const updateCredits=(data_c,tray)=>{
+        if(tray==='pending'){
+            setData({
+                ...data,
+                pending:data_c 
+            });
+        }else if(tray==='inprocess'){
+            setData({
+                ...data,
+                inprocess:data_c 
+            });
+        }else if(tray==='processed'){
+            setData({
+                ...data,
+                processed:data_c 
+            });
+        }
+    }
+
     useEffect(()=>{
 
         location.hash='/dashboard/call';
@@ -80,7 +105,7 @@ export default function Gestion(){
         useWindows();
         setTray('pending');
 
-
+        // Consulto todas las compañas del usuario presente
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}`,{
             headers: {
                 Accept: 'application/json',
@@ -89,14 +114,17 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
+
                 setCampains(data);
                 setCampain(data[0].id);
                 
+                // Asigno en pantalla principal la primer campaña del array
                 const credits=JSON.parse(data[0].distributions);
 
                 credits.map((items)=>{
                     if(Number(items.agent_id)===Number(localStorage.getItem('temp_uS'))){
                         setData(items);
+                        setOriginal(items);
                     }
                 });
             });
@@ -136,9 +164,6 @@ export default function Gestion(){
 
     return (
         <div className="pageConsulta">
-            {
-                console.log(data)
-            }
             <div className="DetailCredit__head">
                 <NavLink
                     to="" 
@@ -176,9 +201,10 @@ export default function Gestion(){
                             if(e.target.value!==''){
                                 
                                 localStorage.setItem('campain',e.target.value);
+
                                 setCampain(e.target.value);
 
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}&id_campain=${e.target.value}`,{
                                     headers: {
                                         Accept: 'application/json',
                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -187,6 +213,20 @@ export default function Gestion(){
                                     .then((response) => response.json())  
                                     .then((data) => {
                                         setCampains(data);
+                                        
+                                        data.map((campa)=>{
+                                            if(Number(campa.id)===Number(e.target.value)){
+                                                // console.log(campa)
+                                                const credits=JSON.parse(campa.distributions);
+                        
+                                                credits.map((items)=>{
+                                                    if(Number(items.agent_id)===Number(localStorage.getItem('temp_uS'))){
+                                                        setData(items);
+                                                        setOriginal(items);
+                                                    }
+                                                });
+                                            }
+                                        });
                                     });
                             }
                         }}>
@@ -213,12 +253,29 @@ export default function Gestion(){
                     </div>
 
                     <div>
-                        <label>Cédula</label>
+                        <label>
+                            Cédula
+
+                        </label>
                     </div>
 
                     <div>
                         <label>Agencia</label>
-                        {/* <select>
+                        <select
+                            onChange={(e)=>{
+                                if(e.target.value!==''){
+                                    useFilterAgency({
+                                        tray:tray,
+                                        data_org:original_data,
+                                        value:e.target.value,
+                                        update:updateCredits,
+                                        all:false
+                                    });
+                                }else{
+
+                                }
+                            }}
+                        >
                             <option value={''}>--Todos--</option>
                             <option value={"catacocha"}>CATACOCHA</option>
                             <option value={"palanda"}>PALANDA</option>
@@ -245,7 +302,7 @@ export default function Gestion(){
                             <option value={"naranjal"}>NARANJAL</option>
                             <option value={"quinche"}>QUINCHE</option>
                             <option value={"quininde"}>QUININDE</option>
-                        </select> */}
+                        </select>
                     </div>
 
                     <div>
@@ -459,6 +516,7 @@ export default function Gestion(){
                             structure={structure}
                             updateTrays={updateTray}
                         /> 
+                        
                     </div>
 
                 :   <></>

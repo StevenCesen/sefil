@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./CardCondonacion.css";
 import useCondonation from "../../hooks/useCondonation";
 
-export default function CardCondonacion({total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,set,id,cartera,setData,view,update}){
+export default function CardCondonacion({total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,otros_valores,set,id,cartera,setData,view,update}){
 
     const [credit,setValues]=useState();
     const [totalCondonado,setTotal]=useState(0);
@@ -15,7 +15,7 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
             seguro_desgravamen:seguro_desgravamen,
             gastos_judiciales:gastos_judiciales,
             gastos_cobranza:gastos_cobranza,
-            otros_valores:0
+            otros_valores:otros_valores
         });
     },[]);
 
@@ -87,16 +87,25 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.gastos_cobranza} USD</p>
                     </div>
+                    <div>
+                        <p>Otros valores</p>
+                        <p>$ {otros_valores} USD</p>
+                        <input type="number" onChange={(e)=>{setValues({
+                            ...credit,
+                            otros_valores:(Number(otros_valores)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                        })}} placeholder="0.00" min={0} step={0.1}/>
+                        <p>$ {credit.otros_valores} USD</p>
+                    </div>
                 </div>
 
                 <div className="CardCondonacion__result">
                     <p>Total condonado</p>
-                    <p>$ {(total-(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
+                    <p>$ {(total-(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
                 </div>
 
                 <div className="CardCondonacion__result">
                     <p>Total a cancelar</p>
-                    <p>$ {(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
+                    <p>$ {(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
                 </div>
 
                 <button className="CardCondonacion__save" 
@@ -112,7 +121,7 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                                 seguro_desgravamen:seguro_desgravamen,
                                 gastos_cobranza:gastos_cobranza,
                                 gastos_judiciales:gastos_judiciales,
-                                otros_valores:0
+                                otros_valores:otros_valores
                             }),
                             postDates:JSON.stringify(credit),
                             totalAmount:String(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)),
@@ -122,7 +131,7 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                             seguro_desgravamen:credit.seguro_desgravamen,
                             gastos_cobranza:credit.gastos_cobranza,
                             gastos_judiciales:credit.gastos_judiciales,
-                            otros_valores:'0',
+                            otros_valores:credit.otros_valores,
                             credito:Number(id),
                             cartera:cartera
                         }
