@@ -32,6 +32,10 @@ export default function Cobranza(){
         acumulado:0,
     });
 
+    const [found,setFound]=useState([]);
+    const [reference,setReference]=useState("");
+    const [reference_2,setReference2]=useState("");
+
     const [business,setBusiness]=useState();
 
     const [aux_busines,setAux]=useState("");
@@ -63,6 +67,10 @@ export default function Cobranza(){
         setInput('');
         setCanton('all');
         setParroquia('all');
+
+        setFound([]);
+        setReference("");
+        setReference2("");
 
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
             headers: {
@@ -113,6 +121,87 @@ export default function Cobranza(){
                                 }
                             }} placeholder="Ingrese cédula o nombre"/>
                         </label>
+
+                        <label>
+                            Buscar referencia
+                            <input
+                                onKeyUp={(e)=>{
+                                    const value=e.target.value;
+                                    setReference(e.target.value);
+
+                                    if(value!==""){
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/search/${value}`,{
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then((data) => {
+                                                setFound(data.data);
+                                            });
+                                    }
+                                }}
+                                placeholder="Código de referencia"
+                            />
+                            {
+                                (('name' in found) & reference!=="") 
+                                ?
+                                    <div>
+                                        {
+                                            <NavLink target="_blank" to={`/dashboard/comprobantes/view/${found.ci}?cartera=${found.cartera}&${found.name}`}>{found.name} | {found.institucion_financiera}</NavLink>
+                                        }
+                                    </div>
+                                : 
+                                    (reference!=="")
+                                    ?
+                                        <div>
+                                            <p>No hay coincidencias</p>
+                                        </div>
+                                    :   <></>
+                            }
+                        </label>
+                
+                        <label>
+                            Buscar comprobante
+                            <input
+                                onKeyUp={(e)=>{
+                                    const value=e.target.value;
+                                    setReference2(e.target.value);
+
+                                    if(value!==""){
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/code/${value}`,{
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then((data) => {
+                                                setFound(data.data);
+                                            });
+                                    }
+                                }}
+                                placeholder="Código de comprobante"
+                            />
+                            {
+                                (('name' in found) & reference_2!=="") 
+                                ?
+                                    <div>
+                                        {
+                                            <NavLink target="_blank" to={`/dashboard/comprobantes/view/${found.ci}?cartera=${found.cartera}&${found.name}`}>{found.name} | {found.institucion_financiera}</NavLink>
+                                        }
+                                    </div>
+                                : 
+                                    (reference_2!=="")
+                                    ?
+                                        <div>
+                                            <p>No hay coincidencias</p>
+                                        </div>
+                                    :   <></>
+                            }
+                        </label>
+
                         <label>
                             Empresa
                             <select value={aux_busines} onChange={(e)=>{

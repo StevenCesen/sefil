@@ -12,16 +12,19 @@ export default function useSearch(string,cartera,setData,setTotal){
                     setData(data.data)
                 });
         }else{  //Búscamos por número de cédula
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?cedula=${string}`,{
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-                .then((response) => response.json())  
-                .then((data) => {
-                    setData(data.data)
-                });
+            
+            if(string.length>5){
+                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?cedula=${string}`,{
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                    .then((response) => response.json())  
+                    .then((data) => {
+                        setData(data.data)
+                    });
+            }
         }
     }else if(string===''){
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit?cartera=SEFIL_1`,{

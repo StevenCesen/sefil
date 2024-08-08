@@ -455,3 +455,31 @@
 .DetailCredit__dial__addPhone>button>img{
     width: 20px;
 }
+.Ggestion__inputNewPhone{
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 5px;
+}
+
+.Ggestion__inputNewPhone>input{
+    height: 30px;
+    padding-left: 10px;
+    width: 70%;
+}
+
+.Ggestion__inputNewPhone>input:focus{
+    outline: none;
+}
+
+.Ggestion__inputNewPhone>button{
+    height: 30px;
+    border: none;
+    background-color: var(--bg-button-call);
+    color: var(--color-3);
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 2px;
+    cursor: pointer;
+}

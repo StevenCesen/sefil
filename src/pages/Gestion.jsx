@@ -115,7 +115,7 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
-
+                console.log(data);
                 setCampains(data);
                 setCampain(data[0].id);
                 localStorage.setItem('campain_name',data[0].name);

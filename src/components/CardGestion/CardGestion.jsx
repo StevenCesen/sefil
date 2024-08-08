@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import "./CardGestion.css"
 import CardCall from "../CardCall/CardCall";
@@ -24,6 +24,12 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [tray,setTray]=useState();
     const [message_state,setMessage]=useState();
     const [phones_secondaries,setSecondaries]=useState();
+    const [incall,setIncall]=useState();
+
+    const [new_phone,setNumber]=useState();
+    // const [phone_external,setCallExternal]=useState(); PENDIENTE, para que puedan marcar a cualquier otro número que no este registrado
+
+    const form=useRef();
 
     const close=()=>{
         setCall(false);
@@ -48,7 +54,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
     const add_id_call=(id)=>{
         let extras=data_gestion.id_calls_extras;
-        extras.push(id);
+        if(extras.length>0){
+            extras.push(id);
+        }else{
+            extras=[id];
+        }
 
         setDataGestion({
             ...data_gestion,
@@ -60,6 +70,17 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         let copy=states;
         copy.push(state);
         setStates(copy);
+    }
+
+    const add_phone=(phone)=>{
+        let phones=data_phones;
+        
+        phones.push({
+            nro:phone.numero,
+            efec:phone.nro_efectivo
+        });
+
+        setPhones(phones);
     }
 
     const update_phones=(phones)=>{
@@ -82,7 +103,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
     useEffect(()=>{
         // Seleccionamos el historial de gestiones del crédito actual
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_credit=${currently.id}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_credit=${currently.id}&cartera=${currently.cartera}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -95,6 +116,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         
         setCall(false);
         setDetails(false);
+        setNumber("");
+        setIncall(false);
         setCredit(currently);
         setPagos([]);
         setTray('Historial');
@@ -120,8 +143,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             judicial:currently.gastos_judiciales,
             cartera:currently.cartera
         });
-
-        console.log(currently)
 
         setStates([]);
         setContacts(JSON.parse(currently.contactos));
@@ -226,23 +247,24 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     <div className={`DetailCredit__body ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
                         <h3
                             onClick={(e)=>{
-                                setCredit(currently)
+                                if(incall===false){
+                                    setCredit(currently)
 
-                                const phones_c=[];
+                                    const phones_c=[];
 
-                                const phones_titular=currently.phones;
-                                phones_titular.map(phone=>{
-                                    phones_c.push({
-                                        nro:phone.numero,
-                                        efec:phone.nro_efectivo
+                                    const phones_titular=currently.phones;
+                                    phones_titular.map(phone=>{
+                                        phones_c.push({
+                                            nro:phone.numero,
+                                            efec:phone.nro_efectivo
+                                        });
                                     });
-                                });
 
-                                update_phones(phones_c);
-                        
+                                    update_phones(phones_c);
+                                }
                             }}
-                        >{credit.name}</h3>
-                        <h3>{credit.ci}</h3>
+                        >{currently.name} | TITULAR</h3>
+                        <h3>{currently.ci}</h3>
                     </div>
 
                     <div className="CardGestion__garantes">
@@ -252,7 +274,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     <button 
                                         onClick={(e)=>{
                                             contacts.map((garante,index)=>{
-                                                if(garante.ci===contact.ci){
+                                                if(garante.ci===contact.ci & incall===false){
                                                     const phones_c=[];
 
                                                     const phones_titular=garante.phones;
@@ -266,6 +288,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                     update_phones(phones_c);
                                                     
                                                     setCredit(garante);
+                                                    
                                                     setDataGestion({
                                                         ...data_gestion,
                                                         client_name:garante.name,
@@ -321,10 +344,68 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     <div>
                         <div className="DetailCredit__dial__addPhone">
                             <h3 className="Ggestion__title">Contactos</h3>
-                            <button className="Ggestion__button">
+                            <button 
+                                onClick={(e)=>{
+
+                                }}
+                                className="Ggestion__button"
+                            >
                                 <img src="./icons/add.png"/>
                             </button>
                         </div>
+
+                        <label className="Ggestion__inputNewPhone">
+                            <input  
+                                value={new_phone}
+                                onChange={(e)=>{
+                                    setNumber(e.target.value);
+                                }}
+                                type="text" 
+                                placeholder="09XXXXXXX"
+                            />
+                            <button
+                                onClick={(e)=>{
+                                    e.target.textContent='Guardando...';
+                                    const data={
+                                        credito:currently.id,
+                                        tipo:credit.tipo,
+                                        nombre:credit.name,
+                                        parentesco:credit.tipo,
+                                        numero:new_phone,
+                                        nro_efectivo:1,
+                                        cartera:currently.cartera,
+                                        ci:credit.ci,
+                                        byUserCreate:localStorage.getItem('temp_uS'),
+                                        byUserDelete:'N/D',
+                                        byUserUpdate:'N/D',
+                                        estado:'ACTIVE'
+                                    };
+
+                                    console.log(data)
+
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/contacts`,{
+                                        method:'POST',
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        },
+                                        body:new URLSearchParams(data)
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            if(data.status===200){
+                                                
+                                                add_phone(data.data);
+                                                e.target.textContent='Guardado';
+
+                                            }else{
+                                                e.target.textContent='Error';
+                                            }
+                                        });
+
+                                }}
+                            >Guardar</button>
+                        </label>
                         
                         <div>
                             <p style={{fontWeight:'600'}}>Contactos principales</p>
@@ -385,6 +466,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         setCancel={setCancel}
                         addCall={add_id_call}
                         addStates={add_state_call}
+                        setInit={setIncall}
                     />
                     
                 </div>
@@ -400,6 +482,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             <button
                                 className="Ggestion__buttons--blank"
                                 onClick={(e)=>{
+                                    
+                                    form.current.reset();
 
                                     let count=0;
 
@@ -455,14 +539,15 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     }else{
                                         setNext(index);
                                     }
-            
+                                    
+                                    
                                 }}
                             >
                                 Seguir
                             </button>
                         </div>
 
-                        <div className="Ggestion__form">
+                        <form ref={form} className="Ggestion__form">
                             <div className="Ggestion__threeGroup">
 
                                 <label className="Ggestion__input">
@@ -526,7 +611,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         }}
                                         value={data_gestion.data_promise}
                                         type="date" 
-                                        placeholder="STEVEN RAFAEL CESEN"
                                     />
                                 </label>
 
@@ -555,7 +639,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     </textarea>
                                 </label>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
 
@@ -586,8 +670,15 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 setStatusGestion(true);
 
                                 const data_send=data_gestion;
-                                data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
-                                data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
+
+                                if(data_send.id_calls_extras.length>0){
+                                    data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
+                                    data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
+                                }else{
+                                    data_send.id_call=0;
+                                    data_send.id_calls_extras=JSON.stringify([]);
+                                }
+                                
 
                                 if(data_gestion.observation===''){
                                     data_send.observation='.';
@@ -622,6 +713,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                             //setNext(index);
 
                                             updateTrays(data);
+
+                                            form.current.reset();
 
                                             setDataGestion({
                                                 id_campain:id_campain,

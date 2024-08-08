@@ -11,7 +11,7 @@ const states_call=[
     'FUERA DE COBERTURA'
 ];
 
-export default function CardCall({change,phone,channel,id_credit,cartera,id_campain,setCancel,addCall,addStates}){
+export default function CardCall({change,phone,channel,id_credit,cartera,id_campain,setCancel,addCall,addStates,setInit}){
     
     const [data_call,setDataCall]=useState();
     const [time,setTime]=useState();
@@ -131,7 +131,6 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                         id_record:base
                                     })
                                 });
-
                                 // const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
                                 // const response=await request.json();
                             
@@ -156,7 +155,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                             onClick={async (e)=>{
                                 let recorder,stream;
 
-                                if(phone.nro===''){
+                                if(phone.nro===0){
                                     addNotification({
                                         title: 'Sin número',
                                         subtitle: 'No hay número para realizar la llamada',
@@ -169,15 +168,33 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                         closeButton: 'Cerrar',
                                         duration: 3000,
                                     });
+
                                 }else{
+                                    
+                                    setInit(true);
+
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/incall`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            console.log("ESTADO BROADCAST")
+                                            console.log(data)
+                                        });
+
                                     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                                     recorder = new MediaRecorder(stream);
                                     recorder.start();
                                     setRecord(recorder);
+
                                     // const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
                                     // const response=await request.json();
 
                                     init();
+
                                     setDataCall({
                                         ...data_call,
                                         state:true
@@ -217,6 +234,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     closeButton: 'Cerrar',  
                                     duration: 3000,
                                 });
+
                             }else{
 
                                 const data_send={
@@ -242,6 +260,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     .then((response) => response.json())  
                                     .then((data) => {
                                         if(data.state===200){
+                                            setInit(false);
                                             addCall(data.id_call);
                                             addStates(call_state);
                                             setCancel(true);
