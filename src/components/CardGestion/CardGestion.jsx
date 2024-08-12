@@ -27,6 +27,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [incall,setIncall]=useState();
 
     const [new_phone,setNumber]=useState();
+    const [view_new_phone,setViewNewPhone]=useState();
     // const [phone_external,setCallExternal]=useState(); PENDIENTE, para que puedan marcar a cualquier otro número que no este registrado
 
     const form=useRef();
@@ -81,6 +82,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         });
 
         setPhones(phones);
+
+        setPhone({
+            nro:(phones.length) ? phones[0].nro : 0,
+            index:0
+        });
     }
 
     const update_phones=(phones)=>{
@@ -116,6 +122,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         
         setCall(false);
         setDetails(false);
+        setViewNewPhone(false);
         setNumber("");
         setIncall(false);
         setCredit(currently);
@@ -346,7 +353,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             <h3 className="Ggestion__title">Contactos</h3>
                             <button 
                                 onClick={(e)=>{
-
+                                    setViewNewPhone(!view_new_phone);
                                 }}
                                 className="Ggestion__button"
                             >
@@ -354,58 +361,63 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             </button>
                         </div>
 
-                        <label className="Ggestion__inputNewPhone">
-                            <input  
-                                value={new_phone}
-                                onChange={(e)=>{
-                                    setNumber(e.target.value);
-                                }}
-                                type="text" 
-                                placeholder="09XXXXXXX"
-                            />
-                            <button
-                                onClick={(e)=>{
-                                    e.target.textContent='Guardando...';
-                                    const data={
-                                        credito:currently.id,
-                                        tipo:credit.tipo,
-                                        nombre:credit.name,
-                                        parentesco:credit.tipo,
-                                        numero:new_phone,
-                                        nro_efectivo:1,
-                                        cartera:currently.cartera,
-                                        ci:credit.ci,
-                                        byUserCreate:localStorage.getItem('temp_uS'),
-                                        byUserDelete:'N/D',
-                                        byUserUpdate:'N/D',
-                                        estado:'ACTIVE'
-                                    };
+                        {
+                            (view_new_phone)
+                            ?
+                                <label className="Ggestion__inputNewPhone">
+                                    <input  
+                                        value={new_phone}
+                                        onChange={(e)=>{
+                                            setNumber(e.target.value);
+                                        }}
+                                        type="text" 
+                                        placeholder="09XXXXXXX"
+                                    />
+                                    <button
+                                        onClick={(e)=>{
+                                            e.target.textContent='Guardando...';
+                                            const data={
+                                                credito:currently.id,
+                                                tipo:credit.tipo,
+                                                nombre:credit.name,
+                                                parentesco:credit.tipo,
+                                                numero:new_phone,
+                                                nro_efectivo:1,
+                                                cartera:currently.cartera,
+                                                ci:credit.ci,
+                                                byUserCreate:localStorage.getItem('temp_uS'),
+                                                byUserDelete:'N/D',
+                                                byUserUpdate:'N/D',
+                                                estado:'ACTIVE'
+                                            };
 
-                                    console.log(data)
+                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/contacts`,{
+                                                method:'POST',
+                                                headers: {
+                                                    Accept: 'application/json',
+                                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                },
+                                                body:new URLSearchParams(data)
+                                            })
+                                                .then((response) => response.json())  
+                                                .then((data) => {
+                                                    if(data.status===200){
+                                                        
+                                                        add_phone(data.data);
+                                                        setViewNewPhone(false);
+                                                        setNumber("");
+                                                        e.target.textContent='Guardar';
 
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/contacts`,{
-                                        method:'POST',
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        },
-                                        body:new URLSearchParams(data)
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            if(data.status===200){
-                                                
-                                                add_phone(data.data);
-                                                e.target.textContent='Guardado';
+                                                    }else{
+                                                        e.target.textContent='Error';
+                                                    }
+                                                });
 
-                                            }else{
-                                                e.target.textContent='Error';
-                                            }
-                                        });
-
-                                }}
-                            >Guardar</button>
-                        </label>
+                                        }}
+                                    >Guardar</button>
+                                </label>
+                            :   <></>
+                        }
                         
                         <div>
                             <p style={{fontWeight:'600'}}>Contactos principales</p>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./CardAssignCampain.css";
 import { useEffect } from "react";
 import FilterRange from "../FilterRange/FilterRange";
@@ -7,6 +7,7 @@ import useFormatterNumber from "../../hooks/useFormatterNumber";
 import CardItemCharge from "../CardItemCharge/CardItemCharge";
 import useVerifyUnique from "../../hooks/useVerifyUnique";
 import addNotification from "react-push-notification";
+import useSearchCreditInDistribution from "../../hooks/useSearchCreditInDistribution";
 
 const agencias=[
     "-- Todas --",
@@ -65,6 +66,8 @@ export default function CardAssignCampain({data,updateCredits}){
 
         setCharge(copy);
     }
+
+    const busc=useRef();
 
     const calcTotal=(data)=>{
         let count=0;
@@ -154,7 +157,26 @@ export default function CardAssignCampain({data,updateCredits}){
     return (
         <div className="CardAssignCampain">
             <p className="CardAssignCampain__head">Asignación de campaña | {data.name}</p>
-            
+
+            <label className="CardAssignCampain__searchCredit">
+                Buscar crédito
+                <input 
+                    onChange={async (e)=>{
+                        if(e.target.value.length>7){
+                            const result=await useSearchCreditInDistribution({
+                                value:e.target.value,
+                                distribution:data,
+                                cartera:data.cartera,
+                                setAgent:setAgents,
+                                setCredit:update
+                            });
+                        }
+                    }}
+                    type="search" 
+                    placeholder="Número de crédito"
+                />
+            </label>
+
             <div className="CardAssignCampain__agents">
                 <label>
                     Agente
@@ -219,6 +241,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                                 >
                                                     <img src="/icons/view.png"/>
                                                 </button>
+
                                                 <button
                                                     onClick={()=>{
 
@@ -234,6 +257,7 @@ export default function CardAssignCampain({data,updateCredits}){
                             :   <></>
                         }
                     </div>
+
                 </label>
                 {
                     (transfer & mode!=='assoc')
@@ -341,6 +365,7 @@ export default function CardAssignCampain({data,updateCredits}){
                     // ?
                         <>
                             <input 
+                                ref={busc}
                                 onChange={(e)=>{
                                     useAssignSearch(
                                         (mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')), // Esta es la data que le pasamos para que filtre
@@ -359,6 +384,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                 type="text" 
                                 placeholder="Ingrese nombre o cédula"
                             />
+
                             {/* <button>Limpiar</button> */}
                         </>
                     // :   <></>

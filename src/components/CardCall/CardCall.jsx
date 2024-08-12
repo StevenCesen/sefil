@@ -131,8 +131,9 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                         id_record:base
                                     })
                                 });
-                                // const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
-                                // const response=await request.json();
+                                
+                                const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
+                                const response=await request.json();
                             
                                 clearInterval(continue_call);
                                 setEnd(true);
@@ -190,8 +191,8 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     recorder.start();
                                     setRecord(recorder);
 
-                                    // const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
-                                    // const response=await request.json();
+                                    const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
+                                    const response=await request.json();
 
                                     init();
 

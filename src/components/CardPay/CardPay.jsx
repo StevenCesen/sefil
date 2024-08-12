@@ -231,6 +231,23 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                         </p>
                         <p>{data.ci}</p>
                     </div>
+
+                    <div>
+                        <p>
+                            <label>Capital</label>
+                            <label>:</label>
+                        </p>
+                        <p>{useFormatterNumber({value:pay.detalle.saldo_capital,currency:'USD'})}</p>
+                    </div>
+
+                    <div>
+                        <p>
+                            <label>Interés</label>
+                            <label>:</label>
+                        </p>
+                        <p>{useFormatterNumber({value:pay.detalle.interes,currency:'USD'})} $</p>
+                    </div>
+
                     <div>
                         <p>
                             <label>Mora</label>
@@ -239,13 +256,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                         <p>{useFormatterNumber({value:pay.detalle.mora,currency:'USD'})} $</p>
                         
                     </div>
-                    <div>
-                        <p>
-                            <label>Interés</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.interes,currency:'USD'})} $</p>
-                    </div>
+                    
                     <div>
                         <p>
                             <label>Seguro desgravamen</label>
@@ -253,20 +264,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                         </p>
                         <p>{useFormatterNumber({value:pay.detalle.seguro_desgravamen,currency:'USD'})} $</p>
                     </div>
-                    <div>
-                        <p>
-                            <label>Gastos judiciales</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.gastos_judiciales,currency:'USD'})} $</p>
-                    </div>
-                    <div>
-                        <p>
-                            <label>Capital</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.saldo_capital,currency:'USD'})}</p>
-                    </div>
+
                     <div>
                         <p>
                             <label>Gastos de cobranza</label>
@@ -274,6 +272,15 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                         </p>
                         <p>{useFormatterNumber({value:pay.detalle.gastos_cobranza,currency:'USD'})}</p>
                     </div>
+
+                    <div>
+                        <p>
+                            <label>Gastos judiciales</label>
+                            <label>:</label>
+                        </p>
+                        <p>{useFormatterNumber({value:pay.detalle.gastos_judiciales,currency:'USD'})} $</p>
+                    </div>
+                    
                     <div>
                         <p>
                             <label>Otros valores</label>
