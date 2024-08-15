@@ -41,13 +41,28 @@
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
     height: 50px;
-    padding: 10px 10px;
+    padding: 5px 5px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     font-weight: bold;
     color: var(--color-3);
     font-size: 14px;
+}
+
+.CardCall>p>input{
+    width: 100px;
+    font-size: 16px;
+    height: 25px;
+    background-color: #008682;
+    border: none;
+    color: var(--color-3);
+    padding-left: 5px;
+    font-weight: bold;
+}
+
+.CardCall>p>input:focus{
+    outline: none;
 }
 
 .CardCall__count{

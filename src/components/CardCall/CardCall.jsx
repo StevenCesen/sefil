@@ -21,6 +21,8 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
     const [view_states,setView]=useState(false);
     const [record,setRecord]=useState();
 
+    const [number_in,setIn]=useState();
+
     const init = ()=>{
         let second=0;
         let minutos=0;
@@ -69,7 +71,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
         setState('');
         setView(false);
         setEnd(false);
-
+        setIn("");
         setContinue();
 
         return () => clearInterval(continue_call);
@@ -80,12 +82,25 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
 
     return (
         <div className="CardCall">
-            <p>Marcador</p>
+            <p>
+                Marcador
+                <input 
+                    type="text"
+                    placeholder="0XXXXXX"
+                    onChange={(e)=>{
+                        setIn(e.target.value);
+                    }}
+                />
+            </p>
 
             {/* <img src="./icons/logo.png"/> */}
 
             <label>
-                <span>{phone.nro}</span>
+                <span
+                    onClick={(e)=>{
+                        useClickToCopy(e.target.textContent);
+                    }}
+                >{(number_in==="") ? phone.nro : number_in}</span>
                 {
                     (data_call.state)
                     ?  
@@ -132,9 +147,16 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     })
                                 });
                                 
-                                const request=await fetch(`hangup.php?exten=${phone.nro}&channel=${channel}`);
-                                const response=await request.json();
-                            
+                                try {
+                                    
+                                    const request=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
+                                    const response=await request.json();
+                                    console.log(response);
+
+                                } catch (error) {
+                                    console.log(error)
+                                }
+                                
                                 clearInterval(continue_call);
                                 setEnd(true);
                                 setView(true);
@@ -156,7 +178,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                             onClick={async (e)=>{
                                 let recorder,stream;
 
-                                if(phone.nro===0){
+                                if(((number_in==="") ? phone.nro : number_in)===0){
                                     addNotification({
                                         title: 'Sin número',
                                         subtitle: 'No hay número para realizar la llamada',
@@ -191,7 +213,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     recorder.start();
                                     setRecord(recorder);
 
-                                    const request=await fetch(`originate.php?exten=${phone.nro}&id=9&channel=${localStorage.getItem('extension')}`);
+                                    const request=await fetch(`originate.php?exten=${(number_in==="") ? phone.nro : number_in}&id=9&channel=${localStorage.getItem('extension')}`);
                                     const response=await request.json();
 
                                     init();

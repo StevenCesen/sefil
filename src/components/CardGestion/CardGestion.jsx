@@ -4,6 +4,7 @@ import "./CardGestion.css"
 import CardCall from "../CardCall/CardCall";
 import addNotification from "react-push-notification";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
+import useClickToCopy from "../../hooks/useClickToCopy";
 
 export default function CardGestion({currently,next,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays}){
     
@@ -254,6 +255,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     <div className={`DetailCredit__body ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
                         <h3
                             onClick={(e)=>{
+                                useClickToCopy(e.target.textContent);
                                 if(incall===false){
                                     setCredit(currently)
 
@@ -271,7 +273,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 }
                             }}
                         >{currently.name} | TITULAR</h3>
-                        <h3>{currently.ci}</h3>
+                        <h3
+                            onClick={(e)=>{
+                                useClickToCopy(e.target.textContent);
+                            }}
+                        >{currently.ci}</h3>
                     </div>
 
                     <div className="CardGestion__garantes">
@@ -280,6 +286,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 (contact.name!=='') &&
                                     <button 
                                         onClick={(e)=>{
+                                            useClickToCopy(e.target.textContent);
                                             contacts.map((garante,index)=>{
                                                 if(garante.ci===contact.ci & incall===false){
                                                     const phones_c=[];
@@ -424,7 +431,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             {
                                 data_phones.map((phone,index)=>(
                                     <div key={index} className="Ggestion__contact">
-                                        <p>{phone.nro} ({phone.efec})</p>
+                                        <p
+                                            onClick={(e)=>{
+                                                useClickToCopy(e.target.textContent);
+                                            }}
+                                        >{phone.nro} ({phone.efec})</p>
                                         <div>
 
                                             <button
@@ -608,7 +619,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         }
                                     </select>
                                 </label>
-
                             </div>
 
                             <div className="Ggestion__twoGroup">
@@ -696,6 +706,12 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     data_send.observation='.';
                                 }
 
+                                data_send.monto=currently.totalAmount;
+                                data_send.cuotas_pagadas=currently.paidFees;
+                                data_send.cuotas_pendientes=currently.pendingFees;
+
+                                console.log(data_send);
+
                                 setMessage('Gestionado');
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
@@ -708,7 +724,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
-                                        console.log(data);
+                                        
                                         if(data.status===200){
                                             addNotification({
                                                 title: 'Éxito',
