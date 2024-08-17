@@ -45,7 +45,6 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
             // minutes:0
         });
 
-        console.log("no me repito")
         init({
             sec:Number(time.split(':')[1]),
             min:Number(time.split(':')[0])

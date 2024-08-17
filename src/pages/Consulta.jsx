@@ -234,7 +234,7 @@ export default function Consulta(){
                             />
                     
                         </label>
-                        <p>Parroquia</p>
+                        <p>Agente</p>
 
                         <label>
                             Estado
@@ -286,7 +286,7 @@ export default function Consulta(){
                                 <p>{credit.company}</p>
                                 <p>{credit.provincia}</p>
                                 <p>{credit.canton}</p>
-                                <p>{credit.parroquia}</p>
+                                <p>{(credit.agent==="") ? "N/D" : credit.agent}</p>
                                 <p>{credit.collectionState}</p>
                             </div> 
                         ))

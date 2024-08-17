@@ -23,9 +23,13 @@ function GestionContextProvider({children}){
                 .then((data) => {
     
                     const data_prev=data;
+
                     data_prev.map(agent=> {
                         agent.status='DESCONECTADO'
                     });
+
+                    console.log(data_prev);
+
                     setAgents(data_prev);
                 });
 

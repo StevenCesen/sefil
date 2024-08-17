@@ -58,21 +58,41 @@ export default function Monitor(){
 
                 {
                     agents.map((agent,index)=>(
-                        <CardUserState
-                            key={index}
-                            name={agent.name}
-                            state={agent.state}
-                            time={agent.tiempo}
-                            name_campain={agent.gestion.campain}
-                            mode={"complete"}
-                            data={{
-                                nro_credits:agent.gestion.total_credits,
-                                nro_gestions:agent.gestion.total_credits_ges,
-                                nro_calls:agent.gestion.nro_llamadas,
-                                nro_efec:agent.gestion.nro_llamadas_efec,
-                                nro_no_efec:agent.gestion.nro_llamadas_no_efec
-                            }}
-                        />
+                        (agent.gestion.length>0)
+                        ?
+                            agent.gestion.map((campain,index)=>(
+                                <CardUserState
+                                    key={index}
+                                    name={agent.name}
+                                    state={agent.state}
+                                    time={agent.tiempo}
+                                    name_campain={campain.campain}
+                                    mode={"complete"}
+                                    data={{
+                                        nro_credits:campain.total_credits,
+                                        nro_gestions:campain.total_credits_ges,
+                                        nro_calls:campain.nro_llamadas,
+                                        nro_efec:campain.nro_llamadas_efec,
+                                        nro_no_efec:campain.nro_llamadas_no_efec
+                                    }}
+                                />
+                            ))
+                        :
+                            <CardUserState
+                                key={index}
+                                name={agent.name}
+                                state={agent.state}
+                                time={agent.tiempo}
+                                name_campain={"-"}
+                                mode={"complete"}
+                                data={{
+                                    nro_credits:"-",
+                                    nro_gestions:"-",
+                                    nro_calls:"-",
+                                    nro_efec:"-",
+                                    nro_no_efec:"-"
+                                }}
+                            />
                     ))
                 }
 

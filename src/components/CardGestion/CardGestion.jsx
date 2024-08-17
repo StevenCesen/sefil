@@ -824,7 +824,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 <div key={index} className="Ggestion__historialItem">
                                     <label>{item.fecha}</label>
                                     <label>{item.client_name}</label>
-                                    <label>{item.state_gestion}</label>
+                                    <label>{item.substate_gestion}</label>
                                     <label>{item.date_promise}</label>
                                     <label>{item.observation}</label>
                                     <label>{item.byUser}</label>

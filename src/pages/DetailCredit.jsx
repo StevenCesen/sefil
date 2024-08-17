@@ -451,6 +451,10 @@ export default function DetailCredit(){
                         (localStorage.getItem('permission').split(',').includes("Comprobantes:all")) &&
                             <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}&name=${credit.name}`}>Comprobantes de pago</NavLink>
                     }
+                    {
+                        (localStorage.getItem('permission').split(',').includes("User:all") | localStorage.getItem('permission').split(',').includes("User:minimize")) &&
+                            <NavLink to={`/dashboard/glist/${param.get('id')}?cartera=${cartera.id}`}>Historial de gestiones</NavLink>
+                    }
                     <NavLink to={`/dashboard/garantes/${param.get('id')}?cartera=${cartera.id}&name=${credit.name}`}>Garantes</NavLink>
                 </div>
             

@@ -935,6 +935,17 @@
     cursor: pointer;
 }
 
+.DetailCredit__access>div>button{
+    justify-self: flex-end;
+    height: 40px;
+    border: none;
+    background-color: var(--bg-alert-successful);
+    border-radius: 4px;
+    color: var(--color-3);
+    width: 120px;
+    cursor: pointer;
+}
+
 .DetailCredit__access>div>button:first-child{
     margin-right: 10px;
 }
@@ -1633,8 +1644,8 @@
     width: 100%;
     background-color: var(--bg-2);
     border-radius: 5px;
-    height: 150px;
     margin-bottom: 10px;
+    border: 1px solid rgb(214, 214, 214);
 }
 
 .Campain__list{

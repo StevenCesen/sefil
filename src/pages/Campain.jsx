@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import CardCreateCampain from "../components/CardCreateCampain/CardCreateCampain";
 import CardAssignCampain from "../components/CardAssignCampain/CardAssignCampain";
 import CardEditCampain from "../components/CardEdirCampain/CardEditCampain";
+import CardSync from "../components/CardSync/CardSync";
 
 export default function Campain(){
 
@@ -79,7 +80,7 @@ export default function Campain(){
                 <div className="Campain__sincronice">
                     <h4 className="Campain__subtitle">Sincronización</h4>
                     <div>
-
+                        <CardSync/>
                     </div>
                 </div>
 

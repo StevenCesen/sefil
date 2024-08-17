@@ -115,7 +115,6 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
-                console.log(data);
                 setCampains(data);
                 setCampain(data[0].id);
                 localStorage.setItem('campain_name',data[0].name);
@@ -158,6 +157,7 @@ export default function Gestion(){
         return () => {
             window.removeEventListener("beforeunload", onBeforeUnload);
         };
+
     },[]);
 
     if(!campains) return <></>
@@ -324,6 +324,7 @@ export default function Gestion(){
                         <label>Agencia</label>
                         <select
                             onChange={(e)=>{
+                                
                                 if(e.target.value!==''){
                                     useFilterAgency({
                                         tray:tray,

@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import {useEffect, useState } from "react";
 import CardGestion from "../components/CardGestion/CardGestion";
@@ -14,6 +14,9 @@ export default function GHistorial(){
     const [current,setCurrent]=useState();
     const [agents,setAgents]=useState();
 
+    const params=new URLSearchParams(useLocation().search);
+    const param=useParams();
+
     const [data,setData]=useState(); //Aquí tenemos todos los créditos
     
     const updateData=(url)=>{
@@ -24,7 +27,23 @@ export default function GHistorial(){
             }
         })
             .then((response) => response.json())  
-	        .then((data) => setData(data));
+	        .then((data) => {
+                data.path+=`?credit=${param.ci}&cartera=${params.get('cartera')}`;
+
+                if(data.next_page_url!==null){
+                    const page_param_next=data.next_page_url.split('?')[1];
+                    data.next_page_url=`${data.path}&${page_param_next}`;
+                }
+
+                if(data.prev_page_url!==null){
+                    const page_param_prev=data.prev_page_url.split('?')[1];
+                    data.prev_page_url=`${data.path}&${page_param_prev}`;
+                }
+
+                console.log(data);
+                
+                setData(data)
+            });
     }
 
     useEffect(()=>{
@@ -37,7 +56,6 @@ export default function GHistorial(){
         })
             .then((response) => response.json())  
             .then((data) => {
-                console.log(data)
                 setAgents(data);
             });
 
@@ -52,16 +70,41 @@ export default function GHistorial(){
                 setCampains(data.data);
                 setCampain(data.data[0]);
 
-                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?campain=${data.data[0].id}`,{
-                    headers: {
-                        Accept: 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                })
-                    .then((response) => response.json())  
-                    .then((data) => {
-                        setData(data);
-                    });
+                if(param.ci!==undefined){
+                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?credit=${param.ci}&cartera=${params.get('cartera')}`,{
+                        headers: {
+                            Accept: 'application/json',
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
+                    })
+                        .then((response) => response.json())  
+                        .then((data) => {
+                            data.path+=`?credit=${param.ci}&cartera=${params.get('cartera')}`;
+
+                            if(data.next_page_url!==null){
+                                const page_param_next=data.next_page_url.split('?')[1];
+                                data.next_page_url=`${data.path}&${page_param_next}`;
+                            }
+
+                            if(data.prev_page_url!==null){
+                                const page_param_prev=data.prev_page_url.split('?')[1];
+                                data.prev_page_url=`${data.path}&${page_param_prev}`;
+                            }
+                            console.log(data)
+                            setData(data);
+                        });
+                }else{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?campain=${data.data[0].id}`,{
+                        headers: {
+                            Accept: 'application/json',
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
+                    })
+                        .then((response) => response.json())  
+                        .then((data) => {
+                            setData(data);
+                        });
+                }
             });
         setCurrent([]);
 
@@ -307,7 +350,6 @@ export default function GHistorial(){
                             <button
                                 onClick={(e)=>{
                                     setCurrent(gestion)
-                                    console.log(gestion)
                                 }}
                             >Ver</button>
                             <label>{gestion.fecha.split(" ")[0]}</label>
@@ -328,15 +370,22 @@ export default function GHistorial(){
                     <p>Registros del {data.from}-{data.to} de {data.total}</p>
                     <div>
                     {
-                        data.links.map((button,index)=>(
-                            (index===0)?
-                                <NavLink key={index} onClick={()=>{updateData(button.url)}}>Anterior</NavLink>
-                            : 
-                                (index===(data.links.length-1)) ?
-                                    <NavLink key={index} onClick={()=>{updateData(button.url)}}>Siguiente</NavLink>
-                                :
-                                    <></>
-                        ))
+                        (data.total>10)
+                        ?   
+                            <>
+                                <button onClick={()=>{
+                                    if(data.prev_page_url!==null){
+                                        updateData(data.prev_page_url)
+                                    }
+                                }}>Anterior</button>
+                                <button onClick={()=>{
+                                    if(data.next_page_url!==null){
+                                        updateData(data.next_page_url)
+                                    }
+                                }}>Siguiente</button>
+                            </>
+                        : 
+                            <></>
                     }
                     </div>
                 </div>

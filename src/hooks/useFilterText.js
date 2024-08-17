@@ -1,6 +1,10 @@
 export default function useFilterText({tray,data_org,value,update,all}){
     let results=[];
 
+    console.log(tray)
+    console.log(data_org)
+    console.log(value)
+
     if(tray==='pending'){
         // Buscar en pendientes
         data_org.pending.map((credit)=>{
@@ -18,16 +22,28 @@ export default function useFilterText({tray,data_org,value,update,all}){
     }else if(tray==='inprocess'){
         // Buscar en proceso
         data_org.inprocess.map((credit)=>{
-            if(credit.agency===value.toUpperCase()){
-                results.push(credit);
+            if(/^[A-Za-z ]+/.test(value)){
+                if(credit.name.toLowerCase().includes(value.toLowerCase())){
+                    results.push(credit);
+                }
+            }else{
+                if(credit.ci.includes(value)){
+                    results.push(credit);
+                }
             }
         });
        
     }else if(tray==='processed'){
         // Buscar en procesados
         data_org.processed.map((credit)=>{
-            if(credit.agency===value.toUpperCase()){
-                results.push(credit);
+            if(/^[A-Za-z ]+/.test(value)){
+                if(credit.name.toLowerCase().includes(value.toLowerCase())){
+                    results.push(credit);
+                }
+            }else{
+                if(credit.ci.includes(value)){
+                    results.push(credit);
+                }
             }
         });
 
