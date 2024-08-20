@@ -11,46 +11,63 @@ export default function CardSync(){
 
     useEffect(()=>{
         setBucle(
-            setInterval(() => {
-                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/sync/status/1`,{
-                    headers: {
-                        Accept: 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                })
-                    .then((response) => response.json())  
-                    .then((data) => {
-                        setPorcentual(data);
-                    });
-            }, 3000)
+            (porcentual<100) &&
+                setInterval(() => {
+                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/sync/status`,{
+                        headers: {
+                            Accept: 'application/json',
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
+                    })
+                        .then((response) => response.json())  
+                        .then((data) => {
+                            if(data.status===400){
+                                setPorcentual(0);
+                            }else{
+                                setPorcentual(data.porcentual);
+                                setNumberCredits(data.total);
+                            }
+                        });
+                }, 3000)
         );
 
-        return () => clearInterval(interval);
+        if(porcentual<100){
+            return () => clearInterval(interval);
+        }else{
+            setPorcentual(100);
+        }
 
     },[]);
 
     return (
         <div className="CardSync">
-            <h3>Sincronizando créditos de la campaña FACES_AGOSTO_Sync</h3>
+            <h3>Proceso de sincronización</h3>
 
             <div className="CardSync__detail">
                 <h4>Créditos</h4>
                 <p>
                     {
-                        (!number_credits)
+                        (porcentual===0)
                         ?
-                            "Consultando créditos, esto puede llevar unos minutos..."   
-                        :   number_credits
+                            "No hay sincronizaciones"
+                        :   (!number_credits)
+                            ?
+                                "Consultando créditos, esto puede llevar unos minutos..."   
+                            :   "Sincronizando: "+number_credits+" créditos."
                     }
                 </p>
             </div>
-
+            
             {
-                (!number_credits)
+                (number_credits)
                 ?
                     <div className="CardSync__detail">
                         <h4>Estado de sincronización</h4>
-                        <p>Actualizando contactos y pagos, esto puede llevar unos minutos...</p>
+                        {
+                            (porcentual===0)
+                            ?   <p>No hay sincronizaciones</p>
+                            :   <p>Actualizando contactos, esto puede llevar unos minutos...</p>
+                        }
 
                         <ProgressBar
                             val_porcentual={porcentual}

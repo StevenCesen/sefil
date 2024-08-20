@@ -121,10 +121,12 @@ export default function CardAssignCampain({data,updateCredits}){
         setViewAgents(false);
         setPrevAgencies([]);
         setDtsn('');
+
         setAgents({
             id:'',
             name:'-- Seleccionar --'
         });
+
         setDistributions(JSON.parse(data.distributions));
         setCharge([]);
         setCoincidence('1');
@@ -148,6 +150,19 @@ export default function CardAssignCampain({data,updateCredits}){
             .then((data) => {
                 setBusiness(data.data);
             });
+
+        // Compruebo si esta campaña no es de tipo SINCRONIZACIÓN API
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setCharge(data);
+            });
+
     },[]);
 
     if(!business) return <></>
@@ -295,50 +310,55 @@ export default function CardAssignCampain({data,updateCredits}){
             <span>Forma de asignación</span>
             
             <div className="CardAssignCampain__radius">
-                <label>
-                    <input 
-                        type="radio"
-                        name="mode"
-                        value={"assoc"}
-                        onChange={(e)=>{
-                            if(e.target.checked){
-                                setMode(e.target.value);
-                                setTransfer(false);
-                            }
-                        }}
-                    />
-                    Asociar cartera
-                    {
-                        (mode==='assoc')
-                        ?
-                            <select
+                {
+                    (data.type_assign!=='api')
+                    ?
+                        <label>
+                            <input 
+                                type="radio"
+                                name="mode"
+                                value={"assoc"}
                                 onChange={(e)=>{
-                                    if(e.target.value!==""){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/all?cartera=${e.target.value}`,{
-                                            headers: {
-                                                Accept: 'application/json',
-                                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                                            }
-                                        })
-                                            .then((response) => response.json())  
-                                            .then((data) => {
-                                                setCharge(data)
-                                                // Cacheo los créditos de cartera por si se necesitan para filtrado
-                                                localStorage.setItem('filt',JSON.stringify(data));
-                                            });
+                                    if(e.target.checked){
+                                        setMode(e.target.value);
+                                        setTransfer(false);
                                     }
                                 }}
-                            >
-                                <option value={""}>--Seleccionar--</option>
-                                {
-                                    business.map((cartera,index)=>(
-                                        <option key={index} value={cartera.name}>{cartera.name}</option>
-                                    ))
-                                }
-                            </select>
-                        :   <></>
-                    }
-                </label>
+                            />
+                            Asociar cartera
+                            {
+                                (mode==='assoc')
+                                ?
+                                    <select
+                                        onChange={(e)=>{
+                                            if(e.target.value!==""){
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/all?cartera=${e.target.value}`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        setCharge(data)
+                                                        // Cacheo los créditos de cartera por si se necesitan para filtrado
+                                                        localStorage.setItem('filt',JSON.stringify(data));
+                                                    });
+                                            }
+                                        }}
+                                    >
+                                        <option value={""}>--Seleccionar--</option>
+                                        {
+                                            business.map((cartera,index)=>(
+                                                <option key={index} value={cartera.name}>{cartera.name}</option>
+                                            ))
+                                        }
+                                    </select>
+                                :   <></>
+                            }
+                        </label>
+                    :   <></>
+                }
 
                 <label>
                     <input 

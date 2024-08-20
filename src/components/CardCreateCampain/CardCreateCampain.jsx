@@ -243,7 +243,9 @@ export default function CardCreateCampain({setData}){
                             charge_inicial:JSON.stringify([]),
                             type_assign:campain.type_assign
                         };
-                        
+
+                        console.log(data)
+
                         if(campain.name!=='' & campain.fecha_init!='' & campain.fecha_finish!=''){
                             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
                                 method:'POST',
