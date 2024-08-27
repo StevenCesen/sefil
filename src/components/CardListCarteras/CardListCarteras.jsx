@@ -107,7 +107,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                     </div>
                     <NavLink target="blank" to={`${import.meta.env.VITE_URL_BASE}/public/api/pays?cartera=${cartera.name}&fecha_inicio=${date_start}&fecha_final=${date_end}`}>Excel</NavLink>
                 </div>
-                
+                <button>Orden de prelación</button>
             </div>
         </div>
     );

@@ -71,7 +71,7 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
         });
 
         return () => clearInterval(calc_time);
-
+    
     },[time]);
 
     if(!times) return <></>
@@ -85,13 +85,12 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
                     CardUserState__state
                     ${
                         (state==='FUERA DE LÍNEA') 
-                        ?  "CardUserState__state--disconnect"
-                        : (state==='CONECTADO')
-                            ? "CardUserState__state--connect"
-                            : (state==='EN PAUSA'  | state==='EN RECESO' | state==='EN ALMUERZO' | state==='EN REUNIÓN')
-                                ? "CardUserState__state--pause"
-                                : "CardUserState__state--active"
-                    
+                        ?   "CardUserState__state--disconnect"
+                        :   (state==='CONECTADO')
+                            ?   "CardUserState__state--connect"
+                            :   (state==='EN PAUSA'  | state==='EN RECESO' | state==='EN ALMUERZO' | state==='EN REUNIÓN')
+                                ?   "CardUserState__state--pause"
+                                :   "CardUserState__state--active"
                     }
                 `}
             >{state}</p>

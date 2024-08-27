@@ -89,7 +89,7 @@ export default function CardAssignCampain({data,updateCredits}){
         // Usamos el seleccionar de créditos
         // 1) Primero debemos saber cual es modo
         // 2) Enviamos la data del filtro correspondiente: Si es asociaación de cartera entonces es filt, si es transferencia, es user_filt
-        useAssignSearch((mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
+        useAssignSearch((mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
     }
 
     function chunckArrayInGroups(arr, size) {
@@ -152,16 +152,19 @@ export default function CardAssignCampain({data,updateCredits}){
             });
 
         // Compruebo si esta campaña no es de tipo SINCRONIZACIÓN API
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
-                setCharge(data);
-            });
+        if(data.type_assign==='api'){
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    localStorage.setItem('filt',JSON.stringify(data));
+                    setCharge(data);
+                });
+        }
 
     },[]);
 
@@ -375,10 +378,16 @@ export default function CardAssignCampain({data,updateCredits}){
                     Transferir carga
                 </label>
             </div>
-            
+
             <label
                 className="CardAssignCampain__file">
-                Cargar datos ({charge.length})
+                Cargar datos ({
+                    (data.type_assign==='api') 
+                    ?   (charge.length===0)
+                        ?   'Cargando...' 
+                        :   charge.length
+                    :   charge.length
+                })
                 {/* <input id="campain" type="file"/> */}
                 {
                     // (charge.length>0)
@@ -388,7 +397,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                 ref={busc}
                                 onChange={(e)=>{
                                     useAssignSearch(
-                                        (mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')), // Esta es la data que le pasamos para que filtre
+                                        (mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')), // Esta es la data que le pasamos para que filtre
                                         e.target.value, //Este es el texto {nombre del cliente o cédula}
                                         update, //Método para actualizar la carga
                                         //================> Listado de filtros
@@ -470,7 +479,7 @@ export default function CardAssignCampain({data,updateCredits}){
                             if(e.target.checked){
                                 setInit();
                                 setCoincidence(e.target.value);
-                                useAssignSearch((mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
+                                useAssignSearch((mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
                         }}
                         defaultChecked
@@ -487,7 +496,7 @@ export default function CardAssignCampain({data,updateCredits}){
                             if(e.target.checked){
                                 setInit();
                                 setCoincidence(e.target.value);
-                                useAssignSearch((mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
+                                useAssignSearch((mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
                         }}
                     />
@@ -534,6 +543,12 @@ export default function CardAssignCampain({data,updateCredits}){
                         >
                             <option value={"Vencido"}>Vencido</option>
                             <option value={"Vigente"}>Vigente</option>
+                            {
+                                (data.type_assign==='api')
+                                ?
+                                    <option value={"Castigado"}>Castigado</option>
+                                :   <></>
+                            }
                             <option value={"Judicial"}>Judicial</option>
                         </select>
                     </label>
@@ -575,7 +590,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                 setPrevAgencies(new_copy);
                                                             }
 
-                                                            useAssignSearch((mode==='assoc') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,prev_agencies);
+                                                            useAssignSearch((mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,prev_agencies);
                                                         
                                                         }}
                                                     />
@@ -622,24 +637,35 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                         dis.distribution.map((item)=>{
                                             if(ids.includes(item.id)===false){
-                                                distribution.push(item);
-                                               
+                                                distribution.push({
+                                                    id:item.id,
+                                                    cartera:item.cartera
+                                                });
                                             }
                                         })
 
                                         dis.pending.map((item)=>{
                                             if(ids.includes(item.id)===false){
-                                                pending.push(item);
+                                                pending.push({
+                                                    id:item.id,
+                                                    cartera:item.cartera
+                                                });
                                             }
                                         })
                                         dis.inprocess.map((item)=>{
                                             if(ids.includes(item.id)===false){
-                                                inprocess.push(item);
+                                                inprocess.push({
+                                                    id:item.id,
+                                                    cartera:item.cartera
+                                                });
                                             }
                                         })
                                         dis.processed.map((item)=>{
                                             if(ids.includes(item.id)===false){
-                                                processed.push(item);
+                                                processed.push({
+                                                    id:item.id,
+                                                    cartera:item.cartera
+                                                });
                                             }
                                         })
 
@@ -655,8 +681,14 @@ export default function CardAssignCampain({data,updateCredits}){
                                 distribution.map((dis)=>{
                                     if(Number(dis.agent_id)===Number(dtsn)){
                                         carga.map((cred)=>{
-                                            dis.pending.push(cred);
-                                            dis.distribution.push(cred);
+                                            dis.pending.push({
+                                                id:cred.id,
+                                                cartera:cred.cartera
+                                            });
+                                            dis.distribution.push({
+                                                id:cred.id,
+                                                cartera:cred.cartera
+                                            });
                                         });
 
                                         dis.total+=Number(carga.length);
@@ -665,23 +697,25 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                 e.target.textContent="Transfiriendo...";
 
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
-                                    method:'PUT',
-                                    headers: {
-                                        Accept: 'application/json',
-                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                    },
-                                    body:new URLSearchParams({
-                                        distributions:JSON.stringify(distribution),
-                                        charge_inicial:JSON.stringify(distribution)
-                                    })
-                                })
-                                    .then((response) => response.json())  
-                                    .then((data) => {
-                                        setDistributions(distribution);
-                                        updateCredits(data.data);
-                                        e.target.textContent="Transferencia correcta";
-                                    });
+                                console.log(distribution)
+
+                                // fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
+                                //     method:'PUT',
+                                //     headers: {
+                                //         Accept: 'application/json',
+                                //         Authorization: `Bearer ${localStorage.getItem('token')}`
+                                //     },
+                                //     body:new URLSearchParams({
+                                //         distributions:JSON.stringify(distribution),
+                                //         charge_inicial:JSON.stringify(distribution)
+                                //     })
+                                // })
+                                //     .then((response) => response.json())  
+                                //     .then((data) => {
+                                //         setDistributions(distribution);
+                                //         updateCredits(data.data);
+                                //         e.target.textContent="Transferencia correcta";
+                                //     });
                             }}
                         >
                             Transferir carga

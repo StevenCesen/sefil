@@ -1,6 +1,7 @@
 export default function useSearch(string,cartera,setData,setTotal){
     if(string.length>4){
         if(/^[A-Za-z ]+/.test(string)){
+
             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?nombre=${string}`,{
                 headers: {
                     Accept: 'application/json',
@@ -11,6 +12,7 @@ export default function useSearch(string,cartera,setData,setTotal){
                 .then((data) => {
                     setData(data.data)
                 });
+
         }else{  //Búscamos por número de cédula
             
             if(string.length>5){
@@ -25,6 +27,7 @@ export default function useSearch(string,cartera,setData,setTotal){
                         setData(data.data)
                     });
             }
+            
         }
     }else if(string===''){
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit?cartera=SEFIL_1`,{

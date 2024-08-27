@@ -9,13 +9,13 @@ export default function CardSelectState({mode,current_option}){
     const options=[
         'CONECTADO',
         // 'FUERA DE LÍNEA',
-        'EN PAUSA',
         'EN RECESO',
+        'EN ALMUERZO',
         'EN REUNIÓN'
     ];
 
-
     useEffect(()=>{
+        console.log(mode)
         setView(false);
         setCurrent(current_option);
 

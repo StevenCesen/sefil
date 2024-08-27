@@ -12,7 +12,7 @@ function GestionContextProvider({children}){
 
     useEffect(()=>{
 
-        if(localStorage.getItem('rol')==='administrador'){
+        if(localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='super'){
             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
                 headers: {
                     Accept: 'application/json',

@@ -1,9 +1,9 @@
 .CardListCarteras__head{
-    width: 70%;
+    width: 80%;
     height: 40px;
     background-color: var(--bg-alert-error);
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 3fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 3fr 1fr;
     justify-content: center;
     align-items: center;
     margin-top: 10px;
@@ -19,20 +19,29 @@
 }
 
 .CardListCarteras{
-    width: 70%;
+    width: 80%;
 }
 
 .CardListCarteras>div{
     width: 100%;
     /* height: 40px; */
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 3fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 3fr 1fr;
     justify-content: center;
     align-items: center;
     text-align: center;
     font-weight: 100;
     position: relative;
     border-bottom: 1px solid rgb(213, 213, 213);
+}
+
+.CardListCarteras>div>button{
+    background-color: var(--bg-alert-successful) !important;
+    height: 35px;
+    color: var(--color-3);
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 2px;
 }
 
 .CardListCarteras>div>div{

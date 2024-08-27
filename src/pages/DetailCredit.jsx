@@ -412,7 +412,6 @@ export default function DetailCredit(){
                                 <p
                                     style={{marginBottom:10,fontSize:14}}
                                 >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
-                            
                     }
                     {
                         (Number(credit.totalAmount)>0.00 & localStorage.getItem('hash')!=='#/dashboard/consulta') ?

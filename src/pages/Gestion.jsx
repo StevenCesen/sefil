@@ -105,7 +105,7 @@ export default function Gestion(){
         setIndex(0);
         useWindows();
         setTray('pending');
-
+        
         // Consulto todas las compañas del usuario presente
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}`,{
             headers: {

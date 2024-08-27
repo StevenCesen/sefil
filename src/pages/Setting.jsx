@@ -3,8 +3,6 @@ import "./pages.css";
 import { useEffect, useRef, useState } from "react";
 import CardCreateCartera from "../components/CardCreateCartera/CardCreateCartera";
 import CardListCarteras from "../components/CardListCarteras/CardListCarteras";
-import CardUpdateCartera from "../components/CardUpdateCartera/CardUpdateCartera";
-import CardExportPays from "../components/CardExportPays/CardExportPays";
 import CardUpdatePay from "../components/CardUpdatePay/CardUpdatePay";
 
 export default function Setting(){
@@ -57,6 +55,7 @@ export default function Setting(){
                                 <label>Estado</label>
                                 <label>Descargar cartera</label>
                                 <label>Descargar pagos</label>
+                                <label>Prelación</label>
                             </div>
 
                             {

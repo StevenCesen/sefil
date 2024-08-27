@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
+import useClickToCopy from "../../hooks/useClickToCopy";
 
 export default function CardItemCharge({item,updateCheck}){
 
@@ -32,7 +33,11 @@ export default function CardItemCharge({item,updateCheck}){
             />
             <label>{item_data.name}</label>
             <label>{item_data.ci}</label>
-            <label>{item_data.credito}</label>
+            <label
+                onClick={(e)=>{
+                    useClickToCopy(e.target.textContent)
+                }}
+            >{item_data.credito}</label>
             <label>{useFormatterNumber({value:item_data.totalAmount,currency:'USD'})}</label>
             <label>{item_data.pendingFees}</label>
             <label>{item_data.dias_vencidos}</label>
