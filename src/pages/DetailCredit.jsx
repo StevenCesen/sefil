@@ -272,7 +272,7 @@ export default function DetailCredit(){
                         </div>
                         <div>
                             <p className="Head Head--se">Crédito</p>
-                            <span>{credit.sync_id} </span>
+                            <span>{cartera.id}-{credit.credito} </span>
                         </div>
                         <div>
                             <p className="Head Head--se">Fecha de emisión</p>
@@ -369,7 +369,7 @@ export default function DetailCredit(){
                     {
                         credit.condonations.map((condonation,index)=>(
                             <div className="DetailCredit__activity" key={index}>
-                                <p>Condonación <strong>{condonation.status.toUpperCase()}</strong>, realizada por {condonation.byUser}. Valor total condonado {useFormatterNumber({
+                                <p>Condonación <strong>{condonation.status.toUpperCase()}</strong>, realizada por {condonation.byUser}. Valor total a cancelar {useFormatterNumber({
                                     value:(Number(JSON.parse(condonation.postDates).capital)+Number(JSON.parse(condonation.postDates).mora)+Number(JSON.parse(condonation.postDates).interes)+Number(JSON.parse(condonation.postDates).seguro_desgravamen)+Number(JSON.parse(condonation.postDates).gastos_cobranza)+Number(JSON.parse(condonation.postDates).gastos_judiciales)),
                                     currency:'USD'
                                 })}</p>

@@ -89,7 +89,10 @@ export default function CardAssignCampain({data,updateCredits}){
         // Usamos el seleccionar de créditos
         // 1) Primero debemos saber cual es modo
         // 2) Enviamos la data del filtro correspondiente: Si es asociaación de cartera entonces es filt, si es transferencia, es user_filt
-        useAssignSearch((mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
+        useAssignSearch(
+            ((mode==='assoc' | data.type_assign==='api') & agent.id==="") 
+                ? JSON.parse(localStorage.getItem('filt')) 
+                : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
     }
 
     function chunckArrayInGroups(arr, size) {
@@ -164,6 +167,19 @@ export default function CardAssignCampain({data,updateCredits}){
                     localStorage.setItem('filt',JSON.stringify(data));
                     setCharge(data);
                 });
+        }else{
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/all?cartera=${data.cartera}`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    setCharge(data);
+                    setMode('assoc')
+                    localStorage.setItem('filt',JSON.stringify(data));
+                });
         }
 
     },[]);
@@ -180,15 +196,21 @@ export default function CardAssignCampain({data,updateCredits}){
                 Buscar crédito
                 <input 
                     onChange={async (e)=>{
-                        if(e.target.value.length>7){
-                            const result=await useSearchCreditInDistribution({
-                                value:e.target.value,
-                                distribution:data,
-                                cartera:data.cartera,
-                                setAgent:setAgents,
-                                setCredit:update
-                            });
+
+                        if(e.target.value.split('-')[1]!==undefined){
+                            let iden_credito=e.target.value.split('-')[1];
+                            console.log(iden_credito)
+                            if(iden_credito.length>7){
+                                const result=await useSearchCreditInDistribution({
+                                    value:iden_credito,
+                                    distribution:data,
+                                    cartera:data.cartera,
+                                    setAgent:setAgents,
+                                    setCredit:update
+                                });
+                            } 
                         }
+                        
                     }}
                     type="search" 
                     placeholder="Número de crédito"
@@ -220,6 +242,8 @@ export default function CardAssignCampain({data,updateCredits}){
                                                         id:'',
                                                         name:'-- Todos --'
                                                     });
+                                                    setCharge(JSON.parse(localStorage.getItem('filt')));
+                                                    setViewAgents(false);
                                                 }}
                                             >-- Todos --</label>
                                         </div>
@@ -316,62 +340,66 @@ export default function CardAssignCampain({data,updateCredits}){
                 {
                     (data.type_assign!=='api')
                     ?
-                        <label>
-                            <input 
-                                type="radio"
-                                name="mode"
-                                value={"assoc"}
-                                onChange={(e)=>{
-                                    if(e.target.checked){
-                                        setMode(e.target.value);
-                                        setTransfer(false);
-                                    }
-                                }}
-                            />
-                            Asociar cartera
-                            {
-                                (mode==='assoc')
-                                ?
-                                    <select
-                                        onChange={(e)=>{
-                                            if(e.target.value!==""){
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/all?cartera=${e.target.value}`,{
-                                                    headers: {
-                                                        Accept: 'application/json',
-                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                    }
-                                                })
-                                                    .then((response) => response.json())  
-                                                    .then((data) => {
-                                                        setCharge(data)
-                                                        // Cacheo los créditos de cartera por si se necesitan para filtrado
-                                                        localStorage.setItem('filt',JSON.stringify(data));
-                                                    });
-                                            }
-                                        }}
-                                    >
-                                        <option value={""}>--Seleccionar--</option>
-                                        {
-                                            business.map((cartera,index)=>(
-                                                <option key={index} value={cartera.name}>{cartera.name}</option>
-                                            ))
-                                        }
-                                    </select>
-                                :   <></>
-                            }
-                        </label>
+                        <></>
+                        // <label>
+                        //     <input 
+                        //         type="radio"
+                        //         name="mode"
+                        //         value={"assoc"}
+                        //         onChange={(e)=>{
+                        //             if(e.target.checked){
+                        //                 setMode(e.target.value);
+                        //                 setTransfer(false);
+                        //             }
+                        //         }}
+                        //     />
+                        //     Asociar cartera
+                        //     {
+                        //         (mode==='assoc')
+                        //         ?
+                        //             <select
+                        //                 onChange={(e)=>{
+                        //                     if(e.target.value!==""){
+                        //                         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/all?cartera=${e.target.value}`,{
+                        //                             headers: {
+                        //                                 Accept: 'application/json',
+                        //                                 Authorization: `Bearer ${localStorage.getItem('token')}`
+                        //                             }
+                        //                         })
+                        //                             .then((response) => response.json())  
+                        //                             .then((data) => {
+                        //                                 setCharge(data)
+                        //                                 // Cacheo los créditos de cartera por si se necesitan para filtrado
+                        //                                 localStorage.setItem('filt',JSON.stringify(data));
+                        //                             });
+                        //                     }
+                        //                 }}
+                        //             >
+                        //                 <option value={""}>--Seleccionar--</option>
+                        //                 {
+                        //                     business.map((cartera,index)=>(
+                        //                         <option key={index} value={cartera.name}>{cartera.name}</option>
+                        //                     ))
+                        //                 }
+                        //             </select>
+                        //         :   <></>
+                        //     }
+                        // </label>
                     :   <></>
                 }
 
                 <label>
                     <input 
-                        type="radio"
+                        type="checkbox"
                         name="mode"
                         value={"transfer"}
                         onChange={(e)=>{
                             if(e.target.checked){
                                 setMode(e.target.value);
                                 setTransfer(true);
+                            }else{
+                                setMode('assoc');
+                                setTransfer(false);
                             }
                         }}
                     />
@@ -396,9 +424,16 @@ export default function CardAssignCampain({data,updateCredits}){
                             <input 
                                 ref={busc}
                                 onChange={(e)=>{
+
+                                    console.log(JSON.parse(localStorage.getItem('user_filt')).length)
+                                    
                                     useAssignSearch(
-                                        (mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')), // Esta es la data que le pasamos para que filtre
+                                        ((mode==='assoc' | data.type_assign==='api') & (agent.id==="" | JSON.parse(localStorage.getItem('user_filt')).length==0)) 
+                                            ?   JSON.parse(localStorage.getItem('filt')) 
+                                            :   JSON.parse(localStorage.getItem('user_filt')), // Esta es la data que le pasamos para que filtro
+                                        
                                         e.target.value, //Este es el texto {nombre del cliente o cédula}
+                                        
                                         update, //Método para actualizar la carga
                                         //================> Listado de filtros
                                         item_filter.filter,
@@ -411,10 +446,46 @@ export default function CardAssignCampain({data,updateCredits}){
                                     );
                                 }}
                                 type="text" 
-                                placeholder="Ingrese nombre o cédula"
+                                placeholder="Ingrese nombre o creditos"
                             />
 
-                            {/* <button>Limpiar</button> */}
+                            <button 
+                                title="Todos los créditos volverán a la carga principal y loa agentes no tendrán créditos"
+                                onClick={(e)=>{
+                                    e.target.textContent="Reiniciando";
+
+                                    let distribution_init=[];
+
+                                    JSON.parse(data.agents).map((agent)=>{
+                                        distribution_init.push({
+                                            agent_id:agent.id,
+                                            total:0,
+                                            distribution:[],
+                                            pending:[],
+                                            processed:[],
+                                            inprocess:[]
+                                        });
+                                    });
+
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/reset/${data.id}`,{
+                                        method:'PUT',
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        },
+                                        body:new URLSearchParams({
+                                            distributions:JSON.stringify(distribution_init)
+                                        })
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setDistributions(distribution_init);
+                                            updateCredits(data.data);
+                                            e.target.textContent="Reiniciado";
+                                        });
+
+                                }}
+                            >Reiniciar campaña</button>
                         </>
                     // :   <></>
                 }
@@ -479,7 +550,10 @@ export default function CardAssignCampain({data,updateCredits}){
                             if(e.target.checked){
                                 setInit();
                                 setCoincidence(e.target.value);
-                                useAssignSearch((mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
+                                useAssignSearch(
+                                    ((mode==='assoc' | data.type_assign==='api') & agent.id==="" & JSON.parse(localStorage.getItem('user_filt')).length>0) 
+                                        ? JSON.parse(localStorage.getItem('filt')) 
+                                        : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
                         }}
                         defaultChecked
@@ -496,7 +570,10 @@ export default function CardAssignCampain({data,updateCredits}){
                             if(e.target.checked){
                                 setInit();
                                 setCoincidence(e.target.value);
-                                useAssignSearch((mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
+                                useAssignSearch(
+                                    ((mode==='assoc' | data.type_assign==='api') & agent.id==="" & JSON.parse(localStorage.getItem('user_filt')).length>0) 
+                                        ? JSON.parse(localStorage.getItem('filt')) 
+                                        : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
                         }}
                     />
@@ -573,10 +650,23 @@ export default function CardAssignCampain({data,updateCredits}){
                                                         type="checkbox"
                                                         onChange={(e)=>{
                                                             if(e.target.checked){
-                                                                // Lo agrego
-                                                                let copy=prev_agencies;
-                                                                copy.push(e.target.value);
-                                                                setPrevAgencies(copy);
+                                                                
+                                                                if(e.target.value==="-- Todas --"){
+                                                                    setPrevAgencies([]);
+                                                                    useAssignSearch(
+                                                                        ((mode==='assoc' | data.type_assign==='api') & agent.id==="" & JSON.parse(localStorage.getItem('user_filt')).length>0) 
+                                                                            ? JSON.parse(localStorage.getItem('filt')) 
+                                                                            : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,[]);
+                                                                }else{
+                                                                    // Lo agrego
+                                                                    let copy=prev_agencies;
+                                                                    copy.push(e.target.value);
+                                                                    setPrevAgencies(copy);
+                                                                    useAssignSearch(
+                                                                        ((mode==='assoc' | data.type_assign==='api') & agent.id==="" & JSON.parse(localStorage.getItem('user_filt')).length>0) 
+                                                                            ? JSON.parse(localStorage.getItem('filt')) 
+                                                                            : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,copy);
+                                                                }
                                                             }else{
                                                                 // Lo quito
                                                                 let copy=prev_agencies;
@@ -587,10 +677,14 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                         new_copy.push(agency);
                                                                     }
                                                                 })
+                                                                
                                                                 setPrevAgencies(new_copy);
-                                                            }
 
-                                                            useAssignSearch((mode==='assoc' | data.type_assign==='api') ? JSON.parse(localStorage.getItem('filt')) : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,prev_agencies);
+                                                                useAssignSearch(
+                                                                    ((mode==='assoc' | data.type_assign==='api') & agent.id==="") 
+                                                                        ? JSON.parse(localStorage.getItem('filt')) 
+                                                                        : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,new_copy);
+                                                            }
                                                         
                                                         }}
                                                     />
@@ -699,23 +793,23 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                 console.log(distribution)
 
-                                // fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
-                                //     method:'PUT',
-                                //     headers: {
-                                //         Accept: 'application/json',
-                                //         Authorization: `Bearer ${localStorage.getItem('token')}`
-                                //     },
-                                //     body:new URLSearchParams({
-                                //         distributions:JSON.stringify(distribution),
-                                //         charge_inicial:JSON.stringify(distribution)
-                                //     })
-                                // })
-                                //     .then((response) => response.json())  
-                                //     .then((data) => {
-                                //         setDistributions(distribution);
-                                //         updateCredits(data.data);
-                                //         e.target.textContent="Transferencia correcta";
-                                //     });
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
+                                    method:'PUT',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    },
+                                    body:new URLSearchParams({
+                                        distributions:JSON.stringify(distribution),
+                                        charge_inicial:JSON.stringify(distribution)
+                                    })
+                                })
+                                    .then((response) => response.json())  
+                                    .then((data) => {
+                                        setDistributions(distribution);
+                                        updateCredits(data.data);
+                                        e.target.textContent="Transferir carga";
+                                    });
                             }}
                         >
                             Transferir carga
@@ -976,7 +1070,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                     .then((data) => {
                                         setDistributions(data_agent);
                                         updateCredits(data.data);
-                                        e.target.textContent="Asignado";
+                                        e.target.textContent="Asignar";
                                     });
 
                             }}

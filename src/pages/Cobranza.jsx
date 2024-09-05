@@ -89,6 +89,9 @@ export default function Cobranza(){
             links:[]
         });
 
+        localStorage.setItem('cartera','SEFIL_1');
+        setAux(localStorage.getItem('cartera'));
+
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null){
             setAux(localStorage.getItem('cartera'));
             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${localStorage.getItem('cartera')}`,{

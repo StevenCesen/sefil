@@ -90,12 +90,12 @@ export default function GHistorial(){
                                 const page_param_prev=data.prev_page_url.split('?')[1];
                                 data.prev_page_url=`${data.path}&${page_param_prev}`;
                             }
-                            console.log(data)
                             setData(data);
                         });
                 }else{
                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?campain=${data.data[0].id}`,{
                         headers: {
+
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`
                         }

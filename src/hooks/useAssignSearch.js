@@ -1,5 +1,7 @@
 export default function useAssignSearch(data,value,update,filter,mode,mora,cuota,monto,estado,agencia){
 
+    console.log(data)
+
     if(filter){
         let results=[];
 
@@ -12,14 +14,16 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     monto==='' &
                     estado!==''
                 ){
+                    console.log("Aqui trmn")
                     if(credit.collectionState===estado){
                         results.push(credit);
                     }
+
                 }else{
                     if(
-                        (Number(credit.dias_vencidos)>=Number(mora.min) & Number(credit.dias_vencidos)<=Number(mora.max)) &
-                        (Number(credit.pendingFees)>=Number(cuota.min) & Number(credit.pendingFees)<=Number(cuota.max)) &
-                        (Number(credit.totalAmount)>=Number(monto.min) & Number(credit.totalAmount)<=Number(monto.max)) &
+                        ( (mora!=="") ? (Number(credit.dias_vencidos)>=Number(mora.min) & Number(credit.dias_vencidos)<=Number(mora.max)) : true) &
+                        ( (cuota!=="") ?(Number(credit.pendingFees)>=Number(cuota.min) & Number(credit.pendingFees)<=Number(cuota.max)) : true ) &
+                        ( (monto!=="") ? Number(credit.totalAmount)>=Number(monto.min) & Number(credit.totalAmount)<=Number(monto.max) : true) &
                         credit.collectionState===estado
                     ){
                         results.push(credit);
@@ -39,12 +43,13 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
 
                 }else{
                     if(
-                        (Number(credit.dias_vencidos)>=Number(mora.min) & Number(credit.dias_vencidos)<=Number(mora.max)) &
-                        (Number(credit.pendingFees)>=Number(cuota.min) & Number(credit.pendingFees)<=Number(cuota.max)) &
-                        (Number(credit.totalAmount)>=Number(monto.min) & Number(credit.totalAmount)<=Number(monto.max)) &
+                        ((mora!=="") ? (Number(credit.dias_vencidos)>=Number(mora.min) & Number(credit.dias_vencidos)<=Number(mora.max)) : true) &
+                        ((cuota!=="") ? (Number(credit.pendingFees)>=Number(cuota.min) & Number(credit.pendingFees)<=Number(cuota.max)) : true) &
+                        ((monto!=="") ? (Number(credit.totalAmount)>=Number(monto.min) & Number(credit.totalAmount)<=Number(monto.max)) : true) &
                         credit.collectionState===estado
                     ){
                         credit.search=false;
+
                     }else{
                         results.push(credit);
                     }
@@ -53,9 +58,10 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
             }
         });
 
+        console.log(results)
         // Al final de tener todo el results filtro por agencia
         if(agencia.length>0){
-            
+            console.log("SI entre")
             let new_result=[];
 
             results.map((credit)=>{
@@ -65,28 +71,43 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     }
                 });
             });
+
             update(new_result);
+
         }else{
+
             update(results);
+
         }
 
     }else if(value.length>3){
 
-        if(/^[A-Za-z ]+/.test(value)){ //Selecciono según el nombre
-            let results=[];
+        if(value.split(' ')[1]===undefined){
+            if(value.split('-')[1]===undefined){ //Selecciono según el nombre
+                let results=[];
+    
+                data.map((credit)=>{
+                    if(credit.name.toLowerCase().includes(value.toLowerCase())){
+                        results.push(credit);
+                    }
+                });
+                
+                update(results);
+            }else{
+                
+                let results=[];
 
-            data.map((credit)=>{
-                if(credit.name.toLowerCase().includes(value.toLowerCase())){
-                    results.push(credit);
-                }
-            });
-            
-            update(results);
+                data.map((credit)=>{
+                    if(credit.credito.includes(value.split('-')[1])){
+                        results.push(credit);
+                    }
+                });
 
-        }else{ //Aquí buscamos según la cédula
+                update(results);
+            }
 
+        }else{
             if(value.includes(' ')){
-
                 // Aquí tenemos todo el array de créditos que hay que activar
                 let values=value.split(' ');
                 let results=[];
@@ -95,29 +116,64 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     let credito=[];
 
                     data.map((credit)=>{
-                        if(credit.credito===credit_s){
+                        if(credit.credito===credit_s.split('-')[1]){
                             credito=credit;
                         }
                     });
+
                     results.push(credito);
                 });
                 
                 update(results);
-
-            }else{
-                
-                let results=[];
-
-                data.map((credit)=>{
-                    if(credit.credito.includes(value)){
-                        results.push(credit);
-                    }
-                });
-
-                update(results);
             }
-
         }
+
+        // if(/^[A-Za-z ]+/.test(value)){ //Selecciono según el nombre
+        //     let results=[];
+
+        //     data.map((credit)=>{
+        //         if(credit.name.toLowerCase().includes(value.toLowerCase())){
+        //             results.push(credit);
+        //         }
+        //     });
+            
+        //     update(results);
+
+        // }else{ //Aquí buscamos según la cédula
+
+        //     if(value.includes(' ')){
+
+        //         // Aquí tenemos todo el array de créditos que hay que activar
+        //         let values=value.split(' ');
+        //         let results=[];
+
+        //         values.map((credit_s)=>{
+        //             let credito=[];
+
+        //             data.map((credit)=>{
+        //                 if(credit.credito===credit_s){
+        //                     credito=credit;
+        //                 }
+        //             });
+        //             results.push(credito);
+        //         });
+                
+        //         update(results);
+
+        //     }else{
+                
+        //         let results=[];
+
+        //         data.map((credit)=>{
+        //             if(credit.credito.includes(value)){
+        //                 results.push(credit);
+        //             }
+        //         });
+
+        //         update(results);
+        //     }
+
+        // }
         
     }else{
         update(data);

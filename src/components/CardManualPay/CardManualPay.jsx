@@ -15,9 +15,9 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
     return (
         <div className="CardManualPay">
 
-             <button className="CardManualPay__close" onClick={()=>{
+            <button className="CardManualPay__close" onClick={()=>{
                 callback()
-             }}>Volver</button>
+            }}>Volver</button>
 
             <div className="CardManualPay__content">
                 <div className="CardManualPay__data">

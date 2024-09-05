@@ -18,18 +18,18 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
                 second++;
     
                 if(second<60){
+
                     setTime({
-                        ...times,
                         second:(second<10) ? `0${second}` : second,
                         minutes:(minutos<10) ? `0${minutos}` : minutos,
                         hour:(hours<10) ? `0${hours}` : hours
                     });
+
                 }else if(minutos<59){
                     second=0;
                     minutos++;
                     
                     setTime({
-                        ...times,
                         minutes:(minutos<10) ? `0${minutos}` : minutos,
                         second:(second<10) ? `0${second}` : second,
                         hour:(hours<10) ? `0${hours}` : hours
@@ -40,7 +40,6 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
                     hours++;
 
                     setTime({
-                        ...times,
                         minutes:(minutos<10) ? `0${minutos}` : minutos,
                         second:(second<10) ? `0${second}` : second,
                         hour:(hours<10) ? `0${hours}` : hours
@@ -56,13 +55,15 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
 
     useEffect(()=>{
 
-        setTime({
-            second:Number(time.split(':')[2]),
-            minutes:Number(time.split(':')[1]),
-            hour:Number(time.split(':')[0])
-            // second:0,
-            // minutes:0
-        });
+        
+
+        // setTime({
+        //     second:Number(time.split(':')[2]),
+        //     minutes:Number(time.split(':')[1]),
+        //     hour:Number(time.split(':')[0])
+        //     // second:0,
+        //     // minutes:0
+        // });
 
         init({
             sec:Number(time.split(':')[2]),

@@ -193,6 +193,13 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
         if(localStorage.getItem('rol')==='super' | localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='call'){
             temp=JSON.parse(structure[2]);
+            
+            // if(currently.dias_vencidos>=80){
+            //     temp=JSON.parse(structure[1]);
+            // }else{
+            //     temp=JSON.parse(structure[2]);
+            // }
+
             setTemplate({
                 states:temp.default[1].options,
                 substates:temp.default[2].suboptions

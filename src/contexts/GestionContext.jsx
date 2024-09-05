@@ -25,15 +25,14 @@ function GestionContextProvider({children}){
                     const data_prev=data;
 
                     data_prev.map(agent=> {
-                        agent.status='DESCONECTADO'
+                        agent.status='DESCONECTADO';
                     });
-
-                    console.log(data_prev);
 
                     setAgents(data_prev);
                 });
 
-            useReceiveState(updateState)
+            useReceiveState(updateState);
+
         }else{
             setAgents([]) 
         }       
