@@ -200,6 +200,12 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             //     temp=JSON.parse(structure[2]);
             // }
 
+            if(currently.dias_vencidos>=91){
+                temp=JSON.parse(structure[1]);
+            }else{
+                temp=JSON.parse(structure[2]);
+            }
+
             setTemplate({
                 states:temp.default[1].options,
                 substates:temp.default[2].suboptions

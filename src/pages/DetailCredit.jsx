@@ -467,7 +467,7 @@ export default function DetailCredit(){
                                 }}>Convenio de pago</button>
 
                                 <button onClick={async e=>{
-                                    if(await useVerifyCondonation(param.id)){
+                                    if(await useVerifyCondonation(param.get('id'))){
                                         setViewCondonation(!view_condonation);
                                     }else{
                                         addNotification({

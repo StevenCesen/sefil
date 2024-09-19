@@ -18,9 +18,14 @@ export default async function useLogin(data,tag,btn){
             localStorage.setItem('rol',response.rol);
             localStorage.setItem('temp_uS',response.id);
             localStorage.setItem('extension',response.extension);
-            location.href='./'
+
+            if(response.changePassword){
+                location.href='#/dashboard/me'
+                location.reload();
+            }else{
+                location.href='./'
+            }
         }
-        
     }else{
         tag.current.textContent='Usuario inválido, revisa las credenciales';
         btn.current.textContent='Ingresar';

@@ -1162,6 +1162,62 @@ export default function Reports(){
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
+
+                            <h4 className="Reports__title">Histórico de Pagos Revertidos</h4>
+                            <div className="Reports__filters Reports__filters--columns-5">
+
+                                <label className="Reports__filter">
+                                    Fecha de inicio
+                                    <input 
+                                        type="date"
+                                        value={fecha_inicio_2}
+                                        onChange={(e)=>{
+                                            setFechaInicio2(e.target.value);
+                                        }}
+                                    />
+                                </label>
+
+                                <label className="Reports__filter">
+                                    Fecha de corte
+                                    <input 
+                                        type="date" 
+                                        value={fecha_final_2} 
+                                        onChange={(e)=>{
+                                            setFechaFinal2(e.target.value);
+                                        }}/>
+                                </label>
+
+                                <label className="Reports__filter">
+                                    Empresa
+                                    <select 
+                                        value={empresa_2}
+                                        onChange={(e)=>{
+                                            setEmpresa2(e.target.value);
+                                        }}
+                                    >
+                                        <option value={''}>--Todos--</option>
+                                        {
+                                            business.map((bus,index)=>(
+                                                <option key={index} value={bus.name.toUpperCase()}>{bus.name.toUpperCase()}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </label>
+                                
+                                <NavLink 
+                                    className="Reports__button"
+                                    
+                                    onClick={(e)=>{
+                                        const splits_inicio=fecha_inicio_2.split('-');
+                                        const inicio=`${splits_inicio[0]}/${splits_inicio[1]}/${splits_inicio[2]}`;
+
+                                        const splits_final=fecha_final_2.split('-');
+                                        const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
+
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/greverse?cartera=${empresa_2}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                    }}
+                                >Generar EXCEL</NavLink>
+                            </div>
                         </div>
 
                     :

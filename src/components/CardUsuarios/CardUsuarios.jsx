@@ -32,6 +32,14 @@ const list={
     "bd":{
         "action":"DB:all",
         "checked":false
+    },
+    "condonar":{
+        "action":"condonar:set",
+        "checked":false
+    },
+    "convenio":{
+        "action":"convenio:set",
+        "checked":false
     }
 };
 
@@ -52,6 +60,8 @@ export default function CardUsuarios({id,name,email,rol,permission}){
         list.reportes.checked=user_permisos.includes(list.reportes.action);
         list.usuarios.checked=user_permisos.includes(list.usuarios.action);
         list.bd.checked=user_permisos.includes(list.bd.action);
+        list.condonar.checked=user_permisos.includes(list.condonar.action);
+        list.convenio.checked=user_permisos.includes(list.convenio.action);
 
         setPermisos({
             ...permisos,
@@ -82,6 +92,14 @@ export default function CardUsuarios({id,name,email,rol,permission}){
             bd:{
                 ...permisos.bd,
                 checked:user_permisos.includes(list.bd.action)
+            },
+            condonar:{
+                ...permisos.condonar,
+                checked:user_permisos.includes(list.condonar.action)
+            },
+            convenio:{
+                ...permisos.convenio,
+                checked:user_permisos.includes(list.convenio.action)
             },
         });
 
@@ -164,6 +182,50 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                         checked={permisos.cobranza.checked}
                     />
                     Cobranza
+                </label>
+                <label>
+                    <input
+                        value={permisos.bd.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                condonar:{
+                                    ...permisos.condonar,
+                                    checked:e.target.checked
+                                }
+                            });
+                            const data={
+                                "permiso":permisos.condonar.action,
+                                "status":e.target.checked
+                            };
+                            useUpdatePermiss(data,id);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.condonar.checked}
+                    />
+                    Solicitud condonación
+                </label>
+                <label>
+                    <input
+                        value={permisos.convenio.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                convenio:{
+                                    ...permisos.convenio,
+                                    checked:e.target.checked
+                                }
+                            });
+                            const data={
+                                "permiso":permisos.convenio.action,
+                                "status":e.target.checked
+                            };
+                            useUpdatePermiss(data,id);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.convenio.checked}
+                    />
+                    Solicitud convenio de pago
                 </label>
                 <label>
                     <input

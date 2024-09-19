@@ -11,23 +11,31 @@ export default function CardNotifierSimple({message,byUser,id}){
                 <p>{message}</p>
                 <span>Generado por {byUser}</span>
             </div>
-            <button 
-                className="CardNotifierSimple__button"
-                onClick={(e)=>{
-                    e.target.textContent='Autorizando...';
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/reprint/${id}`,{
-                        headers: {
-                            Accept: 'application/json',
-                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                        }
-                    })
-                        .then((response) => response.json())  
-                        .then((data) => {
-                            e.target.textContent='Autorizado';
-                            dataContext.removePush(id);
-                        });
-                }}
-            >Autorizar</button>
+            <div>
+                <button 
+                    className="CardNotifierSimple__button CardNotifierModify__button--success"
+                    onClick={(e)=>{
+                        e.target.textContent='Autorizando...';
+                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/reprint/${id}`,{
+                            headers: {
+                                Accept: 'application/json',
+                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                            }
+                        })
+                            .then((response) => response.json())  
+                            .then((data) => {
+                                e.target.textContent='Autorizado';
+                                dataContext.removePush(id);
+                            });
+                    }}
+                >Autorizar</button>
+                <button 
+                    className="CardNotifierSimple__button CardNotifierModify__button--failed"
+                    onClick={(e)=>{
+                        dataContext.removePush(id);
+                    }}
+                >Negar</button>
+            </div>
         </div>
     );
 }

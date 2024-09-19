@@ -2,6 +2,7 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { useEffect, useRef, useState } from "react";
 import Eye from "../components/Eye/Eye";
+import addNotification from "react-push-notification";
 
 export default function Me(){
     const param = useParams();
@@ -11,6 +12,18 @@ export default function Me(){
     const pass=useRef();
 
     useEffect(()=>{
+        addNotification({
+            title: 'Actualización de contraseña',
+            subtitle: 'Por tu seguridad, deberás actualizar la contraseña cada mes',
+            message: '',
+            native: false,
+            backgroundTop: '#009793',
+            backgroundBottom: '#459d9a',
+            colorTop: 'white',
+            colorBottom: 'white',
+            closeButton: 'Cerrar',
+            duration:4000,
+        });
         setPassword('');
     },[]);
 
@@ -66,7 +79,19 @@ export default function Me(){
                                         if(data.state===200){
                                             e.target.textContent='Actualizada';
                                         }else{
-                                            e.target.textContent='Error, vuelve a intentar';
+                                            e.target.textContent='Actualizar';
+                                            addNotification({
+                                                title: 'Error',
+                                                subtitle: data.message,
+                                                message: 'Ingresa una nueva contraseña',
+                                                native: false,
+                                                backgroundTop: '#FF9619',
+                                                backgroundBottom: '#fdb864',
+                                                colorTop: 'white',
+                                                colorBottom: 'white',
+                                                closeButton: 'Cerrar',
+                                                duration: 3000,
+                                            });
                                         }
                                     });
                             }}
