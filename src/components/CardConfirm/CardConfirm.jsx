@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import "./CardConfirm.css";
 
-export default function CardConfirm({id,value,email,name,ci,direccion,telefono,setGastos,setView,setPDF}){
+export default function CardConfirm({id,cartera,value,email,name,ci,direccion,telefono,setGastos,setView,setPDF}){
 
     const [dates,setDates]=useState();
 
     useEffect(()=>{
+        console.log(cartera)
         setDates({
             name:name,
             ci:ci,
@@ -13,7 +14,8 @@ export default function CardConfirm({id,value,email,name,ci,direccion,telefono,s
             telefono:telefono,
             email:email,
             value:value,
-            id:id
+            id:id,
+            cartera:cartera
         });
     },[]);
 

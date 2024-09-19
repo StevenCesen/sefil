@@ -11,9 +11,9 @@ export default async function useStruct(data,btn,id){
     const response=await request.json();
 
     if(response.status===200){
-        btn.textContent='Crédito estructurado';
+        btn.textContent='Guardado correctamente';
         btn.setAttribute('disabled','');
-        location.reload();
+        // location.reload();
     }else{
         btn.textContent='Inténtalo de nuevo';
         btn.removeAttribute('disabled','');

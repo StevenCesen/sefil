@@ -25,6 +25,7 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
         <div className="CardPay">
             <button className="CardCondonacion__close" onClick={()=>{set()}}>Volver</button>
             <div className="CardCondonacion">
+                <p>Condonación</p>
                 <div className="CardCondonacion__content">
                     <div className="CardCondonacion__head">
                         <p>Detalle</p>
@@ -99,12 +100,12 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                 </div>
 
                 <div className="CardCondonacion__result">
-                    <p>Total condonado</p>
+                    <p>Total condonado:</p>
                     <p>$ {(total-(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
                 </div>
 
                 <div className="CardCondonacion__result">
-                    <p>Total a cancelar</p>
+                    <p>Total a cancelar:</p>
                     <p>$ {(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
                 </div>
 
@@ -135,7 +136,6 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                             credito:Number(id),
                             cartera:cartera
                         }
-                        
                         /*
                         ================================ AUTORIZACIÓN ==================================
                         => Si lo hace un usuario administrador, la condonación se aplica directamente

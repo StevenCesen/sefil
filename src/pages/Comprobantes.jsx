@@ -151,7 +151,7 @@ export default function Comprobantes(){
                         <div className="pageConsulta__prevResult">
                             {
                                 credits.data.map((credit,index)=>(
-                                    (credit.ci===val) &&
+                                    (credit.ci===val & Number(cartera.get('credito'))===Number(credit.id)) ?
                                         <button key={index} onClick={()=>{
                                             setCredit(credit.id);
                                             setMessage(false);
@@ -168,6 +168,7 @@ export default function Comprobantes(){
                                             <p className="pageConsulta__prevResult--space"> | </p>
                                             <p>{credit.credito}</p>
                                         </button>
+                                    :   <></>
                                 ))
                             }
                         </div>
@@ -331,7 +332,7 @@ export default function Comprobantes(){
                 
                     <div className="CardPay">
                         <button onClick={()=>{setView(!view)}}>Volver</button>
-                        {console.log(comprobante)}
+            
                         <PDFViewer width={'500px'} height={'500px'}>
                             <PDF 
                                 nro_voucher={comprobante.id}

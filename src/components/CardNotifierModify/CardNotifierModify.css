@@ -20,7 +20,7 @@
     margin-top: 20px;
 }
 
-.CardNotifierModify>div>button{
+.CardNotifierModify>div>button,.CardNotifierModify__buttons>button{
     width: 100%;
     height: 40px;
     border: none;

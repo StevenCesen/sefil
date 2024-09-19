@@ -6,6 +6,7 @@ export default function CardSync(){
 
     const [number_credits,setNumberCredits]=useState();
     const [porcentual,setPorcentual]=useState(0);
+    const [message,setMessage]=useState("");
 
     const [interval,setBucle]=useState();
 
@@ -23,7 +24,11 @@ export default function CardSync(){
                         .then((data) => {
                             if(data.status===400){
                                 setPorcentual(0);
-                            }else{
+                                setMessage("No hay sincronizaciones");
+                            }else if(data.status==='ERROR - NULL'){
+                                setMessage(data.message);
+                            }else if(data.status===200){
+                                setMessage("Consultando créditos, esto puede llevar unos minutos..." );
                                 setPorcentual(data.porcentual);
                                 setNumberCredits(data.total);
                             }
@@ -39,6 +44,8 @@ export default function CardSync(){
 
     },[]);
 
+    if(!message) return <></>
+
     return (
         <div className="CardSync">
             <h3>Proceso de sincronización</h3>
@@ -49,10 +56,10 @@ export default function CardSync(){
                     {
                         (porcentual===0)
                         ?
-                            "No hay sincronizaciones"
+                            message
                         :   (!number_credits)
                             ?
-                                "Consultando créditos, esto puede llevar unos minutos..."   
+                                message  
                             :   "Sincronizando: "+number_credits+" créditos."
                     }
                 </p>

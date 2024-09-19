@@ -19,7 +19,7 @@ export default function useNotification(setNewPush){
         
         //Reproducir un audio
         //new Audio("./notification.mp3").play();
-
+        console.log(data)
         //Actualizo el localstorage
         if(localStorage.getItem('pusher')!==null){
             let prev_data=JSON.parse(localStorage.getItem('pusher'));

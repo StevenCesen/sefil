@@ -89,6 +89,7 @@ export default function Consulta(){
             })
                 .then((response) => response.json())  
                 .then((data) => {
+                    console.log(data)
                     setCredits(data);
                 });
         }
@@ -245,6 +246,7 @@ export default function Consulta(){
                                 value={parroquia}
                                 onChange={(e)=>{
                                     setParroquia(e.target.value);
+                                    console.log(e.target.value)
 
                                     if(e.target.value==='vigente'){
                                         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estadoNot=Cancelado`,{
@@ -258,7 +260,7 @@ export default function Consulta(){
                                                 updateCredits(data.data)
                                             });
                                     }else{
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=Cancelado&canton=${canton_input}&empresa=${aux_busines}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -272,7 +274,8 @@ export default function Consulta(){
                                 }}
                             >
                                 <option value={"vigente"}>Vigente</option>
-                                <option value={"cancelado"}>Cancelado</option>
+                                <option value={"Cancelado"}>Cancelado</option>
+                                <option value={"CONVENIO DE PAGO"}>Convenio</option>
                             </select>
                         </label>
                     </div>

@@ -357,7 +357,7 @@ export default function Cobranza(){
                                                         updateCredits(data.data)
                                                     });
                                             }else{
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=Cancelado&canton=${canton_input}&empresa=${aux_busines}`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -372,6 +372,7 @@ export default function Cobranza(){
                                     >
                                         <option value={"vigente"}>Vigente</option>
                                         <option value={"cancelado"}>Cancelado</option>
+                                        <option value={"CONVENIO DE PAGO"}>Convenio</option>
                                     </select>
                                 </label>
 

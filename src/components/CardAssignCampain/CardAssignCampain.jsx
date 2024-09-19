@@ -90,7 +90,7 @@ export default function CardAssignCampain({data,updateCredits}){
         // 1) Primero debemos saber cual es modo
         // 2) Enviamos la data del filtro correspondiente: Si es asociaación de cartera entonces es filt, si es transferencia, es user_filt
         useAssignSearch(
-            ((mode==='assoc' | data.type_assign==='api') & agent.id==="") 
+            ((mode==='assoc' | data.type_assign==='api') & (agent.id==="" | JSON.parse(localStorage.getItem('user_filt')).length==0)) 
                 ? JSON.parse(localStorage.getItem('filt')) 
                 : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia);
     }
@@ -199,7 +199,7 @@ export default function CardAssignCampain({data,updateCredits}){
 
                         if(e.target.value.split('-')[1]!==undefined){
                             let iden_credito=e.target.value.split('-')[1];
-                            console.log(iden_credito)
+        
                             if(iden_credito.length>7){
                                 const result=await useSearchCreditInDistribution({
                                     value:iden_credito,
@@ -209,12 +209,16 @@ export default function CardAssignCampain({data,updateCredits}){
                                     setCredit:update
                                 });
                             } 
+
                         }
                         
                     }}
                     type="search" 
                     placeholder="Número de crédito"
                 />
+                <div>
+                    <span>Historial de asignación</span>
+                </div>
             </label>
 
             <div className="CardAssignCampain__agents">
@@ -423,10 +427,7 @@ export default function CardAssignCampain({data,updateCredits}){
                         <>
                             <input 
                                 ref={busc}
-                                onChange={(e)=>{
-
-                                    console.log(JSON.parse(localStorage.getItem('user_filt')).length)
-                                    
+                                onChange={(e)=>{  
                                     useAssignSearch(
                                         ((mode==='assoc' | data.type_assign==='api') & (agent.id==="" | JSON.parse(localStorage.getItem('user_filt')).length==0)) 
                                             ?   JSON.parse(localStorage.getItem('filt')) 
@@ -551,7 +552,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                 setInit();
                                 setCoincidence(e.target.value);
                                 useAssignSearch(
-                                    ((mode==='assoc' | data.type_assign==='api') & agent.id==="" & JSON.parse(localStorage.getItem('user_filt')).length>0) 
+                                    ((mode==='assoc' | data.type_assign==='api') & (agent.id==="" | JSON.parse(localStorage.getItem('user_filt')).length==0)) 
                                         ? JSON.parse(localStorage.getItem('filt')) 
                                         : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
@@ -571,7 +572,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                 setInit();
                                 setCoincidence(e.target.value);
                                 useAssignSearch(
-                                    ((mode==='assoc' | data.type_assign==='api') & agent.id==="" & JSON.parse(localStorage.getItem('user_filt')).length>0) 
+                                    ((mode==='assoc' | data.type_assign==='api') & (agent.id==="" | JSON.parse(localStorage.getItem('user_filt')).length==0)) 
                                         ? JSON.parse(localStorage.getItem('filt')) 
                                         : JSON.parse(localStorage.getItem('user_filt')),'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia);
                             }
@@ -654,7 +655,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                 if(e.target.value==="-- Todas --"){
                                                                     setPrevAgencies([]);
                                                                     useAssignSearch(
-                                                                        ((mode==='assoc' | data.type_assign==='api') & agent.id==="" & JSON.parse(localStorage.getItem('user_filt')).length>0) 
+                                                                        ((mode==='assoc' | data.type_assign==='api') & (agent.id==="" | JSON.parse(localStorage.getItem('user_filt')).length==0)) 
                                                                             ? JSON.parse(localStorage.getItem('filt')) 
                                                                             : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,[]);
                                                                 }else{
@@ -663,7 +664,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                     copy.push(e.target.value);
                                                                     setPrevAgencies(copy);
                                                                     useAssignSearch(
-                                                                        ((mode==='assoc' | data.type_assign==='api') & agent.id==="" & JSON.parse(localStorage.getItem('user_filt')).length>0) 
+                                                                        ((mode==='assoc' | data.type_assign==='api') & (agent.id==="" | JSON.parse(localStorage.getItem('user_filt')).length==0)) 
                                                                             ? JSON.parse(localStorage.getItem('filt')) 
                                                                             : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,copy);
                                                                 }
@@ -681,7 +682,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                 setPrevAgencies(new_copy);
 
                                                                 useAssignSearch(
-                                                                    ((mode==='assoc' | data.type_assign==='api') & agent.id==="") 
+                                                                    ((mode==='assoc' | data.type_assign==='api') & (agent.id==="" | JSON.parse(localStorage.getItem('user_filt')).length==0)) 
                                                                         ? JSON.parse(localStorage.getItem('filt')) 
                                                                         : JSON.parse(localStorage.getItem('user_filt')),'',update,true,coincidence,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,new_copy);
                                                             }

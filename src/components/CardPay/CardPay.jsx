@@ -6,7 +6,7 @@ import usePrelacion from "../../hooks/usePrelacion";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useUpdateCredit from "../../hooks/useUpdateCredit";
 
-export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCredit}){
+export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCredit,estado,data_convenio}){
 
     const [pay,setData]=useState();
 
@@ -73,11 +73,11 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
     useEffect(()=>{
         setData({
             ...pay,
-            forma_pago:'efectivo',
+            forma_pago:'',
             //fecha_pago:`${new Date().getFullYear()}-${((new Date().getMonth()+1)>10) ? new Date().getMonth()+1 : `0${new Date().getMonth()+1}`}-${((new Date().getDate())>10) ? new Date().getDate() : `0${new Date().getDate()}`}`,
             fecha_pago:'',
             tipo_transaccion:'total',
-            institucion_financiera:'Banco de Loja | AHORROS',
+            institucion_financiera:'',
             valor_devuelto:0,
             valor_recibido:0,
             codigo_deposito:0,
@@ -93,6 +93,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                 otros_valores:data.otros_valores
             }
         });
+
         setActive(true);
         setPreview(false);
         setCobranza({
@@ -156,7 +157,8 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                 ...pay,
                                 forma_pago:e.target.value
                             })
-                        }}>
+                        }}> 
+                            <option value="">-- Seleccionar --</option>
                             <option value="efectivo">Efectivo</option>
                             <option value="deposito">Depósito</option>
                             <option value="transferencia">Transferencia</option>
@@ -165,43 +167,48 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                     </div>
 
                     {
-                        (pay.forma_pago!=='efectivo') &&
-                            <div>
-                                <p>
-                                    <label>Institución financiera</label>
-                                    <label>:</label>
-                                </p>
-                                
-                                <select value={pay.institucion_financiera} onChange={(e)=>{
-                                    setData({
-                                        ...pay,
-                                        institucion_financiera:e.target.value
-                                    });   
-                                }}>
-                                    <option value="Banco de Loja | AHORROS">Banco de Loja | AHORROS</option>
-                                    <option value="Banco de Loja | CORRIENTE">Banco de Loja | CORRIENTE</option>
-                                    <option value="Banco Pichincha | AHORROS">Banco Pichincha | AHORROS</option>
-                                    <option value="SERVIPAGOS_BL">SERVIPAGOS_BL</option>
-                                    <option value="PAGO ÁGIL_BL">PAGO ÁGIL_BL</option>
-                                    <option value="CACPE Loja">CACPE Loja</option>
-                                    <option value="BanEcuador">BanEcuador</option>
-                                </select>
-                            </div>
+                        (pay.forma_pago!=='efectivo' & pay.forma_pago!=="")
+                            ?
+                                <div>
+                                    <p>
+                                        <label>Institución financiera</label>
+                                        <label>:</label>
+                                    </p>
+                                    
+                                    <select value={pay.institucion_financiera} onChange={(e)=>{
+                                        setData({
+                                            ...pay,
+                                            institucion_financiera:e.target.value
+                                        });   
+                                    }}>
+                                        <option value="">-- Seleccionar --</option>
+                                        <option value="Banco de Loja | AHORROS">Banco de Loja | AHORROS</option>
+                                        <option value="Banco de Loja | CORRIENTE">Banco de Loja | CORRIENTE</option>
+                                        <option value="Banco Pichincha | AHORROS">Banco Pichincha | AHORROS</option>
+                                        <option value="SERVIPAGOS_BL">SERVIPAGOS_BL</option>
+                                        <option value="PAGO ÁGIL_BL">PAGO ÁGIL_BL</option>
+                                        <option value="CACPE Loja">CACPE Loja</option>
+                                        <option value="BanEcuador">BanEcuador</option>
+                                    </select>
+                                </div>
+                            :   <></>
                     }
                     {
-                        (pay.forma_pago!=='efectivo') &&
-                            <div>
-                                <p>
-                                    <label>Código de depósito/transferencia</label>
-                                    <label>:</label>
-                                </p>
-                                <input type="text" value={pay.codigo_deposito} onChange={(e)=>{
-                                    setData({
-                                        ...pay,
-                                        codigo_deposito:e.target.value.trim()
-                                    });
-                                }} />
-                            </div>
+                        (pay.forma_pago!=='efectivo' & pay.forma_pago!=="")
+                            ?
+                                <div>
+                                    <p>
+                                        <label>Código de depósito/transferencia</label>
+                                        <label>:</label>
+                                    </p>
+                                    <input type="text" value={pay.codigo_deposito} onChange={(e)=>{
+                                        setData({
+                                            ...pay,
+                                            codigo_deposito:e.target.value.trim()
+                                        });
+                                    }} />
+                                </div>
+                            :   <></>
                     }
 
                     <div>
@@ -209,12 +216,17 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             <label>Fecha de depósito</label>
                             <label>:</label>
                         </p>
-                        <input type="date" value={pay.fecha_pago} onChange={(e)=>{
-                            setData({
-                                ...pay,
-                                fecha_pago:e.target.value
-                            });
-                        }} />
+                        <input 
+                            type="date" 
+                            value={pay.fecha_pago}
+                            max={new Date(new Date().getTime()-(new Date().getTimezoneOffset() * 60000)).toISOString().split("T")[0]} 
+                            onChange={(e)=>{
+                                setData({
+                                    ...pay,
+                                    fecha_pago:e.target.value
+                                });
+                            }}
+                        />
                     </div>
 
                     <div>
@@ -448,7 +460,11 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                             data_encode.fecha_pago=pay.fecha_pago;
 
                             // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIENDO
-                            if(data_encode.forma_pago!=='efectivo' & data_encode.codigo_deposito===0){
+                            if(data_encode.forma_pago===''){
+                                e.target.textContent='Error, falta forma de pago.';
+                            }else if(data_encode.forma_pago!=='efectivo' & data_encode.institucion_financiera===""){
+                                e.target.textContent='Error, falta institución financiera.';
+                            }else if(data_encode.forma_pago!=='efectivo' & data_encode.codigo_deposito===0){
                                 e.target.textContent='Error, falta código de transacción.'
                             }else if(data_encode.tipo_transaccion==='total' & (Number(data_encode.valor_recibido)<Number(data.totalAmount))){
                                 e.target.textContent='Error, valor recibido no es correcto, inténtalo de nuevo.';
@@ -483,7 +499,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                                             /*========================================================PAGO EXITOSO================================================*/
                                                             if(data.status===200){
 
-                                                                if('id' in data.gasto){
+                                                                if('id' in data.gasto & estado!=='Convenio de pago'){
                                                                     //setPreview(true);
                                                                     setGastos({
                                                                         credito:data.gasto.credito,
@@ -496,8 +512,10 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                                                     id:data.id,
                                                                     sync:data.sync
                                                                 });
+
                                                                 e.target.textContent='Pago registrado';
                                                                 title.current.textContent='COMPROBANTE DE PAGO';
+
                                                                 setActive(false);
                                                                 useUpdateCredit(cartera,id,setCredit);
 

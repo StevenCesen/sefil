@@ -23,7 +23,7 @@
     height: 40px;
     border: none;
     cursor: pointer;
-    background-color: var(--bg-alert-successful);
+    background-color: var(--color-error);
     color: var(--color-3);
 }
 

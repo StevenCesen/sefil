@@ -47,6 +47,8 @@ export default function MenuNotifier(){
                                         message={push.message.message}
                                         credito={push.message.credito}
                                         cartera={push.message.cartera}
+                                        fecha_pago={push.message.fecha_pago}
+                                        total={push.message.totalAmount}
                                         user_generate={push.message.byUser}
                                         prev_data={push.message.prev_data}
                                         current_data={push.message.current_data}

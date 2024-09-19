@@ -14,6 +14,7 @@ import PDFgastos from "../components/PDFgastos";
 import PDFcondonacion from "../components/PDFcondonacion";
 import CardConfirm from "../components/CardConfirm/CardConfirm";
 import CardEditJudicial from "../components/CardEditJudicial/CardEditJudicial";
+import addNotification from "react-push-notification";
 
 const render = (status) => {
     return <h1>{status}</h1>;
@@ -370,7 +371,13 @@ export default function DetailCredit(){
                         credit.condonations.map((condonation,index)=>(
                             <div className="DetailCredit__activity" key={index}>
                                 <p>Condonación <strong>{condonation.status.toUpperCase()}</strong>, realizada por {condonation.byUser}. Valor total a cancelar {useFormatterNumber({
-                                    value:(Number(JSON.parse(condonation.postDates).capital)+Number(JSON.parse(condonation.postDates).mora)+Number(JSON.parse(condonation.postDates).interes)+Number(JSON.parse(condonation.postDates).seguro_desgravamen)+Number(JSON.parse(condonation.postDates).gastos_cobranza)+Number(JSON.parse(condonation.postDates).gastos_judiciales)),
+                                    value:(
+                                        Number(JSON.parse(condonation.postDates).capital)+
+                                        Number(JSON.parse(condonation.postDates).mora)+
+                                        Number(JSON.parse(condonation.postDates).interes)+
+                                        Number(JSON.parse(condonation.postDates).seguro_desgravamen)+
+                                        Number(JSON.parse(condonation.postDates).gastos_cobranza)+
+                                        Number(JSON.parse(condonation.postDates).gastos_judiciales)),
                                     currency:'USD'
                                 })}</p>
                                 <span>{condonation.fecha}</span>
@@ -380,8 +387,20 @@ export default function DetailCredit(){
                     {
                         credit.restructs.map((restruct,index)=>(
                             <div className="DetailCredit__activity" key={index}>
-                                <p key={index}>Reestructuración <strong>{restruct.status.toUpperCase()}</strong>, realizada por {restruct.byUser}</p>
+                                <p key={index}>Convenio de pago con estado <strong>{restruct.status.toUpperCase()}</strong>, realizado por {restruct.byUser}</p>
                                 <span>{restruct.fecha}</span>
+                                <p style={{margin:"10px 0",fontSize:"14px"}}>Fecha de pago: {restruct.fecha_pago}</p>
+                                <div style={{marginTop:"10px",borderTop:"1px solid grey",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
+                                    {
+                                        JSON.parse(restruct.detail).map((cuota)=>(
+                                            <div style={{display:"grid",justifyContent:"center",alignItems:"center",gridTemplateColumns:"15% 40% 45%",height:"30px",textAlign:"center",borderBottom:"1px solid grey"}}>
+                                                <p>{cuota.cuota}</p>
+                                                <p>{useFormatterNumber({value:cuota.valor,currency:'USD'})}</p>
+                                                <p>{cuota.estado}</p>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
                             </div>
                         ))
                     }
@@ -396,22 +415,30 @@ export default function DetailCredit(){
                     <h3>Acciones</h3>
     
                     {
-                        (localStorage.getItem('hash')!=='#/dashboard/consulta') &&
-                            (viewGastos.status===true) ?
+                        (localStorage.getItem('hash')!=='#/dashboard/consulta') 
+                        ?
+                            (viewGastos.status===true & credit.status!=='Convenio de pago') ?
+                                <>
+                                    <p
+                                        style={{marginBottom:10,fontSize:14}}
+                                    >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                                    <button 
+                                        onClick={(e)=>{
+                                            e.target.textContent='Facturando...';
+                                            //Aquí actualizamos el estado para que desaparezca el botón
+                                            // setPDF(true);
+                                            setEdit(true);
+                                        }}
+                                    >Generar gastos de cobranza</button>
+                                </>
 
-                                <button 
-                                    onClick={(e)=>{
-                                        e.target.textContent='Facturando...';
-                                        //Aquí actualizamos el estado para que desaparezca el botón
-                                        // setPDF(true);
-                                        setEdit(true);
-                                    }}
-                                >Generar gastos de cobranza</button>
-
-                            : (Number(credit.totalAmount)>0.00) &&
-                                <p
-                                    style={{marginBottom:10,fontSize:14}}
-                                >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                            : (Number(credit.totalAmount)>0.00 & credit.status!=='Convenio de pago') 
+                                ?
+                                    <p
+                                        style={{marginBottom:10,fontSize:14}}
+                                    >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                                :   <></>
+                        :   <></>
                     }
                     {
                         (Number(credit.totalAmount)>0.00 & localStorage.getItem('hash')!=='#/dashboard/consulta') ?
@@ -421,12 +448,20 @@ export default function DetailCredit(){
                                 }}>Pago</button>
 
                                 <button onClick={async e=>{
-                                    if(await useVerifyStruct(param.id)){
+                                    if(await useVerifyStruct(param.get('id'))){
                                         setReestructurar(!view_reestructurar);
                                     }else{
-                                        setPush({
-                                            view:true,
-                                            text:'No se puede, hay un proceso de reestructuración no autorizado aún.'
+                                        addNotification({
+                                            title: 'ERROR',
+                                            subtitle: 'Crédito con convenio',
+                                            message: 'No se puede, hay un convenio ya creado',
+                                            native: false,
+                                            backgroundTop: '#FF9619',
+                                            backgroundBottom: '#fdb864',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration: 3500
                                         });
                                     }
                                 }}>Convenio de pago</button>
@@ -435,9 +470,17 @@ export default function DetailCredit(){
                                     if(await useVerifyCondonation(param.id)){
                                         setViewCondonation(!view_condonation);
                                     }else{
-                                        setPush({
-                                            view:true,
-                                            text:'No se puede, hay un proceso de condonación no autorizado aún.'
+                                        addNotification({
+                                            title: 'ERROR',
+                                            subtitle: 'Crédito con condonación',
+                                            message: 'No se puede, ya se ha registrado una condonación',
+                                            native: false,
+                                            backgroundTop: '#FF9619',
+                                            backgroundBottom: '#fdb864',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration: 3500
                                         });
                                         clean;
                                     }
@@ -448,7 +491,7 @@ export default function DetailCredit(){
                     }
                     {
                         (localStorage.getItem('permission').split(',').includes("Comprobantes:all")) &&
-                            <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}&name=${credit.name}`}>Comprobantes de pago</NavLink>
+                            <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}&name=${credit.name}&credito=${param.get('id')}`}>Comprobantes de pago</NavLink>
                     }
                     {
                         (localStorage.getItem('permission').split(',').includes("User:all") | localStorage.getItem('permission').split(',').includes("User:minimize")) &&
@@ -462,6 +505,16 @@ export default function DetailCredit(){
             {
                 (view_reestructurar) &&
                     <CardStructure
+                        original_dates={{
+                            totalAmount:credit.totalAmount,
+                            saldo_capital:credit.saldo_capital,
+                            mora:credit.mora,
+                            interes:credit.interes,
+                            seguro_desgravamen:credit.seguro_desgravamen,
+                            gastos_judiciales:credit.gastos_judiciales,
+                            gastos_cobranza:credit.gastos_cobranza,
+                            otros_valores:credit.otros_valores
+                        }}
                         total={credit.totalAmount}
                         set={setReestructurar}
                         id={param.get('id')}
@@ -499,6 +552,8 @@ export default function DetailCredit(){
                         setGastos={updateGastos}
                         setPDF={setPDF}
                         setCredit={setCredit}
+                        estado={credit.status}
+                        data_convenio={(credit.status==='Convenio de pago') ? credit.restructs : []}
                     />
             }
 
@@ -515,6 +570,7 @@ export default function DetailCredit(){
                         <button className="CardCondonacion__close" onClick={()=>{setEdit(false)}}>Volver</button>
                         <CardConfirm
                             id={viewGastos.id}
+                            cartera={cartera.id}
                             value={Number(JSON.parse(viewGastos.valor_gasto).value)}
                             name={credit.name}
                             ci={credit.ci}
@@ -545,6 +601,7 @@ export default function DetailCredit(){
                             />
                         </PDFViewer>
                     </div>
+
             }
 
             {
