@@ -153,7 +153,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
           </View>
 
           <View>
-            <Text style={{color:"#009793",fontSize:16,marginTop:20}}>2) Distribución por cartera</Text>
+            <Text style={{color:"#009793",fontSize:16,marginTop:20}}>2) Estado de carteras</Text>
             <Image
               src={images[2]}
             />

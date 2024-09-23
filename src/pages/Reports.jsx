@@ -111,6 +111,9 @@ export default function Reports(){
 
     const [total_months,setTotalMonths]=useState();
 
+    const [number,setNumber]=useState();
+    const [type_search,setTypeSearch]=useState();
+
     const param=useParams();
 
     const updateMonto=(value)=>{
@@ -156,6 +159,9 @@ export default function Reports(){
             credits_by_mora:{},
             filters:{}
         });
+
+        setNumber(0);
+        setTypeSearch('0');
 
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalMonths`,{
             headers: {
@@ -641,14 +647,10 @@ export default function Reports(){
                                 </div>
                         }
 
-                        <h4 className="Reports__title">Estado de carteras</h4>
+                        <h4 className="Reports__title">Estado actual de carteras</h4>
                         <div className="Reports__resultGraphic">
                             <div className="Reports__resultFilter">
-                                <h3>Distribución por cartera</h3>
-                                <label>
-                                    Fecha
-                                    <input type="date"/>
-                                </label>
+                                
                             </div>
 
                             <div className="Reports__resumeGraphic">
@@ -689,11 +691,28 @@ export default function Reports(){
                                 
                                 <div>
                                     <div className="Reports__resultFilter">
-                                        <h3>Tendencia anual de recuperación</h3>
-                                        <label>
-                                            Fecha
-                                            <input type="date"/>
-                                        </label>
+                                        <h3>Tendencia de recuperación</h3>
+                                        <div>
+                                            <label>
+                                                Fecha inicio
+                                                <input 
+                                                    value={fecha_inicio}
+                                                    onChange={(e)=>{
+                                                        setFechaInicio(e.target.value);
+                                                    }}
+                                                    type="date"/>
+                                            </label>
+                                            <span>a</span>
+                                            <label>
+                                                Fecha fin
+                                                <input 
+                                                    value={fecha_final}
+                                                    onChange={(e)=>{
+                                                        setFechaFinal(e.target.value);
+                                                    }}
+                                                    type="date"/>
+                                            </label>
+                                        </div>
                                     </div>
                                      <Line
                                         key={1}
@@ -1332,6 +1351,59 @@ export default function Reports(){
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>
+                                
+                                <h4 className="Reports__title">Evolución de créditos en función de pagos</h4>
+                                <div className="Reports__filters Reports__filters--columns-5">
+                                    <label className="Reports__filter">
+                                        Empresa
+                                        <select 
+                                            value={empresa}
+                                            onChange={(e)=>{
+                                                setEmpresa(e.target.value);
+                                            }}
+                                        >
+                                            {
+                                                business.map((bus,index)=>(
+                                                    <option key={index} value={bus.name.toUpperCase()}>{bus.name.toUpperCase()}</option>
+                                                ))
+                                            }
+                                        </select>
+                                    </label>
+
+                                    <label className="Reports__filter">
+                                        Tipo de coincidencia
+                                        <select 
+                                            value={type_search}
+                                            onChange={(e)=>{
+                                                setTypeSearch(e.target.value);
+                                            }}
+                                        >
+                                            <option value={'0'}>Sin pagos</option>
+                                            <option value={'1'}>Con</option>
+                                            <option value={'2'}>Más</option>
+                                        </select>
+                                    </label>
+
+                                    <label className="Reports__filter">
+                                        Número de pagos
+                                        <input 
+                                            value={number}
+                                            type="number"
+                                            onChange={(e)=>{
+                                                setNumber(e.target.value);
+                                            }}
+                                        />
+                                    </label>
+                                    
+                                    <NavLink
+                                        className="Reports__button"
+                                        
+                                        onClick={(e)=>{
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/evolution?cartera=${empresa}&type=${type_search}&number=${number}`;
+                                        }}
+                                    >Generar EXCEL</NavLink>
+                                </div>
+
                             </div>
                         
             }

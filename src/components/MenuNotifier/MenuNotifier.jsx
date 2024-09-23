@@ -39,6 +39,8 @@ export default function MenuNotifier(){
                                         message={push.message.message}
                                         byUser={push.message.byUser}
                                         id={push.message.id}
+                                        cartera={push.message.cartera}
+                                        credito={push.message.credito}
                                     />
                                 :
                                     <CardNotifierModify

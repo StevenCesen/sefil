@@ -26,6 +26,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [message_state,setMessage]=useState();
     const [phones_secondaries,setSecondaries]=useState();
     const [incall,setIncall]=useState();
+    const [gasto_cobranza,setGasto]=useState(0);
 
     const [new_phone,setNumber]=useState();
     const [view_new_phone,setViewNewPhone]=useState();
@@ -121,6 +122,25 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                 setHistorial(data.data.data);
             });
         
+            console.log(currently.cartera)
+
+        if(currently.cartera==='SEFIL_1' | currently.cartera==='SEFIL_2'){
+            console.log(currently.cartera)
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/genGastos?cartera=${currently.cartera}&credito=${currently.id}`,{
+                method:'GET',
+                headers: {
+                    Accept: 'application/json'
+                }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    console.log(data);
+                    setGasto(data.gastos);
+                });
+        }else{
+            setGasto(0);
+        }
+        
         setCall(false);
         setDetails(false);
         setViewNewPhone(false);
@@ -200,11 +220,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             //     temp=JSON.parse(structure[2]);
             // }
 
-            if(currently.dias_vencidos>=91){
-                temp=JSON.parse(structure[1]);
-            }else{
-                temp=JSON.parse(structure[2]);
-            }
+            // if(currently.dias_vencidos>=91){
+            //     temp=JSON.parse(structure[1]);
+            // }else{
+            //     temp=JSON.parse(structure[2]);
+            // }
 
             setTemplate({
                 states:temp.default[1].options,
@@ -341,6 +361,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             <p><strong>Seguro desgravamen:</strong> $ {info_credit.seguro}</p>
                             <p><strong>Gastos judiciales:</strong> $ {info_credit.judicial}</p>
                             <p><strong>Gastos de cobranza:</strong> $ {info_credit.gastos}</p>
+                            <p><strong>Gastos de cobranza SEFIL: </strong> {useFormatterNumber({value:gasto_cobranza,currency:'USD'})}</p>
                             <p><strong>Otros valores:</strong> $ {info_credit.otros}</p>
                         </div>
 
@@ -355,7 +376,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             </div>
                             <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                                 <label>Monto adeudado</label>
-                                <p>{useFormatterNumber({value:info_credit.totalAmount,currency:'USD'})}</p>
+                                <p>{useFormatterNumber({value:(Number(info_credit.totalAmount)+((gasto_cobranza>0) ? gasto_cobranza : 0)),currency:'USD'})}</p>
                             </div>
                         </div>
                     </div>
@@ -639,10 +660,13 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     Fecha de compromiso
                                     <input 
                                         onChange={(e)=>{
-                                            setDataGestion({
-                                                ...data_gestion,
-                                                date_promise:e.target.value
-                                            });
+                                            console.log(e.target.value)
+                                            if(e.target.value!=""){
+                                                setDataGestion({
+                                                    ...data_gestion,
+                                                    date_promise:e.target.value
+                                                });
+                                            }
                                         }}
                                         value={data_gestion.data_promise}
                                         type="date" 
@@ -684,7 +708,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         onClick={(e)=>{
 
                             e.target.textContent="Guardando...";
-
+                            console.log(data_gestion)
                             if(data_gestion.date_promise==='' | data_gestion.substate_gestion===''){
                                 e.target.textContent="Intentar de nuevo";
 

@@ -174,7 +174,25 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                         totalAmount:totalAmount
                     }
 
-                    useStruct(data,e.target,id);
+                    if(tipo_desgloce==='automatico' | (totalSum===total & tipo_desgloce==='manual')){
+                        useStruct(data,e.target,id);
+
+                    }else{
+                        e.target.textContent="Guardar cambios";
+
+                        addNotification({
+                            title: 'ERROR SUMATORIA',
+                            subtitle: 'El desgloce de cuotas no suman el monto total adeudado',
+                            message: 'Por favor, revise los valores',
+                            native: false,
+                            backgroundTop: '#FF9619',
+                            backgroundBottom: '#fdb864',
+                            colorTop: 'white',
+                            colorBottom: 'white',
+                            closeButton: 'Cerrar',
+                            duration: 3500
+                        });
+                    }
 
                 }}>Guardar cambios</button>
             </div>

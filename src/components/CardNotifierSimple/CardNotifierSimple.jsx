@@ -1,15 +1,20 @@
 import { useContext } from "react";
 import "./CardNotifierSimple.css";
 import { NotifierContext } from "../../contexts/notifierContext";
+import { NavLink } from "react-router-dom";
 
-export default function CardNotifierSimple({message,byUser,id}){
+export default function CardNotifierSimple({message,cartera,credito,byUser,id}){
     const dataContext=useContext(NotifierContext);
 
     return (
         <div className="CardNotifierSimple">
             <div className="CardNotifierSimple__contentText">
                 <p>{message}</p>
+                <span>Comprobante #: {id}</span>
                 <span>Generado por {byUser}</span>
+                
+                <NavLink to={`/dashboard/recaudacion/view/${cartera}?id=${credito}`} onClick={()=>{localStorage.setItem('hash','#/dashboard/consulta')}}> Ir al crédito</NavLink>
+                
             </div>
             <div>
                 <button 

@@ -792,8 +792,6 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                 e.target.textContent="Transfiriendo...";
 
-                                console.log(distribution)
-
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
                                     method:'PUT',
                                     headers: {
@@ -807,6 +805,18 @@ export default function CardAssignCampain({data,updateCredits}){
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
+                                        addNotification({
+                                            title: 'Éxito',
+                                            subtitle: 'Carga transferida',
+                                            message: '',
+                                            native: false,
+                                            backgroundTop: '#009793',
+                                            backgroundBottom: '#459d9a',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration:3000,
+                                        });
                                         setDistributions(distribution);
                                         updateCredits(data.data);
                                         e.target.textContent="Transferir carga";
@@ -1053,8 +1063,6 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                 }
 
-                                console.log(data_agent);
-
                                 // Aquí debo comprobar que no se este asignando créditos que ya están asignados a otros agentes
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
                                     method:'PUT',
@@ -1069,6 +1077,18 @@ export default function CardAssignCampain({data,updateCredits}){
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
+                                        addNotification({
+                                            title: 'Éxito',
+                                            subtitle: 'Asignación correcta',
+                                            message: '',
+                                            native: false,
+                                            backgroundTop: '#009793',
+                                            backgroundBottom: '#459d9a',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration:3000,
+                                        });
                                         setDistributions(data_agent);
                                         updateCredits(data.data);
                                         e.target.textContent="Asignar";

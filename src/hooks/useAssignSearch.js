@@ -1,7 +1,5 @@
 export default function useAssignSearch(data,value,update,filter,mode,mora,cuota,monto,estado,agencia){
 
-    console.log(data)
-
     if(filter){
         let results=[];
 
@@ -14,11 +12,9 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     monto==='' &
                     estado!==''
                 ){
-                    console.log("Aqui trmn")
                     if(credit.collectionState===estado){
                         results.push(credit);
                     }
-
                 }else{
                     if(
                         ( (mora!=="") ? (Number(credit.dias_vencidos)>=Number(mora.min) & Number(credit.dias_vencidos)<=Number(mora.max)) : true) &
@@ -57,8 +53,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 
             }
         });
-
-        console.log(results)
+        
         // Al final de tener todo el results filtro por agencia
         if(agencia.length>0){
             console.log("SI entre")
@@ -103,15 +98,25 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     }
                 });
 
+                if(results.length===0){
+    
+                        
+                    JSON.parse(localStorage.getItem('filt')).map((credit)=>{
+                        if(credit.credito.includes(value.split('-')[1])){
+                            results.push(credit);
+                        }
+                    });
+                }
+
                 update(results);
             }
 
         }else{
+            let values=value.split(' ');
+            let results=[];
+            
             if(value.includes(' ')){
-                // Aquí tenemos todo el array de créditos que hay que activar
-                let values=value.split(' ');
-                let results=[];
-
+                // Aquí tenemos todo el array de créditos que hay que activa
                 values.map((credit_s)=>{
                     let credito=[];
 
@@ -121,10 +126,29 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                         }
                     });
 
-                    results.push(credito);
+                    ('name' in credito) ? results.push(credito) : "";
                 });
-                
+
                 update(results);
+
+                if(results.length===0){
+                    let values=value.split(' ');
+                    let results=[];
+    
+                    values.map((credit_s)=>{
+                        let credito=[];
+    
+                        JSON.parse(localStorage.getItem('filt')).map((credit)=>{
+                            if(credit.credito===credit_s.split('-')[1]){
+                                credito=credit;
+                            }
+                        });
+    
+                        results.push(credito);
+                    })
+                    
+                    update(results);
+                }
             }
         }
 

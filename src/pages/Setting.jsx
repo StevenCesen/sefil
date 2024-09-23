@@ -72,7 +72,7 @@ export default function Setting(){
                                     />
                                 ))
                             }
-                            
+
                             {/* <CardExportPays/> */}
 
                         </>

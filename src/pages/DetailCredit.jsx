@@ -173,6 +173,7 @@ export default function DetailCredit(){
         })
             .then((response) => response.json())  
             .then((data) => {
+
                 if(data.id===false){
                     setGastos({
                         ...viewGastos,
@@ -201,6 +202,7 @@ export default function DetailCredit(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                console.log(data)
                 setPrev(data.gastos);
             });
 
@@ -387,9 +389,10 @@ export default function DetailCredit(){
                     {
                         credit.restructs.map((restruct,index)=>(
                             <div className="DetailCredit__activity" key={index}>
-                                <p key={index}>Convenio de pago con estado <strong>{restruct.status.toUpperCase()}</strong>, realizado por {restruct.byUser}</p>
+                                <p key={index}>Convenio solicitado por: {restruct.byUser}</p>
+                                <p key={index}> {(restruct.status==='autorizado') ? "Autorizado por M. Bravo" : "Pendiente de autorizar"}</p>
                                 <span>{restruct.fecha}</span>
-                                <p style={{margin:"10px 0",fontSize:"14px"}}>Fecha de pago: {restruct.fecha_pago}</p>
+                                <p style={{margin:"10px 0",fontSize:"14px"}}>Fecha de convenio: {restruct.fecha_pago}</p>
                                 <div style={{marginTop:"10px",borderTop:"1px solid grey",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
                                     {
                                         JSON.parse(restruct.detail).map((cuota)=>(

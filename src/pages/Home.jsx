@@ -14,9 +14,11 @@ import {
     Legend,
   } from 'chart.js';
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import CardDataStatics from "../components/CardDataStatics/CardDataStatics";
+import { GestionContext } from "../contexts/GestionContext";
+import CardUserState from "../components/CardUserState/CardUserState";
 
 ChartJS.register(
     CategoryScale,
@@ -118,12 +120,15 @@ export default function Home(){
     // const [data,setData]=useState({});
     const [users,setUsers]=useState();
 
+    const [agents,setAgents]=useState();
+    const data=useContext(GestionContext);
+
     const [totalMonth,setMonth]=useState(0);
 
     const [comprobantes,setComprobantes]=useState();
 
     useEffect(()=>{
-
+        setAgents(data.agents);
         // fetch("https://sefil.softsen.space/public/api/vouchers/reportAnual",{
         //     headers: {
         //         Accept: 'application/json',
@@ -210,11 +215,12 @@ export default function Home(){
                 setComprobantes(data.data);
             });
 
-    },[]);
+    },[data.agents]);
 
     if(!vouchers) return <></>
     if(!totalMonth) return <></>
     if(!comprobantes) return <></>
+    if(!agents) return <></>
     // if(!condonations) return <></>
     // if(!restruct) return <></>
     // if(!data) return <></>
@@ -267,11 +273,59 @@ export default function Home(){
                 <div>
                     <div>
                         <h3>Monitoreo de llamadas</h3>
-                    </div>
+                        <div className="pageConsulta__monitor">
+                            <div className="pageConsulta__monitorHead">
+                                <label>Usuario</label>
+                                <label>Estado</label>
+                                <label>Tiempo</label>
+                                <label>Campaña</label>
+                                <label>Nro. créditos</label>
+                                <label>Nro. créditos gestionados</label>
+                                <label>Nro. llamadas</label>
+                                <label>Nro. llamadas efec.</label>
+                                <label>Nro. llamadas no efec.</label>
+                            </div>
+                            {
+                                agents.map((agent,index)=>(
+                                    (agent.gestion.length>0)
+                                    ?
+                                        agent.gestion.map((campain,index)=>(
+                                            <CardUserState
+                                                key={index}
+                                                name={agent.name}
+                                                state={agent.state}
+                                                time={agent.tiempo}
+                                                name_campain={campain.campain}
+                                                mode={"complete"}
+                                                data={{
+                                                    nro_credits:campain.total_credits,
+                                                    nro_gestions:campain.total_credits_ges,
+                                                    nro_calls:campain.nro_llamadas,
+                                                    nro_efec:campain.nro_llamadas_efec,
+                                                    nro_no_efec:campain.nro_llamadas_no_efec
+                                                }}
+                                            />
+                                        ))
+                                    :
+                                        <CardUserState
+                                            key={index}
+                                            name={agent.name}
+                                            state={agent.state}
+                                            time={agent.tiempo}
+                                            name_campain={"-"}
+                                            mode={"complete"}
+                                            data={{
+                                                nro_credits:"-",
+                                                nro_gestions:"-",
+                                                nro_calls:"-",
+                                                nro_efec:"-",
+                                                nro_no_efec:"-"
+                                            }}
+                                        />
+                                ))
+                            }
 
-                    <div>
-                        <h3>Monitorio WhatsApp</h3>
-
+                        </div>
                     </div>
                 </div>
 
