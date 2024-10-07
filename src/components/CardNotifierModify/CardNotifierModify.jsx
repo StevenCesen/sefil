@@ -4,8 +4,9 @@ import { NotifierContext } from "../../contexts/notifierContext";
 import addNotification from "react-push-notification";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useFadeArray from "../../hooks/useFadeArray";
+import { NavLink } from "react-router-dom";
 
-export default function CardNotifierModify({title,message,credito,cartera,fecha_pago,user_generate,prev_data,total,current_data,id,name,ci}){
+export default function CardNotifierModify({title,message,credito,cartera,fecha_pago,user_generate,prev_data,total,current_data,id,name,ci,setData,setPDF}){
 
     const [condonation,setCondonation]=useState({});
     const [number,setNumber]=useState(0);
@@ -14,6 +15,7 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
     const [restruct,setRestruct]=useState({
         cuotas:[]
     });
+
     const dataContext=useContext(NotifierContext);
 
     const updateCuota=({cuota,valor})=>{
@@ -65,7 +67,7 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
             <p className="CardNotifierModify__title">CÉDULA: {ci}</p>
 
             <div className="CardNotifierModify__subhead">
-                <p>Nro. crédito: {credito}</p>
+                <NavLink to={`/dashboard/recaudacion/view/${cartera}?id=${credito}`} onClick={()=>{localStorage.setItem('hash','#/dashboard/consulta')}}> Ir al crédito</NavLink>
                 <p>Cartera: {cartera}</p>
             </div>
 
@@ -235,6 +237,19 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                         credito:credito,
                                         cartera:cartera
                                     }
+
+                                    condonation.fecha=fecha_pago;
+                                    condonation.by_user=user_generate;
+                                    condonation.name=name;
+                                    condonation.credito=credito;
+                                    condonation.ci=ci;
+                                    condonation.prevDates=JSON.stringify(prev_data);
+                                    condonation.postDates=data.postDates;
+
+                                    console.log(condonation);
+
+                                    setData(condonation);
+                                    setPDF(true);
                                     
                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/condonar/${id}`,{
                                         method:'PUT',
@@ -355,9 +370,6 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                                 val_prev+=Number(input.value);
                                             });
                                             
-                                            console.log(`Diferencia ${diferencia}`)
-                                            console.log(`SUMA ${val_prev}`)
-
                                             if(val_prev>total){
 
                                                 if(diferencia>0){
@@ -390,6 +402,11 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                             }
                                         }}
                                     />
+                                    <input 
+                                        type="date"
+                                        className={`desgloce_inputsDate-${credito}`}
+                                        value={cuota.fecha_pago}
+                                    />
                                 </div>
                            ))
                         }
@@ -415,6 +432,8 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                         credito:credito,
                                         cartera:cartera
                                     }
+
+                                    console.log(data)
                                     
                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/estructurar/${id}`,{
                                         method:'PUT',

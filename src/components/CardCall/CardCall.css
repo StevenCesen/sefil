@@ -115,6 +115,13 @@
     background-color: #D2006E;
 }
 
+.CardCall__button--whats{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--bg-alert-successful);
+}
+
 .CardCall__button--call{
     width: 50px;
     height: 50px;

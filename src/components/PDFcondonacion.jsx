@@ -63,7 +63,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
                 <View>
                   <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>RUC: 1792679443001</Text>
                   <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>FECHA Y HORA DE AUTORIZACIÓN: {fecha}</Text>
-                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>AUTORIZADO POR: {user_auth.toUpperCase()}</Text>
+                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>{(localStorage.getItem('permission').includes('User:minimize')) ? "AUTORIZADO POR:" : "SOLICITADO POR" } {user_auth.toUpperCase()}</Text>
                 </View>
 
               </View>

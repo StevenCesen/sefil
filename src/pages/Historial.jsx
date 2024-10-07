@@ -90,6 +90,7 @@ export default function GHistorial(){
                                 const page_param_prev=data.prev_page_url.split('?')[1];
                                 data.prev_page_url=`${data.path}&${page_param_prev}`;
                             }
+                            console.log(data)
                             setData(data);
                         });
                 }else{
@@ -353,7 +354,7 @@ export default function GHistorial(){
                                 }}
                             >Ver</button>
                             <label>{gestion.fecha.split(" ")[0]}</label>
-                            <label>{campain.name}</label>
+                            <label>{gestion.campain_name}</label>
                             <label>{gestion.client_name}</label>
                             <label>{gestion.client_ci}</label>
                             <label>{gestion.type}</label>

@@ -455,17 +455,42 @@ export default function CardAssignCampain({data,updateCredits}){
                                 onClick={(e)=>{
                                     e.target.textContent="Reiniciando";
 
-                                    let distribution_init=[];
+                                    const dtsn=15;
 
-                                    JSON.parse(data.agents).map((agent)=>{
-                                        distribution_init.push({
-                                            agent_id:agent.id,
-                                            total:0,
-                                            distribution:[],
-                                            pending:[],
-                                            processed:[],
-                                            inprocess:[]
-                                        });
+                                    const distribution=distributions;
+
+                                    let new_charge_15=[];
+
+                                    // Copio lo que tiene el origen
+                                    distribution.map((dis)=>{
+                                        if(Number(dis.agent_id)!==dtsn){
+
+                                            let distribution=[];
+                                            let pending=[];
+                                            let inprocess=[];
+                                            let processed=[];
+
+                                            dis.distribution=distribution;
+                                            dis.pending=pending;
+                                            dis.inprocess=inprocess;
+                                            dis.processed=processed;
+                                            dis.total=distribution.length;
+
+                                        }else{
+                                            JSON.parse(localStorage.getItem('filt')).map((credito)=>{
+                                                new_charge_15.push({
+                                                    id:credito.id,
+                                                    cartera:credito.cartera
+                                                });
+                                            });
+
+                                            dis.distribution=new_charge_15;
+                                            dis.pending=[];
+                                            dis.inprocess=[];
+                                            dis.processed=[];
+                                            dis.total=new_charge_15.length;
+
+                                        }
                                     });
 
                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/reset/${data.id}`,{
@@ -475,12 +500,12 @@ export default function CardAssignCampain({data,updateCredits}){
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
                                         },
                                         body:new URLSearchParams({
-                                            distributions:JSON.stringify(distribution_init)
+                                            distributions:JSON.stringify(distribution)
                                         })
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            setDistributions(distribution_init);
+                                            setDistributions(distribution);
                                             updateCredits(data.data);
                                             e.target.textContent="Reiniciado";
                                         });
@@ -789,6 +814,9 @@ export default function CardAssignCampain({data,updateCredits}){
                                         dis.total+=Number(carga.length);
                                     }
                                 });
+
+
+                                console.log(distribution);
 
                                 e.target.textContent="Transfiriendo...";
 

@@ -392,14 +392,15 @@ export default function DetailCredit(){
                                 <p key={index}>Convenio solicitado por: {restruct.byUser}</p>
                                 <p key={index}> {(restruct.status==='autorizado') ? "Autorizado por M. Bravo" : "Pendiente de autorizar"}</p>
                                 <span>{restruct.fecha}</span>
-                                <p style={{margin:"10px 0",fontSize:"14px"}}>Fecha de convenio: {restruct.fecha_pago}</p>
+                                {/* <p style={{margin:"10px 0",fontSize:"14px"}}>Fecha de convenio: {restruct.fecha_pago}</p> */}
                                 <div style={{marginTop:"10px",borderTop:"1px solid grey",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
                                     {
                                         JSON.parse(restruct.detail).map((cuota)=>(
-                                            <div style={{display:"grid",justifyContent:"center",alignItems:"center",gridTemplateColumns:"15% 40% 45%",height:"30px",textAlign:"center",borderBottom:"1px solid grey"}}>
+                                            <div style={{display:"grid",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"30px",textAlign:"center",borderBottom:"1px solid grey"}}>
                                                 <p>{cuota.cuota}</p>
                                                 <p>{useFormatterNumber({value:cuota.valor,currency:'USD'})}</p>
-                                                <p>{cuota.estado}</p>
+                                                <p>{('fecha_pago' in cuota) ? cuota.fecha_pago : ""}</p>
+                                                <p style={{fontSize:"14px"}}>{cuota.estado}</p>
                                             </div>
                                         ))
                                     }
@@ -613,6 +614,13 @@ export default function DetailCredit(){
                         <button className="CardCondonacion__close" onClick={()=>{setPDFcondonation(false)}}>Volver</button>
                         <PDFViewer width={'800px'} height={'600px'}>
                             <PDFcondonacion
+                                // ci={"1104266075"}
+                                // credito={"467"}
+                                // name={"BARROS GUTIERREZ JORGE LUIS"}
+                                // fecha={"2024/09/30 19:11:56"}
+                                // prevDates={'{"mora":"0","interes":"0","capital":"290.41","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
+                                // postDates={'{"capital":"145.2","interes":"0","mora":"0","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
+                                // user_auth={'María Bravo'}
                                 ci={value_condonacion.ci}
                                 credito={value_condonacion.credito}
                                 name={value_condonacion.name}

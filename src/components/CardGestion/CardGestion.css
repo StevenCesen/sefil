@@ -214,6 +214,19 @@
     margin-bottom: 20px;
 }
 
+.Ggestion__principalHead>div{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 20px;
+}
+
+.Ggestion__principalHead>div>p{
+    font-weight: bold;
+    font-size: 18px;
+}
+
 .Ggestion__principalHead>button{
     height: 40px;
     padding: 0 20px;

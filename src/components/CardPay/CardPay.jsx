@@ -484,6 +484,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                             .then((response) => response.json())  
                                             .then(async (data) => {
                                                 /*========================================================EL CÓDIGO DE DEPOSITO ES ÚNICO Y NO EXISTE AÚN EN BASE================================================*/
+    
                                                 if(data.state===200){
                                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/pay/${id}`,{
                                                         method:'PUT',
@@ -530,6 +531,8 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                             });
                                 }else{
                                     /*========================================================PAGO EXITOSO================================================*/
+                                    console.log(data_encode);
+
                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/pay/${id}`,{
                                             method:'PUT',
                                             headers: {
@@ -540,6 +543,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                         })
                                             .then((response) => response.json())  
                                             .then(async (data) => {
+                                                console.log(data)
                                                 if(data.status===200){
 
                                                     if('id' in data.gasto){

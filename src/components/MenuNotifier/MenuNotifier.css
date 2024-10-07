@@ -24,6 +24,19 @@
     text-align: center;
 } */
 
+.MenuNotifier>.CardPay{
+    position: fixed;
+    width: 100%;
+    height: calc(100% - var(--height-header));
+    background-color: rgba(100, 100, 100, 0.437);
+    top: var(--height-header);
+    left: 0;
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
 .MenuNotifier__contentPush{
     display: block;
     z-index: 100;

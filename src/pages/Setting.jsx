@@ -4,14 +4,18 @@ import { useEffect, useRef, useState } from "react";
 import CardCreateCartera from "../components/CardCreateCartera/CardCreateCartera";
 import CardListCarteras from "../components/CardListCarteras/CardListCarteras";
 import CardUpdatePay from "../components/CardUpdatePay/CardUpdatePay";
+import CardPrelacion from "../components/CardPrelacion/CardPrelacion";
 
 export default function Setting(){
     const param = useParams();
 
     //Utilizables
     const [carteras,setCarteras]=useState();
+    const [view_prelacion,setView]=useState();
+    const [current_cartera,setCurrent]=useState();
 
     useEffect(()=>{
+        setView(false);
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
             headers: {
                 Accept: 'application/json',
@@ -69,6 +73,8 @@ export default function Setting(){
                                         // versions={JSON.parse(cartera.versions)}
                                         versions={[]}
                                         state={cartera.status}
+                                        view={setView}
+                                        setCurrent={setCurrent}
                                     />
                                 ))
                             }
@@ -113,6 +119,18 @@ export default function Setting(){
                     (
                         location.hash='/dashboard/configuracion/importdb'
                     )
+            }
+            
+            {
+                (view_prelacion)
+                ?   
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setView(false)}}>Volver</button>
+                        <CardPrelacion
+                            cartera={current_cartera}
+                        />
+                    </div>
+                :   <></>
             }
         </div>
     );

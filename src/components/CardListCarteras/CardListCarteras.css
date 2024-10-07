@@ -39,7 +39,7 @@
     background-color: var(--bg-alert-successful) !important;
     height: 35px;
     color: var(--color-3);
-    font-size: 14px;
+    font-size: 10px;
     cursor: pointer;
     border-radius: 2px;
 }

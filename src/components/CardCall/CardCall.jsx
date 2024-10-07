@@ -20,6 +20,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
     const [end_session,setEnd]=useState(false);
     const [view_states,setView]=useState(false);
     const [record,setRecord]=useState();
+    const [whats_call,setWhatCall]=useState();
 
     const [number_in,setIn]=useState();
 
@@ -69,6 +70,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
         });
         setRecord('');
         setState('');
+        setWhatCall(false);
         setView(false);
         setEnd(false);
         setIn("");
@@ -129,7 +131,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                 }
             </div>
 
-            <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+            <div style={{display:'flex',justifyContent:'center',alignItems:'center',gap:'10px'}}>
                 {/* COLGAR */}
                 {
                     (!view_states)
@@ -149,9 +151,11 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 
                                 try {
                                     
-                                    const request=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
-                                    const response=await request.json();
-                                    console.log(response);
+                                    if(!whats_call){
+                                        const request=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
+                                        const response=await request.json();
+                                        console.log(response);
+                                    }
 
                                 } catch (error) {
                                     console.log(error)
@@ -160,6 +164,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 clearInterval(continue_call);
                                 setEnd(true);
                                 setView(true);
+                                setWhatCall(false);
                             }} 
                             className="CardCall__button CardCall__button--exit"
                         >
@@ -174,7 +179,6 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                     (!data_call.state)
                     ?
                         <button 
-                            style={{marginLeft:'10px'}}
                             onClick={async (e)=>{
                                 let recorder,stream;
 
@@ -229,6 +233,50 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                         >
                             <img
                                 src="./icons/call.png"
+                            />
+                        </button>
+                    :   <></>
+                }
+
+                {
+                    (!data_call.state)
+                    ?
+                        <button
+                            title="Da click, he inicia la llamada dentro de Whatsapp"
+                            className="CardCall__button CardCall__button--whats"
+                            onClick={async (e)=>{
+                                let recorder,stream;
+        
+                                setInit(true);
+                                setWhatCall(true);
+
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/incall`,{
+                                    headers: {
+                                        Accept: 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                    }
+                                })
+                                    .then((response) => response.json())  
+                                    .then((data) => {
+                                        console.log("ESTADO BROADCAST")
+                                        console.log(data)
+                                    });
+
+                                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                                recorder = new MediaRecorder(stream);
+                                recorder.start();
+                                setRecord(recorder);
+
+                                init();
+
+                                setDataCall({
+                                    ...data_call,
+                                    state:true
+                                });
+                            }}
+                        >
+                            <img
+                                src="./icons/send_waps.png"
                             />
                         </button>
                     :   <></>

@@ -6,7 +6,7 @@ import addNotification from "react-push-notification";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useClickToCopy from "../../hooks/useClickToCopy";
 
-export default function CardGestion({currently,next,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays}){
+export default function CardGestion({currently,next,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays,number}){
     
     const [call,setCall]=useState(false);
     const [credit,setCredit]=useState(); //Información netamente de la persona actual
@@ -33,6 +33,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     // const [phone_external,setCallExternal]=useState(); PENDIENTE, para que puedan marcar a cualquier otro número que no este registrado
 
     const form=useRef();
+    const dates=useRef();
 
     const close=()=>{
         setCall(false);
@@ -121,11 +122,9 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             .then((data) => {
                 setHistorial(data.data.data);
             });
-        
-            console.log(currently.cartera)
 
         if(currently.cartera==='SEFIL_1' | currently.cartera==='SEFIL_2'){
-            console.log(currently.cartera)
+
             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/genGastos?cartera=${currently.cartera}&credito=${currently.id}`,{
                 method:'GET',
                 headers: {
@@ -134,7 +133,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             })
                 .then((response) => response.json())  
                 .then((data) => {
-                    console.log(data);
                     setGasto(data.gastos);
                 });
         }else{
@@ -187,44 +185,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
         update_phones(phones_c);
 
-        // setSecondaries([
-        //     {
-        //         // nro:'0978950498',
-        //         nro:'0978950498',
-        //         parentesco:'Hermano-TITULAR',
-        //         efec:0
-        //     },
-        //     {
-        //         // nro:'0978950498',
-        //         nro:'0978950498',
-        //         parentesco:'Esposa-TITULAR',
-        //         efec:0
-        //     },
-        //     {
-        //         // nro:'0978950498',
-        //         nro:'0978950498',
-        //         parentesco:'Esposa-TITULAR',
-        //         efec:0
-        //     }
-        // ]);
-
         // Seleccionamos la plantilla
         let temp=[];
 
         if(localStorage.getItem('rol')==='super' | localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='call'){
             temp=JSON.parse(structure[2]);
-            
-            // if(currently.dias_vencidos>=80){
-            //     temp=JSON.parse(structure[1]);
-            // }else{
-            //     temp=JSON.parse(structure[2]);
-            // }
-
-            // if(currently.dias_vencidos>=91){
-            //     temp=JSON.parse(structure[1]);
-            // }else{
-            //     temp=JSON.parse(structure[2]);
-            // }
 
             setTemplate({
                 states:temp.default[1].options,
@@ -260,7 +225,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             id_credit:currently.id,
             state_gestion:temp.default[1].options[0],
             substate_gestion:'',
-            date_promise:'',
+            date_promise:"",
             observation:'',
             byUser:'',
             fecha:'',
@@ -273,10 +238,10 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
     },[currently]);
 
+    if(!data_gestion) return <></>
     if(!historial) return <></>
     if(!credit) return <></>
     if(!contacts) return <></>
-    if(!data_gestion) return <></>
     if(!template) return <></>
     if(!message_state) return <></> 
 
@@ -533,16 +498,21 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                 <div className="Ggestion__principal">
                     <div>
                         <div className="Ggestion__principalHead">
-                            <h3 className="Ggestion__title">Gestión ({message_state})</h3>
+                            <div>
+                                <h3 className="Ggestion__title">Gestión ({message_state})</h3>
+                                <p>Quedan ({number.length})</p>
+                            </div>
+                            
                             {/* En este botón se hace verificación de estados de llamadas para guardar en bandeja de "EN PROCESO" */}
 
                             <button
                                 className="Ggestion__buttons--blank"
                                 onClick={(e)=>{
-                                    
-                                    form.current.reset();
 
                                     let count=0;
+                                    
+                                    form.current.reset();
+                                    dates.current.value="";
 
                                     if(states.length>0){
                                         states.map((state)=>{
@@ -552,8 +522,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         });
     
                                         if(count===0){
-                                            console.log("Se hicieron llamadas y todas fueron no CONTACTADO");
-
                                             const data={
                                                 id_campain:data_gestion.id_campain,
                                                 id_credit:data_gestion.id_credit
@@ -596,8 +564,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     }else{
                                         setNext(index);
                                     }
-                                    
-                                    
+                                
                                 }}
                             >
                                 Seguir
@@ -658,15 +625,14 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             <div className="Ggestion__twoGroup">
                                 <label className="Ggestion__input" style={{width:"calc((100% / 3) - 15px)"}}>
                                     Fecha de compromiso
-                                    <input 
+                    
+                                    <input
+                                        ref={dates}
                                         onChange={(e)=>{
-                                            console.log(e.target.value)
-                                            if(e.target.value!=""){
-                                                setDataGestion({
-                                                    ...data_gestion,
-                                                    date_promise:e.target.value
-                                                });
-                                            }
+                                            setDataGestion({
+                                                ...data_gestion,
+                                                date_promise:e.target.value
+                                            });
                                         }}
                                         value={data_gestion.data_promise}
                                         type="date" 
@@ -708,7 +674,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         onClick={(e)=>{
 
                             e.target.textContent="Guardando...";
-                            console.log(data_gestion)
+                        
                             if(data_gestion.date_promise==='' | data_gestion.substate_gestion===''){
                                 e.target.textContent="Intentar de nuevo";
 
@@ -747,9 +713,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 data_send.cuotas_pagadas=currently.paidFees;
                                 data_send.cuotas_pendientes=currently.pendingFees;
 
-                                console.log(data_send);
-
                                 setMessage('Gestionado');
+
+                                console.log("SW: Data Gestión");
+                                console.log(data_send);
+                                form.current.reset();
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
                                     method:'POST',

@@ -151,7 +151,7 @@ export default function Me(){
 
                         <div>
                             <p ref={length}>Debe tener longitud de 8 o más caracteres</p>
-                            <p ref={mayus}>Debe mayúsculas</p>
+                            <p ref={mayus}>Debe contener mayúsculas</p>
                             <p ref={number}>Debe contener números</p>
                             <p ref={especial}>Debe contener almenos un caracter especial</p>
                         </div>

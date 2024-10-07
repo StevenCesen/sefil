@@ -2,7 +2,6 @@ import { NavLink } from "react-router-dom";
 import "./CardListCarteras.css";
 import { useEffect, useState } from "react";
 
-
 function preFormattedUnit(value){
     if(value>=10){
         return value;
@@ -11,9 +10,9 @@ function preFormattedUnit(value){
     }
 }
 
-export default function CardListCarteras({name,fecha_upload,last_update,versions,fecha_carga,state}){
+export default function CardListCarteras({name,fecha_upload,last_update,versions,fecha_carga,state,view,setCurrent}){
     
-    const [viewVersions,setView]=useState(false);
+    const [view_prelacion,setView]=useState(false);
     const [cartera,setCartera]=useState({
         name:'',
         fecha_upload:'',
@@ -29,6 +28,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
 
     useEffect(()=>{
         setView(false);
+
         setCartera({
             name:name,
             fecha_upload:fecha_upload,
@@ -107,7 +107,12 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                     </div>
                     <NavLink target="blank" to={`${import.meta.env.VITE_URL_BASE}/public/api/pays?cartera=${cartera.name}&fecha_inicio=${date_start}&fecha_final=${date_end}`}>Excel</NavLink>
                 </div>
-                <button>Orden de prelación</button>
+                <button
+                    onClick={(e)=>{
+                        view(true);
+                        setCurrent(name);
+                    }}
+                >Orden de prelación</button>
             </div>
         </div>
     );

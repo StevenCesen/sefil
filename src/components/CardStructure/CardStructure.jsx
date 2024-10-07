@@ -60,10 +60,10 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                     }} min={1} step={1}/>
                 </div>
 
-                <div className="CardCondonacion__select">
+                {/* <div className="CardCondonacion__select">
                     <label>Fecha de pago:</label>
                     <input type="date" onChange={(e)=>{setDate(e.target.value)}}/>
-                </div>
+                </div> */}
                 
                 {
                     (tipo_desgloce==='automatico') ?
@@ -73,6 +73,7 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                                     <div key={index}>
                                         <label>{index+1}</label>
                                         <input className="desgloce_inputs" type="number" disabled value={(totalAmount/nro_cuotas).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}/>
+                                        <input type="date"/>
                                     </div>
                                )) 
                             }
@@ -122,6 +123,7 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                                                 }
                                             }}
                                         />
+                                        <input type="date"/>
                                     </div>
                                )) 
                             }
@@ -154,10 +156,12 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                         if(index===0){
                             valor_cuota=input.value;
                         }
+
                         detalle.push({
                             cuota:index+1,
                             valor:input.value,
-                            estado:'PENDIENTE'
+                            estado:'PENDIENTE',
+                            fecha_pago:input.nextElementSibling.value
                         });
                     });
 
@@ -165,7 +169,7 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                         valor_cuota:valor_cuota,
                         cuotas_pendientes:nro_cuotas-1,
                         cuota:1,
-                        fecha:date,
+                        fecha:detalle[0].fecha_pago,
                         credito:id,
                         cartera:cartera,
                         status:"",
@@ -173,6 +177,8 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                         original_dates:JSON.stringify(original_dates),
                         totalAmount:totalAmount
                     }
+
+                    console.log(data);
 
                     if(tipo_desgloce==='automatico' | (totalSum===total & tipo_desgloce==='manual')){
                         useStruct(data,e.target,id);

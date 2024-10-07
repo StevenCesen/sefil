@@ -1064,7 +1064,7 @@ export default function Reports(){
                                         const splits_final=fecha_final.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/cierre?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}&agente=${agent}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/cierre?cartera=${empresa}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}&agente=${agent}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1121,7 +1121,7 @@ export default function Reports(){
                                         const splits_final=fecha_final_1.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/condonaciones?cartera=${empresa_1}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/condonaciones?cartera=${empresa_1}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1177,7 +1177,7 @@ export default function Reports(){
                                         const splits_final=fecha_final_2.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/gcobranza?cartera=${empresa_2}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/gcobranza?cartera=${empresa_2}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1233,7 +1233,7 @@ export default function Reports(){
                                         const splits_final=fecha_final_2.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/greverse?cartera=${empresa_2}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/greverse?cartera=${empresa_2}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1276,7 +1276,7 @@ export default function Reports(){
                                             const splits_final=fecha_final.split('-');
                                             const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
                                             
-                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/gjudicial?fecha_inicio=${inicio}&fecha_final=${final}`;
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/gjudicial?fecha_inicio=${inicio}&user=${localStorage.getItem('name')}&fecha_final=${final}`;
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>
@@ -1347,7 +1347,7 @@ export default function Reports(){
                                             const splits_final=fecha_final.split('-');
                                             const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
                                             
-                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/cobros?cartera=${empresa}&fecha_inicio=${inicio}&fecha_final=${final}&unificate=${type_unificate}`;
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/cobros?cartera=${empresa}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}&unificate=${type_unificate}`;
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>
@@ -1399,7 +1399,7 @@ export default function Reports(){
                                         className="Reports__button"
                                         
                                         onClick={(e)=>{
-                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/evolution?cartera=${empresa}&type=${type_search}&number=${number}`;
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/evolution?cartera=${empresa}&user=${localStorage.getItem('name')}&type=${type_search}&number=${number}`;
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>

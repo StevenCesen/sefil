@@ -4,15 +4,22 @@ import CardNotifierModify from "../CardNotifierModify/CardNotifierModify";
 import { NavLink } from "react-router-dom";
 import { NotifierContext } from "../../contexts/notifierContext";
 import CardNotifierSimple from "../CardNotifierSimple/CardNotifierSimple";
+import PDFcondonacion from "../PDFcondonacion";
+import { PDFViewer } from "@react-pdf/renderer";
 
 export default function MenuNotifier(){
 
     const [menu,setMenu]=useState(false);
     const [pusher,setPusher]=useState();
+    const [view_pdf,setView]=useState();
+    const [condonation,setCondonation]=useState();
+
     const dataContext=useContext(NotifierContext);
 
     useEffect(()=>{
         setMenu(false);
+        setView(view_pdf);
+        setCondonation([]);
         setPusher(dataContext.data_push);
     },[dataContext]);
 
@@ -57,13 +64,32 @@ export default function MenuNotifier(){
                                         id={push.message.id}
                                         name={push.message.name}
                                         ci={push.message.ci}
+                                        setData={setCondonation}
+                                        setPDF={setView}
                                     />
-
                             ))
                         }
-                        
                     </div>
             }
+
+            {
+                (view_pdf) &&
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setView(false)}}>Volver</button>
+                        <PDFViewer width={'800px'} height={'600px'}>
+                            <PDFcondonacion
+                                ci={condonation.ci}
+                                credito={condonation.credito}
+                                name={condonation.name}
+                                fecha={condonation.fecha}
+                                prevDates={condonation.prevDates}
+                                postDates={condonation.postDates}
+                                user_auth={localStorage.getItem('name')}
+                            />
+                        </PDFViewer>
+                    </div>
+            }
+
         </div>
     );
 }

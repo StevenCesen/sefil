@@ -7,6 +7,7 @@ import useWindows from "../hooks/useWindows";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import useFilterAgency from "../hooks/useFilterAgency";
 import useFilterText from "../hooks/useFilterText";
+import useFilterState from "../hooks/useFilterState";
 
 export default function Gestion(){
 
@@ -115,8 +116,6 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
-                
-                console.log(data);
 
                 setCampains(data);
                 setCampain(data[0].id);
@@ -392,7 +391,7 @@ export default function Gestion(){
 
                     <div>
                         <label>Monto</label>
-                        <div>
+                        {/* <div>
                             <div>
                                 <label>Min</label>
                                 <input type="number"/>
@@ -401,12 +400,12 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input type="number"/>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div>
                         <label>Cuotas</label>
-                        <div>
+                        {/* <div>
                             <div>
                                 <label>Min</label>
                                 <input type="number"/>
@@ -415,12 +414,32 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input type="number"/>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div>
                         <label>Estado</label>
-                        <select>
+                        <select
+                            onChange={(e)=>{
+                                if(e.target.value!=='all'){
+                                    useFilterState({
+                                        tray:tray,
+                                        data_org:original_data,
+                                        value:e.target.value,
+                                        update:updateCredits,
+                                        all:false
+                                    })
+                                }else{
+                                    useFilterState({
+                                        tray:tray,
+                                        data_org:original_data,
+                                        value:e.target.value,
+                                        update:updateCredits,
+                                        all:true
+                                    })
+                                }
+                            }}
+                        >
                             <option value={"all"}>--Todos--</option>
                             <option value={"Vencido"}>Vencidos</option>
                             <option value={"Vigente"}>Vigentes</option>
@@ -431,9 +450,8 @@ export default function Gestion(){
 
                     <div>
                         <label>Compromiso</label>
-                        <input type="date"/>
+                        {/* <input type="date"/> */}
                     </div>
-
                 </div>
                 
                 {
@@ -477,9 +495,6 @@ export default function Gestion(){
                                     </button>
                                     <p>{credit.name}</p>
                                     <p>{credit.ci}</p>
-                                    {
-                                        console.log(credit)
-                                    }
                                     <p>{credit.agency}</p>
                                     <p>{credit.dias_vencidos}</p>
                                     <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
@@ -503,9 +518,6 @@ export default function Gestion(){
                                     </button>
                                     <p>{credit.name}</p>
                                     <p>{credit.ci}</p>
-                                    {
-                                        console.log(credit)
-                                    }
                                     <p>{credit.agency}</p>
                                     <p>{credit.dias_vencidos}</p>
                                     <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
@@ -586,6 +598,7 @@ export default function Gestion(){
                             state_gestion={state_gestion}
                             structure={structure}
                             updateTrays={updateTray}
+                            number={data[tray]}
                         /> 
                         
                     </div>
