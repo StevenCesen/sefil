@@ -55,6 +55,8 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
         otros_valores:0.00
     });
 
+    const [orden_prelacion,setOrdenPrelacion]=useState();
+
     const [cobranza,setCobranza]=useState();
 
     const [idVouch,setVouch]=useState(0);
@@ -101,10 +103,23 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
             value:data.gastos_cobranza
         });
 
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/prelacion?cartera=${cartera}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                console.log(data)
+                setOrdenPrelacion(data);
+            });
+
     },[]);  
 
     if(!pay) return <></>
     if(!cobranza) return <></>
+    if(!orden_prelacion) return <></>
 
     return(
         <div className="CardPay">
@@ -333,7 +348,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                                 valor_recibido:Number(e.target.value)
                                             });
 
-                                            usePrelacion(e.target.value,data,setPrelacion,updateDetalle);
+                                            usePrelacion(e.target.value,data,setPrelacion,updateDetalle,orden_prelacion);
                                             
                                         }else{
                                             if(pay.forma_pago==='efectivo'){

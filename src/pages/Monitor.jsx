@@ -7,15 +7,38 @@ import { GestionContext } from "../contexts/GestionContext.jsx";
 export default function Monitor(){
 
     const [agents,setAgents]=useState();
+    const [campains,setCampains]=useState();
+    const [campain,setCampain]=useState("");
+
     const data=useContext(GestionContext);
 
     useEffect(()=>{
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                let camps=[];
+
+                data.data.map(campa=>{
+                    if(campa.state==='ACTIVA'){
+                        camps.push(campa);
+                    }
+                });
+
+                setCampains(camps);
+            });
 
         setAgents(data.agents);
         
     },[data.agents]);
 
     if(!agents) return <></>
+    if(!campains) return <></>
 
     return (
         <div className="pageConsulta">
@@ -48,12 +71,23 @@ export default function Monitor(){
                     <label>Usuario</label>
                     <label>Estado</label>
                     <label>Tiempo</label>
-                    <label>Campaña</label>
-                    <label>Nro. créditos</label>
+                    <label>
+                        Campaña
+                        <select>
+                            <option value={""}>-- Todas --</option>
+                            {
+                                campains.map(campain=>(
+                                    <option value={campain.name}>{campain.name}</option>
+                                ))
+                            }
+                        </select>
+                    </label>
+                    <label>Nro. créditos asignados</label>
                     <label>Nro. créditos gestionados</label>
+                    <label>Nro. créditos gestion efec.</label>
+                    <label>Nro. créditos pendientes</label>
+                    <label>Nro. créditos en proceso</label>
                     <label>Nro. llamadas</label>
-                    <label>Nro. llamadas efec.</label>
-                    <label>Nro. llamadas no efec.</label>
                 </div>
 
                 {
@@ -71,9 +105,10 @@ export default function Monitor(){
                                     data={{
                                         nro_credits:campain.total_credits,
                                         nro_gestions:campain.total_credits_ges,
+                                        nro_gestions_efec:campain.total_credits_ges_efec,
+                                        nro_pendientes:campain.nro_pendientes,
+                                        nro_proceso:campain.nro_proceso,
                                         nro_calls:campain.nro_llamadas,
-                                        nro_efec:campain.nro_llamadas_efec,
-                                        nro_no_efec:campain.nro_llamadas_no_efec
                                     }}
                                 />
                             ))
@@ -88,9 +123,10 @@ export default function Monitor(){
                                 data={{
                                     nro_credits:"-",
                                     nro_gestions:"-",
+                                    nro_gestions_efec:"-",
+                                    nro_pendientes:"-",
+                                    nro_proceso:"-",
                                     nro_calls:"-",
-                                    nro_efec:"-",
-                                    nro_no_efec:"-"
                                 }}
                             />
                     ))

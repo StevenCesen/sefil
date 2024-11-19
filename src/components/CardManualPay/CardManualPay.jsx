@@ -136,6 +136,9 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                         onClick={(e)=>{
                             e.target.textContent="Cargando...";
                             
+                            console.log(pays.to)
+                            console.log(pays.last_page)
+
                             if(pays.to<pays.last_page){
                                 //Actualizo el crédito
 
@@ -188,6 +191,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     seguro_actual:pagos.seguro_actual,
                                     judicial_actual:pagos.judicial_actual
                                 });
+                                
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/edit`,{
                                     method:'POST',
@@ -201,6 +205,10 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                         if(data.state===200){
                                             //Actualizamos el pago
                                             e.target.textContent="Terminado";
+                                            setUpdate({
+                                                total:0
+                                            });
+                                            callback();
                                         }
                                     })
                             }

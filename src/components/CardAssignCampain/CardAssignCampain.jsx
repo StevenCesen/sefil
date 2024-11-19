@@ -8,6 +8,7 @@ import CardItemCharge from "../CardItemCharge/CardItemCharge";
 import useVerifyUnique from "../../hooks/useVerifyUnique";
 import addNotification from "react-push-notification";
 import useSearchCreditInDistribution from "../../hooks/useSearchCreditInDistribution";
+import CardItemErrorCharge from "../CardItemErrorCharge/CardItemErrorCharge";
 
 const agencias=[
     "-- Todas --",
@@ -52,6 +53,7 @@ export default function CardAssignCampain({data,updateCredits}){
     const [coincidence,setCoincidence]=useState();
     const [view_agents,setViewAgents]=useState();
     const [prev_agencies,setPrevAgencies]=useState();
+    const [errors,setErrors]=useState();
 
     const update=(data)=>{
         setCharge(data);
@@ -124,6 +126,7 @@ export default function CardAssignCampain({data,updateCredits}){
         setViewAgents(false);
         setPrevAgencies([]);
         setDtsn('');
+        setErrors([]);
 
         setAgents({
             id:'',
@@ -728,6 +731,33 @@ export default function CardAssignCampain({data,updateCredits}){
 
             </div>
 
+            {
+                (errors.length>0)
+                ?
+                    <div className="CardAssignCampain__errors">
+                        <h4>Créditos no asignados ({errors.length})</h4>
+                        <p>Estos créditos pertenecen a otros agentes</p>
+                        <div className="CardAssignCampain__headCharge">
+                            <label></label>
+                            <label>Nombre</label>
+                            <label>Agente</label>
+                            <label>Crédito</label>
+                            <label>Monto</label>
+                            <label>Cuotas pendientes</label>
+                            <label>Días mora</label>
+                            <label>Estado</label>
+                        </div>
+                        {
+                            errors.map((credit,index)=>(
+                                <CardItemErrorCharge
+                                    item={credit}
+                                />
+                            ))
+                        }
+                    </div>
+                :   <></>
+            }
+
             <div className="CardAssignCampain__footer">
                 {
                     (transfer)
@@ -739,6 +769,8 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                 const distribution=distributions;
                                 let carga=charge;
+
+                                setErrors([]);
 
                                 // Copio lo que tiene el origen
                                 distribution.map((dis)=>{
@@ -917,6 +949,8 @@ export default function CardAssignCampain({data,updateCredits}){
                                             }
                                         });
 
+                                        console.log(other_agent);
+
                                         if(self.length>0){
                                             if(other_agent.length>0){
                                                 addNotification({
@@ -989,11 +1023,17 @@ export default function CardAssignCampain({data,updateCredits}){
                                     // Créditos que ya se encuentran asignados
                                     const self=[];
 
-                                    distribution.map((dis)=>{
+                                    distribution.map((dis,n)=>{
+                                        dis.distribution.map(cred=>{
+                                            cred.agent_id=dis.agent_id;
+                                        });
+
                                         if(Number(dis.agent_id)===Number(agent.id)){
                                             results.map((result)=>{
-                                                const [state,message]=useVerifyUnique({id_credit:result.id,agent_id:Number(agent.id),data_self:dis.distribution,mode:1});
+                                                const [state,message,agent_id]=useVerifyUnique({id_credit:result.id,agent_id:Number(agent.id),data_self:dis.distribution,mode:1});
                                                 
+                                                result.agent_id=agent_id;
+
                                                 if(state){
                                                     no_self.push(result);
                                                 }else{
@@ -1011,21 +1051,41 @@ export default function CardAssignCampain({data,updateCredits}){
                                     const unique=[];
                                     const other_datas=[];
 
-                                    distribution.map((dis)=>{
+                                    distribution.map((dis,n)=>{
+                                        dis.distribution.map(cred=>{
+                                            cred.agent_id=dis.agent_id;
+                                        })
+
                                         if(Number(dis.agent_id)!==Number(agent.id)){
                                             other_datas.push(dis.distribution);
                                         }
                                     });
 
                                     no_self.map(result=>{
-                                        const [state,message]=useVerifyUnique({id_credit:result.id,agent_id:Number(agent.id),data_self:other_datas,mode:2});
-                                                
+                                        const [state,message,agent_id]=useVerifyUnique({id_credit:result.id,agent_id:Number(agent.id),data_self:other_datas,mode:2});
+                                        
+                                        result.agent_id=agent_id;
+
                                         if(state){
                                             unique.push(result);
                                         }else{
                                             other_agent.push(result);
                                         }
                                     });
+
+                                    const names_agents=JSON.parse(data.agents);
+                                    let erros=[];
+                                    
+                                    other_agent.map((credito)=>{
+                                        names_agents.map((agt=>{
+                                            if(credito.agent_id===agt.id){
+                                                credito.agent_id=agt.name;
+                                                erros.push(credito);
+                                            }
+                                        }))
+                                    });
+
+                                    setErrors(erros);
 
                                     if(self.length>0){
                                         if(other_agent.length>0){

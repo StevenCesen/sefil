@@ -274,17 +274,19 @@ export default function Home(){
                     <div>
                         <h3>Monitoreo de llamadas</h3>
                         <div className="pageConsulta__monitor">
-                            <div className="pageConsulta__monitorHead">
-                                <label>Usuario</label>
-                                <label>Estado</label>
-                                <label>Tiempo</label>
-                                <label>Campaña</label>
-                                <label>Nro. créditos</label>
-                                <label>Nro. créditos gestionados</label>
-                                <label>Nro. llamadas</label>
-                                <label>Nro. llamadas efec.</label>
-                                <label>Nro. llamadas no efec.</label>
-                            </div>
+                        <div className="pageConsulta__monitorHead">
+                            <label>Usuario</label>
+                            <label>Estado</label>
+                            <label>Tiempo</label>
+                            <label>Campaña</label>
+                            <label>Nro. créditos asignados</label>
+                            <label>Nro. créditos gestionados</label>
+                            <label>Nro. créditos gestion efec.</label>
+                            <label>Nro. créditos pendientes</label>
+                            <label>Nro. créditos en proceso</label>
+                            <label>Nro. llamadas</label>
+                        </div>
+
                             {
                                 agents.map((agent,index)=>(
                                     (agent.gestion.length>0)
@@ -300,9 +302,10 @@ export default function Home(){
                                                 data={{
                                                     nro_credits:campain.total_credits,
                                                     nro_gestions:campain.total_credits_ges,
+                                                    nro_gestions_efec:campain.total_credits_ges_efec,
+                                                    nro_pendientes:campain.nro_pendientes,
+                                                    nro_proceso:campain.nro_proceso,
                                                     nro_calls:campain.nro_llamadas,
-                                                    nro_efec:campain.nro_llamadas_efec,
-                                                    nro_no_efec:campain.nro_llamadas_no_efec
                                                 }}
                                             />
                                         ))

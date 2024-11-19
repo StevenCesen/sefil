@@ -13,6 +13,8 @@ export default function Consulta(){
     const [canton_input,setInput]=useState('');
     const [canton,setCanton]=useState('all');
     const [parroquia,setParroquia]=useState('all');
+    const [agents,setAgents]=useState();
+    const [agent,setAgent]=useState();
 
     const [credits,setCredits]=useState({
         current_page:1,
@@ -58,6 +60,7 @@ export default function Consulta(){
         setInput('');
         setCanton('all');
         setParroquia('all');
+        setAgent("all");
 
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
             headers: {
@@ -89,14 +92,26 @@ export default function Consulta(){
             })
                 .then((response) => response.json())  
                 .then((data) => {
-                    console.log(data)
                     setCredits(data);
+                });
+
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    setAgents(data);
                 });
         }
 
     },[]);
 
-    if(!business) return <></>    
+    if(!business) return <></>  
+    if(!agents) return <></>  
+    if(!agent) return <></>
 
     return (
         <div className="pageConsulta">
@@ -204,6 +219,17 @@ export default function Consulta(){
                                             .then((data) => {
                                                 setCredits(data);
                                             });
+
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then((data) => {
+                                                setAgents(data);
+                                            });
                                     }
                                 }}
                             >
@@ -238,7 +264,47 @@ export default function Consulta(){
                             />
                     
                         </label>
-                        <p>Agente</p>
+
+                        <label>
+                            Agente
+                            <select
+                                value={agent}
+                                onChange={(e)=>{
+
+                                    setAgent(e.target.value);
+
+                                    if(e.target.value!=='all'){
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/distribution?cartera=${localStorage.getItem('cartera')}&id=${e.target.value}`,{
+                                            headers: {
+                                                Accept: 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                            }
+                                        })
+                                            .then((response) => response.json())  
+                                            .then((data) => {
+                                                const creds=JSON.parse(data[0].distributions);
+
+                                                creds.map((items)=>{
+                                                    if(items.agent_id===Number(e.target.value)){
+                                                        setCredits({
+                                                            ...credits,
+                                                            data:items.distribution
+                                                        });
+                                                    }
+                                                });
+                                            });
+                                    }
+
+                                }}
+                            >
+                                <option value={"all"}>-- Seleccionar agente --</option>
+                                {
+                                    agents.map((agent)=>(
+                                        <option value={agent.id}>{agent.name}</option>
+                                    ))
+                                }
+                            </select>
+                        </label>
 
                         <label>
                             Estado
@@ -284,7 +350,7 @@ export default function Consulta(){
                         credits.data.map((credit,index)=>(
                             <div key={index}>
                                 <NavLink to={`/dashboard/recaudacion/view/${credit.cartera}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
-                                <p>{credit.credito}</p>
+                                <p>{credit.cartera}-{credit.credito}</p>
                                 <p>{credit.tipo}</p>
                                 <p>{credit.name}</p>
                                 <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
@@ -301,22 +367,27 @@ export default function Consulta(){
 
                 </div>
 
-                <div className="DetailCredit__access">
-                    <p>Registros del {credits.from}-{credits.to} de {credits.total}</p>
-                    <div>
-                    {
-                        credits.links.map((button,index)=>(
-                            (index===0)?
-                                <NavLink key={index} onClick={()=>{updateData(button.url)}}>Anterior</NavLink>
-                            : 
-                                (index===(credits.links.length-1)) ?
-                                    <NavLink key={index} onClick={()=>{updateData(button.url)}}>Siguiente</NavLink>
-                                :
-                                    <></>
-                        ))
-                    }
-                    </div>
-                </div>
+                {
+                    (agent==="all")
+                    ?
+                        <div className="DetailCredit__access">
+                            <p>Registros del {credits.from}-{credits.to} de {credits.total}</p>
+                            <div>
+                            {
+                                credits.links.map((button,index)=>(
+                                    (index===0)?
+                                        <NavLink key={index} onClick={()=>{updateData(button.url)}}>Anterior</NavLink>
+                                    : 
+                                        (index===(credits.links.length-1)) ?
+                                            <NavLink key={index} onClick={()=>{updateData(button.url)}}>Siguiente</NavLink>
+                                        :
+                                            <></>
+                                ))
+                            }
+                            </div>
+                        </div>
+                    :   <></>
+                }
 
             </div>
         </div>

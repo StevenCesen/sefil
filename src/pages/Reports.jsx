@@ -699,6 +699,27 @@ export default function Reports(){
                                                     value={fecha_inicio}
                                                     onChange={(e)=>{
                                                         setFechaInicio(e.target.value);
+                                            
+                                                        const year_inicio=e.target.value.split('-')[0];
+                                                        const mes_inicio=e.target.value.split('-')[1];
+
+                                                        const year_final=fecha_final.split('-')[0];
+                                                        const mes_final=fecha_final.split('-')[1];
+
+                                                        if(mes_final){
+                                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalMonths?year=${year_inicio}&mes_inicio=${mes_inicio}&mes_final=${mes_final}`,{
+                                                                headers: {
+                                                                    Accept: 'application/json',
+                                                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                                }
+                                                            })
+                                                                .then((response) => response.json())  
+                                                                .then((data) => {
+                                                                    console.log(data);
+                                                                    setTotalMonths(data);
+                                                                });
+                                                        }
+                                                        
                                                     }}
                                                     type="date"/>
                                             </label>
@@ -709,6 +730,25 @@ export default function Reports(){
                                                     value={fecha_final}
                                                     onChange={(e)=>{
                                                         setFechaFinal(e.target.value);
+                                                        const year_final=e.target.value.split('-')[0];
+                                                        const mes_final=e.target.value.split('-')[1];
+
+                                                        const year_inicio=fecha_inicio.split('-')[0];
+                                                        const mes_inicio=fecha_inicio.split('-')[1];
+
+                                                        if(mes_inicio){
+                                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalMonths?year=${year_inicio}&mes_inicio=${mes_inicio}&mes_final=${mes_final}`,{
+                                                                headers: {
+                                                                    Accept: 'application/json',
+                                                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                                }
+                                                            })
+                                                                .then((response) => response.json())  
+                                                                .then((data) => {
+                                                                    console.log(data);
+                                                                    setTotalMonths(data);
+                                                                });
+                                                        }
                                                     }}
                                                     type="date"/>
                                             </label>
@@ -720,11 +760,11 @@ export default function Reports(){
                                         width={"100%"}
                                         height={"30px"}
                                         data={{
-                                            labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                                            labels:total_months.labels,
                                             datasets:[
                                                 {
                                                     label:'Total',
-                                                    data:total_months[0],
+                                                    data:total_months.totals[0],
                                                     backgroundColor: 'rgba(255, 99, 132, 0.5)'
                                                 }
                                             ]
@@ -749,11 +789,11 @@ export default function Reports(){
                                         width={"100%"}
                                         height={"30px"}
                                         data={{
-                                            labels:['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                                            labels:total_months.labels,
                                             datasets:[
                                                 {
                                                     label:'Total',
-                                                    data:total_months[1],
+                                                    data:total_months.totals[1],
                                                     backgroundColor: 'rgba(53, 162, 235, 0.5)'
                                                 }
                                             ]
@@ -1400,6 +1440,34 @@ export default function Reports(){
                                         
                                         onClick={(e)=>{
                                             location.href=`${import.meta.env.VITE_URL_BASE}/public/api/evolution?cartera=${empresa}&user=${localStorage.getItem('name')}&type=${type_search}&number=${number}`;
+                                        }}
+                                    >Generar EXCEL</NavLink>
+                                </div>
+
+                                <h4 className="Reports__title">Reporte de asignación de campaña</h4>
+
+                                <div className="Reports__filters Reports__filters--columns-5">
+                                    <label className="Reports__filter">
+                                        Empresa
+                                        <select 
+                                            value={empresa}
+                                            onChange={(e)=>{
+                                                setEmpresa(e.target.value);
+                                            }}
+                                        >
+                                            {
+                                                business.map((bus,index)=>(
+                                                    <option key={index} value={bus.name.toUpperCase()}>{bus.name.toUpperCase()}</option>
+                                                ))
+                                            }
+                                        </select>
+                                    </label>
+                                    
+                                    <NavLink
+                                        className="Reports__button"
+                                        
+                                        onClick={(e)=>{
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/reporteAsignacion?cartera=${empresa}`;
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>

@@ -403,11 +403,11 @@
     width: 100%;
     display: grid;
     background-color: var(--bg-alert-error);
-    height: 50px;
+    height: 70px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     padding: 5px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
     gap: 10;
@@ -419,6 +419,15 @@
     font-size: 14px;
     color: var(--color-3);
 }
+
+.pageConsulta__monitorHead>label>select{
+    margin-top: 5px;
+    height: 35px;
+    border: none;
+    border-radius: 2px;
+    background-color:#FEC888;
+}
+
 /* =========================== DETAIL CREDIT ========================== */
 .DetailCredit{
     width: 100%;
@@ -1061,7 +1070,10 @@
 }
 
 .pageUsuarios__access{
-    width: 100%;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
     padding: 0 0 !important;
     background-color: var(--bg-1) !important;
     margin-bottom: 10px;
@@ -1075,6 +1087,15 @@
     background-color: var(--bg-alert-successful);
     color: var(--color-3);
     cursor: pointer;
+}
+
+.pageUsuarios__saveChanges{
+    width: 100px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+    background-color: var(--color-error) !important;
+    color: var(--color-3);
 }
 
 .pageUsuarios>div:nth-child(2n+1){

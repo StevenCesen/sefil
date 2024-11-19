@@ -2,9 +2,15 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import "./CardGestion.css"
 import CardCall from "../CardCall/CardCall";
+import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import addNotification from "react-push-notification";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useClickToCopy from "../../hooks/useClickToCopy";
+import MyMapComponent from "../Map/Map";
+
+const render = (status) => {
+    return <p>{status}</p>;
+};
 
 export default function CardGestion({currently,next,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays,number}){
     
@@ -16,6 +22,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [data_gestion,setDataGestion]=useState();
     const [historial,setHistorial]=useState();
     const [pagos,setPagos]=useState();
+    const [direcciones,setDirecciones]=useState();
     const [phone_actual,setPhone]=useState();
     const [data_phones,setPhones]=useState();
     const [states,setStates]=useState();
@@ -146,6 +153,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setIncall(false);
         setCredit(currently);
         setPagos([]);
+        setDirecciones([]);
         setTray('Historial');
         setMessage('No gestionado aún');
         setInfo({
@@ -743,7 +751,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 closeButton: 'Cerrar',
                                                 duration:3000,
                                             });
-                                            //setNext(index);
 
                                             updateTrays(data);
 
@@ -793,12 +800,19 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
-                                        console.log(data)
                                         setPagos(data);
                                     });
                                 setTray('Pagos');
                             }}
                         >Pagos</button>
+
+                        <button
+                            onClick={(e)=>{
+                                setDirecciones(currently.direcciones);
+                                setTray('Direcciones');
+                            }}
+                        >Direcciones</button>
+
                     </div>
                     <div className="Ggestion__historialHead">
                         {
@@ -813,12 +827,22 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     <label>Agente</label>
                                 </>
                             :
-                                <>
-                                    <label>Fecha pago</label>
-                                    <label>Tipo de pago</label>
-                                    <label>Monto</label>
-                                    <label>Estado</label>
-                                </>
+                                (tray==='Pagos')
+                                    ?
+                                        <>
+                                            <label>Fecha pago</label>
+                                            <label>Tipo de pago</label>
+                                            <label>Monto</label>
+                                            <label>Estado</label>
+                                        </>
+                                    :
+                                        <>
+                                            <label>Nombre</label>
+                                            <label>Ciudad</label>
+                                            <label>Parroquia</label>
+                                            <label>Dirección</label>
+                                            <label>Ubicación</label>
+                                        </>
                         }
                     </div>
 
@@ -836,20 +860,44 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 </div>
                             ))
                         :   
-                            (tray==='Pagos' & pagos.length>0)
-                            ?
-                                pagos.map((item,index)=>(
+                            (tray==='Pagos')
+                            ?   
+                                (pagos.length>0)
+                                ?
+                                    pagos.map((item,index)=>(
+                                        <div key={index} className="Ggestion__historialItem">
+                                            <label>{item.fecha}</label>
+                                            <label>{item.forma_pago}</label>
+                                            <label>{useFormatterNumber({value:item.valor_recibido,currency:'USD'})}</label>
+                                            <label>{item.status.toUpperCase()}</label>
+                                        </div>
+                                    ))
+                                :   
+                                    <div className="Ggestion__historialItem">
+                                        <label>Sin pagos</label>
+                                    </div>
+                            :
+                                direcciones.map((item,index)=>(
                                     <div key={index} className="Ggestion__historialItem">
-                                        <label>{item.fecha}</label>
-                                        <label>{item.forma_pago}</label>
-                                        <label>{useFormatterNumber({value:item.valor_recibido,currency:'USD'})}</label>
-                                        <label>{item.status.toUpperCase()}</label>
+                                        <label>{item.nombre}</label>
+                                        <label>{item.ciudad}</label>
+                                        <label>{item.parroquia}</label>
+                                        <label>{item.direccion}</label>
+
+                                        {
+                                            (item.ubicacion.lat!=="")
+                                            ?
+                                                <Wrapper apiKey="AIzaSyDqk_2FCNezPuFgd8Zaeu2s1idsDpdC1Qc" render={render}>
+                                                    <MyMapComponent
+                                                        center={{lat:parseFloat(item.ubicacion.lat),lng:parseFloat(item.ubicacion.lng)}}
+                                                        zoom={15}
+                                                    />
+                                                </Wrapper>
+                                            :   <p style={{fontWeight:"100",textAlign:"center"}}>No hay ubicación</p>
+                                        }
+                                        
                                     </div>
                                 ))
-                            :   
-                                <div className="Ggestion__historialItem">
-                                    <label>Sin pagos</label>
-                                </div>
                     }
                     
                 </div>

@@ -74,6 +74,7 @@ export default function Setting(){
                                         versions={[]}
                                         state={cartera.status}
                                         view={setView}
+                                        data_cartera={cartera}
                                         setCurrent={setCurrent}
                                     />
                                 ))

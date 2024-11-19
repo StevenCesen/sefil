@@ -246,8 +246,6 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                     condonation.prevDates=JSON.stringify(prev_data);
                                     condonation.postDates=data.postDates;
 
-                                    console.log(condonation);
-
                                     setData(condonation);
                                     setPDF(true);
                                     
@@ -345,69 +343,77 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
 
                         {
                             restruct.cuotas.map((cuota,index)=>(
-                                <div key={index} style={{marginBottom:"5px"}}>
-                                    <label style={{marginRight:"10px"}}>{index+1}</label>
-                                    <input 
-                                        type="number"
-                                        className={`desgloce_inputs-${credito}`}
-                                        style={{width:"100px"}}
-                                        step={0.01}
-                                        value={cuota.valor}
-                                        onChange={(e)=>{
-                                            
-                                            updateCuota({
-                                                cuota:cuota.cuota,
-                                                valor:e.target.value
-                                            });
-
-                                            let inputs=document.getElementsByClassName(`desgloce_inputs-${credito}`);
-                                            inputs=[].slice.call(inputs);
-                                            
-                                            let val_prev=0,diferencia=0;
-
-                                            inputs.map((input)=>{
-                                                diferencia=total-val_prev
-                                                val_prev+=Number(input.value);
-                                            });
-                                            
-                                            if(val_prev>total){
-
-                                                if(diferencia>0){
-                                                    updateCuota({
-                                                        cuota:cuota.cuota,
-                                                        valor:diferencia.toFixed(2)
-                                                    });
-                                                    setTotal(total);
-                                                }else{
-                                                    updateCuota({
-                                                        cuota:cuota.cuota,
-                                                        valor:0
-                                                    });
-                                                }
-
-                                                addNotification({
-                                                    title: 'ERROR SUMATORIA',
-                                                    subtitle: 'Se sobrepaso el valor total del desgloce',
-                                                    message: 'Por favor, revise los valores',
-                                                    native: false,
-                                                    backgroundTop: '#FF9619',
-                                                    backgroundBottom: '#fdb864',
-                                                    colorTop: 'white',
-                                                    colorBottom: 'white',
-                                                    closeButton: 'Cerrar',
-                                                    duration: 3500
+                                (index===0)
+                                ?
+                                    <div key={index} style={{marginBottom:"5px"}}>
+                                        <label style={{marginRight:"10px"}}>{index+1}</label>
+                                        <span style={{marginRight:"10px",fontWeight:'500',color:"var(--color-5)"}}>{cuota.valor}</span>
+                                        <span style={{marginRight:"10px",fontWeight:'500',color:"var(--color-5)",marginLeft:"50px"}}>{cuota.fecha_pago}</span>
+                                    </div>
+                                :
+                                    <div key={index} style={{marginBottom:"5px"}}>
+                                        <label style={{marginRight:"10px"}}>{index+1}</label>
+                                        <input 
+                                            type="number"
+                                            className={`desgloce_inputs-${credito}`}
+                                            style={{width:"100px"}}
+                                            step={0.01}
+                                            value={cuota.valor}
+                                            onChange={(e)=>{
+                                                
+                                                updateCuota({
+                                                    cuota:cuota.cuota,
+                                                    valor:e.target.value
                                                 });
-                                            }else{
-                                                setTotal(val_prev);
-                                            }
-                                        }}
-                                    />
-                                    <input 
-                                        type="date"
-                                        className={`desgloce_inputsDate-${credito}`}
-                                        value={cuota.fecha_pago}
-                                    />
-                                </div>
+
+                                                let inputs=document.getElementsByClassName(`desgloce_inputs-${credito}`);
+                                                inputs=[].slice.call(inputs);
+                                                
+                                                let val_prev=0,diferencia=0;
+
+                                                inputs.map((input)=>{
+                                                    diferencia=total-val_prev
+                                                    val_prev+=Number(input.value);
+                                                });
+                                                
+                                                if(val_prev>total){
+
+                                                    if(diferencia>0){
+                                                        updateCuota({
+                                                            cuota:cuota.cuota,
+                                                            valor:diferencia.toFixed(2)
+                                                        });
+                                                        setTotal(total);
+                                                    }else{
+                                                        updateCuota({
+                                                            cuota:cuota.cuota,
+                                                            valor:0
+                                                        });
+                                                    }
+
+                                                    addNotification({
+                                                        title: 'ERROR SUMATORIA',
+                                                        subtitle: 'Se sobrepaso el valor total del desgloce',
+                                                        message: 'Por favor, revise los valores',
+                                                        native: false,
+                                                        backgroundTop: '#FF9619',
+                                                        backgroundBottom: '#fdb864',
+                                                        colorTop: 'white',
+                                                        colorBottom: 'white',
+                                                        closeButton: 'Cerrar',
+                                                        duration: 3500
+                                                    });
+                                                }else{
+                                                    setTotal(val_prev);
+                                                }
+                                            }}
+                                        />
+                                        <input 
+                                            type="date"
+                                            className={`desgloce_inputsDate-${credito}`}
+                                            value={cuota.fecha_pago}
+                                        />
+                                    </div>
                            ))
                         }
 

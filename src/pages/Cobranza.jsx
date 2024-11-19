@@ -382,7 +382,7 @@ export default function Cobranza(){
                                 credits.data.map((credit,index)=>(
                                     <div key={index}>
                                         <NavLink to={`/dashboard/recaudacion/view/${credit.cartera}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
-                                        <p>{credit.credito}</p>
+                                        <p>{credit.cartera}-{credit.credito}</p>
                                         <p>{credit.tipo}</p>
                                         <p>{credit.name}</p>
                                         <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>

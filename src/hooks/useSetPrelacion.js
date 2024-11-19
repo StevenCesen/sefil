@@ -33,6 +33,7 @@ export default function usePrelacion(value,data_original,setPrelacion,setData){
                                 //AQUÍ FINALIZA EL PROGRAMA
                             }else{
                                 prelacion.saldo_capital=Number(data_original.saldo_capital)-Number(value);
+    
                                 prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
                             }
                     
@@ -60,6 +61,7 @@ export default function usePrelacion(value,data_original,setPrelacion,setData){
                     prelacion.otros_valores=data_original.otros_valores;
 
                     prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
+                    
                 }
 
             }else{

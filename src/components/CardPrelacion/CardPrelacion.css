@@ -27,6 +27,94 @@
     grid-template-columns: 1fr;
 }
 
+.CardSelectsEdit{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.CardSelectsFrom{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.CardSelectsFrom>label{
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content:center;
+    border-radius: 2px;
+    align-items:center;
+    color: var(--color-3);
+    font-weight: bold;
+    gap: 10px;
+    height: 30px;
+    background-color: var(--bg-alert-error);
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.CardSelectsFrom__labelOff{
+    background-color: rgb(186, 186, 186) !important;
+}
+
+.CardSelectsTo{
+    width: 100%;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 2px dotted rgb(195, 195, 195);
+    border-radius: 2px;
+}
+
+
+.CardSelectsTo>label{
+    font-size: 13px;
+    color: rgb(181, 181, 181);
+}
+
+.CardSelectsTo__label{
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content:center;
+    border-radius: 2px;
+    align-items:center;
+    color: var(--color-3) !important;
+    font-weight: bold;
+    gap: 10px;
+    height: 30px;
+    background-color: var(--bg-alert-error);
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.CardValues__head{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.CardValues__head>p{
+    font-weight: 100;
+    margin-bottom: 10px;
+}
+
+.CardValues__head>button{
+    height: 30px;
+    border: 1px solid rgb(209, 209, 209);
+    border-radius: 2px;
+}
+
 .CardSelects{
     width: 100%;
     display: flex;

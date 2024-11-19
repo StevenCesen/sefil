@@ -341,3 +341,21 @@
 .CardAssignCampain__headCharge>input,.CardAssignCampain__itemCharge>input{
     margin: 0 auto;
 }
+
+.CardAssignCampain__errors{
+    width: 100%;
+    height: 200px;
+    border-radius: 2px;
+    padding: 0 10px;
+    background-color: var(--bg-1);
+    overflow-y: auto;
+    margin-top: 20px;
+}
+
+.CardAssignCampain__errors>h4,.CardAssignCampain__errors>p{
+    margin-bottom: 10px;
+}
+
+.CardAssignCampain__errors>p{
+    font-weight: 100;
+}

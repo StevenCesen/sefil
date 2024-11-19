@@ -103,6 +103,7 @@ export default function Dashboard({rol}){
                 setActions(user.actions);
             }
         });
+
     },[]);
 
     return (

@@ -48,6 +48,40 @@
     margin: 10px 10px;
 }
 
+.CardConfirm__cuentas{
+    width: 100%;
+    padding: 0 10px !important;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: inherit !important;
+    margin-bottom: 10px;
+}
+
+.CardConfirm__cuentas>label{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 5px;
+}
+
+.CardConfirm__cuentas>label>input{
+    width: 90%;
+    margin-top: 5px;
+}
+
+.CardConfirm__cuentas>label>select{
+    margin-top: 5px;
+    width: 90%;
+}
+
+.CardConfirm>label>select{
+    width: 90%;
+}
+
 .CardConfirm>label>input[type=text]{
     width: 90%;
 }

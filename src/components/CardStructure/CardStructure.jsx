@@ -5,22 +5,27 @@ import useStruct from "../../hooks/useStruct";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import addNotification from "react-push-notification";
 
-export default function CardStructure({original_dates,total,id,set,cartera}){
+export default function CardStructure({original_dates,total,id,set,cartera,cobranza}){
 
     const [tipo_desgloce,setDesgloce]=useState();
     const [nro_cuotas,setNumber]=useState();
     const [date,setDate]=useState();
     const [totalAmount,setTotalAmount]=useState();
     const [totalSum,setTotalSum]=useState();
+    const [monto_cuota,setMonto]=useState();
+    const [value_cuotas,setValueCuotas]=useState();
 
     useEffect(()=>{
         setDesgloce('automatico');
         setNumber(1);
         setTotalAmount(total);
         setTotalSum(0);
+        setMonto(0);
+        setValueCuotas([]);
     },[]);
 
     if(!totalAmount) return <></>
+    if(!value_cuotas) return <></>
 
     return (
         <div className="CardPay">
@@ -48,6 +53,8 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                     </select>
                 </div>
 
+                <h4>Calcular por número de cuotas</h4>
+
                 <div className="CardCondonacion__select">
                     <label>Número de cuotas:</label>
                     <input type="number" value={nro_cuotas} onChange={(e)=>{ 
@@ -59,6 +66,37 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
 
                     }} min={1} step={1}/>
                 </div>
+                
+                <h4>Calcular número de cuotas por monto</h4>
+
+                <div className="CardCondonacion__selectThree">
+                    <label>Monto:</label>
+                    <input type="number" value={monto_cuota} onChange={(e)=>{ 
+                        if(e.target.value>=0){
+                            setMonto(e.target.value);
+                        }else{
+                            setMonto(0);
+                        }
+                    }} min={1} step={1}/>
+                    <button
+                        onClick={(e)=>{
+                            const nro_by_monto=totalAmount/monto_cuota;
+
+                            const cuotas_prev=[];
+
+                            useFadeArray(Math.round(nro_by_monto)).map((cuota,index)=>{
+                                if(index===(Math.round(nro_by_monto)-1)){
+                                    const last_quote=totalAmount-monto_cuota*(index);
+                                    cuotas_prev.push(last_quote);
+                                }else{
+                                    cuotas_prev.push(monto_cuota);
+                                }
+                            });
+                            setValueCuotas(cuotas_prev);
+                            setNumber(Math.round(nro_by_monto));
+                        }}
+                    >Calcular</button>
+                </div>
 
                 {/* <div className="CardCondonacion__select">
                     <label>Fecha de pago:</label>
@@ -68,22 +106,45 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                 {
                     (tipo_desgloce==='automatico') ?
                         <div className="CardCondonacion__quotes">
+
+                            <div>
+                                <label>1</label>
+                                <label>{useFormatterNumber({value:cobranza,currency:'USD'})}</label>
+                                <label>Gastos de cobranza</label>
+                            </div>
+
                             {
                                useFadeArray(nro_cuotas).map((cuota,index)=>(
-                                    <div key={index}>
-                                        <label>{index+1}</label>
-                                        <input className="desgloce_inputs" type="number" disabled value={(totalAmount/nro_cuotas).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}/>
-                                        <input type="date"/>
-                                    </div>
+
+                                    (monto_cuota>0 & value_cuotas.length>0
+                                    )
+                                    ?
+                                        <div key={index}>
+                                            <label>{index+2}</label>
+                                            <input className="desgloce_inputs" type="number" disabled value={ Number((value_cuotas[index])).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}/>
+                                            <input type="date"/>
+                                        </div>
+                                    : 
+                                        <div key={index}>
+                                            <label>{index+2}</label>
+                                            <input className="desgloce_inputs" type="number" disabled value={(totalAmount/nro_cuotas).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}/>
+                                            <input type="date"/>
+                                        </div>
                                )) 
                             }
                         </div>
                     : 
                         <div className="CardCondonacion__quotes">
+                            <div>
+                                <label>1</label>
+                                <label>{useFormatterNumber({value:cobranza,currency:'USD'})}</label>
+                                <label>Gastos de cobranza</label>
+                            </div>
+
                             {
                                useFadeArray(nro_cuotas).map((cuota,index)=>(
                                     <div key={index}>
-                                        <label>{index+1}</label>
+                                        <label>{index+2}</label>
                                         <input 
                                             type="number"
                                             className="desgloce_inputs"
@@ -150,11 +211,22 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                     let inputs=document.getElementsByClassName('desgloce_inputs');
                     inputs=[].slice.call(inputs);
 
-                    let valor_cuota=0;
+                    let valor_cuota=0,errors=0;
+
+                    detalle.push({
+                        cuota:1,
+                        valor:cobranza,
+                        estado:'PENDIENTE',
+                        fecha_pago:inputs[0].nextElementSibling.value
+                    });
 
                     inputs.map((input,index)=>{
                         if(index===0){
                             valor_cuota=input.value;
+                        }
+
+                        if(input.nextElementSibling.value===''){
+                            errors++;
                         }
 
                         detalle.push({
@@ -178,11 +250,24 @@ export default function CardStructure({original_dates,total,id,set,cartera}){
                         totalAmount:totalAmount
                     }
 
-                    console.log(data);
+                    
+                    if(errors>0){
+                        e.target.textContent="Guardar cambios";
 
-                    if(tipo_desgloce==='automatico' | (totalSum===total & tipo_desgloce==='manual')){
+                        addNotification({
+                            title: 'ERROR FECHAS',
+                            subtitle: 'Existen cuotas que no tienen fecha',
+                            message: 'Por favor, revise las fechas',
+                            native: false,
+                            backgroundTop: '#FF9619',
+                            backgroundBottom: '#fdb864',
+                            colorTop: 'white',
+                            colorBottom: 'white',
+                            closeButton: 'Cerrar',
+                            duration: 3500
+                        });
+                    }else if(tipo_desgloce==='automatico' | (totalSum===total & tipo_desgloce==='manual')){
                         useStruct(data,e.target,id);
-
                     }else{
                         e.target.textContent="Guardar cambios";
 

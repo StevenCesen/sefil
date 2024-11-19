@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import CardUsuarios from "../components/CardUsuarios/CardUsuarios";
+import addNotification from "react-push-notification";
 
 export default function Usuarios(){
 
     const [users,setUsers]=useState([]);
-    
     const content_users=useRef();
-    
     const [new_user,setNew]=useState(true);
+    const [new_change,setNewChange]=useState();
 
     const [data,setData]=useState({
         name:'',
@@ -29,7 +29,7 @@ export default function Usuarios(){
                 setUsers(data);
             });
         setNew(false);
-
+        setNewChange(false);
     },[]);
 
     return (
@@ -44,6 +44,86 @@ export default function Usuarios(){
                         e.target.textContent='Cancelar';
                     }
                 }}>Agregar usuario</button>
+
+                {
+                    (new_change)
+                    ?
+                        <button
+                            className="pageUsuarios__saveChanges"
+                            onClick={(e)=>{
+                                let usuarios=document.getElementsByClassName('CardUsuarios');
+                                usuarios=[].slice.call(usuarios);
+                                let count=0;
+
+                                usuarios.map(async (usuario)=>{
+                                    const id=usuario.children[0].dataset.id;
+                                    let new_permiss=[];
+
+                                    let permiss=usuario.children[4].children;
+                                    permiss=[].slice.call(permiss);
+
+                                    permiss.map(permiso=>{
+                                        if(permiso.children[0].checked){
+                                            new_permiss.push(permiso.children[0].value);
+                                        }
+                                    });
+                                    
+                                    // Actualizamos en el servidor
+                                    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/edit2/${id}`,{
+                                        method:'PUT',
+                                        body:new URLSearchParams({
+                                            permission:JSON.stringify([{
+                                                permission:new_permiss
+                                            }])
+                                        }),
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    });
+                                    const response=await request.json();
+
+                                    if(response.status!==200){
+                                        count++;
+                                    }
+                                });
+
+                                if(count===0){
+                                    addNotification({
+                                        title: 'Éxito',
+                                        subtitle: 'Permiso actualizado correctamente',
+                                        message: '',
+                                        native: false,
+                                        backgroundTop: '#009793',
+                                        backgroundBottom: '#459d9a',
+                                        colorTop: 'white',
+                                        colorBottom: 'white',
+                                        closeButton: 'Cerrar',
+                                        duration:3000,
+                                    });
+
+                                    setNewChange(false);
+
+                                }else{
+                                    addNotification({
+                                        title: 'Error',
+                                        subtitle: 'No se pudo actualizar permiso',
+                                        message: 'Inténtalo otra vez',
+                                        native: false,
+                                        backgroundTop: '#FF9619',
+                                        backgroundBottom: '#fdb864',
+                                        colorTop: 'white',
+                                        colorBottom: 'white',
+                                        closeButton: 'Cerrar',
+                                        duration:3000,
+                                    });
+                                }
+
+                            }}
+                        >Guardar cambios</button>
+                    :   <></>
+                }
+
             </div>
             
             <div className="pageUsuarios__head">
@@ -62,54 +142,57 @@ export default function Usuarios(){
                         <span><input type="text" placeholder="Escriba aquí..." value={data.name} onChange={(e)=>{setData({...data,name:e.target.value})}}/></span>
                         <span><input type="email" placeholder="name@domain.com" value={data.email} onChange={(e)=>{setData({...data,email:e.target.value})}}/></span>
                         <span>
-                            <select value={data.role} onChange={(e)=>{
-                                const permiss=[{
-                                    permission:[]
-                                }];
+                            <select 
+                                value={data.role} 
+                                onChange={(e)=>{
+                                    const permiss=[{
+                                        permission:[]
+                                    }];
 
-                                if(e.target.value==='super'){
-                                    permiss[0].permission.push('DB:import');
-                                    permiss[0].permission.push('DB:destroy');
-                                    permiss[0].permission.push('DB:update');
-                                    permiss[0].permission.push('DB:recovery');
-                                    permiss[0].permission.push('Backup:show');
-                                    permiss[0].permission.push('Backup:add');
-                                    permiss[0].permission.push('Backup:update');
+                                    if(e.target.value==='super'){
+                                        permiss[0].permission.push('DB:import');
+                                        permiss[0].permission.push('DB:destroy');
+                                        permiss[0].permission.push('DB:update');
+                                        permiss[0].permission.push('DB:recovery');
+                                        permiss[0].permission.push('Backup:show');
+                                        permiss[0].permission.push('Backup:add');
+                                        permiss[0].permission.push('Backup:update');
+                                        
+                                    }else if(e.target.value==='gestor'){
+                                        permiss[0].permission=[];
+                                        permiss[0].permission.push('Consulta:all');
+                                        permiss[0].permission.push('Gestion:all');
                                     
-                                }else if(e.target.value==='gestor'){
-                                    permiss[0].permission=[];
-                                    permiss[0].permission.push('Consulta:all');
-                                    permiss[0].permission.push('Gestion:all');
-                                
-                                }else if(e.target.value==='campo'){
-                                    permiss[0].permission=[];
-                                    permiss[0].permission.push('Consulta:all');
-                                    permiss[0].permission.push('Gestion:all');
+                                    }else if(e.target.value==='campo'){
+                                        permiss[0].permission=[];
+                                        permiss[0].permission.push('Consulta:all');
+                                        permiss[0].permission.push('Gestion:all');
 
-                                }else if(e.target.value==='administrador'){
-                                    permiss[0].permission=[];
-                                    permiss[0].permission.push('Consulta:all');
-                                    permiss[0].permission.push('Cobranza:all');
-                                    permiss[0].permission.push('Gestion:all');
-                                    permiss[0].permission.push('Comprobantes:all');
-                                    permiss[0].permission.push('Reportes:all');
-                                    permiss[0].permission.push('User:minimize');
-                                    
-                                }else if(e.target.value==='cobranza'){
-                                    permiss[0].permission=[];
-                                    permiss[0].permission.push('Consulta:all');
-                                    permiss[0].permission.push('Cobranza:all');
-                                    permiss[0].permission.push('Comprobantes:all');
+                                    }else if(e.target.value==='administrador'){
+                                        permiss[0].permission=[];
+                                        permiss[0].permission.push('Consulta:all');
+                                        permiss[0].permission.push('Cobranza:all');
+                                        permiss[0].permission.push('Gestion:all');
+                                        permiss[0].permission.push('Comprobantes:all');
+                                        permiss[0].permission.push('Reportes:all');
+                                        permiss[0].permission.push('User:minimize');
+                                        
+                                    }else if(e.target.value==='cobranza'){
+                                        permiss[0].permission=[];
+                                        permiss[0].permission.push('Consulta:all');
+                                        permiss[0].permission.push('Cobranza:all');
+                                        permiss[0].permission.push('Comprobantes:all');
 
-                                }else{
-                                    permiss[0].permission=[];
-                                    permiss[0].permission.push('Consulta:all');
-                                    permiss[0].permission.push('Comprobantes:all');
-                                }
+                                    }else{
+                                        permiss[0].permission=[];
+                                        permiss[0].permission.push('Consulta:all');
+                                        permiss[0].permission.push('Comprobantes:all');
+                                    }
 
-                                setData({...data,role:e.target.value,permission:permiss})
+                                    setData({...data,role:e.target.value,permission:permiss})
 
-                            }}>
+                                }}
+                            >
                                 {
                                     (localStorage.getItem('rol')==='super') &&
                                         <option value="super">Super usuario</option>
@@ -157,6 +240,7 @@ export default function Usuarios(){
                         email={user.email}
                         rol={user.role}
                         permission={JSON.parse(user.permission)[0].permission}
+                        setChange={setNewChange}
                     />
                 ))
             }

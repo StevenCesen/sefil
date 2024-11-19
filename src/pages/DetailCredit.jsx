@@ -165,35 +165,53 @@ export default function DetailCredit(){
                 setCredit(data);
             });
         
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gastos?credito=${param.get('id')}`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
 
-                if(data.id===false){
-                    setGastos({
-                        ...viewGastos,
-                        status:false
-                    });
-                }else{
-                    setGastos({
-                        ...viewGastos,
-                        status:true,
-                        credito:data.id.credito,
-                        id:data.id.id,
-                        valor_gasto:data.id.postDates,
-                        sync:data.id.sync,
-                        fecha:'',
-                        clave_acceso:'',
-                        valor:''
-                    });
+        // Para verificar si existe registrado un gasto de cobranza y estado pendiente
+        /*
+            true: hay un gasto en estado pendiente
+            false: no hay un gasto en estado pendiente
+            pay: hay gastos ya cobrados
+        */
+
+        try {
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gastos?credito=${param.get('id')}&cartera=${cartera.id}`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
-            });
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+    
+                    if(data.id===false){
+                        setGastos({
+                            ...viewGastos,
+                            status:false
+                        });
+                    }else if(data.id==="pay"){
+                        setGastos({
+                            ...viewGastos,
+                            status:"pay"
+                        });
+                    }else{
+                        setGastos({
+                            ...viewGastos,
+                            status:true,
+                            credito:data.id.credito,
+                            id:data.id.id,
+                            valor_gasto:data.id.postDates,
+                            sync:data.id.sync,
+                            fecha:'',
+                            clave_acceso:'',
+                            valor:''
+                        });
+                    }
+                });
+        } catch (error) {
+            console.log(error)
+        }
         
+        // Calculamos el valor de gasto actualizado
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/genGastos?cartera=${cartera.id}&credito=${param.get('id')}`,{
             method:'GET',
             headers: {
@@ -205,6 +223,7 @@ export default function DetailCredit(){
                 console.log(data)
                 setPrev(data.gastos);
             });
+        
 
         setPush({
             view:false,
@@ -394,6 +413,12 @@ export default function DetailCredit(){
                                 <span>{restruct.fecha}</span>
                                 {/* <p style={{margin:"10px 0",fontSize:"14px"}}>Fecha de convenio: {restruct.fecha_pago}</p> */}
                                 <div style={{marginTop:"10px",borderTop:"1px solid grey",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
+                                    <div style={{display:"grid",textAlign:"center",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"30px",borderBottom:"1px solid grey"}}>
+                                        <p style={{fontSize:"14px",fontWeight:"bold"}}>Nro.</p>
+                                        <p style={{fontSize:"14px",fontWeight:"bold"}}>Valor</p>
+                                        <p style={{fontSize:"14px",fontWeight:"bold"}}>Fecha pago</p>
+                                        <p style={{fontSize:"14px",fontWeight:"bold"}}>Estado</p>
+                                    </div>
                                     {
                                         JSON.parse(restruct.detail).map((cuota)=>(
                                             <div style={{display:"grid",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"30px",textAlign:"center",borderBottom:"1px solid grey"}}>
@@ -421,22 +446,52 @@ export default function DetailCredit(){
                     {
                         (localStorage.getItem('hash')!=='#/dashboard/consulta') 
                         ?
-                            (viewGastos.status===true & credit.status!=='Convenio de pago') ?
+                            (viewGastos.status===true | viewGastos.status===false) ?
                                 <>
                                     <p
                                         style={{marginBottom:10,fontSize:14}}
                                     >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                                    
                                     <button 
                                         onClick={(e)=>{
                                             e.target.textContent='Facturando...';
                                             //Aquí actualizamos el estado para que desaparezca el botón
                                             // setPDF(true);
-                                            setEdit(true);
+                                            if(viewGastos.status===false){
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        // setEdit(true);
+                                                        console.log(data)
+                                                        // setCredit(data);
+                                                        setGastos({
+                                                            ...viewGastos,
+                                                            status:true,
+                                                            credito:data.gasto.id.credito,
+                                                            id:data.gasto.id,
+                                                            valor_gasto:data.gasto.postDates,
+                                                            sync:"",
+                                                            fecha:'',
+                                                            clave_acceso:'',
+                                                            valor:''
+                                                        });
+
+                                                        setEdit(true);
+
+                                                    });
+                                            }else{
+                                                setEdit(true);
+                                            }
                                         }}
                                     >Generar gastos de cobranza</button>
                                 </>
 
-                            : (Number(credit.totalAmount)>0.00 & credit.status!=='Convenio de pago') 
+                            :   (Number(credit.totalAmount)>0.00 & credit.status!=='Convenio de pago' & viewGastos.status!=='pay') 
                                 ?
                                     <p
                                         style={{marginBottom:10,fontSize:14}}
@@ -498,8 +553,9 @@ export default function DetailCredit(){
                             <NavLink to={`/dashboard/comprobantes/view/${credit.ci}?cartera=${cartera.id}&name=${credit.name}&credito=${param.get('id')}`}>Comprobantes de pago</NavLink>
                     }
                     {
-                        (localStorage.getItem('permission').split(',').includes("User:all") | localStorage.getItem('permission').split(',').includes("User:minimize")) &&
+                        (localStorage.getItem('permission').split(',').includes("User:all") | localStorage.getItem('permission').split(',').includes("User:minimize")) ?
                             <NavLink to={`/dashboard/glist/${param.get('id')}?cartera=${cartera.id}`}>Historial de gestiones</NavLink>
+                        :   <></>
                     }
                     <NavLink to={`/dashboard/garantes/${param.get('id')}?cartera=${cartera.id}&name=${credit.name}`}>Garantes</NavLink>
                 </div>
@@ -523,6 +579,7 @@ export default function DetailCredit(){
                         set={setReestructurar}
                         id={param.get('id')}
                         cartera={cartera.id}
+                        cobranza={prev_gasto}
                     />
             }
 

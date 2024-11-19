@@ -41,6 +41,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
             .then((response) => response.json())  
             .then((data) => {
                 setPays(data);
+                console.log(data);
             });
             
     },[]);
@@ -95,6 +96,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                         const file=document.getElementById(`pays-${name}`);
 
                         if(file.files[0]===undefined){
+
                             addNotification({
                                 title: 'Error archivo',
                                 subtitle: 'Se debe cargar un archivo',
@@ -107,6 +109,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                                 closeButton: 'Cerrar',
                                 duration: 4000,
                             });
+
                         }else{
                             const data_import=new FormData();
                             data_import.append('name',name);

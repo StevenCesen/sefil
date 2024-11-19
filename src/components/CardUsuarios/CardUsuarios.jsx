@@ -43,7 +43,7 @@ const list={
     }
 };
 
-export default function CardUsuarios({id,name,email,rol,permission}){
+export default function CardUsuarios({id,name,email,rol,permission,setChange}){
     
     const menu=useRef();
     const permiss=useRef();
@@ -110,7 +110,7 @@ export default function CardUsuarios({id,name,email,rol,permission}){
 
     return (
         <div className="CardUsuarios">
-            <span>{id}</span>
+            <span data-id={id} className="CardUsuario__id">{id}</span>
             <span>{name}</span>
             <span>{email}</span>
             <span>{rol}</span>
@@ -126,11 +126,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                     checked:e.target.checked
                                 }
                             });
-                            const data={
-                                "permiso":permisos.consulta.action,
-                                "status":e.target.checked
-                            };
-                            useUpdatePermiss(data,id);
+                            // const data={
+                            //     "permiso":permisos.consulta.action,
+                            //     "status":e.target.checked
+                            // };
+                            // useUpdatePermiss(data,id);
+                            setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.consulta.checked}
@@ -149,11 +150,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                 }
                             });
                             
-                            const data={
-                                "permiso":permisos.recaudacion.action,
-                                "status":e.target.checked
-                            };
-                            useUpdatePermiss(data,id);
+                            // const data={
+                            //     "permiso":permisos.recaudacion.action,
+                            //     "status":e.target.checked
+                            // };
+                            // useUpdatePermiss(data,id);
+                            setChange(true);
 
                         }} 
                         type="checkbox" 
@@ -172,11 +174,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                     checked:e.target.checked
                                 }
                             });
-                            const data={
-                                "permiso":permisos.cobranza.action,
-                                "status":e.target.checked
-                            };
-                            useUpdatePermiss(data,id);
+                            // const data={
+                            //     "permiso":permisos.cobranza.action,
+                            //     "status":e.target.checked
+                            // };
+                            // useUpdatePermiss(data,id);
+                            setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.cobranza.checked}
@@ -194,11 +197,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                     checked:e.target.checked
                                 }
                             });
-                            const data={
-                                "permiso":permisos.condonar.action,
-                                "status":e.target.checked
-                            };
-                            useUpdatePermiss(data,id);
+                            // const data={
+                            //     "permiso":permisos.condonar.action,
+                            //     "status":e.target.checked
+                            // };
+                            // useUpdatePermiss(data,id);
+                            setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.condonar.checked}
@@ -216,11 +220,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                     checked:e.target.checked
                                 }
                             });
-                            const data={
-                                "permiso":permisos.convenio.action,
-                                "status":e.target.checked
-                            };
-                            useUpdatePermiss(data,id);
+                            // const data={
+                            //     "permiso":permisos.convenio.action,
+                            //     "status":e.target.checked
+                            // };
+                            // useUpdatePermiss(data,id);
+                            setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.convenio.checked}
@@ -238,11 +243,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                     checked:e.target.checked
                                 }
                             });
-                            const data={
-                                "permiso":permisos.comprobantes.action,
-                                "status":e.target.checked
-                            };
-                            useUpdatePermiss(data,id);
+                            // const data={
+                            //     "permiso":permisos.comprobantes.action,
+                            //     "status":e.target.checked
+                            // };
+                            // useUpdatePermiss(data,id);
+                            setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.comprobantes.checked}
@@ -260,11 +266,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                     checked:e.target.checked
                                 }
                             });
-                            const data={
-                                "permiso":permisos.reportes.action,
-                                "status":e.target.checked
-                            };
-                            useUpdatePermiss(data,id);
+                            // const data={
+                            //     "permiso":permisos.reportes.action,
+                            //     "status":e.target.checked
+                            // };
+                            // useUpdatePermiss(data,id);
+                            setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.reportes.checked}
@@ -298,11 +305,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                         checked:e.target.checked
                                     }
                                 });
-                                const data={
-                                    "permiso":permisos.usuarios.action,
-                                    "status":e.target.checked
-                                };
-                                useUpdatePermiss(data,id);
+                                // const data={
+                                //     "permiso":permisos.usuarios.action,
+                                //     "status":e.target.checked
+                                // };
+                                // useUpdatePermiss(data,id);
+                                setChange(true);
                             }
                         }} 
                         type="checkbox" 
@@ -321,11 +329,12 @@ export default function CardUsuarios({id,name,email,rol,permission}){
                                     checked:e.target.checked
                                 }
                             });
-                            const data={
-                                "permiso":permisos.bd.action,
-                                "status":e.target.checked
-                            };
-                            useUpdatePermiss(data,id);
+                            // const data={
+                            //     "permiso":permisos.bd.action,
+                            //     "status":e.target.checked
+                            // };
+                            // useUpdatePermiss(data,id);
+                            setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.bd.checked}

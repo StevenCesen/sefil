@@ -23,12 +23,16 @@ function GestionContextProvider({children}){
                 .then((data) => {
     
                     const data_prev=data;
+                    let agents=[]
 
                     data_prev.map(agent=> {
                         agent.status='DESCONECTADO';
+                        if(agent.name!=='EN ESPERA' & agent.name!=='Vanesa Rodriguez'){
+                            agents.push(agent);
+                        }
                     });
 
-                    setAgents(data_prev);
+                    setAgents(agents);
                 });
 
             useReceiveState(updateState);

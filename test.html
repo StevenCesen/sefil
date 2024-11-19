@@ -113,35 +113,22 @@
     <title>CLICK TO COPY</title>
 </head>
 <body>
-    <p id="myText">Hello World</p>
-<button class="btn" onclick="copyContent()">Copy!</button>
+   <script>
+     let order=[
+        'saldo_capital',
+        'mora',
+        'interes',
+        'seguro'
+    ];
 
-<script>
-  let text = document.getElementById('myText').innerHTML;
-  const copyContent = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      console.log('Content copied to clipboard');
-    } catch (err) {
-      console.error('Failed to copy: ', err);
+    let pago={
+        saldo_capital:10,
+        mora:200,
+        interes:20,
+        seguro:35
     }
-  }
-</script>
 
+    console.log(pago[order[2]])
+   </script>
 </body>
 </html>
-
-
-
-<PDFViewer width={'800px'} height={'600px'}>
-    <PDFgastos
-        nro_voucher={25}
-        credito={`${175}-${"001025198"}`}
-        name={"ESPEJO CARRION YAJAIRA GUADALUPE"}
-        ci={"1105382152"}
-        direccion={"LA MERCED ALTA, FRENTE A LA IGLESIA JUNTO A LA CASA DE 2 PISOS"}
-        fecha={"2024/09/05 10:34:09"}
-        clave_acceso={"0509202401179267944300120010040000000391234567818"}
-        valor_gasto={useFormatterNumber({value:Number("30.636"),currency:'USD'})}
-    />
-</PDFViewer>

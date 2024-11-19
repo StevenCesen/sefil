@@ -19,6 +19,12 @@
     font-size: 14px;
 }
 
+.CardStructure>h4{
+    margin: 0 10px;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
 .CardCondonacion__select{
     width: 100%;
     padding: 10px 10px;
@@ -26,6 +32,29 @@
     grid-template-columns: 1fr 1fr;
     justify-content: center;
     align-items: center;
+}
+
+.CardCondonacion__selectThree{
+    width: 100%;
+    padding: 10px 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.CardCondonacion__selectThree>label{
+    font-size: 14px;
+}
+
+.CardCondonacion__selectThree>input{
+    width: 100%;
+}
+
+.CardCondonacion__selectThree>button{
+    width: 100%;
+    height: 25px;
 }
 
 .CardCondonacion__select>label{

@@ -10,7 +10,7 @@ function preFormattedUnit(value){
     }
 }
 
-export default function CardListCarteras({name,fecha_upload,last_update,versions,fecha_carga,state,view,setCurrent}){
+export default function CardListCarteras({name,fecha_upload,last_update,versions,fecha_carga,state,view,setCurrent,data_cartera}){
     
     const [view_prelacion,setView]=useState(false);
     const [cartera,setCartera]=useState({
@@ -110,7 +110,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                 <button
                     onClick={(e)=>{
                         view(true);
-                        setCurrent(name);
+                        setCurrent(data_cartera);
                     }}
                 >Orden de prelación</button>
             </div>
