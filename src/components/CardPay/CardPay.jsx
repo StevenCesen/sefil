@@ -68,6 +68,8 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
     const updateDetalle=(detalle)=>{
         setData({
             ...pay,
+            tipo_transaccion: (data_convenio!==null) ? 'parcial' : 'total',
+            valor_recibido:(data_convenio!==null) ? data_convenio.valor_cuota : 0,
             detalle:detalle
         });
     };
@@ -78,10 +80,10 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
             forma_pago:'',
             //fecha_pago:`${new Date().getFullYear()}-${((new Date().getMonth()+1)>10) ? new Date().getMonth()+1 : `0${new Date().getMonth()+1}`}-${((new Date().getDate())>10) ? new Date().getDate() : `0${new Date().getDate()}`}`,
             fecha_pago:'',
-            tipo_transaccion:'total',
+            tipo_transaccion: (data_convenio!==null) ? 'parcial' : 'total',
             institucion_financiera:'',
             valor_devuelto:0,
-            valor_recibido:0,
+            valor_recibido:(data_convenio!==null) ? data_convenio.valor_cuota : 0,
             codigo_deposito:0,
             credito:id,
             detalle:{
@@ -110,9 +112,14 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
             }
         })
             .then((response) => response.json())  
-            .then((data) => {
-                console.log(data)
-                setOrdenPrelacion(data);
+            .then((data_pre) => {
+                
+                setOrdenPrelacion(data_pre);
+
+                if(data_convenio!==null){
+                    usePrelacion(data_convenio.valor_cuota,data,setPrelacion,updateDetalle,data_pre);
+                }
+
             });
 
     },[]);  
@@ -161,6 +168,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                         
                     </div>
                     
+
                     <div>
                         <p>
                             <label>Forma de pago</label>
@@ -340,27 +348,34 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                         <label>Valor recibido</label>
                                         <label>:</label>
                                     </p>
-                                    <input type="text" placeholder="0" ref={ref} onChange={(e)=>{
-                                        if(pay.tipo_transaccion==='parcial'){
-                                            
-                                            setData({
-                                                ...pay,
-                                                valor_recibido:Number(e.target.value)
-                                            });
 
-                                            usePrelacion(e.target.value,data,setPrelacion,updateDetalle,orden_prelacion);
-                                            
-                                        }else{
-                                            if(pay.forma_pago==='efectivo'){
+                                    <input 
+                                        type="text" 
+                                        placeholder="0" 
+                                        ref={ref} 
+                                        defaultValue={pay.valor_recibido} 
+                                        onChange={(e)=>{
+                                            if(pay.tipo_transaccion==='parcial'){
+                                                
                                                 setData({
                                                     ...pay,
-                                                    valor_recibido:e.target.value,
-                                                    valor_devuelto:(Number(e.target.value)>Number(data.totalAmount)) ? String((Number(e.target.value)-Number(data.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')) : 0
-                                                })
-                                            }
-                                        }
+                                                    valor_recibido:Number(e.target.value)
+                                                });
 
-                                    }}/>
+                                                usePrelacion(e.target.value,data,setPrelacion,updateDetalle,orden_prelacion);
+                                                
+                                            }else{
+                                                if(pay.forma_pago==='efectivo'){
+                                                    setData({
+                                                        ...pay,
+                                                        valor_recibido:e.target.value,
+                                                        valor_devuelto:(Number(e.target.value)>Number(data.totalAmount)) ? String((Number(e.target.value)-Number(data.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')) : 0
+                                                    })
+                                                }
+                                            }
+
+                                        }}
+                                    />
                                 </div>
                             </>
                         :   <></>
@@ -594,25 +609,6 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                         }}>Registrar pago</button>
                     :
                         <></>
-                        // AQUÍ YA NO VA ESTO
-                        // <button 
-                        //     className="CardPay__button"
-                        //     onClick={(e)=>{
-                        //         e.target.textContent="Procesando...";
-                        //         fetch(`https://sefil.softsen.space/public/api/credit/reverse/${idVouch.id}`,{
-                        //             headers: {
-                        //                 Accept: 'application/json',
-                        //                 Authorization: `Bearer ${localStorage.getItem('token')}`
-                        //             }
-                        //         })
-                        //             .then((response) => response.json())  
-                        //             .then(async (data) => {
-                        //                 if(data.status===200){
-                        //                     location.reload();
-                        //                 }
-                        //             });
-                        //     }}
-                        // >Revertir cobro</button>
                 }
 
             </div>

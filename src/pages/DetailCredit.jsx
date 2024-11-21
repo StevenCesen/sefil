@@ -420,12 +420,67 @@ export default function DetailCredit(){
                                         <p style={{fontSize:"14px",fontWeight:"bold"}}>Estado</p>
                                     </div>
                                     {
-                                        JSON.parse(restruct.detail).map((cuota)=>(
-                                            <div style={{display:"grid",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"30px",textAlign:"center",borderBottom:"1px solid grey"}}>
+                                        JSON.parse(restruct.detail).map((cuota,n)=>(
+                                            <div style={{display:"grid",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"40px",textAlign:"center",borderBottom:"1px solid grey"}}>
                                                 <p>{cuota.cuota}</p>
                                                 <p>{useFormatterNumber({value:cuota.valor,currency:'USD'})}</p>
                                                 <p>{('fecha_pago' in cuota) ? cuota.fecha_pago : ""}</p>
-                                                <p style={{fontSize:"14px"}}>{cuota.estado}</p>
+                                                {
+                                                    (cuota.estado==='PENDIENTE')
+                                                    ?
+
+                                                        (n==0)
+                                                        ?
+                                                            <button 
+                                                                style={{width:"90%",margin:"0 auto",fontSize:"12px",height:"30px",color:"white",backgroundColor:"var(--bg-alert-successful)",border:"none"}}
+                                                                onClick={(e)=>{
+                                                                    e.target.textContent='Facturando...';
+                                                                    //Aquí actualizamos el estado para que desaparezca el botón
+                                                                    // setPDF(true);
+                                                                    if(viewGastos.status===false){
+                                                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
+                                                                            headers: {
+                                                                                Accept: 'application/json',
+                                                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                                            }
+                                                                        })
+                                                                            .then((response) => response.json())  
+                                                                            .then((data) => {
+                                                                                // setEdit(true);
+                                                                                console.log(data)
+                                                                                // setCredit(data);
+                                                                                setGastos({
+                                                                                    ...viewGastos,
+                                                                                    status:true,
+                                                                                    credito:data.gasto.id.credito,
+                                                                                    id:data.gasto.id,
+                                                                                    valor_gasto:data.gasto.postDates,
+                                                                                    sync:"",
+                                                                                    fecha:'',
+                                                                                    clave_acceso:'',
+                                                                                    valor:''
+                                                                                });
+
+                                                                                setEdit(true);
+
+                                                                            });
+                                                                    }else{
+                                                                        setEdit(true);
+                                                                    }
+                                                                }}
+
+                                                            >Gasto de cobranza</button>
+
+                                                        :   <button 
+                                                                style={{width:"90%",margin:"0 auto",fontSize:"12px",height:"30px",color:"white",backgroundColor:"var(--bg-alert-successful)",border:"none"}}
+                                                                onClick={()=>{
+                                                                    setPay(!pay);
+                                                                }}
+
+                                                            >Pago</button>
+
+                                                    :   <p style={{fontSize:"14px"}}>{cuota.estado}</p>
+                                                }
                                             </div>
                                         ))
                                     }
@@ -447,49 +502,53 @@ export default function DetailCredit(){
                         (localStorage.getItem('hash')!=='#/dashboard/consulta') 
                         ?
                             (viewGastos.status===true | viewGastos.status===false) ?
-                                <>
-                                    <p
-                                        style={{marginBottom:10,fontSize:14}}
-                                    >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
-                                    
-                                    <button 
-                                        onClick={(e)=>{
-                                            e.target.textContent='Facturando...';
-                                            //Aquí actualizamos el estado para que desaparezca el botón
-                                            // setPDF(true);
-                                            if(viewGastos.status===false){
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
-                                                    headers: {
-                                                        Accept: 'application/json',
-                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                    }
-                                                })
-                                                    .then((response) => response.json())  
-                                                    .then((data) => {
-                                                        // setEdit(true);
-                                                        console.log(data)
-                                                        // setCredit(data);
-                                                        setGastos({
-                                                            ...viewGastos,
-                                                            status:true,
-                                                            credito:data.gasto.id.credito,
-                                                            id:data.gasto.id,
-                                                            valor_gasto:data.gasto.postDates,
-                                                            sync:"",
-                                                            fecha:'',
-                                                            clave_acceso:'',
-                                                            valor:''
+                               
+                                (credit.status!=='Convenio de pago')
+                                ?
+                                    <>
+                                        <p
+                                            style={{marginBottom:10,fontSize:14}}
+                                        >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                                        
+                                        <button 
+                                            onClick={(e)=>{
+                                                e.target.textContent='Facturando...';
+                                                //Aquí actualizamos el estado para que desaparezca el botón
+                                                // setPDF(true);
+                                                if(viewGastos.status===false){
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
+                                                        headers: {
+                                                            Accept: 'application/json',
+                                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                        }
+                                                    })
+                                                        .then((response) => response.json())  
+                                                        .then((data) => {
+                                                            // setEdit(true);
+                                                            console.log(data)
+                                                            // setCredit(data);
+                                                            setGastos({
+                                                                ...viewGastos,
+                                                                status:true,
+                                                                credito:data.gasto.id.credito,
+                                                                id:data.gasto.id,
+                                                                valor_gasto:data.gasto.postDates,
+                                                                sync:"",
+                                                                fecha:'',
+                                                                clave_acceso:'',
+                                                                valor:''
+                                                            });
+
+                                                            setEdit(true);
+
                                                         });
-
-                                                        setEdit(true);
-
-                                                    });
-                                            }else{
-                                                setEdit(true);
-                                            }
-                                        }}
-                                    >Generar gastos de cobranza</button>
-                                </>
+                                                }else{
+                                                    setEdit(true);
+                                                }
+                                            }}
+                                        >Generar gastos de cobranza</button>
+                                    </>
+                                :   <></>
 
                             :   (Number(credit.totalAmount)>0.00 & credit.status!=='Convenio de pago' & viewGastos.status!=='pay') 
                                 ?
@@ -502,28 +561,36 @@ export default function DetailCredit(){
                     {
                         (Number(credit.totalAmount)>0.00 & localStorage.getItem('hash')!=='#/dashboard/consulta') ?
                             <>
-                                <button onClick={e=>{
-                                    setPay(!pay);
-                                }}>Pago</button>
-
-                                <button onClick={async e=>{
-                                    if(await useVerifyStruct(param.get('id'))){
-                                        setReestructurar(!view_reestructurar);
-                                    }else{
-                                        addNotification({
-                                            title: 'ERROR',
-                                            subtitle: 'Crédito con convenio',
-                                            message: 'No se puede, hay un convenio ya creado',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3500
-                                        });
-                                    }
-                                }}>Convenio de pago</button>
+                                
+                                {
+                                    (credit.status!=='Convenio de pago')
+                                    ?
+                                        <>
+                                            <button onClick={e=>{
+                                                setPay(!pay);
+                                            }}>Pago</button>
+            
+                                            <button onClick={async e=>{
+                                                if(await useVerifyStruct(param.get('id'))){
+                                                    setReestructurar(!view_reestructurar);
+                                                }else{
+                                                    addNotification({
+                                                        title: 'ERROR',
+                                                        subtitle: 'Crédito con convenio',
+                                                        message: 'No se puede, hay un convenio ya creado',
+                                                        native: false,
+                                                        backgroundTop: '#FF9619',
+                                                        backgroundBottom: '#fdb864',
+                                                        colorTop: 'white',
+                                                        colorBottom: 'white',
+                                                        closeButton: 'Cerrar',
+                                                        duration: 3500
+                                                    });
+                                                }
+                                            }}>Convenio de pago</button>
+                                        </>
+                                    :   <></>
+                                }
 
                                 <button onClick={async e=>{
                                     if(await useVerifyCondonation(param.get('id'))){
@@ -614,7 +681,7 @@ export default function DetailCredit(){
                         setPDF={setPDF}
                         setCredit={setCredit}
                         estado={credit.status}
-                        data_convenio={(credit.status==='Convenio de pago') ? credit.restructs : []}
+                        data_convenio={(credit.status==='Convenio de pago') ? credit.restructs[0] : []}
                     />
             }
 
