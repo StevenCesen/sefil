@@ -12,14 +12,14 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
 
     const [send,setSend]=useState({
         prevDates:{
-            mora:'',
-            interes:'',
-            seguro_desgravamen:'',
-            gastos_judiciales:'',
-            saldo_capital:'',
-            gastos_cobranza:'',
-            totalAmount:'',
-            otros_valores:''
+            mora:0,
+            interes:0,
+            seguro_desgravamen:0,
+            gastos_judiciales:0,
+            saldo_capital:0,
+            gastos_cobranza:0,
+            totalAmount:0,
+            otros_valores:0
         },
         tipo_transaccion:'',
         forma_pago:'',
@@ -75,6 +75,9 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
     };
 
     useEffect(()=>{
+        console.log(data);
+        console.log(data_convenio);
+
         setData({
             ...pay,
             forma_pago:'',
@@ -116,7 +119,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                 
                 setOrdenPrelacion(data_pre);
 
-                if(data_convenio!==null){
+                if('detail' in data_convenio){
                     usePrelacion(data_convenio.valor_cuota,data,setPrelacion,updateDetalle,data_pre);
                 }
 

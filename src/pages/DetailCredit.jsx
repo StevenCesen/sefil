@@ -471,12 +471,32 @@ export default function DetailCredit(){
 
                                                             >Gasto de cobranza</button>
 
-                                                        :   <button 
+                                                        :   
+                                                            <button 
                                                                 style={{width:"90%",margin:"0 auto",fontSize:"12px",height:"30px",color:"white",backgroundColor:"var(--bg-alert-successful)",border:"none"}}
                                                                 onClick={()=>{
-                                                                    setPay(!pay);
-                                                                }}
 
+                                                                    const date=new Date().toLocaleString().split(',')[0];
+                                                                    const date_comparative=date.split('/')[2]+"-"+date.split('/')[1]+"-"+date.split('/')[0];
+
+                                                                    if(date_comparative===cuota.fecha_pago || JSON.parse(restruct.detail)[n-1].estado==='PAGADO'){
+                                                                        setPay(!pay);
+                                                                    }else{
+                                                                        addNotification({
+                                                                            title: 'ERROR PAGO',
+                                                                            subtitle: `No se puede realizar pago`,
+                                                                            message: `Existe una cuota anterior sin pago o aún no es la fecha de pago.`,
+                                                                            native: false,
+                                                                            backgroundTop: '#FF9619',
+                                                                            backgroundBottom: '#fdb864',
+                                                                            colorTop: 'white',
+                                                                            colorBottom: 'black',
+                                                                            closeButton: 'Cerrar',
+                                                                            duration: 5000,
+                                                                        });
+                                                                    }
+                                                                    
+                                                                }}
                                                             >Pago</button>
 
                                                     :   <p style={{fontSize:"14px"}}>{cuota.estado}</p>
