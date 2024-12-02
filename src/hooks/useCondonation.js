@@ -16,17 +16,18 @@ export default async function useCondonation(data,btn,id,setData,view,set,update
         data.fecha=response.fecha;
         data.ci=response.ci;
         data.name=response.name;
-        
-        update({
-            capital:data.saldo_capital,
-            interes:data.interes,
-            mora:data.mora,
-            seguro_desgravamen:data.seguro_desgravamen,
-            gastos_judiciales:data.gastos_judiciales,
-            gastos_cobranza:data.gastos_cobranza,
-            otros_valores:data.otros_valores,
-            totalAmount:data.totalAmount
-        }); 
+        if(update!==null){
+            update({
+                capital:data.saldo_capital,
+                interes:data.interes,
+                mora:data.mora,
+                seguro_desgravamen:data.seguro_desgravamen,
+                gastos_judiciales:data.gastos_judiciales,
+                gastos_cobranza:data.gastos_cobranza,
+                otros_valores:data.otros_valores,
+                totalAmount:data.totalAmount
+            }); 
+        }
 
         setData(data);
         btn.textContent='Condonación guardada';

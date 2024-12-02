@@ -57,6 +57,7 @@ export default function Campain(){
             .then((response) => response.json())  
             .then((data) => {
                 setCampains(data);
+                console.log(data)
             });
     },[]);
 

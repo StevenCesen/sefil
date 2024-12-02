@@ -12,6 +12,7 @@ function App() {
   const [session,setSession]=useState({});
 
   useEffect(()=>{
+    console.log("HOLA")
     if(localStorage.getItem('temp_uS')!=null){
       fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/${localStorage.getItem('temp_uS')}`,{
         headers: {
@@ -45,6 +46,7 @@ function App() {
         state:false
       });
     }
+    
   },[]);
 
   if(!session) return <></>

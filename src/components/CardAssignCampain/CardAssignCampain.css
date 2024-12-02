@@ -71,7 +71,15 @@
     bottom: 0;
 }
 
-.CardAssignCampain__footer>button{
+.CardAssignCampain__footer>div{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+.CardAssignCampain__footer>div>button{
     width: 100px;
     color: var(--color-3);
     font-weight: bold;
@@ -80,6 +88,19 @@
     height: 35px;
     border-radius:2px;
     background-color: #008682;
+}
+
+.CardAssignCampain__footer>div>label{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.CardAssignCampain__footer>div>label>input{
+    width: 80px;
+    height: 35px;
+    text-align: center;
+    margin-left: 10px;
 }
 
 .CardAssignCampain__agents{
@@ -103,6 +124,8 @@
 }
 
 .CardAssignCampain__agentsResult>label{
+    width: 100%;
+    display: block;
     cursor: pointer;
 }
 
@@ -143,6 +166,7 @@
 }
 
 .CardAssignCampain__agentsOptions>div>label{
+    width: 100%;
     font-size: 14px;
     padding-left: 10px;
 }
@@ -221,8 +245,6 @@
 
 .CardAssignCampain__filters{
     width: 100%;
-    height: 192px;
-    overflow-y: auto;
     padding: 0 10px;
 }
 

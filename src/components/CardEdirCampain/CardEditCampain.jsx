@@ -186,7 +186,6 @@ export default function CardEditCampain({data_campain}){
                         e.target.textContent="Actualizando...";
 
                         const agents_select=[];
-                        const new_distributions=JSON.parse(campain.distributions);
 
                         agents.map(agent=>{
                             if(agent.status){
@@ -200,32 +199,13 @@ export default function CardEditCampain({data_campain}){
                         const agent_found=[];
                         let agents_new=[];
 
-                        agents_select.map((agent)=>{
-                            new_distributions.map((dis)=>{
-                                if(agent.id===dis.agent_id & !agent_found.includes(dis.agent_id)){
-                                    agent_found.push(agent.id)
-                                }else{
-                                    agents_new=agent.id;
-                                }
-                            });
-                        });
-
-                        new_distributions.push({
-                            agent_id:agents_new,
-                            total:0,
-                            distribution:[],
-                            pending:[],
-                            processed:[],
-                            inprocess:[]
-                        });
-
                         const data={
                             agents:JSON.stringify(agents_select),
                             name:campain.name,
                             cartera:campain.cartera,
                             fecha_init:campain.fecha_init,
                             fecha_finish:campain.fecha_finish,
-                            distributions:JSON.stringify(new_distributions)
+                            mode:'dates'
                         };
 
                         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${campain.id}`,{
@@ -240,8 +220,8 @@ export default function CardEditCampain({data_campain}){
                             .then((data) => {
                                 e.target.textContent="Actualizado";
                             });
-
                     }}
+
                     className="CardCreateCampain__button CardCreateCampain__button--save"
                 >Guardar</button>
             </div>

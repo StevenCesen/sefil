@@ -399,6 +399,11 @@
     cursor: pointer;
 }
 
+.pageConsulta__monitor{
+    width: 100%;
+    height: calc(100vh - 100px);
+}
+
 .pageConsulta__monitorHead{
     width: 100%;
     display: grid;
@@ -810,6 +815,23 @@
     align-items: center;
 }
 
+.DetailCredit__pays--filter{
+    width: 100%;
+    display: flex;
+}
+
+.DetailCredit__pays--filter>div{
+
+}
+
+.DetailCredit__pays--filter>div>input{
+    width: 100%;
+    background-color: #FEC888;
+    text-align: center;
+    color: black;
+    border: none;
+}
+
 .DetailCredit__comprobantes>div>div>button{
     border: none;
     background-color: inherit;
@@ -1048,6 +1070,103 @@
     justify-content: flex-end;
 }
 
+/* =============================== PARA VER INFO CRÉDITOS SYNCS ============= */
+.DetailCredit__information{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    box-sizing: border-box;
+}
+
+.DetailCredit__datesCredit{
+    width: 100%;
+    padding: 20px 20px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+}
+
+.DetailCredit__datesCredit>div{
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.DetailCredit__datesCredit>div>label:first-child{
+    font-weight: bold;
+}
+
+.DetailCredit__contacts,.DetailCredit__gestiones,.DetailCredit__pagos{
+    width: 100%;
+}
+
+.DetailCredit__contactsHead{
+    width: 100%;
+    height: 40px;
+    background-color: var(--bg-alert-error);
+    display: grid;
+    grid-template-columns: 50% 25% 25%;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 5px;
+    margin-top: 10px;
+    border-top-right-radius: 5px;
+}
+
+.DetailCredit__contactsItem{
+    width: 100%;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 50% 25% 25%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.DetailCredit__contactsHead>label,.DetailCredit__gestionesHead>label,.DetailCredit__pagosHead>label{
+    font-weight: bold;
+    text-align: center;
+}
+
+.DetailCredit__gestionesHead{
+    width: 100%;
+    height: 40px;
+    background-color: var(--bg-alert-error);
+    display: grid;
+    grid-template-columns: 10% 25% 10% 25% 20%;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 5px;
+    margin-top: 10px;
+    border-top-right-radius: 5px;
+}
+
+.DetailCredit__gestionesItem{
+    width: 100%;
+    height: 40px;
+    display: grid;
+    grid-template-columns: 10% 25% 10% 25% 20%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.DetailCredit__pagosHead{
+    width: 100%;
+    height: 40px;
+    background-color: var(--bg-alert-error);
+    display: grid;
+    grid-template-columns: 5% 15% 15% 10% 15% 10% 10% 10% 10%;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 5px;
+    font-size: 13px;
+    margin-top: 10px;
+    border-top-right-radius: 5px;
+}
+
 /* =============================== USUARIOS ================================ */
 .pageUsuarios{
     width: 100%;
@@ -1151,10 +1270,14 @@
 .Home__stadisticOne>div{
     width: 100%;
     margin: 20px 0;
-    height: 500px;
     box-shadow: var(--box-shadow);
     padding: 10px 10px;
     background-color: var(--bg-2);
+}
+
+.Home__stadisticOne>div>div{
+    width: 100%;
+    height: calc(100vh - 200px) !important;
 }
 
 .Home__stadisticOne>div>h3,.Home__stadisticOne>div>div>h3{

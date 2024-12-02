@@ -15,6 +15,7 @@ import GGestion from "./GGestion";
 import Campain from "./Campain";
 import Template from "./Template";
 import GHistorial from "./Historial";
+import Clist from "./Clist";
 
 const data=[
     {
@@ -97,6 +98,7 @@ export default function Dashboard({rol}){
 
     useEffect(()=>{
         //Consulta a API, para setear permisos
+        console.log(rol)
         data.map((user)=>{
             if(rol===user.rol){
                 setPermission(user.permission);
@@ -141,43 +143,47 @@ export default function Dashboard({rol}){
                                             ?
                                                 <GHistorial/>
                                             :
-                                                (page.action==='call')
+                                                (page.action==='clist')
                                                 ?
-                                                    <Gestion/>
+                                                    <Clist/>
                                                 :
-                                                    (page.action==='ccall')
+                                                    (page.action==='call')
                                                     ?
-                                                        <GGestion/>
+                                                        <Gestion/>
                                                     :
-                                                        (page.action==='templates')
+                                                        (page.action==='ccall')
                                                         ?
-                                                            <Template/>
+                                                            <GGestion/>
                                                         :
-                                                            (page.action==='campain')
+                                                            (page.action==='templates')
                                                             ?
-                                                                <Campain/>
+                                                                <Template/>
                                                             :
-                                                                (page.action==='usuarios')
+                                                                (page.action==='campain')
                                                                 ?
-                                                                    <Usuarios/>
+                                                                    <Campain/>
                                                                 :
-                                                                    (page.action==='configuracion')
+                                                                    (page.action==='usuarios')
                                                                     ?
-                                                                        <Setting/>
-                                                                    :   
-                                                                        (localStorage.getItem('rol')==='administrador') ?
-                                                                            <Home/>
-                                                                        :
-                                                                            (localStorage.getItem('rol')!=='super')
-                                                                            ? 
+                                                                        <Usuarios/>
+                                                                    :
+                                                                        (page.action==='configuracion')
+                                                                        ?
+                                                                            <Setting/>
+                                                                        :   
+                                                                            (localStorage.getItem('rol')==='administrador') ?
+                                                                                <Home/>
+                                                                            :
+                                                                                (localStorage.getItem('rol')!=='super')
+                                                                                ? 
 
-                                                                                (localStorage.getItem('rol')==='cobranza' | localStorage.getItem('rol')==='consulta')
-                                                                                ?
-                                                                                    <Consulta/>
-                                                                                : 
-                                                                                    <Gestion/>
+                                                                                    (localStorage.getItem('rol')==='cobranza' | localStorage.getItem('rol')==='consulta')
+                                                                                    ?
+                                                                                        <Consulta/>
+                                                                                    : 
+                                                                                        <Gestion/>
 
-                                                                            :   <Setting/>
+                                                                                :   <Setting/>
             }
         </div>
     );

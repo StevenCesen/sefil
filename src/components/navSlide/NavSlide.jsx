@@ -73,6 +73,7 @@ export default function NavSlide({actions,permission}){
                                                 ?
                                                     <>
                                                         <NavLink to={"dashboard/glist"}>Historial de gestiones</NavLink>
+                                                        <NavLink to={"dashboard/clist"}>Consulta créditos</NavLink>
                                                         {
                                                             (options.includes('Gestion:all'))
                                                             ?

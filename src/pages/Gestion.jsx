@@ -28,23 +28,58 @@ export default function Gestion(){
 
     const [tray,setTray]=useState();
 
-    const updateTray=(tray)=>{
+    const updateTray=(credit_id,destination)=>{
         let copy=data;
+        let prev_credito=[];
+        let new_pending=[],new_inprocess=[],new_processed=[];
 
-        let trays=JSON.parse(tray.data[0].distributions);
+        if(tray==='pending'){
+            copy.pending.map(credito=>{
+                if(credito.id_credito===credit_id){
+                    prev_credito=credito;
+                }else{
+                    new_pending.push(credito);
+                }
+            });
 
-        trays.map((agent)=>{
-            
-            if(Number(localStorage.getItem('temp_uS'))===agent.agent_id){
-                copy.pending=agent.pending;
-                copy.inprocess=agent.inprocess;
-                copy.processed=agent.processed;
+            new_inprocess=copy.inprocess;
+            new_processed=copy.processed;
 
-                setData(copy);
-            }
+        }else if(tray==='inprocess'){
+            copy.inprocess.map(credito=>{
+                if(credito.id_credito===credit_id){
+                    prev_credito=credito;
+                }else{
+                    new_inprocess.push(credito);
+                }
+            });
+            new_pending=copy.pending;
+            new_processed=copy.processed;
+        }else if(tray==='processed'){
+            copy.processed.map(credito=>{
+                if(credito.id_credito===credit_id){
+                    prev_credito=credito;
+                }else{
+                    new_processed.push(credito);
+                }
+            });
+            new_pending=copy.pending;
+            new_inprocess=copy.inprocess;
+        }
+
+        if(destination==='pending'){
+            copy.pending.push(prev_credito);
+        }else if(destination==='inprocess'){
+            copy.inprocess.push(prev_credito);
+        }else if(destination==='processed'){
+            copy.processed.push(prev_credito);
+        }
+
+        setData({
+            pending:new_pending,
+            inprocess:new_inprocess,
+            processed:new_processed
         });
-
-        
     }
 
     // Para pasar al siguiente crédito
@@ -98,7 +133,7 @@ export default function Gestion(){
     useEffect(()=>{
 
         location.hash='/dashboard/call';
-        
+        console.log("ESTAMOS AQUÍ")
         setForm(false);
         setStateCall(true);
         setStateGestion(true);
@@ -116,20 +151,49 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
+                if(data.length===0){
+                    setCampains([]);
+                    setCampain([]);
+                    setData({
+                        ...original_data,
+                        pending:[],
+                        inprocess:[],
+                        processed:[]
+                    });
+                }else{
+                    setCampains(data);
+                    setCampain(data[0].id);
+                    localStorage.setItem('campain_name',data[0].name);
+                    // Asigno en pantalla principal la primer campaña del array
+                    const credits=data[0].distributions;
+                    
+                    let pending=[],inprocess=[],process=[];
 
-                setCampains(data);
-                setCampain(data[0].id);
-                localStorage.setItem('campain_name',data[0].name);
-                
-                // Asigno en pantalla principal la primer campaña del array
-                const credits=JSON.parse(data[0].distributions);
+                    credits.map(credito=>{
+                        if(credito.tray=='PENDIENTE'){
+                            pending.push(credito);
+                        }else if(credito.tray=='EN PROCESO'){
+                            inprocess.push(credito);
+                        }else{
+                            process.push(credito);
+                        }
+                    });
 
-                credits.map((items)=>{
-                    if(Number(items.agent_id)===Number(localStorage.getItem('temp_uS'))){
-                        setData(items);
-                        setOriginal(items);
-                    }
-                });
+                    setData({
+                        ...data,
+                        pending:pending,
+                        inprocess:inprocess,
+                        processed:process
+                    });
+
+                    setOriginal({
+                        ...original_data,
+                        pending:pending,
+                        inprocess:inprocess,
+                        processed:process
+                    });
+                }
+        
             });
 
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/templates`,{
@@ -155,11 +219,11 @@ export default function Gestion(){
         };
         
         window.addEventListener("beforeunload", onBeforeUnload);
-        
+
         return () => {
             window.removeEventListener("beforeunload", onBeforeUnload);
         };
-
+        
     },[]);
 
     if(!campains) return <></>
@@ -223,13 +287,31 @@ export default function Gestion(){
                                             if(Number(campa.id)===Number(e.target.value)){
                                                 localStorage.setItem('campain_name',campa.name);
                                                 // console.log(campa)
-                                                const credits=JSON.parse(campa.distributions);
-                        
-                                                credits.map((items)=>{
-                                                    if(Number(items.agent_id)===Number(localStorage.getItem('temp_uS'))){
-                                                        setData(items);
-                                                        setOriginal(items);
+                                                const credits=campa.distributions;
+                
+                                                let pending=[],inprocess=[],process=[];
+
+                                                credits.map(credito=>{
+                                                    if(credito.tray=='PENDIENTE'){
+                                                        pending.push(credito);
+                                                    }else if(credito.tray=='EN PROCESO'){
+                                                        inprocess.push(credito);
+                                                    }else{
+                                                        process.push(credito);
                                                     }
+                                                });
+
+                                                setData({
+                                                    ...data,
+                                                    pending:pending,
+                                                    inprocess:inprocess,
+                                                    processed:process
+                                                });
+                                                setOriginal({
+                                                    ...original_data,
+                                                    pending:pending,
+                                                    inprocess:inprocess,
+                                                    processed:process
                                                 });
                                             }
                                         });

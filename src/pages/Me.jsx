@@ -32,7 +32,6 @@ export default function Me(){
     useEffect(()=>{
         setAccept(false);
         setCode('');
-
         addNotification({
             title: 'Actualización de contraseña',
             subtitle: 'Por tu seguridad, deberás actualizar la contraseña cada mes',

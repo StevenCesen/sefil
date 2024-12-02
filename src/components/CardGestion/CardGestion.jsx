@@ -7,6 +7,12 @@ import addNotification from "react-push-notification";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useClickToCopy from "../../hooks/useClickToCopy";
 import MyMapComponent from "../Map/Map";
+import useVerifyCondonation from "../../hooks/useVerifyCondonation";
+import CardCondonacion from "../CardCondonacion/CardCondonacion";
+import { PDFViewer } from "@react-pdf/renderer";
+import PDFcondonacion from "../PDFcondonacion";
+import CardStructure from "../CardStructure/CardStructure";
+import useVerifyStruct from "../../hooks/useVerifyRestruct";
 
 const render = (status) => {
     return <p>{status}</p>;
@@ -34,6 +40,12 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [phones_secondaries,setSecondaries]=useState();
     const [incall,setIncall]=useState();
     const [gasto_cobranza,setGasto]=useState(0);
+    const [view_condonation,setViewCondonation]=useState(true);
+    const [viewPDFCondonation,setPDFcondonation]=useState(false);
+    const [value_condonacion,setData]=useState([]);
+    const [view_reestructurar,setReestructurar]=useState(true);
+    
+    const ref_date=useRef();
 
     const [new_phone,setNumber]=useState();
     const [view_new_phone,setViewNewPhone]=useState();
@@ -47,8 +59,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     }
 
     const changeNro=(index)=>{
-        console.log(index)
-        console.log(data_phones.length)
 
         if((index+1)<data_phones.length){
             setPhone({
@@ -117,9 +127,16 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
     }
 
+    const view=()=>{
+        setPDFcondonation(true);
+    }
+
     useEffect(()=>{
+        setReestructurar(false);
+        setViewCondonation(false);
+        setPDFcondonation(false);
         // Seleccionamos el historial de gestiones del crédito actual
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_credit=${currently.id}&cartera=${currently.cartera}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_credit=${currently.id_credito}&cartera=${currently.cartera}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -157,7 +174,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setTray('Historial');
         setMessage('No gestionado aún');
         setInfo({
-            id:currently.id,
+            id:currently.id_credito,
             name:currently.name,
             ci:currently.ci,
             monthlyFeeAmount:currently.monthlyFeeAmount,
@@ -178,8 +195,13 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             cartera:currently.cartera
         });
 
+        localStorage.setItem('cartera',currently.cartera);
+        localStorage.setItem('id_credito',currently.id_credito);
+        localStorage.setItem('dias_vencidos',currently.dias_vencidos);
+        localStorage.setItem('client_ci',currently.ci);
+
         setStates([]);
-        setContacts(JSON.parse(currently.contactos));
+        setContacts(currently.contactos);
 
         const phones_c=[];
 
@@ -230,7 +252,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             id_campain:id_campain,
             id_call:'', //Llamada con gestión
             id_calls_extras:[],
-            id_credit:currently.id,
+            id_credit:currently.id_credito,
             state_gestion:temp.default[1].options[0],
             substate_gestion:'',
             date_promise:"",
@@ -242,7 +264,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             type:currently.tipo,
             dias_vencidos:currently.dias_vencidos,
             cartera:currently.cartera
-        });
+        }) 
 
     },[currently]);
 
@@ -257,13 +279,24 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         <div className="Ggestion">
             <div className="Ggestion__dates">
                     
-                <div className={`DetailCredit__detail ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm" : ""}`}>
-                    <div className={`DetailCredit__body ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
+                <div className={`DetailCredit__detail ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Castigado' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm" : ""}`}>
+                    <div className={`DetailCredit__body DetailCredit__body--focus ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Castigado' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
                         <h3
                             onClick={(e)=>{
+
                                 useClickToCopy(e.target.textContent);
                                 if(incall===false){
-                                    setCredit(currently)
+
+                                    setCredit(currently);
+                                    localStorage.setItem('client_ci',currently.ci);
+
+                                    let elements=document.getElementsByClassName('DetailCredit__body--focus');
+                                    elements=[].slice.call(elements);
+
+                                    elements.map((ele)=>{
+                                        ele.classList.remove('DetailCredit__body--focus');
+                                    });
+                                    e.target.parentElement.classList.add('DetailCredit__body--focus');
 
                                     const phones_c=[];
 
@@ -293,9 +326,19 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     <button 
                                         onClick={(e)=>{
                                             useClickToCopy(e.target.textContent);
+
                                             contacts.map((garante,index)=>{
                                                 if(garante.ci===contact.ci & incall===false){
                                                     const phones_c=[];
+
+                                                    form.current.reset();
+                                                    let elements=document.getElementsByClassName('DetailCredit__body--focus');
+                                                    elements=[].slice.call(elements);
+
+                                                    elements.map((ele)=>{
+                                                        ele.classList.remove('DetailCredit__body--focus');
+                                                    });
+                                                    e.target.classList.add('DetailCredit__body--focus');
 
                                                     const phones_titular=garante.phones;
                                                     phones_titular.map(phone=>{
@@ -306,15 +349,18 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                     });
 
                                                     update_phones(phones_c);
-                                                    
                                                     setCredit(garante);
                                                     
+                                                    localStorage.setItem('client_ci',garante.ci);
+
                                                     setDataGestion({
                                                         ...data_gestion,
                                                         client_name:garante.name,
+                                                        id_credit:currently.id_credito,
                                                         client_ci:garante.ci,
                                                         type:garante.tipo
                                                     });
+                                                    
                                                 }
                                             });
                                         }}
@@ -339,22 +385,22 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         </div>
 
                         <div className="DetailCredit__info">
-                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                                 <label>Días de mora</label>
                                 <p>{info_credit.dias_vencidos}</p>
                             </div>
-                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                                 <label>Último pago</label>
                                 <p>{info_credit.paymentDate.split(' ')[0]}</p>
                             </div>
-                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                            <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                                 <label>Monto adeudado</label>
                                 <p>{useFormatterNumber({value:(Number(info_credit.totalAmount)+((gasto_cobranza>0) ? gasto_cobranza : 0)),currency:'USD'})}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className={`DetailCredit__footer ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? 'DetailCredit__footer--warn' : "DetailCredit__footer--success"}`}>
+                    <div className={`DetailCredit__footer ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' | info_credit.collectionState==='VENCIDO TOTAL') ? 'DetailCredit__footer--warn' : "DetailCredit__footer--success"}`}>
                         <p>AG. {info_credit.agency}</p>
                         <p>{info_credit.collectionState}</p>
                     </div>
@@ -471,6 +517,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     </div>
                                 ))
                             }
+                            
 
                             {/* <p style={{fontWeight:'600'}}>Contactos secundarios</p>
                             {
@@ -532,25 +579,37 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         if(count===0){
                                             const data={
                                                 id_campain:data_gestion.id_campain,
-                                                id_credit:data_gestion.id_credit
+                                                id_credit:data_gestion.id_credit,
+                                                cartera:data_gestion.cartera
                                             };
 
-                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/trays`,{
-                                                method:'POST',
-                                                headers: {
-                                                    Accept: 'application/json',
-                                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                },
-                                                body:new URLSearchParams(data)
-                                            })
-                                                .then((response) => response.json())  
-                                                .then((data) => {
-                                                    updateTrays(data);
+                                            console.log(data);
 
-                                                    if(data.state===200){
-                                                        setNext(index);
-                                                    }
-                                                });
+                                            e.target.textContent="Espere...";
+
+                                            if(data.id_campain!==undefined & data.id_credit!==undefined & data.cartera!==undefined){
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/trays`,{
+                                                    method:'POST',
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    },
+                                                    body:new URLSearchParams(data)
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        updateTrays(data.data,'inprocess');
+    
+                                                        if(data.state===200){
+                                                            setNext(index);
+                                                            e.target.textContent="Seguir";
+                                                        }
+                                                    });
+                                            }else{
+                                                setNext(index);
+                                                e.target.textContent="Seguir";
+                                            }
+
                                         }else{
                                             if(state_gestion){
                                                 setNext(index);
@@ -674,6 +733,53 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             </div>
                         </form>
                     </div>
+                    <div className="Ggestion__principalActions">
+                        <h3>Acciones</h3>
+                        <button 
+                            title="Solicitar condonación"
+                            onClick={async (e)=>{
+                                if(await useVerifyCondonation(currently.id)){
+                                    setViewCondonation(!view_condonation);
+                                }else{
+                                    addNotification({
+                                        title: 'ERROR',
+                                        subtitle: 'Crédito con condonación',
+                                        message: 'No se puede, ya se ha registrado una condonación',
+                                        native: false,
+                                        backgroundTop: '#FF9619',
+                                        backgroundBottom: '#fdb864',
+                                        colorTop: 'white',
+                                        colorBottom: 'white',
+                                        closeButton: 'Cerrar',
+                                        duration: 3500
+                                    });
+                                    clean;
+                                }
+                            }}
+                        >Condonar</button>
+
+                        <button
+                            title="Solicitar Convenio de Pago"
+                            onClick={async (e)=>{
+                                if(await useVerifyStruct(currently.id)){
+                                    setReestructurar(!view_reestructurar);
+                                }else{
+                                    addNotification({
+                                        title: 'ERROR',
+                                        subtitle: 'Crédito con convenio',
+                                        message: 'No se puede, hay un convenio ya creado',
+                                        native: false,
+                                        backgroundTop: '#FF9619',
+                                        backgroundBottom: '#fdb864',
+                                        colorTop: 'white',
+                                        colorBottom: 'white',
+                                        closeButton: 'Cerrar',
+                                        duration: 3500
+                                    });
+                                }
+                            }}
+                        >Convenio</button>
+                    </div>
                 </div>
 
                 <div className="Ggestion__buttons">
@@ -683,7 +789,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                             e.target.textContent="Guardando...";
                         
-                            if(data_gestion.date_promise==='' | data_gestion.substate_gestion===''){
+                            if((data_gestion.date_promise==='' & data_gestion.substate_gestion=='COMPROMISO DE PAGO') | data_gestion.substate_gestion===''){
                                 e.target.textContent="Intentar de nuevo";
 
                                 addNotification({
@@ -720,12 +826,11 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                 data_send.monto=currently.totalAmount;
                                 data_send.cuotas_pagadas=currently.paidFees;
                                 data_send.cuotas_pendientes=currently.pendingFees;
-
-                                setMessage('Gestionado');
-
-                                console.log("SW: Data Gestión");
-                                console.log(data_send);
-                                form.current.reset();
+                                data_send.id_credit=localStorage.getItem('id_credito');
+                                data_send.cartera=localStorage.getItem('cartera');
+                                data_send.date_promise=dates.current.value;
+                                data_send.dias_vencidos=localStorage.getItem('dias_vencidos');
+                                data_send.client_ci=localStorage.getItem('credit_ci');
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
                                     method:'POST',
@@ -739,6 +844,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     .then((data) => {
                                         
                                         if(data.status===200){
+                                            setMessage('Gestionado');
                                             addNotification({
                                                 title: 'Éxito',
                                                 subtitle: 'Gestión guardada correctamente',
@@ -752,7 +858,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 duration:3000,
                                             });
 
-                                            updateTrays(data);
+                                            updateTrays(data.data,'processed');
 
                                             form.current.reset();
 
@@ -760,8 +866,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 id_campain:id_campain,
                                                 id_call:'',
                                                 id_calls_extras:[],
-                                                id_credit:currently.id,
-                                                state_gestion:'',
+                                                id_credit:currently.id_credito,
+                                                state_gestion:template.states[0],
                                                 substate_gestion:'',
                                                 date_promise:'',
                                                 observation:'',
@@ -770,13 +876,12 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                 client_name:currently.name
                                             });
 
-                                            e.target.textContent="Guardado";
+                                            e.target.textContent="Guardar";
                                         }else{
                                             e.target.textContent="Error, inténtalo de nuevo";
                                         }
                                     });
                             }
-
                         }}
                     >Guardar</button>
                 </div>
@@ -901,7 +1006,74 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                     }
                     
                 </div>
-            </div>    
+            </div>
+
+            {
+                (view_condonation) &&
+                    <CardCondonacion 
+                        capital={credit.saldo_capital}
+                        mora={credit.mora}
+                        interes={credit.interes}
+                        seguro_desgravamen={credit.seguro_desgravamen}
+                        gastos_judiciales={credit.gastos_judiciales}
+                        gastos_cobranza={credit.gastos_cobranza}
+                        otros_valores={credit.otros_valores}
+                        total={Number(credit.totalAmount)}
+                        set={setViewCondonation}
+                        id={currently.id}
+                        cartera={currently.cartera}
+                        setData={setData}
+                        view={view}
+                        update={null}
+                    />
+            }
+
+            {
+                (viewPDFCondonation) &&
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setPDFcondonation(false)}}>Volver</button>
+                        <PDFViewer width={'800px'} height={'600px'}>
+                            <PDFcondonacion
+                                // ci={"1104266075"}
+                                // credito={"467"}
+                                // name={"BARROS GUTIERREZ JORGE LUIS"}
+                                // fecha={"2024/09/30 19:11:56"}
+                                // prevDates={'{"mora":"0","interes":"0","capital":"290.41","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
+                                // postDates={'{"capital":"145.2","interes":"0","mora":"0","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
+                                // user_auth={'María Bravo'}
+                                ci={value_condonacion.ci}
+                                credito={value_condonacion.credito}
+                                name={value_condonacion.name}
+                                fecha={value_condonacion.fecha}
+                                prevDates={value_condonacion.prevDates}
+                                postDates={value_condonacion.postDates}
+                                user_auth={value_condonacion.by_user}
+                            />
+                        </PDFViewer>
+                    </div>
+            }
+
+            {
+                (view_reestructurar) &&
+                    <CardStructure
+                        original_dates={{
+                            totalAmount:credit.totalAmount,
+                            saldo_capital:credit.saldo_capital,
+                            mora:credit.mora,
+                            interes:credit.interes,
+                            seguro_desgravamen:credit.seguro_desgravamen,
+                            gastos_judiciales:credit.gastos_judiciales,
+                            gastos_cobranza:credit.gastos_cobranza,
+                            otros_valores:credit.otros_valores
+                        }}
+                        total={credit.totalAmount}
+                        set={setReestructurar}
+                        id={currently.id}
+                        cartera={currently.cartera}
+                        cobranza={gasto_cobranza}
+                    />
+            }
+
         </div>
     );
 }

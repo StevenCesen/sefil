@@ -1,204 +1,148 @@
-export default function useAssignSearch(data,value,update,filter,mode,mora,cuota,monto,estado,agencia){
+export default function useAssignSearch(data,value,update,filter,mode,mora,cuota,monto,estado,agencia,estado_gestion,agente,cartera){
 
     if(filter){
+        /** 
+     * =========================================================================================
+     *     Búsqueda mediante rangos de mora, cuotas, montos, estado y estado de gestión.
+     * =========================================================================================
+    */
         let results=[];
 
-        data.map((credit)=>{
-            if(Number(mode)===1){ //Modo coincidir
-                // Compruebo si los valores de rango vienen vacios entonces solo busco por estado o agencia
-                if(
-                    mora==='' & 
-                    cuota==='' &
-                    monto==='' &
-                    estado!==''
-                ){
-                    if(credit.collectionState===estado){
-                        results.push(credit);
+        if(Number(mode)===1){ //Modo coincidir
+            if(
+                mora==='' & 
+                cuota==='' &
+                monto==='' &
+                estado_gestion==='' &
+                estado==='' &
+                agencia===''
+            ){
+
+                results=data;
+
+            }else{
+                let filters="";
+
+                if(mora!==""){
+                    console.log(mora)
+                    if(mora.min!=="" & Number(mora.min)!==0){
+                        filters+=`&mora_min=${mora.min}`;
                     }
-                }else{
-                    if(
-                        ( (mora!=="") ? (Number(credit.dias_vencidos)>=Number(mora.min) & Number(credit.dias_vencidos)<=Number(mora.max)) : true) &
-                        ( (cuota!=="") ?(Number(credit.pendingFees)>=Number(cuota.min) & Number(credit.pendingFees)<=Number(cuota.max)) : true ) &
-                        ( (monto!=="") ? Number(credit.totalAmount)>=Number(monto.min) & Number(credit.totalAmount)<=Number(monto.max) : true) &
-                        credit.collectionState===estado
-                    ){
-                        results.push(credit);
+                    if(mora.max!=="" & Number(mora.max)!==0){
+                        filters+=`&mora_max=${mora.max}`;
                     }
                 }
 
-            }else{ //Modo no coincidir
-                if(
-                    mora==='' & 
-                    cuota==='' &
-                    monto==='' &
-                    estado!==''
-                ){
-                    if(credit.collectionState!==estado){
-                        results.push(credit);
+                if(monto!==""){
+                    if(monto.min!=="" & Number(monto.min)!==0){
+                        filters+=`&monto_min=${monto.min}`;
                     }
-
-                }else{
-                    if(
-                        ((mora!=="") ? (Number(credit.dias_vencidos)>=Number(mora.min) & Number(credit.dias_vencidos)<=Number(mora.max)) : true) &
-                        ((cuota!=="") ? (Number(credit.pendingFees)>=Number(cuota.min) & Number(credit.pendingFees)<=Number(cuota.max)) : true) &
-                        ((monto!=="") ? (Number(credit.totalAmount)>=Number(monto.min) & Number(credit.totalAmount)<=Number(monto.max)) : true) &
-                        credit.collectionState===estado
-                    ){
-                        credit.search=false;
-
-                    }else{
-                        results.push(credit);
+    
+                    if(monto.max!=="" & Number(monto.max)!==0){
+                        filters+=`&monto_max=${monto.max}`;
                     }
                 }
-                
+
+                if(cuota!==""){
+                    if(cuota.min!=="" & Number(cuota.min)!==0){
+                        filters+=`&cuotas_min=${cuota.min}`;
+                    }
+    
+                    if(cuota.max!=="" & Number(cuota.max)!==0){
+                        filters+=`&cuotas_max=${cuota.max}`;
+                    }
+                }
+
+                if(estado_gestion!==""){
+                    filters+=`&management=${estado_gestion}`;
+                }
+
+                if(estado!==""){
+                    filters+=`&state=${estado}`;
+                }
+
+                if(agencia.length>0){
+                    filters+=`&agencias=${JSON.stringify(agencia)}`;
+                }
+
+                if(agente){
+                    filters+=`&user=${agente}`;
+                }
+
+                console.log(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`)
+
+                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`,{
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                    .then((response) => response.json())  
+                    .then((data) => {
+                        update(data);
+                    });
             }
-        });
-        
-        // Al final de tener todo el results filtro por agencia
-        if(agencia.length>0){
-            console.log("SI entre")
-            let new_result=[];
 
-            results.map((credit)=>{
-                agencia.map((agency)=>{
-                    if(agency.toLowerCase()===credit.agency.toLowerCase()){
-                        new_result.push(credit);
-                    }
-                });
-            });
+        }else{ //Modo no coincidir
+            if(
+                mora==='' & 
+                cuota==='' &
+                monto==='' &
+                estado!==''
+            ){
+                if(credit.collectionState!==estado){
+                    results.push(credit);
+                }
 
-            update(new_result);
+            }else{
+                if(
+                    ((mora!=="") ? (Number(credit.dias_vencidos)>=Number(mora.min) & Number(credit.dias_vencidos)<=Number(mora.max)) : true) &
+                    ((cuota!=="") ? (Number(credit.pendingFees)>=Number(cuota.min) & Number(credit.pendingFees)<=Number(cuota.max)) : true) &
+                    ((monto!=="") ? (Number(credit.totalAmount)>=Number(monto.min) & Number(credit.totalAmount)<=Number(monto.max)) : true)
+                    //credit.collectionState===estado
+                ){
+                    credit.search=false;
 
-        }else{
-
-            update(results);
-
+                }else{
+                    results.push(credit);
+                }
+            }
         }
+
+    /** 
+     * =========================================================================================
+     *               Búsqueda mediante nombre, crédito o listado de créditos
+     * =========================================================================================
+    */
 
     }else if(value.length>3){
+        if(/^[A-Za-z ]+/.test(value) & !/[0-9]+/.test(value)){
+            console.log("Entre a busqueda por nombre y número de crédito");
 
-        if(value.split(' ')[1]===undefined){
-            if(value.split('-')[1]===undefined){ //Selecciono según el nombre
-                let results=[];
-    
-                data.map((credit)=>{
-                    if(credit.name.toLowerCase().includes(value.toLowerCase())){
-                        results.push(credit);
-                    }
-                });
-                
-                update(results);
-            }else{
-                
-                let results=[];
 
-                data.map((credit)=>{
-                    if(credit.credito.includes(value.split('-')[1])){
-                        results.push(credit);
-                    }
-                });
+        }else if(/^[0-9-_A-Za-z ]+/.test(value)){  //Búsqueda masiva de créditos
+            console.log("Entre a busqueda masiva")
 
-                if(results.length===0){
-    
-                        
-                    JSON.parse(localStorage.getItem('filt')).map((credit)=>{
-                        if(credit.credito.includes(value.split('-')[1])){
-                            results.push(credit);
-                        }
-                    });
-                }
-
-                update(results);
-            }
-
-        }else{
             let values=value.split(' ');
-            let results=[];
-            
-            if(value.includes(' ')){
-                // Aquí tenemos todo el array de créditos que hay que activa
-                values.map((credit_s)=>{
-                    let credito=[];
+            let syncs_id=[];
 
-                    data.map((credit)=>{
-                        if(credit.credito===credit_s.split('-')[1]){
-                            credito=credit;
-                        }
-                    });
+            values.map((value)=>{
+                syncs_id.push(value.split('-')[1]);
+            });
 
-                    ('name' in credito) ? results.push(credito) : "";
-                });
+            console.log(syncs_id)
 
-                update(results);
-
-                if(results.length===0){
-                    let values=value.split(' ');
-                    let results=[];
-    
-                    values.map((credit_s)=>{
-                        let credito=[];
-    
-                        JSON.parse(localStorage.getItem('filt')).map((credit)=>{
-                            if(credit.credito===credit_s.split('-')[1]){
-                                credito=credit;
-                            }
-                        });
-    
-                        results.push(credito);
-                    })
-                    
-                    update(results);
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE&creditos=${JSON.stringify(syncs_id)}`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
-            }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    update(data)
+                });
         }
-
-        // if(/^[A-Za-z ]+/.test(value)){ //Selecciono según el nombre
-        //     let results=[];
-
-        //     data.map((credit)=>{
-        //         if(credit.name.toLowerCase().includes(value.toLowerCase())){
-        //             results.push(credit);
-        //         }
-        //     });
-            
-        //     update(results);
-
-        // }else{ //Aquí buscamos según la cédula
-
-        //     if(value.includes(' ')){
-
-        //         // Aquí tenemos todo el array de créditos que hay que activar
-        //         let values=value.split(' ');
-        //         let results=[];
-
-        //         values.map((credit_s)=>{
-        //             let credito=[];
-
-        //             data.map((credit)=>{
-        //                 if(credit.credito===credit_s){
-        //                     credito=credit;
-        //                 }
-        //             });
-        //             results.push(credito);
-        //         });
-                
-        //         update(results);
-
-        //     }else{
-                
-        //         let results=[];
-
-        //         data.map((credit)=>{
-        //             if(credit.credito.includes(value)){
-        //                 results.push(credit);
-        //             }
-        //         });
-
-        //         update(results);
-        //     }
-
-        // }
-        
     }else{
         update(data);
     }

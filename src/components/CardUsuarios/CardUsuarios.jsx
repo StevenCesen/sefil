@@ -188,7 +188,7 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                 </label>
                 <label>
                     <input
-                        value={permisos.bd.action}
+                        value={permisos.condonar.action}
                         onChange={(e)=>{
                             setPermisos({
                                 ...permisos,

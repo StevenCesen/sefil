@@ -3,16 +3,34 @@
     top: 80px;
     left: 20px; */
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     z-index: 100;
     width:20px;
+    height: 400px !important;
     background-color: var(--bg-2);
     border-radius: 5px;
     box-shadow: var(--box-shadow);
     border: 1px solid var(--color-1);
     margin-bottom: 10px;
+    position: relative;
+}
+
+::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #393812;
+    -webkit-border-radius: 1ex;
+    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+::-webkit-scrollbar-corner {
+    background: #000;
 }
 
 .CardCall>label{
@@ -63,6 +81,10 @@
 
 .CardCall>p>input:focus{
     outline: none;
+}
+
+.CardCall>p>input::placeholder{
+    color:white
 }
 
 .CardCall__count{
@@ -143,6 +165,8 @@
     color: var(--color-3);
     font-size: 14px;
     margin-top: 20px;
+    position: absolute;
+    bottom: 0;
 }
 
 .CardCall__button--save{

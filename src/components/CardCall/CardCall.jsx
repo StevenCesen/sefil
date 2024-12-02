@@ -61,7 +61,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
             id_campain:id_campain,
             id_record:'',
             id_gestion:'',
-            cartera:cartera
+            cartera:localStorage.getItem('cartera')
         });
 
         setTime({
@@ -88,6 +88,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                 Marcador
                 <input 
                     type="text"
+                    style={{color:"white !important"}}
                     placeholder="0XXXXXX"
                     onChange={(e)=>{
                         setIn(e.target.value);
@@ -208,8 +209,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            console.log("ESTADO BROADCAST")
-                                            console.log(data)
+                                            console.log(data);
                                         });
 
                                     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -311,14 +311,13 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 const data_send={
                                     state_call:call_state,
                                     duration_call:Number(time.minutes)*60+Number(time.second),	
-                                    phone:data_call.phone,	
+                                    phone:(number_in!=="") ? number_in: data_call.phone ,	
                                     id_credit:data_call.id_credit,
                                     id_campain:data_call.id_campain,
                                     id_record:data_call.id_record,
                                     cartera:data_call.cartera
                                 };
-
-                                console.log(data_send);
+                                
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/calls`,{
                                     method:'POST',

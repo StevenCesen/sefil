@@ -141,7 +141,6 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                         => Si lo hace un usuario administrador, la condonación se aplica directamente
                         => Si lo hace un agente de cobranza o gestión, la condonación se aplica cuando un usuario administrador la autorice
                         */
-                        
                         useCondonation(data,e.target,id,setData,view,set,update);
                         
                     }}

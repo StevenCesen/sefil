@@ -1,10 +1,6 @@
 export default function useFilterText({tray,data_org,value,update,all}){
     let results=[];
 
-    console.log(tray)
-    console.log(data_org)
-    console.log(value)
-
     if(tray==='pending'){
         // Buscar en pendientes
         data_org.pending.map((credit)=>{
