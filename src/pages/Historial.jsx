@@ -6,6 +6,8 @@ import addNotification from "react-push-notification";
 import useWindows from "../hooks/useWindows";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import CardCurrentGestion from "../components/CardCurrentGestion/CardCurrentGestion";
+import useFilterGestions from "../hooks/useFilterGestions";
+import useReturnFilter from "../hooks/useReturnFilter";
 
 export default function GHistorial(){
 
@@ -13,6 +15,7 @@ export default function GHistorial(){
     const [campains,setCampains]=useState();
     const [current,setCurrent]=useState();
     const [agents,setAgents]=useState();
+    const [filters,setFilters]=useState();
 
     const params=new URLSearchParams(useLocation().search);
     const param=useParams();
@@ -20,6 +23,7 @@ export default function GHistorial(){
     const [data,setData]=useState(); //Aquí tenemos todos los créditos
     
     const updateData=(url)=>{
+
         fetch(url,{
             headers: {
                 Accept: 'application/json',
@@ -28,26 +32,59 @@ export default function GHistorial(){
         })
             .then((response) => response.json())  
 	        .then((data) => {
-                data.path+=`?credit=${param.ci}&cartera=${params.get('cartera')}`;
 
-                if(data.next_page_url!==null){
-                    const page_param_next=data.next_page_url.split('?')[1];
-                    data.next_page_url=`${data.path}&${page_param_next}`;
+                if(param.ci){
+                    data.path+=`?credit=${param.ci}&cartera=${params.get('cartera')}`;
+
+                    if(data.next_page_url!==null){
+                        const page_param_next=data.next_page_url.split('?')[1];
+                        data.next_page_url=`${data.path}&${page_param_next}`;
+                    }
+
+                    if(data.prev_page_url!==null){
+                        const page_param_prev=data.prev_page_url.split('?')[1];
+                        data.prev_page_url=`${data.path}&${page_param_prev}`;
+                    }
+                }else{
+                    const filter=useReturnFilter({
+                        fecha_gestion:filters.fecha_gestion,
+                        campain:filters.campain,
+                        name:filters.name,
+                        ci:filters.ci,
+                        type:filters.type,
+                        state_gestion:filters.state_gestion,
+                        date_promise:filters.date_promise,
+                        agente:filters.agente
+                    });
+
+                    console.log(filter);
+
+                    if(data.next_page_url!==null){
+                        data.next_page_url+=`&${filter}`;
+                    }
+                    
+                    if(data.prev_page_url!==null){
+                        data.prev_page_url+=`&${filter}`; 
+                    }
                 }
-
-                if(data.prev_page_url!==null){
-                    const page_param_prev=data.prev_page_url.split('?')[1];
-                    data.prev_page_url=`${data.path}&${page_param_prev}`;
-                }
-
-                console.log(data);
                 
-                setData(data)
+                setData(data);
             });
     }
 
     useEffect(()=>{
 
+        setFilters({
+            fecha_gestion:"",
+            campain:"",
+            name:"",
+            ci:"",
+            type:"",
+            state_gestion:"",
+            date_promise:"",
+            agente:""
+        });
+        
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/agents`,{
             headers: {
                 Accept: 'application/json',
@@ -68,7 +105,6 @@ export default function GHistorial(){
             .then((response) => response.json())  
             .then((data) => {
                 setCampains(data.data);
-                setCampain(data.data[0]);
 
                 if(param.ci!==undefined){
                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?credit=${param.ci}&cartera=${params.get('cartera')}`,{
@@ -90,11 +126,12 @@ export default function GHistorial(){
                                 const page_param_prev=data.prev_page_url.split('?')[1];
                                 data.prev_page_url=`${data.path}&${page_param_prev}`;
                             }
-                            console.log(data)
+                            
                             setData(data);
                         });
                 }else{
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?campain=${data.data[0].id}`,{
+
+                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
                         headers: {
 
                             Accept: 'application/json',
@@ -135,32 +172,53 @@ export default function GHistorial(){
                     <label></label>
                     <label>
                         Fecha gestión
-                        <input type="date"/>
+                        <input 
+                            value={filters.fecha_gestion}
+                            type="date"
+                            onChange={(e)=>{
+                                setFilters({
+                                    ...filters,
+                                    fecha_gestion:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:e.target.value,
+                                    campain:filters.campain,
+                                    name:filters.name,
+                                    ci:filters.ci,
+                                    type:filters.type,
+                                    state_gestion:filters.state_gestion,
+                                    date_promise:filters.date_promise,
+                                    agente:filters.agente,
+                                    setData:setData
+                                });
+                            }}
+                        />
                     </label>
                     <label>
                         Campaña
                         <select
-                            value={campain.id}
+                            value={filters.campain}
                             onChange={(e)=>{
-                                if(e.target.value!==''){
-                                    
-                                    localStorage.setItem('campain',e.target.value);
-                                    setCampain(e.target.value);
-    
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?campain=${e.target.value}`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }
+                                setFilters({
+                                    ...filters,
+                                    campain:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:filters.fecha_gestion,
+                                    campain:e.target.value,
+                                    name:filters.name,
+                                    ci:filters.ci,
+                                    type:filters.type,
+                                    state_gestion:filters.state_gestion,
+                                    date_promise:filters.date_promise,
+                                    agente:filters.agente,
+                                    setData:setData
+                                });
                             }}
                         >
-                            <option value={""}>--Seleccionar--</option>
+                            <option>-- Seleccionar --</option>
                             {
                                 campains.map((campain,index)=>(
                                     <option value={campain.id} key={index}>{campain.name}</option>
@@ -171,62 +229,50 @@ export default function GHistorial(){
                     <label>
                         Nombre
                         <input 
+                            value={filters.name}
                             type="value"
                             onChange={(e)=>{
-                                if(e.target.value.length>2){
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?name=${e.target.value}`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }else{
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }
+                                setFilters({
+                                    ...filters,
+                                    name:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:filters.fecha_gestion,
+                                    campain:filters.campain,
+                                    name:e.target.value,
+                                    ci:filters.ci,
+                                    type:filters.type,
+                                    state_gestion:filters.state_gestion,
+                                    date_promise:filters.date_promise,
+                                    agente:filters.agente,
+                                    setData:setData
+                                });
                             }}
                         />
                     </label>
                     <label>
                         Cédula
                         <input 
+                            value={filters.ci}
                             type="value"
                             onChange={(e)=>{
-                                if(e.target.value.length>3){
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?ci=${e.target.value}`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }else{
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }
+                                setFilters({
+                                    ...filters,
+                                    ci:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:filters.fecha_gestion,
+                                    campain:filters.campain,
+                                    name:filters.name,
+                                    ci:e.target.value,
+                                    type:filters.type,
+                                    state_gestion:filters.state_gestion,
+                                    date_promise:filters.date_promise,
+                                    agente:filters.agente,
+                                    setData:setData
+                                });
                             }}
                         />
 
@@ -234,30 +280,24 @@ export default function GHistorial(){
                     <label>
                         Tipo
                         <select
+                            value={filters.type}
                             onChange={(e)=>{
-                                if(e.target.value!==''){
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?type=${e.target.value}`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }else{
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }
+                                setFilters({
+                                    ...filters,
+                                    type:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:filters.fecha_gestion,
+                                    campain:filters.campain,
+                                    name:filters.name,
+                                    ci:filters.ci,
+                                    type:e.target.value,
+                                    state_gestion:filters.state_gestion,
+                                    date_promise:filters.date_promise,
+                                    agente:filters.agente,
+                                    setData:setData
+                                });
                             }}
                         >
                             <option value={""}>-- Seleccionar --</option>
@@ -268,69 +308,100 @@ export default function GHistorial(){
                     <label>ID crédito</label>
                     <label>
                         Estado gestión
-                        <select>
-                            <option>COMPROMISO DE PAGO</option>
-                            <option>COMPROMISO DE PAGO</option>
+                        <select
+                            value={filters.state_gestion}
+                            onChange={(e)=>{
+                                setFilters({
+                                    ...filters,
+                                    state_gestion:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:filters.fecha_gestion,
+                                    campain:filters.campain,
+                                    name:filters.name,
+                                    ci:filters.ci,
+                                    type:filters.type,
+                                    state_gestion:e.target.value,
+                                    date_promise:filters.date_promise,
+                                    agente:filters.agente,
+                                    setData:setData
+                                });
+                            }}
+                        >
+                            <option>-- Seleccionar --</option>
+                            <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
+                            <option value={"Judicial"}>MENSAJE A TERCEROS</option>
+                            <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
+                            <option value={"YA PAGÓ"}>YA PAGÓ</option>
+                            <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>
+                            <option value={"CLIENTE SE NIEGA A PAGAR"}>CLIENTE SE NIEGA A PAGAR</option>
+                            <option value="CLIENTE INDICA QUE NO ES SU DEUDA">CLIENTE INDICA QUE NO ES SU DEUDA</option>
+                            <option value="CONVENIO DE PAGO">CONVENIO DE PAGO</option>
+                            <option value="CONTACTO INDICA QUE ESTA EQUIVOCADO">CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
+                            <option value="CLIENTE ESCUCHA Y NO HABLA">CLIENTE ESCUCHA Y NO HABLA</option>
+                            <option value="CLIENTE ESTA OCUPADO">CLIENTE ESTA OCUPADO</option>
+                            <option value="CONTESTA MENOR DE EDAD">CONTESTA MENOR DE EDAD</option>
+                            <option value="CORTA LA LLAMADA">CORTA LA LLAMADA</option>
+                            <option value="INUBICABLE">INUBICABLE</option>
+                            <option value="NO VIVE EN LA MISMA DIRECCIÓN">NO VIVE EN LA MISMA DIRECCIÓN</option>
+                            <option value="Recopilación de Información">Recopilación de Información</option>
+                            <option value="Documentación para demanda">Documentación para demanda</option>
+                            <option value="Presentación demanda">Presentación demanda</option>
+                            <option value="Citación judicial">Citación judicial</option>
+                            <option value="Ejecución">Ejecución</option>
+                            <option value="Peritaje">Peritaje</option>
+                            <option value="Embargo">Embargo</option>
+                            <option value="Sentencia">Sentencia</option>
+                            <option value="Archivo demanda">Archivo demanda</option>
                         </select>
                     </label>
                     <label>
                         Acuerdo
                         <input 
+                            value={filters.date_promise}
                             type="date"
                             onChange={(e)=>{
-                                if(e.target.value!==''){
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?promise=${e.target.value}`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }else{
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }
+                                setFilters({
+                                    ...filters,
+                                    date_promise:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:filters.fecha_gestion,
+                                    campain:filters.campain,
+                                    name:filters.name,
+                                    ci:filters.ci,
+                                    type:filters.type,
+                                    state_gestion:filters.state_gestion,
+                                    date_promise:e.target.value,
+                                    agente:filters.agente,
+                                    setData:setData
+                                });
                             }}
                         />
                     </label>
                     <label>
                         Agente
                         <select
+                            value={filters.agent}
                             onChange={(e)=>{
-                                if(e.target.value!==''){
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?agent=${e.target.value}`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }else{
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setData(data);
-                                        });
-                                }
+                                setFilters({
+                                    ...filters,
+                                    agent:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:filters.fecha_gestion,
+                                    campain:filters.campain,
+                                    name:filters.name,
+                                    ci:filters.ci,
+                                    type:filters.type,
+                                    state_gestion:filters.state_gestion,
+                                    date_promise:filters.date_promise,
+                                    agente:e.target.value,
+                                    setData:setData
+                                });
                             }}
                         >
                             <option>-- Seleccionar --</option>
@@ -369,6 +440,7 @@ export default function GHistorial(){
 
                 <div className="DetailCredit__access" style={{margin:"10px 0"}}>
                     <p>Registros del {data.from}-{data.to} de {data.total}</p>
+                    
                     <div>
                     {
                         (data.total>10)

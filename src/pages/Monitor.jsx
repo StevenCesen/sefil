@@ -8,7 +8,7 @@ export default function Monitor(){
 
     const [agents,setAgents]=useState();
     const [campains,setCampains]=useState();
-    const [campain,setCampain]=useState("");
+    const [campain,setCampain]=useState();
 
     const data=useContext(GestionContext);
 
@@ -23,17 +23,34 @@ export default function Monitor(){
             .then((response) => response.json())  
             .then((data) => {
                 let camps=[];
-
                 data.data.map(campa=>{
                     if(campa.state==='ACTIVA'){
                         camps.push(campa);
                     }
                 });
-
                 setCampains(camps);
             });
 
-        setAgents(data.agents);
+        if(campain!==""){
+            let copy=data.agents;
+            let agents=[];
+
+            copy.map((agent)=>{
+                let new_agents=[];
+                if(agent.gestion.length>0){
+                    agent.gestion.map((camp)=>{
+                        if(camp.campain===campain){
+                            new_agents.push(camp);
+                        }
+                    });
+                    agent.gestion=new_agents;
+                    agents.push(agent);
+                }
+            });
+            setAgents(agents);
+        }else{
+            setAgents(data.agents);
+        }
         
     },[data.agents]);
 
@@ -54,16 +71,6 @@ export default function Monitor(){
 
             <div className="pageConsulta__search">
                 <h4 className="Reports__title">Monitoreo</h4>
-                {/* <label>
-                    Buscar cliente
-                    <input onKeyUp={(e)=>{
-                        const ci=e.target.value;
-                        if(aux_busines!==""){
-                            useSearch(ci,aux_busines,updateCredits,setCredits);
-                        }
-                        
-                    }} placeholder="Ingrese cédula o nombre"/>
-                </label> */}
             </div>
 
             <div className="pageConsulta__monitor">
@@ -73,7 +80,32 @@ export default function Monitor(){
                     <label>Tiempo</label>
                     <label>
                         Campaña
-                        <select>
+                        <select
+                            onChange={(e)=>{
+                                setCampain(e.target.value);
+
+                                if(e.target.value!==""){
+                                    let copy=data.agents;
+                                    let agents=[];
+                        
+                                    copy.map((agent)=>{
+                                        let new_agents=[];
+                                        if(agent.gestion.length>0){
+                                            agent.gestion.map((camp)=>{
+                                                if(camp.campain===e.target.value){
+                                                    new_agents.push(camp);
+                                                }
+                                            });
+                                            agent.gestion=new_agents;
+                                            agents.push(agent);
+                                        }
+                                    });
+                        
+                                    setAgents(agents);
+                                }
+                               
+                            }}
+                        >
                             <option value={""}>-- Todas --</option>
                             {
                                 campains.map(campain=>(

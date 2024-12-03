@@ -11,7 +11,7 @@ function GestionContextProvider({children}){
     }
 
     useEffect(()=>{
-        if(localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='super' | localStorage.getItem('rol')==='call'){
+        if(localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='super'){
             // if(localStorage.getItem('permission').split(',').includes("Cobranza:all")){
                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
                     headers: {

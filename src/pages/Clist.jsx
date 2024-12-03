@@ -4,6 +4,7 @@ import CardCredit from "../components/CardCredit/CardCredit";
 import { useEffect, useRef, useState } from "react";
 import useSearch from "../hooks/useSearch.js";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
+import useSearchSyncs from "../hooks/useSearchSync.js";
 
 export default function Clist(){
     const param = useParams();
@@ -106,6 +107,7 @@ export default function Clist(){
             })
                 .then((response) => response.json())  
                 .then((data) => {
+                    console.log(data);
                     setCredit(data);
                 });
         }
@@ -226,6 +228,23 @@ export default function Clist(){
                                     <label>Mora</label>
                                     <label>Otros</label>
                                 </div>
+
+                                {
+                                    data_credit.pagos.map((pago,index)=>(
+                                        <div key={index} className="DetailCredit__pagosItem">
+                                            <label>{pago.fee_id}</label>
+                                            <label>{pago.payment_id}</label>
+                                            <label>{pago.payment_date}</label>
+                                            <label>{pago.payment_type}</label>
+                                            <label>{pago.payment_value}</label>
+                                            <label>{pago.capital}</label>
+                                            <label>{pago.interes}</label>
+                                            <label>{pago.mora}</label>
+                                            <label>{pago.otros}</label>
+                                        </div>
+                                    ))
+                                }
+
                             </div>
 
                         </div>
@@ -237,10 +256,7 @@ export default function Clist(){
                                 Buscar cliente
                                 <input onKeyUp={(e)=>{
                                     const ci=e.target.value;
-                                    if(aux_busines!==""){
-                                        useSearch(ci,aux_busines,updateCredits,setCredits);
-                                    }
-                                    
+                                    useSearchSyncs(ci,'syncs',updateCredits,setCredits);
                                 }} placeholder="Ingrese cédula o nombre"/>
                             </label>
                         </div>
@@ -394,7 +410,7 @@ export default function Clist(){
 
                                             }}>{credit.id}</NavLink>
                                             <p>{credit.cartera}-{('sync_id' in credit) ? credit.sync_id : credit.credito}</p>
-                                            <p>{credit.name}</p>
+                                            <p>{credit.name} <strong style={{fontWeight:'bold'}}>{('type' in credit) ? credit.type : credit.tipo}</strong></p>
                                             <p>{useFormatterNumber({value:('total_amount' in credit) ? credit.total_amount : credit.totalAmount,currency:'USD'})}</p>
                                             <p>{credit.ci}</p>
                                             <p>FACES</p>

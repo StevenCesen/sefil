@@ -9,6 +9,5 @@ export default function useReceiveState(update){
 
     channel.bind('state', async function(data) {
         update(data.message.data);
-        console.log(data.message.data);
     });
 }

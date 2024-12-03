@@ -500,7 +500,7 @@ export default function Gestion(){
                     </div>
 
                     <div>
-                        <label>Estado</label>
+                        <label>Estado gestión</label>
                         <select
                             onChange={(e)=>{
                                 if(e.target.value!=='all'){
@@ -522,11 +522,27 @@ export default function Gestion(){
                                 }
                             }}
                         >
-                            <option value={"all"}>--Todos--</option>
-                            <option value={"Vencido"}>Vencidos</option>
-                            <option value={"Vigente"}>Vigentes</option>
-                            <option value={"Judicial"}>Judicial</option>
-                            <option value={"Prejudicial"}>Prejudicial</option>
+                            <option value={""}>-- Seleccionar --</option>
+                            <option value={"PENDIENTE"}>PENDIENTE</option>
+                            <option value={"EN PROCESO"}>EN PROCESO</option>
+                            <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
+                            <option value={"Judicial"}>MENSAJE A TERCEROS</option>
+                            <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
+                            <option value={"YA PAGÓ"}>YA PAGÓ</option>
+                            <option value={"MENSAJE DE TEXTO"}>MENSAJE DE TEXTO</option>
+                            <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>
+                            <option value={"CLIENTE SE NIEGA A PAGAR"}>CLIENTE SE NIEGA A PAGAR</option>
+                            <option value="CLIENTE INDICA QUE NO ES SU DEUDA">CLIENTE INDICA QUE NO ES SU DEUDA</option>
+                            <option value="PASAR A TRAMITE LEGAL">PASAR A TRAMITE LEGAL</option>
+                            <option value="VOLVER A LLAMAR">VOLVER A LLAMAR</option>
+                            <option value="CONVENIO DE PAGO">CONVENIO DE PAGO</option>
+                            <option value="CONTACTO INDICA QUE ESTA EQUIVOCADO">CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
+                            <option value="CLIENTE ESCUCHA Y NO HABLA">CLIENTE ESCUCHA Y NO HABLA</option>
+                            <option value="CLIENTE ESTA OCUPADO">CLIENTE ESTA OCUPADO</option>
+                            <option value="CONTESTA MENOR DE EDAD">CONTESTA MENOR DE EDAD</option>
+                            <option value="CORTA LA LLAMADA">CORTA LA LLAMADA</option>
+                            <option value="INUBICABLE">INUBICABLE</option>
+                            <option value="NO VIVE EN LA MISMA DIRECCIÓN">NO VIVE EN LA MISMA DIRECCIÓN</option>
                         </select>
                     </div>
 

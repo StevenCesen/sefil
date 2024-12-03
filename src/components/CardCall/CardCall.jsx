@@ -141,9 +141,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                             onClick={async (e)=>{
                                 record.stop();
                                 record.addEventListener('dataavailable',async e => {
-                                    console.log(e.data)
                                     const base=await useBlobToBase64(e.data);
-
                                     setDataCall({
                                         ...data_call,
                                         id_record:base
