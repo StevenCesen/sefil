@@ -27,7 +27,7 @@ function GestionContextProvider({children}){
     
                         data_prev.map(agent=> {
                             agent.status='DESCONECTADO';
-                            if(agent.name!=='EN ESPERA' & agent.name!=='Vanesa Rodriguez'){
+                            if(agent.name!=='EN ESPERA' & agent.name!=='Vanesa Rodriguez' & agent.state!="FUERA DE LÍNEA"){
                                 agents.push(agent);
                             }
                         });

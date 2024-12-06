@@ -162,7 +162,6 @@
 
 .DetailCredit__dial>div{
     width: 100%;
-    height: calc(100vh - 500px);
     overflow-y: auto;
 }
 
@@ -352,16 +351,23 @@
 
 .Ggestion__historial{
     width: 100%;
-    height: calc(100vh - 500px);
+    height: 300px;
     overflow-y: auto;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+}
+
+.Ggestion__historial>div>button{
+    border: none;
+    border:1px solid rgb(204, 204, 204);
+    font-weight: bold;
+    border-radius: 2px;
 }
 
 .Ggestion__historial>div:first-child{
     width: 100%;
     display: flex;
     justify-content: flex-start;
-    gap: 10px;
+    gap: 5px;
     align-items: center;
     margin-bottom: 5px;
 }

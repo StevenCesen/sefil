@@ -420,8 +420,8 @@
 
 .pageConsulta__monitorHead>label{
     text-align: center;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: bold;
+    font-size: 16px;
     color: var(--color-3);
 }
 
@@ -2161,7 +2161,7 @@
 .Historial__head{
     width: 100%;
     display: grid;
-    grid-template-columns: 5% 8% 8% 12% 8% 8% 6% 8% 8% 8% 17%;
+    grid-template-columns: 5% 8% 8% 8% 8% 8% 6% 8% 8% 4% 8% 17%;
     justify-content: center;
     align-items: center;
     background-color: var(--bg-alert-error);
@@ -2201,7 +2201,7 @@
 .Historial__item{
     width: 100%;
     display: grid;
-    grid-template-columns: 5% 8% 8% 12% 8% 8% 6% 8% 8% 8% 17%;
+    grid-template-columns: 5% 8% 8% 8% 8% 8% 6% 8% 8% 4% 8% 17%;
     justify-content: center;
     align-items: center;
     padding: 5px 0;

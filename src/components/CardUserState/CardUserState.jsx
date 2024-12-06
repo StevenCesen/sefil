@@ -102,12 +102,12 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
                 (mode==='complete') 
                 ?
                     <>
-                        <p>{data.nro_credits}</p>
-                        <p>{data.nro_gestions}</p>
-                        <p>{data.nro_gestions_efec}</p>
-                        <p>{data.nro_pendientes}</p>
-                        <p>{data.nro_proceso}</p>
-                        <p>{data.nro_calls}</p>
+                        <p style={{fontSize:"16px"}}>{data.nro_credits}</p>
+                        <p style={{fontSize:"16px"}}>{data.nro_gestions}</p>
+                        <p style={{fontSize:"16px"}}>{data.nro_gestions_efec}</p>
+                        <p style={{fontSize:"16px"}}>{data.nro_pendientes}</p>
+                        <p style={{fontSize:"16px"}}>{data.nro_proceso}</p>
+                        <p style={{fontSize:"16px"}}>{data.nro_calls}</p>
                     </>
                 : 
                     <></>

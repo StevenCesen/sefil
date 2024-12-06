@@ -9,6 +9,7 @@
 .CardSelectState__contentSelect{
     width: 100%;
     position: relative;
+    z-index: 200;
 }
 
 .CardSelectState__contentSelect>label{
@@ -29,6 +30,7 @@
     align-items: flex-start;
     flex-direction: column;
     box-shadow: var(--box-shadow);
+    z-index: 200;
 }
 
 .CardSelectState__select>label{

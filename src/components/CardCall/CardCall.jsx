@@ -17,9 +17,10 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
     const [time,setTime]=useState();
     const [call_state,setState]=useState();
     const [continue_call,setContinue]=useState();
+    const [status_call,setStatusCall]=useState();
     const [end_session,setEnd]=useState(false);
     const [view_states,setView]=useState(false);
-    const [record,setRecord]=useState();
+    const [record,setRecord]=useState({});
     const [whats_call,setWhatCall]=useState();
 
     const [number_in,setIn]=useState();
@@ -30,26 +31,74 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
         
         setContinue(
             setInterval(() => {
-                second++;
-    
-                if(second<60){
-                    setTime({
-                        ...time,
-                        second:(second<10) ? `0${second}` : second,
-                        minutes:(minutos<10) ? `0${minutos}` : minutos
-                    });
-                }else{
-                    second=0;
-                    minutos++;
-                    
-                    setTime({
-                        ...time,
-                        minutes:(minutos<10) ? `0${minutos}` : minutos,
-                        second:(second<10) ? `0${second}` : second
-                    })
+                if(localStorage.getItem('state_call')=="true"){
+                    second++;
+
+                    if(second<60){
+                        setTime({
+                            ...time,
+                            second:(second<10) ? `0${second}` : second,
+                            minutes:(minutos<10) ? `0${minutos}` : minutos
+                        });
+                    }else{
+                        second=0;
+                        minutos++;
+                        
+                        setTime({
+                            ...time,
+                            minutes:(minutos<10) ? `0${minutos}` : minutos,
+                            second:(second<10) ? `0${second}` : second
+                        })
+                    }
                 }
             }, 1000)
-        )
+        );
+    }
+
+    const status=(recorder)=>{
+        setInterval(async () => {
+            if(localStorage.getItem('state_call')=="true"){
+                const request=await fetch(`status_channel.php?channel=${channel}&exten=${(number_in==="") ? phone.nro : number_in}`);
+                const response=await request.json();
+                
+                if('destino' in response){
+                    if(response.destino==='Up'){
+                        localStorage.setItem('progreso','(En conversación)');
+                    }else{
+                        localStorage.setItem('progreso','(Llamando)');
+                    }
+                }
+
+                console.log(response);
+
+                if(response.estado=='Busy' | response.estado==""){
+                    
+                    try {
+                        const hangup=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
+                        const respo=await hangup.json();
+                    } catch (error) {
+                        console.log(error);
+                        recorder.stop();
+
+                        recorder.addEventListener('dataavailable',async e => {
+                            const base=await useBlobToBase64(e.data);
+                            setDataCall({
+                                ...data_call,
+                                id_record:base,
+                                state:false
+                            }); 
+                        });
+                        
+                        localStorage.setItem('state_call',"setState");
+                        localStorage.setItem('progreso',"(Terminado)");
+                        setEnd(true);
+                        setView(true);
+                        setWhatCall(false);
+                    }
+                
+                }
+            }
+        }, 3000);
     }
 
     useEffect(()=>{
@@ -64,6 +113,9 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
             cartera:localStorage.getItem('cartera')
         });
 
+        localStorage.setItem('state_call',false);
+        localStorage.setItem('progreso','(Llamar)');
+
         setTime({
             second:0,
             minutes:0
@@ -76,7 +128,12 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
         setIn("");
         setContinue();
 
-        return () => clearInterval(continue_call);
+        return () => {
+            [continue_call,status_call].map((interval)=>{
+                clearInterval(interval);
+            });
+        };
+    
     },[phone]);
 
     if(!time) return <></>
@@ -105,10 +162,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                     }}
                 >{(number_in==="") ? phone.nro : number_in}</span>
                 {
-                    (data_call.state)
-                    ?  
-                        '(Llamando)'
-                    :   '(Llamar)'
+                    localStorage.getItem('progreso')
                 }
             </label>
 
@@ -118,7 +172,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
 
             <div className="CardCall__options">
                 {
-                    (view_states)
+                    (localStorage.getItem('state_call')==='setState')
                     ?   
                         states_call.map((state,index)=>(
                             <button
@@ -135,35 +189,40 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
             <div style={{display:'flex',justifyContent:'center',alignItems:'center',gap:'10px'}}>
                 {/* COLGAR */}
                 {
-                    (!view_states)
+                    (localStorage.getItem('state_call')==="true")
                     ?
                         <button 
                             onClick={async (e)=>{
-                                record.stop();
-                                record.addEventListener('dataavailable',async e => {
-                                    const base=await useBlobToBase64(e.data);
-                                    setDataCall({
-                                        ...data_call,
-                                        id_record:base
-                                    })
-                                });
-                                
                                 try {
-                                    
                                     if(!whats_call){
                                         const request=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
                                         const response=await request.json();
                                         console.log(response);
                                     }
 
+                                    record.stop();
+                                    record.addEventListener('dataavailable',async e => {
+                                        const base=await useBlobToBase64(e.data);
+                                        setDataCall({
+                                            ...data_call,
+                                            id_record:base
+                                        })
+                                    });
+
                                 } catch (error) {
-                                    console.log(error)
+                                    clearInterval(continue_call);
+                                    clearInterval(status_call);
+                                    setEnd(true);
+                                    setView(true);
+                                    setWhatCall(false);
                                 }
-                                
+                                localStorage.setItem('progreso','(Recien marcado)');
                                 clearInterval(continue_call);
+                                clearInterval(status_call);
                                 setEnd(true);
                                 setView(true);
                                 setWhatCall(false);
+                                localStorage.setItem('state_call',"setState");
                             }} 
                             className="CardCall__button CardCall__button--exit"
                         >
@@ -175,7 +234,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                 }
                 {/* LLAMAR */}
                 {
-                    (!data_call.state)
+                    (localStorage.getItem('state_call')==="false")
                     ?
                         <button 
                             onClick={async (e)=>{
@@ -198,6 +257,8 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 }else{
                                     
                                     setInit(true);
+                                    localStorage.setItem('state_call',true);
+                                    localStorage.setItem('progreso','(Llamando)');
 
                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/incall`,{
                                         headers: {
@@ -219,6 +280,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     const response=await request.json();
 
                                     init();
+                                    status(recorder);
 
                                     setDataCall({
                                         ...data_call,
@@ -237,7 +299,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                 }
 
                 {
-                    (!data_call.state)
+                    (localStorage.getItem('state_call')==="false")
                     ?
                         <button
                             title="Da click, he inicia la llamada dentro de Whatsapp"
@@ -247,6 +309,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
         
                                 setInit(true);
                                 setWhatCall(true);
+                                localStorage.setItem('progreso','(Grabando, ve a WhatsApp)');
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/incall`,{
                                     headers: {
@@ -258,6 +321,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     .then((data) => {
                                         console.log("ESTADO BROADCAST")
                                         console.log(data)
+                                        localStorage.setItem('state_call',true);
                                     });
 
                                 stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -316,6 +380,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     cartera:data_call.cartera
                                 };
                                 
+                                console.log(data_send);
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/calls`,{
                                     method:'POST',
@@ -330,6 +395,8 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                         if(data.state===200){
                                             setInit(false);
                                             addCall(data.id_call);
+                                            clearInterval(continue_call);
+                                            clearInterval(status_call);
                                             addStates(call_state);
                                             setCancel(true);
                                             setView(false);
@@ -339,11 +406,17 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                             });
 
                                             //Función para tomar el siguiente número
-                                            change(phone.index);
+                                            if(number_in===""){
+                                                change(phone.index);
+                                            }
+
                                             setDataCall({
                                                 ...data_call,
                                                 state:false
                                             });
+
+                                            localStorage.setItem('progreso',"(Recien marcado)");
+                                            localStorage.setItem('state_call',"false");
 
                                             e.target.textContent="Guardado";
 

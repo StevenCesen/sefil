@@ -8,6 +8,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
 import useFilterAgency from "../hooks/useFilterAgency";
 import useFilterText from "../hooks/useFilterText";
 import useFilterState from "../hooks/useFilterState";
+import useFilteMinMax from "../hooks/useFilterMinMax";
 
 export default function Gestion(){
 
@@ -23,6 +24,7 @@ export default function Gestion(){
 
     const [state_call,setStateCall]=useState(false);
     const [state_gestion,setStateGestion]=useState(false);
+    const [mora,setMora]=useState();
 
     const [structure,setStructure]=useState();
 
@@ -133,7 +135,6 @@ export default function Gestion(){
     useEffect(()=>{
 
         location.hash='/dashboard/call';
-        console.log("ESTAMOS AQUÍ")
         setForm(false);
         setStateCall(true);
         setStateGestion(true);
@@ -141,7 +142,11 @@ export default function Gestion(){
         setIndex(0);
         useWindows();
         setTray('pending');
-        
+        setMora({
+            min:"",
+            max:""
+        });
+
         // Consulto todas las compañas del usuario presente
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}`,{
             headers: {
@@ -154,6 +159,7 @@ export default function Gestion(){
                 if(data.length===0){
                     setCampains([]);
                     setCampain([]);
+                    
                     setData({
                         ...original_data,
                         pending:[],
@@ -166,7 +172,7 @@ export default function Gestion(){
                     localStorage.setItem('campain_name',data[0].name);
                     // Asigno en pantalla principal la primer campaña del array
                     const credits=data[0].distributions;
-                    
+                    console.log(data);
                     let pending=[],inprocess=[],process=[];
 
                     credits.map(credito=>{
@@ -263,14 +269,10 @@ export default function Gestion(){
                             setTray('processed')
                         }}
                     >Supervisión ({data.processed.length})</button> */}
-
                     <label>
                         Campaña
                         <select value={campain} onChange={(e)=>{
                             if(e.target.value!==''){
-                                
-                                localStorage.setItem('campain',e.target.value);
-
                                 setCampain(e.target.value);
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}&id_campain=${e.target.value}`,{
@@ -307,12 +309,14 @@ export default function Gestion(){
                                                     inprocess:inprocess,
                                                     processed:process
                                                 });
+
                                                 setOriginal({
                                                     ...original_data,
                                                     pending:pending,
                                                     inprocess:inprocess,
                                                     processed:process
                                                 });
+
                                             }
                                         });
                                     });
@@ -462,41 +466,62 @@ export default function Gestion(){
                         <div>
                             <div>
                                 <label>Min</label>
-                                <input type="number"/>
+                                <input 
+                                    type="number"
+                                    value={mora.min}
+                                    onChange={(e)=>{
+                                        setMora({
+                                            ...mora,
+                                            min:Number(e.target.value)
+                                        });
+
+                                        useFilteMinMax({
+                                            tray:tray,
+                                            data_org:original_data,
+                                            value:{
+                                                min:e.target.value,
+                                                max:mora.max
+                                            },
+                                            update:updateCredits,
+                                            all:false
+                                        });
+                                    }}
+                                />
                             </div>
                             <div>
                                 <label>Max</label>
-                                <input type="number"/>
+                                <input 
+                                    type="number"
+                                    value={mora.max}
+                                    onChange={(e)=>{
+                                        setMora({
+                                            ...mora,
+                                            max:Number(e.target.value)
+                                        });
+
+                                        useFilteMinMax({
+                                            tray:tray,
+                                            data_org:original_data,
+                                            value:{
+                                                min:mora.min,
+                                                max:e.target.value
+                                            },
+                                            update:updateCredits,
+                                            all:false
+                                        });
+
+                                    }}
+                                />
                             </div>
                         </div>
                     </div>
 
                     <div>
                         <label>Monto</label>
-                        {/* <div>
-                            <div>
-                                <label>Min</label>
-                                <input type="number"/>
-                            </div>
-                            <div>
-                                <label>Max</label>
-                                <input type="number"/>
-                            </div>
-                        </div> */}
                     </div>
 
                     <div>
                         <label>Cuotas</label>
-                        {/* <div>
-                            <div>
-                                <label>Min</label>
-                                <input type="number"/>
-                            </div>
-                            <div>
-                                <label>Max</label>
-                                <input type="number"/>
-                            </div>
-                        </div> */}
                     </div>
 
                     <div>
@@ -522,15 +547,16 @@ export default function Gestion(){
                                 }
                             }}
                         >
-                            <option value={""}>-- Seleccionar --</option>
-                            <option value={"PENDIENTE"}>PENDIENTE</option>
-                            <option value={"EN PROCESO"}>EN PROCESO</option>
+                            <option value={"all"}>-- Seleccionar --</option>
                             <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
                             <option value={"Judicial"}>MENSAJE A TERCEROS</option>
                             <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
                             <option value={"YA PAGÓ"}>YA PAGÓ</option>
                             <option value={"MENSAJE DE TEXTO"}>MENSAJE DE TEXTO</option>
+                            <option value={"NO CONTESTA"}>NO CONTESTA</option>
                             <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>
+                            <option value={"NUMERO INCORRECTO"}>NUMERO INCORRECTO</option>
+                            <option value={"FUERA DEL AREA DE COBERTURA"}>FUERA DEL AREA DE COBERTURA</option>
                             <option value={"CLIENTE SE NIEGA A PAGAR"}>CLIENTE SE NIEGA A PAGAR</option>
                             <option value="CLIENTE INDICA QUE NO ES SU DEUDA">CLIENTE INDICA QUE NO ES SU DEUDA</option>
                             <option value="PASAR A TRAMITE LEGAL">PASAR A TRAMITE LEGAL</option>
@@ -548,7 +574,6 @@ export default function Gestion(){
 
                     <div>
                         <label>Compromiso</label>
-                        {/* <input type="date"/> */}
                     </div>
                 </div>
                 
@@ -573,8 +598,8 @@ export default function Gestion(){
                                 <p>{credit.dias_vencidos}</p>
                                 <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                                 <p>{credit.pendingFees}</p>
-                                <p>{(credit.collectionState==='Cartera Vendida') ? 'VENCIDO' : credit.collectionState}</p>
-                                <p>{"N/D"}</p>
+                                <p>{credit.status_managment}</p>
+                                <p>{credit.date_promise}</p>
                             </div>
                         ))
                     :   (tray==='inprocess')
@@ -597,8 +622,8 @@ export default function Gestion(){
                                     <p>{credit.dias_vencidos}</p>
                                     <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                                     <p>{credit.pendingFees}</p>
-                                    <p>{(credit.collectionState==='Cartera Vendida') ? 'VENCIDO' : credit.collectionState}</p>
-                                    <p>{"N/D"}</p>
+                                    <p>{credit.status_managment}</p>
+                                    <p>{credit.date_promise}</p>
                                 </div>
                             ))
                         :
@@ -620,21 +645,13 @@ export default function Gestion(){
                                     <p>{credit.dias_vencidos}</p>
                                     <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                                     <p>{credit.pendingFees}</p>
-                                    <p>{(credit.collectionState==='Cartera Vendida') ? 'VENCIDO' : credit.collectionState}</p>
-                                    <p>{"N/D"}</p>
+                                    <p>{credit.status_managment}</p>
+                                    <p>{credit.date_promise}</p>
                                 </div>
                             ))
                 }
 
             </div>
-
-            {/* <div className="DetailCredit__access">
-                <p>Registros del {}-{} de {}</p>
-                <div>
-                    <NavLink onClick={()=>{}}>Anterior</NavLink>
-                    <NavLink onClick={()=>{}}>Siguiente</NavLink>
-                </div>
-            </div> */}
 
             {
                 (view_form)

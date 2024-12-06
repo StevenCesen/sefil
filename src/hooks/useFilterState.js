@@ -4,24 +4,31 @@ export default function useFilterState({tray,data_org,value,update,all}){
     if(tray==='pending' & !all){
         // Buscar en pendientes
         data_org.pending.map((credit)=>{
-            if(credit.collectionState.toUpperCase()===value.toUpperCase()){
-                results.push(credit);
+            if(credit.status_managment!==null){
+                if(credit.status_managment.toUpperCase()===value.toUpperCase()){
+                    results.push(credit);
+                }
             }
         });
 
     }else if(tray==='inprocess' & !all){
         // Buscar en proceso
         data_org.inprocess.map((credit)=>{
-            if(credit.collectionState.toUpperCase()===value.toUpperCase()){
-                results.push(credit);
+            if(credit.status_managment!==null){
+                if(credit.status_managment.toUpperCase()===value.toUpperCase()){
+                    results.push(credit);
+                }
             }
         });
        
     }else if(tray==='processed' & !all){
         // Buscar en procesados
+       
         data_org.processed.map((credit)=>{
-            if(credit.collectionState.toUpperCase()===value.toUpperCase()){
-                results.push(credit);
+            if(credit.status_managment!==null){
+                if(credit.status_managment.toUpperCase()===value.toUpperCase()){
+                    results.push(credit);
+                }
             }
         });
 

@@ -56,7 +56,7 @@ export default function GHistorial(){
                         date_promise:filters.date_promise,
                         agente:filters.agente
                     });
-
+                    console.log(filters)
                     console.log(filter);
 
                     if(data.next_page_url!==null){
@@ -381,6 +381,7 @@ export default function GHistorial(){
                             }}
                         />
                     </label>
+                    <label>Días mora</label>
                     <label>
                         Agente
                         <select
@@ -388,7 +389,7 @@ export default function GHistorial(){
                             onChange={(e)=>{
                                 setFilters({
                                     ...filters,
-                                    agent:e.target.value
+                                    agente:e.target.value
                                 });
 
                                 useFilterGestions({
@@ -432,6 +433,7 @@ export default function GHistorial(){
                             <label>{gestion.id_credit}</label>
                             <label>{gestion.substate_gestion}</label>
                             <label>{gestion.date_promise}</label>
+                            <label>{gestion.dias_vencidos}</label>
                             <label>{`${gestion.byUser.split(" ")[0].substring(0,1)}. ${gestion.byUser.split(" ")[1]}`}</label>
                             <label>{gestion.observation}</label>
                         </div>

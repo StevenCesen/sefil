@@ -130,6 +130,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 syncs_id.push(value.split('-')[1]);
             });
 
+            console.log(cartera)
             console.log(syncs_id)
 
             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE&creditos=${JSON.stringify(syncs_id)}`,{

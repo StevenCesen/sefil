@@ -8,7 +8,7 @@
     flex-direction: column;
     z-index: 100;
     width:20px;
-    height: 400px !important;
+    height: 300px !important;
     background-color: var(--bg-2);
     border-radius: 5px;
     box-shadow: var(--box-shadow);
@@ -35,13 +35,13 @@
 
 .CardCall>label{
     text-align: center;
-    margin-top: 20px;
-    font-size: 20px;
+    margin-top: 10px;
+    font-size: 16px;
     color: var(--color-1);
 }
 
 .CardCall>label>span{
-    font-size: 24px;
+    font-size: 20px;
     display: block;
     font-weight: bold;
     color: var(--color-1);
@@ -58,7 +58,7 @@
     width: 100%;
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
-    height: 50px;
+    height: 40px;
     padding: 5px 5px;
     display: flex;
     justify-content: space-between;
@@ -69,7 +69,7 @@
 }
 
 .CardCall>p>input{
-    width: 100px;
+    width: 150px;
     font-size: 16px;
     height: 25px;
     background-color: #008682;
@@ -111,11 +111,12 @@
 }
 
 .CardCall__options>button{
-    height: 40px;
+    height: 30px;
     background-color: var(--bg-2);
     color: var(--color-1);
     border: 1px solid;
     border-radius: 2px;
+    font-weight: bold;
 }
 
 .CardCall__button{
@@ -128,6 +129,7 @@
 .CardCall__options>button:hover,.CardCall__options>button:focus{
     background-color: var(--bg-alert-successful);
     color: var(--color-3);
+    cursor: pointer;
 }
 
 .CardCall__button--exit{
