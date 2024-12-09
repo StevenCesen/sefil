@@ -172,10 +172,11 @@ export default function Gestion(){
                     localStorage.setItem('campain_name',data[0].name);
                     // Asigno en pantalla principal la primer campaña del array
                     const credits=data[0].distributions;
-                    console.log(data);
+                    
                     let pending=[],inprocess=[],process=[];
 
                     credits.map(credito=>{
+                        console.log(credito)
                         if(credito.tray=='PENDIENTE'){
                             pending.push(credito);
                         }else if(credito.tray=='EN PROCESO'){
@@ -622,7 +623,7 @@ export default function Gestion(){
                                     <p>{credit.dias_vencidos}</p>
                                     <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                                     <p>{credit.pendingFees}</p>
-                                    <p>{credit.status_managment}</p>
+                                    <p className={`${(credit.status_managment==='COMPROMISO DE PAGO') ? "Gestion__item--alert" : ""}`}>{credit.status_managment}</p>
                                     <p>{credit.date_promise}</p>
                                 </div>
                             ))

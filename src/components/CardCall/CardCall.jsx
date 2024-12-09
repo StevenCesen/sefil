@@ -147,8 +147,24 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                     type="text"
                     style={{color:"white !important"}}
                     placeholder="0XXXXXX"
+                    value={number_in}
                     onChange={(e)=>{
-                        setIn(e.target.value);
+                        if(localStorage.getItem('state_call')=="false"){
+                            setIn(e.target.value);
+                        }else{
+                            addNotification({
+                                title: 'ERR: Llamada en progreso',
+                                subtitle: 'Termine o guarde la llamada para digitar otro número.',
+                                message: '',
+                                native: false,
+                                backgroundTop: '#FF9619',
+                                backgroundBottom: '#fdb864',
+                                colorTop: 'white',
+                                colorBottom: 'white',
+                                closeButton: 'Cerrar',
+                                duration: 3000,
+                            });
+                        }
                     }}
                 />
             </p>
@@ -276,8 +292,12 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     recorder.start();
                                     setRecord(recorder);
 
-                                    const request=await fetch(`originate.php?exten=${(number_in==="") ? phone.nro : number_in}&id=9&channel=${localStorage.getItem('extension')}`);
-                                    const response=await request.json();
+                                    try {
+                                        const request=await fetch(`originate.php?exten=${(number_in==="") ? phone.nro : number_in}&id=9&channel=${localStorage.getItem('extension')}`);
+                                        const response=await request.json();
+                                    } catch (error) {
+                                        
+                                    }
 
                                     init();
                                     status(recorder);
@@ -347,7 +367,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
 
             <div className="CardCall__footer">
                 {
-                    (end_session)
+                    (localStorage.getItem('state_call')==="setState")
                     ?
                     <button 
                         onClick={(e)=>{

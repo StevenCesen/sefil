@@ -158,19 +158,7 @@ export default function CardAssignCampain({data,updateCredits}){
         
         // Compruebo si esta campaña no es de tipo SINCRONIZACIÓN API
         if(data.type_assign==='api'){
-            // fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs`,{
-            //     headers: {
-            //         Accept: 'application/json',
-            //         Authorization: `Bearer ${localStorage.getItem('token')}`
-            //     }
-            // })
-            //     .then((response) => response.json())  
-            //     .then((data) => {
-            //         console.log(data);
-            //         localStorage.setItem('filt',JSON.stringify(data));
-            //         setCharge(data);
-            //     });
-
+            
             setCharge([]);
 
         }else{
@@ -187,9 +175,6 @@ export default function CardAssignCampain({data,updateCredits}){
                     localStorage.setItem('filt',JSON.stringify(data));
                 });
         }
-
-        console.log(data)
-
     },[]);
 
     if(!business) return <></>

@@ -25,34 +25,36 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [contacts,setContacts]=useState(); //Información de garantes
     const [info_credit,setInfo]=useState(); //Información del crédito
 
-    const [data_gestion,setDataGestion]=useState();
+    const [data_gestion,setDataGestion]=useState(); //ESTE SE DEBE ANULAR
+
+    // Información adicional del crédito
     const [historial,setHistorial]=useState();
     const [pagos,setPagos]=useState();
     const [direcciones,setDirecciones]=useState();
     const [phone_actual,setPhone]=useState();
     const [data_phones,setPhones]=useState();
     const [states,setStates]=useState();
-
-    const [template,setTemplate]=useState();
-    const [view_details,setDetails]=useState();
-    const [tray,setTray]=useState();
-    const [message_state,setMessage]=useState();
-    const [phones_secondaries,setSecondaries]=useState();
-    const [incall,setIncall]=useState();
-    const [gasto_cobranza,setGasto]=useState(0);
     const [view_condonation,setViewCondonation]=useState(true);
     const [viewPDFCondonation,setPDFcondonation]=useState(false);
     const [value_condonacion,setData]=useState([]);
     const [view_reestructurar,setReestructurar]=useState(true);
-    
-    const ref_titular=useRef();
+
+    //  Para seleccionar la plantilla que se va a usar
+    const [template,setTemplate]=useState();
+
+    //  Para selecccionar la bandeja de créditos
+    const [tray,setTray]=useState();
+
+    const [message_state,setMessage]=useState();
+    const [incall,setIncall]=useState();
+    const [gasto_cobranza,setGasto]=useState(0);
 
     const [new_phone,setNumber]=useState();
     const [view_new_phone,setViewNewPhone]=useState();
-    // const [phone_external,setCallExternal]=useState(); PENDIENTE, para que puedan marcar a cualquier otro número que no este registrado
 
     const form=useRef();
     const dates=useRef();
+    const ref_titular=useRef();
 
     const close=()=>{
         setCall(false);
@@ -74,7 +76,15 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     }
 
     const add_id_call=(id)=>{
-        let extras=data_gestion.id_calls_extras;
+
+        let extras=[];
+
+        if(Array.isArray(data_gestion.id_calls_extras)){
+            extras=data_gestion.id_calls_extras;
+        }else{
+            extras=JSON.parse(data_gestion.id_calls_extras);
+        }
+
         if(extras.length>0){
             extras.push(id);
         }else{
@@ -138,6 +148,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setReestructurar(false);
         setViewCondonation(false);
         setPDFcondonation(false);
+
         // Seleccionamos el historial de gestiones del crédito actual
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_credit=${currently.id_credito}&cartera=${currently.cartera}`,{
             headers: {
@@ -167,7 +178,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         }
         
         setCall(false);
-        setDetails(false);
+
         setViewNewPhone(false);
         setNumber("");
         setIncall(false);
@@ -175,7 +186,10 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setPagos([]);
         setDirecciones([]);
         setTray('Historial');
+
+        //  ASOCIAR ESTE MENSAJE DE ACUERDO A LA ULTIMA GESTIÓN DEL DÍA
         setMessage('No gestionado aún');
+        
         setInfo({
             id:currently.id_credito,
             name:currently.name,
@@ -198,12 +212,15 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             cartera:currently.cartera
         });
 
-        console.log(currently);
-
         localStorage.setItem('cartera',currently.cartera);
         localStorage.setItem('id_credito',currently.id_credito);
         localStorage.setItem('dias_vencidos',currently.dias_vencidos);
-        localStorage.setItem('credit_ci',currently.ci);
+        localStorage.setItem('client_ci',currently.ci);
+        localStorage.setItem('state_gestion','');
+        localStorage.setItem('substate_gestion','');
+        localStorage.setItem('date_promise','');
+        localStorage.setItem('client_name',currently.name);
+        localStorage.setItem('observation',currently.name);
 
         setStates([]);
         setContacts(currently.contactos);
@@ -258,7 +275,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             id_call:'', //Llamada con gestión
             id_calls_extras:[],
             id_credit:currently.id_credito,
-            state_gestion:temp.default[1].options[0],
+            state_gestion:'',
             substate_gestion:'',
             date_promise:"",
             observation:'',
@@ -268,7 +285,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
             client_ci:currently.ci,
             type:currently.tipo,
             dias_vencidos:currently.dias_vencidos,
-            cartera:currently.cartera
+            cartera:currently.cartera,
+            monto:currently.totalAmount
         });
 
     },[currently]);
@@ -290,9 +308,17 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                             onClick={(e)=>{
 
                                 useClickToCopy(e.target.textContent);
+
                                 if(incall===false){
 
                                     setCredit(currently);
+                                    setDataGestion({
+                                        ...data_gestion,
+                                        client_name:currently.name,
+                                        client_ci:currently.ci,
+                                        type:currently.tipo,
+                                    });
+
                                     localStorage.setItem('client_ci',currently.ci);
 
                                     let elements=document.getElementsByClassName('DetailCredit__body--focus');
@@ -331,7 +357,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     <button 
                                         onClick={(e)=>{
                                             useClickToCopy(e.target.textContent);
-
                                             contacts.map((garante,index)=>{
                                                 if(garante.ci===contact.ci & incall===false){
                                                     const phones_c=[];
@@ -355,17 +380,15 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                                                     update_phones(phones_c);
                                                     setCredit(garante);
-                                                    
-                                                    localStorage.setItem('client_ci',garante.ci);
+
+                                                    console.log(currently)
 
                                                     setDataGestion({
                                                         ...data_gestion,
                                                         client_name:garante.name,
-                                                        id_credit:currently.id_credito,
                                                         client_ci:garante.ci,
-                                                        type:garante.tipo
+                                                        type:garante.tipo,
                                                     });
-                                                    
                                                 }
                                             });
                                         }}
@@ -610,9 +633,9 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     let count=0;
                                     
                                     form.current.reset();
-                                    dates.current.value="";
-
+                                
                                     if(incall){
+                                        
                                         addNotification({
                                             title: 'ERR: Llamada',
                                             subtitle: 'Por favor, termine la llamada o espere que se guarde para continuar.',
@@ -626,6 +649,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                             duration: 3000,
                                         });
                                         e.target.textContent="Seguir";
+
                                     }else if(states.length>0){
                                         states.map((state)=>{
                                             if(state==='CONTACTADO'){
@@ -709,20 +733,26 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                                 <label className="Ggestion__input">
                                     Nombre del contacto
-                                    <input type="text" placeholder="STEVEN RAFAEL CESEN" value={credit.name}/>
+                                    <input 
+                                        type="text" 
+                                        placeholder="NOMBRE DEL CLIENTE"
+                                        value={data_gestion.client_name}
+                                    />
                                 </label>
 
                                 <label className="Ggestion__select">
                                     Estado
                                     <select 
                                         onChange={(e)=>{
+                                        console.log(e)
                                             setDataGestion({
                                                 ...data_gestion,
                                                 state_gestion:e.target.value
-                                            })
+                                            });
                                         }}
                                         value={data_gestion.state_gestion}
                                     >
+                                        <option>-- Seleccionar estado --</option>
                                         {
                                             template.states.map((option,index)=>(
                                                 <option key={index} value={option}>{option}</option>
@@ -735,13 +765,14 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     Subestado
                                     <select
                                         onChange={(e)=>{
+                                            console.log(e)
                                             setDataGestion({
                                                 ...data_gestion,
                                                 substate_gestion:e.target.value
-                                            })
-                                        }}
-                                        value={data_gestion.substate_gestion
-                                    }>
+                                            });
+                                        }} 
+                                        value={data_gestion.substate_gestion}
+                                    >
                                         <option value={""}>-- Seleccionar --</option>
                                         {
                                             template.substates.map((option)=>(
@@ -760,14 +791,13 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     Fecha de compromiso
                     
                                     <input
-                                        ref={dates}
                                         onChange={(e)=>{
                                             setDataGestion({
                                                 ...data_gestion,
                                                 date_promise:e.target.value
                                             });
                                         }}
-                                        value={data_gestion.data_promise}
+                                        value={data_gestion.date_promise}
                                         type="date" 
                                     />
                                 </label>
@@ -894,28 +924,21 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                                     const data_send=data_gestion;
 
-                                    if(data_send.id_calls_extras.length>0){
-                                        data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
-                                        data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
+                                    if(Array.isArray(data_send.id_calls_extras)){
+                                        if(data_send.id_calls_extras.length>0){
+                                            data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
+                                        }else{
+                                            data_send.id_call=0;
+                                        }
                                     }else{
-                                        data_send.id_call=0;
-                                        data_send.id_calls_extras=JSON.stringify([]);
+                                        data_send.id_calls_extras=JSON.parse(data_send.id_calls_extras);
+                                        data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
                                     }
+
+                                    data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
+
+                                    console.log(data_send);
                                     
-
-                                    if(data_gestion.observation===''){
-                                        data_send.observation='.';
-                                    }
-
-                                    data_send.monto=currently.totalAmount;
-                                    data_send.cuotas_pagadas=currently.paidFees;
-                                    data_send.cuotas_pendientes=currently.pendingFees;
-                                    data_send.id_credit=localStorage.getItem('id_credito');
-                                    data_send.cartera=localStorage.getItem('cartera');
-                                    data_send.date_promise=dates.current.value;
-                                    data_send.dias_vencidos=localStorage.getItem('dias_vencidos');
-                                    data_send.client_ci=localStorage.getItem('credit_ci');
-
                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
                                         method:'POST',
                                         headers: {
@@ -944,8 +967,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
 
                                                 updateTrays(data.data,'processed');
 
-                                                form.current.reset();
-
                                                 let elements=document.getElementsByClassName('DetailCredit__body--focus');
                                                 elements=[].slice.call(elements);
 
@@ -958,7 +979,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                     id_call:'',
                                                     id_calls_extras:[],
                                                     id_credit:currently.id_credito,
-                                                    state_gestion:template.states[0],
+                                                    state_gestion:'',
                                                     substate_gestion:'',
                                                     date_promise:'',
                                                     observation:'',
@@ -967,11 +988,14 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                     client_name:currently.name
                                                 });
 
+                                                form.current.reset();
+
                                                 e.target.textContent="Guardar";
                                             }else{
                                                 e.target.textContent="Error, inténtalo de nuevo";
                                             }
                                         });
+
                                 }else{
                                     addNotification({
                                         title: 'ERR: Llamada',

@@ -1744,7 +1744,7 @@
     padding: 5px;
     font-weight: 100;
     text-align: center;
-    height: 40px;
+    height: 50px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
@@ -1761,6 +1761,15 @@
 
 .Gestion__item:nth-child(2n+1){
     background-color: var(--bg-2);
+}
+
+.Gestion__item--alert{
+    background-color:  rgba(247, 38, 38, 0.671) !important;
+    border-radius: 2px;
+    font-size: 14px;
+    padding: 4px 10px;
+    color: var(--color-3);
+    font-weight: bold;
 }
 
 .Gestion__head>div{
