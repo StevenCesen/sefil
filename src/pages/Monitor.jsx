@@ -9,8 +9,60 @@ export default function Monitor(){
     const [agents,setAgents]=useState();
     const [campains,setCampains]=useState();
     const [campain,setCampain]=useState();
+    const [interval_agents,setIntervalAgent]=useState();
 
-    const data=useContext(GestionContext);
+    const updateState=()=>{
+        setIntervalAgent(
+            setInterval(() => {
+
+                (location.hash==="#/dashboard/monitor") 
+                ?
+                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
+                        headers: {
+                            Accept: 'application/json',
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
+                    })
+                        .then((response) => response.json())  
+                        .then((data) => {
+                            const data_prev=data;
+                            let agents_new=[];
+                            
+                            data_prev.map(agent=> {
+                                agent.status='DESCONECTADO';
+
+                                if(agent.name!=='EN ESPERA' & agent.name!=='Vanesa Rodriguez' & agent.name!=='Alexis Ortega' & agent.name!=='Patricio Paéz' & agent.name!=='Dayannara Mora'){
+                                    if(localStorage.getItem('filter_campain')!==null & localStorage.getItem('filter_campain')!==""){
+                                        
+                                        if(agent.gestion.length>0){
+                                            let new_agents=[];
+
+                                            agent.gestion.map((camp)=>{
+                                                if(camp.campain===localStorage.getItem('filter_campain')){
+                                                    new_agents.push(camp);
+                                                }
+                                            });
+
+                                            agent.gestion=new_agents;
+                                            if(agent.gestion.length>0){
+                                                agents_new.push(agent);
+                                            }
+                                        }
+
+                                    }else{
+                                        agents_new.push(agent);
+                                    }
+                                }
+
+                            });
+
+                            setAgents(agents_new);
+                        })
+                :   clearInterval(interval_agents)
+                
+            }, 4000)
+        );
+    }
 
     useEffect(()=>{
 
@@ -29,30 +81,59 @@ export default function Monitor(){
                     }
                 });
                 setCampains(camps);
+
+                localStorage.setItem('filter_campain',camps[camps.length-1].name);
+                setCampain(camps[camps.length-1].name);
+
             });
 
-        if(campain!==""){
-            let copy=data.agents;
-            let agents=[];
-
-            copy.map((agent)=>{
-                let new_agents=[];
-                if(agent.gestion.length>0){
-                    agent.gestion.map((camp)=>{
-                        if(camp.campain===campain){
-                            new_agents.push(camp);
+        if(localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='super' | localStorage.getItem('permission').split(',').includes('Monitor:all')){
+            updateState();
+            
+            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    const data_prev=data;
+                    let agents_new=[];
+                    
+                    data_prev.map(agent=> {
+                        agent.status='DESCONECTADO';
+                        
+                        if(agent.name!=='EN ESPERA' & agent.name!=='Vanesa Rodriguez' & agent.name!=='Alexis Ortega' & agent.name!=='Patricio Paéz' & agent.name!=='Dayannara Mora'){
+                            if(localStorage.getItem('filter_campain')!==null & localStorage.getItem('filter_campain')!==""){
+                                if(agent.gestion.length>0){
+                                    let new_agents=[];
+                                    agent.gestion.map((camp)=>{
+                                        if(camp.campain===localStorage.getItem('filter_campain')){
+                                            new_agents.push(camp);
+                                        }
+                                    });
+                                    agent.gestion=new_agents;
+                                    if(agent.gestion.length>0){
+                                        agents_new.push(agent);
+                                    }
+                                }
+                            }else{
+                                agents_new.push(agent);
+                            }
                         }
                     });
-                    agent.gestion=new_agents;
-                    agents.push(agent);
-                }
-            });
-            setAgents(agents);
+                    setAgents(agents_new);
+                });
         }else{
-            setAgents(data.agents);
+            setAgents([]);
         }
+
+        return () => {
+            clearInterval(interval_agents);
+        };
         
-    },[data.agents]);
+    },[]);
 
     if(!agents) return <></>
     if(!campains) return <></>
@@ -71,55 +152,82 @@ export default function Monitor(){
 
             <div className="pageConsulta__search">
                 <h4 className="Reports__title">Monitoreo</h4>
+                <label>
+                    Campaña
+                    <select
+                        value={campain}
+                        onChange={(e)=>{
+                            setCampain(e.target.value);
+                            localStorage.setItem('filter_campain',e.target.value)
+
+                            if(e.target.value!==""){
+                                let copy=agents;
+                                let agents_new=[];
+                    
+                                copy.map((agent)=>{
+                                    let new_agents=[];
+                                    if(agent.gestion.length>0){
+                                        agent.gestion.map((camp)=>{
+                                            if(camp.campain===e.target.value){
+                                                new_agents.push(camp);
+                                            }
+                                        });
+                                        agent.gestion=new_agents;
+                                        agents_new.push(agent);
+                                    }
+                                });
+                    
+                                setAgents(agents_new);
+                            }
+                            
+                        }}
+                    >
+                        <option value={""}>-- Todas --</option>
+                        {
+                            campains.map(campain=>(
+                                <option value={campain.name}>{campain.name}</option>
+                            ))
+                        }
+                    </select>
+                </label>
             </div>
 
             <div className="pageConsulta__monitor">
-                <div className="pageConsulta__monitorHead">
+                <div className="pageConsulta__monitorHead" style={{top:"-20px"}}>
                     <label>Usuario</label>
                     <label>Estado</label>
                     <label>Tiempo</label>
-                    <label>
-                        Campaña
-                        <select
-                            onChange={(e)=>{
-                                setCampain(e.target.value);
-
-                                if(e.target.value!==""){
-                                    let copy=data.agents;
-                                    let agents=[];
-                        
-                                    copy.map((agent)=>{
-                                        let new_agents=[];
-                                        if(agent.gestion.length>0){
-                                            agent.gestion.map((camp)=>{
-                                                if(camp.campain===e.target.value){
-                                                    new_agents.push(camp);
-                                                }
-                                            });
-                                            agent.gestion=new_agents;
-                                            agents.push(agent);
-                                        }
-                                    });
-                        
-                                    setAgents(agents);
-                                }
-                               
-                            }}
-                        >
-                            <option value={""}>-- Todas --</option>
-                            {
-                                campains.map(campain=>(
-                                    <option value={campain.name}>{campain.name}</option>
-                                ))
-                            }
-                        </select>
-                    </label>
+                    
                     <label>Nro. créditos asignados</label>
-                    <label>Nro. créditos gestionados</label>
-                    <label>Nro. créditos gestion efec.</label>
+                    <label>
+                        Nro. créditos gestionados
+                        <div>
+                            <label>Acum.</label>
+                            <label>Día.</label>
+                        </div>
+                    </label>
+                    <label>
+                        Nro. créditos gestion efec.
+                        <div>
+                            <label>Acum.</label>
+                            <label>Día.</label>
+                        </div>
+                    </label>
                     <label>Nro. créditos pendientes</label>
-                    <label>Nro. créditos en proceso</label>
-                    <label>Nro. llamadas</label>
+                    <label>
+                        Nro. créditos en proceso
+                        <div>
+                            <label>Acum.</label>
+                            <label>Día.</label>
+                        </div>
+                    </label>
+                    <label>
+                        Nro. llamadas
+                        <div>
+                            <label>Acum.</label>
+                            <label>Día.</label>
+                        </div>
+                    </label>
                 </div>
 
                 {
@@ -137,10 +245,14 @@ export default function Monitor(){
                                     data={{
                                         nro_credits:campain.total_credits,
                                         nro_gestions:campain.total_credits_ges,
+                                        nro_gestions_dia:campain.total_credits_ges_dia,
                                         nro_gestions_efec:campain.total_credits_ges_efec,
+                                        nro_gestions_efec_dia:campain.total_credits_ges_efec_dia,
                                         nro_pendientes:campain.nro_pendientes,
                                         nro_proceso:campain.nro_proceso,
+                                        nro_proceso_dia:campain.nro_proceso_dia,
                                         nro_calls:campain.nro_llamadas,
+                                        nro_calls_acum:campain.nro_llamadas_acum,
                                     }}
                                 />
                             ))
@@ -153,12 +265,16 @@ export default function Monitor(){
                                 name_campain={"-"}
                                 mode={"complete"}
                                 data={{
-                                    nro_credits:"-",
-                                    nro_gestions:"-",
-                                    nro_gestions_efec:"-",
-                                    nro_pendientes:"-",
-                                    nro_proceso:"-",
-                                    nro_calls:"-",
+                                    nro_credits:'-',
+                                    nro_gestions:'-',
+                                    nro_gestions_dia:'-',
+                                    nro_gestions_efec:'-',
+                                    nro_gestions_efec_dia:'-',
+                                    nro_pendientes:'-',
+                                    nro_proceso:'-',
+                                    nro_proceso_dia:'-',
+                                    nro_calls:'-',
+                                    nro_calls_acum:'-',
                                 }}
                             />
                     ))

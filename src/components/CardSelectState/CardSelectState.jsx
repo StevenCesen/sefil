@@ -51,7 +51,7 @@ export default function CardSelectState({mode,current_option}){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then((data) => {
-                                                        
+                                                            console.log(data);
                                                         });
                                                 }}
                                             >{option}</label>

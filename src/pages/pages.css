@@ -209,8 +209,17 @@
     align-items: flex-start;
     flex-direction: column;
     color: var(--color-2);
-    font-size: 15px;
+    font-size: 16px;
     position: relative;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.pageConsulta__search>label>select{
+    height: 40px;
+    border: none;
+    margin-top: 5px;
+    border-bottom: 1px solid rgb(176, 176, 176);
 }
 
 .pageConsulta__search>label>div{
@@ -406,23 +415,47 @@
 
 .pageConsulta__monitorHead{
     width: 100%;
+    box-sizing: border-box;
     display: grid;
     background-color: var(--bg-alert-error);
-    height: 70px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    padding: 5px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    padding: 20px 5px 20px 5px;
+    grid-template-columns: 8% 8% 12% 8% 14% 14% 10% 14% 12%;
     justify-content: center;
-    align-items: center;
-    gap: 10;
+    align-items:flex-end;
+    position: sticky;
+    top: 0;
 }
 
 .pageConsulta__monitorHead>label{
+    width: 100%;
     text-align: center;
     font-weight: bold;
     font-size: 16px;
     color: var(--color-3);
+}
+
+.pageConsulta__monitorHead>label>div{
+    width: 95%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--color-3);
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.pageConsulta__monitorHead>label>div>label{
+    background-color:#FEC888;
+    text-align: center;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-5);
 }
 
 .pageConsulta__monitorHead>label>select{
@@ -1280,9 +1313,7 @@
 
 .Home__stadisticOne>div{
     width: 100%;
-    margin: 20px 0;
     box-shadow: var(--box-shadow);
-    padding: 10px 10px;
     background-color: var(--bg-2);
 }
 
@@ -1315,7 +1346,6 @@
     height: 500px;
     overflow-y: auto;
     box-shadow: var(--box-shadow);
-    padding: 10px 10px;
     background-color: var(--bg-2);
 }
 

@@ -55,7 +55,7 @@ export default function CardAssignCampain({data,updateCredits}){
     const [prev_agencies,setPrevAgencies]=useState();
     const [errors,setErrors]=useState();
     const [total_assign,setTotalAssign]=useState();
-    const [count,setCount]=useState();
+    const [view_details,setDetails]=useState();
 
     const update=(data)=>{
         setCharge(data);
@@ -90,12 +90,10 @@ export default function CardAssignCampain({data,updateCredits}){
         copy[key]=value;
         setItems(item_filter);
 
-        console.log(data.cartera);
-
         // Usamos el seleccionar de créditos
         // 1) Primero debemos saber cual es modo
         // 2) Enviamos la data del filtro correspondiente: Si es asociaación de cartera entonces es filt, si es transferencia, es user_filt
-        useAssignSearch(charge,'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia,copy.estado_gestion,agent.id,data.cartera);
+        useAssignSearch(charge,'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,prev_agencies,copy.estado_gestion,agent.id,data.cartera);
     }
 
     function chunckArrayInGroups(arr, size) {
@@ -123,6 +121,7 @@ export default function CardAssignCampain({data,updateCredits}){
         setViewAgents(false);
         setPrevAgencies([]);
         setDtsn('');
+        setDetails(false);
         setErrors([]);
         setTotalAssign(0);
 
@@ -183,7 +182,7 @@ export default function CardAssignCampain({data,updateCredits}){
 
     return (
         <div className="CardAssignCampain">
-            <p className="CardAssignCampain__head">Asignación de campaña | {data.name}</p>
+            <p className="CardAssignCampain__head">Asignación de campaña | {data.name} ({data.totals} CRÉDITOS)</p>
 
             <label className="CardAssignCampain__searchCredit">
                 <strong style={{fontWeight:'bold'}}> Buscar crédito</strong>
@@ -257,9 +256,22 @@ export default function CardAssignCampain({data,updateCredits}){
                                                         setViewAgents(false);
                                                     
                                                         data.distributions.map((agente)=>{
-                                                            console.log(agente)
                                                             if(Number(agente.agent_id)===Number(agent.id)){
-                                                                setCharge(agente.distribution)
+                                                                //setCharge(agente.distribution)
+                                                                useAssignSearch(
+                                                                    charge,
+                                                                    '',
+                                                                    update,
+                                                                    true,
+                                                                    coincidence,
+                                                                    item_filter.mora,
+                                                                    item_filter.cuota,
+                                                                    item_filter.monto,
+                                                                    item_filter.estado,
+                                                                    prev_agencies,
+                                                                    item_filter.estado_gestion,
+                                                                    agent.id,
+                                                                    data.cartera);
                                                             }
                                                         });
 
@@ -413,6 +425,8 @@ export default function CardAssignCampain({data,updateCredits}){
                     // (charge.length>0)
                     // ?
                         <>
+                            
+
                             <input 
                                 ref={busc}
                                 onChange={(e)=>{  
@@ -439,6 +453,7 @@ export default function CardAssignCampain({data,updateCredits}){
 
                             <button 
                                 title="Todos los créditos volverán a la carga principal y loa agentes no tendrán créditos"
+                                className="CardAssignCampain__file--buttonReset"
                                 onClick={(e)=>{
                                     e.target.textContent="Reiniciando";
 
@@ -460,6 +475,12 @@ export default function CardAssignCampain({data,updateCredits}){
                                         });
                                 }}
                             >Reiniciar campaña</button>
+
+                            <button
+                                onClick={(e)=>{
+                                    setDetails(true);
+                                }}
+                            >Ver detalle cred.</button>
                         </>
                     // :   <></>
                 }
@@ -468,43 +489,6 @@ export default function CardAssignCampain({data,updateCredits}){
                         (charge.length>0)
                         ?   
                             <>
-                                <div className="CardAssignCampain__headCharge">
-                                    <input 
-                                        type="checkbox"
-                                        onChange={(e)=>{
-                                            const prev_charge=charge;
-                                            let results=[];
-
-                                            if(e.target.checked){
-                                                prev_charge.map((credit)=>{
-                                                    credit.select=true;
-                                                    results.push(credit);
-                                                });
-                                            }else{
-                                                prev_charge.map((credit)=>{
-                                                    credit.select=false;
-                                                    results.push(credit);
-                                                });
-                                            }
-                                            
-                                            setCharge(results);
-                                        }}
-                                    />
-                                    <label>Nombre</label>
-                                    <label>Cédula</label>
-                                    <label>Crédito</label>
-                                    <label>Monto</label>
-                                    <label>Cuotas pendientes</label>
-                                    <label>Días mora</label>
-                                    <label>Estado</label>
-                                </div>
-                                {
-                                    charge.map((credit,index)=>(
-                                        <CardItemCharge
-                                            item={credit}
-                                        />
-                                    ))
-                                }
                             </>
                         :   <></> 
                     }
@@ -787,7 +771,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                             agent_destino:dtsn,
                                             carga:JSON.stringify(carga_enviar),
                                             cartera:data.cartera
-                                        })
+                                        });
 
                                         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
                                             method:'PUT',
@@ -804,8 +788,6 @@ export default function CardAssignCampain({data,updateCredits}){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                console.log(data);
-                                            
                                                 if(data.errors.length>0){
                                                     addNotification({
                                                         title: 'ERR: Cruce',
@@ -832,6 +814,8 @@ export default function CardAssignCampain({data,updateCredits}){
                                                         closeButton: 'Cerrar',
                                                         duration:3000,
                                                     });
+
+                                                    updateCredits(data);
                                                 }
                                                 e.target.textContent="Transferir carga";
                                             });
@@ -1199,6 +1183,36 @@ export default function CardAssignCampain({data,updateCredits}){
                         
                 }
             </div>
+            
+            {/* Para visualizar el detalle de los créditos */}
+            {
+                (view_details)
+                ?   
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setDetails(false)}}>Ocultar</button>
+                        <div style={{width:"100%",padding:"0 10px",height:"500px",overflowY:'auto'}}>
+                            <div className="CardAssignCampain__headCharge">
+                                <label></label>
+                                <label>Nombre</label>
+                                <label>Cédula</label>
+                                <label>Crédito</label>
+                                <label>Monto</label>
+                                <label>Cuotas pendientes</label>
+                                <label>Días mora</label>
+                                <label>Estado</label>
+                            </div>
+                            {
+                                charge.map((credit,index)=>(
+                                    <CardItemCharge
+                                        item={credit}
+                                    />
+                                ))
+                            }
+                        </div>
+                    </div>
+                :   <></>
+            }
+
         </div>
     );
 }

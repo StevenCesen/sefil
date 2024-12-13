@@ -13,7 +13,7 @@ export default function Header(){
                 (useSessions()) && 
                     <>
                         {
-                            (localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='legal' | localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='call' | localStorage.getItem('rol')==='campo') 
+                            (localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='legal' | localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='call' | localStorage.getItem('rol')==='campo') 
                             ?
                                 <CardSelectState
                                     mode={"select"}

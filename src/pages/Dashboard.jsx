@@ -98,7 +98,6 @@ export default function Dashboard({rol}){
 
     useEffect(()=>{
         //Consulta a API, para setear permisos
-        console.log(rol)
         data.map((user)=>{
             if(rol===user.rol){
                 setPermission(user.permission);

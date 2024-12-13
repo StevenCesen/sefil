@@ -71,7 +71,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
 
                 console.log(response);
 
-                if(response.estado=='Busy' | response.estado==""){
+                if(response.estado=='Busy'){
                     
                     try {
                         const hangup=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
@@ -339,8 +339,6 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
-                                        console.log("ESTADO BROADCAST")
-                                        console.log(data)
                                         localStorage.setItem('state_call',true);
                                     });
 

@@ -936,7 +936,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                     }
 
                                     data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
-
+                                    data_send.cartera=localStorage.getItem('cartera');
+                                    
                                     console.log(data_send);
                                     
                                     fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
@@ -974,6 +975,8 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                     ele.classList.remove('DetailCredit__body--focus');
                                                 });
 
+                                                form.current.reset();
+
                                                 setDataGestion({
                                                     id_campain:id_campain,
                                                     id_call:'',
@@ -985,10 +988,9 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                                     observation:'',
                                                     byUser:'',
                                                     fecha:'',
-                                                    client_name:currently.name
+                                                    client_name:currently.name,
+                                                    cartera:currently.cartera
                                                 });
-
-                                                form.current.reset();
 
                                                 e.target.textContent="Guardar";
                                             }else{
@@ -1110,7 +1112,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                         <div key={index} className="Ggestion__historialItem">
                                             <label>{item.fecha}</label>
                                             <label>{item.forma_pago}</label>
-                                            <label>{useFormatterNumber({value:item.valor_recibido,currency:'USD'})}</label>
+                                            <label>{useFormatterNumber({value:Number(item.valor_recibido.replace(',','.')),currency:'USD'})}</label>
                                             <label>{item.status.toUpperCase()}</label>
                                         </div>
                                     ))

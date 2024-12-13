@@ -44,13 +44,14 @@
     justify-content: flex-start;
     color: var(--color-3);
     font-weight: bold;
-    font-size: 14px;
+    font-size: 18px;
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
     align-items: center;
     margin-bottom: 10px;
     position: sticky;
     top: 0;
+    z-index: 99;
 }
 
 .CardAssignCampain__footer{
@@ -227,10 +228,19 @@
     height: 35px;
     padding: 0 10px;
     cursor: pointer;
+    border: none;
+    font-weight: bold;
+    border: 1px solid rgb(194, 194, 194);
 }
 
 .CardAssignCampain__file>input:focus{
     outline: none;
+}
+
+.CardAssignCampain__file--buttonReset{
+    background-color: var(--color-error);
+    color: var(--color-3);
+    border: none !important;
 }
 
 .CardAssignCampain__file>div{

@@ -54,9 +54,6 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
     }
 
     useEffect(()=>{
-
-        
-
         // setTime({
         //     second:Number(time.split(':')[2]),
         //     minutes:Number(time.split(':')[1]),
@@ -65,13 +62,19 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
         //     // minutes:0
         // });
 
-        init({
-            sec:Number(time.split(':')[2]),
-            min:Number(time.split(':')[1]),
-            hour:Number(time.split(':')[0])
+        // init({
+        //     sec:Number(time.split(':')[2]),
+        //     min:Number(time.split(':')[1]),
+        //     hour:Number(time.split(':')[0])
+        // });
+
+        setTime({
+            minutes:(Number(time.split(':')[1])<10) ? `0${Number(time.split(':')[1])}` : Number(time.split(':')[1]),
+            second:(Number(time.split(':')[2])<10) ? `0${Number(time.split(':')[2])}` : Number(time.split(':')[2]),
+            hour:(Number(time.split(':')[0])<10) ? `0${Number(time.split(':')[0])}` : Number(time.split(':')[0])
         });
 
-        return () => clearInterval(calc_time);
+        //return () => clearInterval(calc_time);
     
     },[time]);
 
@@ -97,17 +100,29 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
             >{state}</p>
 
             <p>{`${(state!=='FUERA DE LÍNEA') ? times.hour+":"+times.minutes+":"+times.second : " - "}`}</p>
-            <p>{name_campain}</p>
+            {/* <p>{name_campain}</p> */}
             {
                 (mode==='complete') 
                 ?
                     <>
                         <p style={{fontSize:"16px"}}>{data.nro_credits}</p>
-                        <p style={{fontSize:"16px"}}>{data.nro_gestions}</p>
-                        <p style={{fontSize:"16px"}}>{data.nro_gestions_efec}</p>
+                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
+                            <label>{data.nro_gestions}</label>
+                            <label>{data.nro_gestions_dia}</label>
+                        </p>
+                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderRight:"1px solid grey"}}>
+                            <label>{data.nro_gestions_efec}</label>
+                            <label>{data.nro_gestions_efec_dia}</label>
+                        </p>
                         <p style={{fontSize:"16px"}}>{data.nro_pendientes}</p>
-                        <p style={{fontSize:"16px"}}>{data.nro_proceso}</p>
-                        <p style={{fontSize:"16px"}}>{data.nro_calls}</p>
+                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
+                            <label>{data.nro_proceso}</label>
+                            <label>{data.nro_proceso_dia}</label>
+                        </p>
+                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderRight:"1px solid grey"}}>
+                            <label>{data.nro_calls_acum}</label>
+                            <label>{data.nro_calls}</label>
+                        </p>
                     </>
                 : 
                     <></>

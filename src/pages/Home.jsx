@@ -14,10 +14,9 @@ import {
     Legend,
   } from 'chart.js';
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import CardDataStatics from "../components/CardDataStatics/CardDataStatics";
-import { GestionContext } from "../contexts/GestionContext";
 import CardUserState from "../components/CardUserState/CardUserState";
 
 ChartJS.register(
@@ -119,16 +118,16 @@ export default function Home(){
     const [totalDay,setTotal]=useState(0);
     // const [data,setData]=useState({});
     const [users,setUsers]=useState();
+    const [interval_agents,setIntervalAgent]=useState();
 
     const [agents,setAgents]=useState();
-    const data=useContext(GestionContext);
 
     const [totalMonth,setMonth]=useState(0);
 
     const [comprobantes,setComprobantes]=useState();
 
     useEffect(()=>{
-        setAgents(data.agents);
+
         // fetch("https://sefil.softsen.space/public/api/vouchers/reportAnual",{
         //     headers: {
         //         Accept: 'application/json',
@@ -195,15 +194,6 @@ export default function Home(){
             .then((response) => response.json())  
             .then((data) => setMonth(data));
 
-        // fetch("https://sefil.softsen.space/public/api/users/departaments",{
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())  
-        //     .then((data) => setUsers(data));
-
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/vouchers`,{
             headers: {
                 Accept: 'application/json',
@@ -215,12 +205,12 @@ export default function Home(){
                 setComprobantes(data.data);
             });
 
-    },[data.agents]);
+        
+    },[]);
 
     if(!vouchers) return <></>
     if(!totalMonth) return <></>
     if(!comprobantes) return <></>
-    if(!agents) return <></>
     // if(!condonations) return <></>
     // if(!restruct) return <></>
     // if(!data) return <></>
@@ -269,68 +259,6 @@ export default function Home(){
                         options={options_1}
                     />
                 </div> */}
-
-                <div>
-                    <div>
-                        <h3>Monitoreo de llamadas</h3>
-                        <div className="pageConsulta__monitor">
-                        <div className="pageConsulta__monitorHead">
-                            <label>Usuario</label>
-                            <label>Estado</label>
-                            <label>Tiempo</label>
-                            <label>Campaña</label>
-                            <label>Nro. créditos asignados</label>
-                            <label>Nro. créditos gestionados</label>
-                            <label>Nro. créditos gestion efec.</label>
-                            <label>Nro. créditos pendientes</label>
-                            <label>Nro. créditos en proceso</label>
-                            <label>Nro. llamadas</label>
-                        </div>
-
-                            {
-                                agents.map((agent,index)=>(
-                                    (agent.gestion.length>0)
-                                    ?
-                                        agent.gestion.map((campain,index)=>(
-                                            <CardUserState
-                                                key={index}
-                                                name={agent.name}
-                                                state={agent.state}
-                                                time={agent.tiempo}
-                                                name_campain={campain.campain}
-                                                mode={"complete"}
-                                                data={{
-                                                    nro_credits:campain.total_credits,
-                                                    nro_gestions:campain.total_credits_ges,
-                                                    nro_gestions_efec:campain.total_credits_ges_efec,
-                                                    nro_pendientes:campain.nro_pendientes,
-                                                    nro_proceso:campain.nro_proceso,
-                                                    nro_calls:campain.nro_llamadas,
-                                                }}
-                                            />
-                                        ))
-                                    :
-                                        <CardUserState
-                                            key={index}
-                                            name={agent.name}
-                                            state={agent.state}
-                                            time={agent.tiempo}
-                                            name_campain={"-"}
-                                            mode={"complete"}
-                                            data={{
-                                                nro_credits:"-",
-                                                nro_gestions:"-",
-                                                nro_calls:"-",
-                                                nro_efec:"-",
-                                                nro_no_efec:"-"
-                                            }}
-                                        />
-                                ))
-                            }
-
-                        </div>
-                    </div>
-                </div>
 
                 {/* <CardDataList
                     title={"Créditos reestructurados"}

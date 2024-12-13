@@ -7,7 +7,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
      * =========================================================================================
     */
         let results=[];
-
+        
         if(Number(mode)===1){ //Modo coincidir
             if(
                 mora==='' & 
@@ -79,6 +79,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 })
                     .then((response) => response.json())  
                     .then((data) => {
+                        console.log(data)
                         update(data);
                     });
             }

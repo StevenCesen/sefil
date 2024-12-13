@@ -36,6 +36,16 @@ export default function NavSlide({actions,permission}){
             }
 
             {
+                (options.includes('Monitor:all') | options.includes('User:all') | options.includes('User:minimize')) ?
+                    <NavLink to="dashboard/monitor" className="NavSlide__option">
+                        <img src="./icons/monitor.png"/>
+                        <label>Monitoreo</label>
+                        <span>Monitoreo</span>
+                    </NavLink>
+                : <></>
+            }
+
+            {
                 (options.includes('Consulta:all')) ?
                     <NavLink to="dashboard/consulta" className="NavSlide__option">
                         <img src="./icons/ic_round-search.png"/>
@@ -80,12 +90,19 @@ export default function NavSlide({actions,permission}){
                                                                 <NavLink to={"dashboard/call"}>Gestión</NavLink>
                                                             : <></>
                                                         }
-                                                        <NavLink to={"dashboard/monitor"}>Monitoreo</NavLink>
                                                         <NavLink to={"dashboard/campain"}>Campañas</NavLink>
                                                         <NavLink to={"dashboard/ccall"}>Configuración de Gestión</NavLink>
                                                     </>
 
-                                                :   <NavLink to={"dashboard/call"}>Gestión</NavLink>
+                                                :   
+                                                    (options.includes('Monitor:all'))
+                                                    ?
+                                                        <>
+                                                            <NavLink to={"dashboard/glist"}>Historial de gestiones</NavLink>
+                                                            <NavLink to={"dashboard/call"}>Gestión</NavLink>
+                                                        </>
+                                                    :
+                                                        <NavLink to={"dashboard/call"}>Gestión</NavLink>
                                             }
                                         </>
                                     :
