@@ -18,7 +18,7 @@ const render = (status) => {
     return <p>{status}</p>;
 };
 
-export default function CardGestion({currently,next,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays,number}){
+export default function CardGestion({currently,total,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays,number}){
     
     const [call,setCall]=useState(false);
     const [credit,setCredit]=useState(); //Información netamente de la persona actual
@@ -53,7 +53,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
     const [view_new_phone,setViewNewPhone]=useState();
 
     const form=useRef();
-    const dates=useRef();
+    const button_seguir=useRef();
     const ref_titular=useRef();
 
     const close=()=>{
@@ -148,7 +148,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         setReestructurar(false);
         setViewCondonation(false);
         setPDFcondonation(false);
-
         // Seleccionamos el historial de gestiones del crédito actual
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_credit=${currently.id_credito}&cartera=${currently.cartera}`,{
             headers: {
@@ -178,7 +177,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
         }
         
         setCall(false);
-
         setViewNewPhone(false);
         setNumber("");
         setIncall(false);
@@ -621,7 +619,7 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                         <div className="Ggestion__principalHead">
                             <div>
                                 <h3 className="Ggestion__title">Gestión ({message_state})</h3>
-                                <p>Quedan ({number.length})</p>
+                                <p>Quedan ({total})</p>
                             </div>
                             
                             {/* En este botón se hace verificación de estados de llamadas para guardar en bandeja de "EN PROCESO" */}
@@ -665,7 +663,6 @@ export default function CardGestion({currently,next,index,setNext,id_campain,set
                                             };
 
                                             console.log(data);
-
                                             e.target.textContent="Espere...";
 
                                             if(data.id_campain!==undefined & data.id_credit!==undefined & data.cartera!==undefined){

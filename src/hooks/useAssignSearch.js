@@ -24,7 +24,6 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 let filters="";
 
                 if(mora!==""){
-                    console.log(mora)
                     if(mora.min!=="" & Number(mora.min)!==0){
                         filters+=`&mora_min=${mora.min}`;
                     }

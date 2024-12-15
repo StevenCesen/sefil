@@ -25,10 +25,93 @@ export default function Gestion(){
     const [state_call,setStateCall]=useState(false);
     const [state_gestion,setStateGestion]=useState(false);
     const [mora,setMora]=useState();
-
     const [structure,setStructure]=useState();
-
     const [tray,setTray]=useState();
+
+    const [filters,setFilters]=useState();
+
+    const generate_uri=({
+        campain,
+        bandeja,
+        agente,
+        agencia,
+        mora,
+        estado_gestion,
+        compromiso
+    })=>{
+        let filters="";
+
+        filters+=`?campain=${campain}`;
+
+        filters+=(bandeja==='pending') ? `&tray=PENDIENTE` : (bandeja==='inprocess') ? `&tray=EN PROCESO` : `&tray=GESTIONADO`;
+
+        if(mora!==""){
+            if(mora.min!=="" & Number(mora.min)!==0){
+                filters+=`&mora_min=${mora.min}`;
+            }
+            if(mora.max!=="" & Number(mora.max)!==0){
+                filters+=`&mora_max=${mora.max}`;
+            }
+        }
+
+        if(estado_gestion!==""){
+            filters+=`&management=${estado_gestion}`;
+        }
+
+        if(agencia!==""){
+            filters+=`&agencia=${agencia}`;
+        }
+
+        if(agente){
+            filters+=`&user=${agente}`;
+        }
+
+        if(compromiso!==""){
+            filters+=`&compromiso=${compromiso}`;
+        }
+
+        return filters;
+    }
+
+    const updateFilter=({campain,bandeja,agente,agencia,mora,estado_gestion,compromiso})=>{
+        
+        let filters=generate_uri({
+            campain,
+            bandeja,
+            agente,
+            agencia,
+            mora,
+            estado_gestion,
+            compromiso
+        });
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filtertray${filters}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((datas) => {
+                if(bandeja==='pending'){
+                    setData({
+                        ...data,
+                        pending:datas
+                    });
+                }else if(bandeja==='inprocess'){
+                    setData({
+                        ...data,
+                        inprocess:datas
+                    });
+                }else{
+                    setData({
+                        ...data,
+                        processed:datas
+                    });
+                }
+            });
+
+    }
 
     const updateTray=(credit_id,destination)=>{
         let copy=data;
@@ -86,30 +169,160 @@ export default function Gestion(){
 
     // Para pasar al siguiente crédito
     const updateNav=(index)=>{
-        if(tray==='pending'){
-            if(index<(data.pending.length-1)){
-                setCurrenly(data.pending[index+1]);
-                setNext(data.pending[index+2]);
-                setIndex(index+1);
-            }else{
-                setForm(false);
+        if(index<9){
+            if(tray==='pending'){
+                if(index<(data.pending.data.length-1)){
+                    setCurrenly(data.pending.data[index+1]);
+                    setNext(data.pending.data[index+2]);
+                    setIndex(index+1);
+                }else{
+                    setForm(false);
+                }
+            }else if(tray==='inprocess'){
+                if(index<(data.inprocess.data.length-1)){
+                    setCurrenly(data.inprocess.data[index+1]);
+                    setNext(data.inprocess.data[index+2]);
+                    setIndex(index+1);
+                }else{
+                    setForm(false);
+                }
+            }else if(tray==='processed'){
+                if(index<(data.processed.data.length-1)){
+                    setCurrenly(data.processed.data[index+1]);
+                    setNext(data.processed.data[index+2]);
+                    setIndex(index+1);
+                }else{
+                    setForm(false);
+                }
             }
-        }else if(tray==='inprocess'){
-            if(index<(data.inprocess.length-1)){
-                setCurrenly(data.inprocess[index+1]);
-                setNext(data.inprocess[index+2]);
-                setIndex(index+1);
-            }else{
-                setForm(false);
+
+        }else{
+            //Actualizamos con los siguientes registros
+            let url="",bandeja="",complemento="",filtro="";
+
+            if(tray==='pending'){
+                url=data.pending.next_page_url;
+                bandeja="PENDIENTE";
+
+                if(url.includes('filtertray')){
+                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${campain}`;
+                    filtro=generate_uri({
+                        campain:campain,
+                        bandeja:tray,
+                        agente:localStorage.getItem('temp_uS'),
+                        agencia:filters.agencias,
+                        mora:filters.mora,
+                        estado_gestion:filters.estado_gestion,
+                        compromiso:filters.compromiso
+                    });
+                }else{
+                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${campain}`;
+                }
+
+            }else if(tray==='inprocess'){
+                url=data.inprocess.next_page_url;
+                bandeja="EN PROCESO";
+
+                if(url.includes('filtertray')){
+                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${campain}`;
+                    filtro=generate_uri({
+                        campain:campain,
+                        bandeja:tray,
+                        agente:localStorage.getItem('temp_uS'),
+                        agencia:filters.agencias,
+                        mora:filters.mora,
+                        estado_gestion:filters.estado_gestion,
+                        compromiso:filters.compromiso
+                    });
+                }else{
+                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${campain}`;
+                }
+
+            }else if(tray==='processed'){
+                url=data.processed.next_page_url;
+                bandeja="GESTIONADO";
+
+                if(url.includes('filtertray')){
+                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${campain}`;
+                    filtro=generate_uri({
+                        campain:campain,
+                        bandeja:tray,
+                        agente:localStorage.getItem('temp_uS'),
+                        agencia:filters.agencias,
+                        mora:filters.mora,
+                        estado_gestion:filters.estado_gestion,
+                        compromiso:filters.compromiso
+                    });
+                }else{
+                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${campain}`;
+                }
             }
-        }else if(tray==='processed'){
-            if(index<(data.processed.length-1)){
-                setCurrenly(data.processed[index+1]);
-                setNext(data.processed[index+2]);
-                setIndex(index+1);
-            }else{
-                setForm(false);
-            }
+
+            fetch(`${url}${complemento}${filtro.replace('?','&')}`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then((response) => response.json())  
+                .then((datas) => {
+
+                    if(tray==='pending'){
+                        if(url.includes('filtertray')){
+                            setData({
+                                ...data,
+                                pending:datas
+                            });
+                            setCurrenly(datas.data[0]);
+                            setNext(datas.data[1]);
+                            setIndex(0);
+                        }else{
+                            setData({
+                                ...data,
+                                pending:datas.pendiente
+                            });
+                            setCurrenly(datas.pendiente.data[0]);
+                            setNext(datas.pendiente.data[1]);
+                            setIndex(0);
+                        }
+                    }else if(tray==='inprocess'){
+                        if(url.includes('filtertray')){
+                            setData({
+                                ...data,
+                                inprocess:datas
+                            });
+                            setCurrenly(datas.data[0]);
+                            setNext(datas.data[1]);
+                            setIndex(0);
+                        }else{
+                            setData({
+                                ...data,
+                                inprocess:datas.proceso
+                            });
+                            setCurrenly(datas.proceso.data[0]);
+                            setNext(datas.proceso.data[1]);
+                            setIndex(0);
+                        }
+                    }else if(tray==='processed'){
+                        if(url.includes('filtertray')){
+                            setData({
+                                ...data,
+                                processed:datas
+                            });
+                            setCurrenly(datas.data[0]);
+                            setNext(datas.data[1]);
+                            setIndex(0);
+                        }else{
+                            setData({
+                                ...data,
+                                processed:datas.gestionado
+                            });
+                            setCurrenly(datas.gestionado.data[0]);
+                            setNext(datas.gestionado.data[1]);
+                            setIndex(0);
+                        }
+                    }
+                });
         }
     }
 
@@ -147,8 +360,22 @@ export default function Gestion(){
             max:""
         });
 
+        setFilters({
+            mora:{
+                min:"",
+                max:""
+            },
+            agencias:"",
+            estado_gestion:"",
+            compromiso:""
+        });
+
+        setCampain('SEFIL_1');
+
+        localStorage.setItem('campain_name','SEFIL_1')
+
         // Consulto todas las compañas del usuario presente
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -156,50 +383,15 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
-                if(data.length===0){
-                    setCampains([]);
-                    setCampain([]);
-                    
-                    setData({
-                        ...original_data,
-                        pending:[],
-                        inprocess:[],
-                        processed:[]
-                    });
-                }else{
-                    setCampains(data);
-                    setCampain(data[0].id);
-                    localStorage.setItem('campain_name',data[0].name);
-                    // Asigno en pantalla principal la primer campaña del array
-                    const credits=data[0].distributions;
-                    
-                    let pending=[],inprocess=[],process=[];
 
-                    credits.map(credito=>{
-                        console.log(credito)
-                        if(credito.tray=='PENDIENTE'){
-                            pending.push(credito);
-                        }else if(credito.tray=='EN PROCESO'){
-                            inprocess.push(credito);
-                        }else{
-                            process.push(credito);
-                        }
-                    });
+                console.log(data);
 
-                    setData({
-                        ...data,
-                        pending:pending,
-                        inprocess:inprocess,
-                        processed:process
-                    });
-
-                    setOriginal({
-                        ...original_data,
-                        pending:pending,
-                        inprocess:inprocess,
-                        processed:process
-                    });
-                }
+                setData({
+                    pending:data.pendiente,
+                    inprocess:data.proceso,
+                    processed:data.gestionado,
+                    inactive:data.inactivos
+                });
         
             });
 
@@ -219,21 +411,9 @@ export default function Gestion(){
                 });
                 setStructure(templates);
             });
-
-        const onBeforeUnload = (ev) => {
-            ev.returnValue = "Anything you wanna put here!";
-            return "Anything here as well, doesn't matter!";
-        };
-        
-        window.addEventListener("beforeunload", onBeforeUnload);
-
-        return () => {
-            window.removeEventListener("beforeunload", onBeforeUnload);
-        };
         
     },[]);
 
-    if(!campains) return <></>
     if(!data) return <></>
     if(!structure) return <></>
 
@@ -254,29 +434,34 @@ export default function Gestion(){
                         onClick={()=>{
                             setTray('pending')
                         }}
-                    >Pendientes ({data.pending.length})</button>
+                    >Pendientes ({data.pending.total})</button>
                     <button
                         onClick={()=>{
-                            setTray('inprocess')
+                            setTray('inprocess');
                         }}
-                    >En proceso ({data.inprocess.length})</button>
+                    >En proceso ({data.inprocess.total})</button>
                     <button
                         onClick={()=>{
                             setTray('processed')
                         }}
-                    >Gestionados ({data.processed.length})</button>
-                    {/* <button
-                        onClick={()=>{
-                            setTray('processed')
-                        }}
-                    >Supervisión ({data.processed.length})</button> */}
+                    >Gestionados ({data.processed.total})</button>
+                    {
+                        (localStorage.getItem('rol')==='call')
+                        ?
+                        <button
+                            onClick={()=>{
+                                setTray('inactive')
+                            }}
+                        >Inactivos ({data.inactive.total})</button>
+                        :   <></>
+                    }
                     <label>
                         Campaña
                         <select value={campain} onChange={(e)=>{
                             if(e.target.value!==''){
                                 setCampain(e.target.value);
-
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/campains?id=${localStorage.getItem('temp_uS')}&id_campain=${e.target.value}`,{
+                                // Consulto todas las compañas del usuario presente
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=${e.target.value}`,{
                                     headers: {
                                         Accept: 'application/json',
                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -284,51 +469,18 @@ export default function Gestion(){
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
-                                        setCampains(data);
-                                        
-                                        data.map((campa)=>{
-                                            if(Number(campa.id)===Number(e.target.value)){
-                                                localStorage.setItem('campain_name',campa.name);
-                                                // console.log(campa)
-                                                const credits=campa.distributions;
-                
-                                                let pending=[],inprocess=[],process=[];
-
-                                                credits.map(credito=>{
-                                                    if(credito.tray=='PENDIENTE'){
-                                                        pending.push(credito);
-                                                    }else if(credito.tray=='EN PROCESO'){
-                                                        inprocess.push(credito);
-                                                    }else{
-                                                        process.push(credito);
-                                                    }
-                                                });
-
-                                                setData({
-                                                    ...data,
-                                                    pending:pending,
-                                                    inprocess:inprocess,
-                                                    processed:process
-                                                });
-
-                                                setOriginal({
-                                                    ...original_data,
-                                                    pending:pending,
-                                                    inprocess:inprocess,
-                                                    processed:process
-                                                });
-
-                                            }
+                                        setData({
+                                            pending:data.pendiente,
+                                            inprocess:data.proceso,
+                                            processed:data.gestionado,
+                                            inactive:data.inactivos
                                         });
                                     });
                             }
                         }}>
-                                <option value={""}>--Seleccionar--</option>
-                            {
-                                campains.map((bus,index)=>(
-                                    <option key={index} value={bus.id}>{bus.name.toUpperCase()}</option>
-                                ))
-                            }
+                            <option value={"SEFIL_1"}>SEFIL 1</option>
+                            <option value={"SEFIL_2"}>SEFIL 2</option>
+                            <option value={"syncs"}>FACES</option>
                         </select>
                     </label>
                 </div>
@@ -346,7 +498,7 @@ export default function Gestion(){
                         :   (tray==='processed')
                             ?   
                                 'GESTIONADOS'
-                            :   ""
+                            :   "INACTIVOS"
                 }</h4>
 
                 <div className="Gestion__head">
@@ -412,25 +564,23 @@ export default function Gestion(){
                     <div>
                         <label>Agencia</label>
                         <select
+                            value={filters.agencias}
                             onChange={(e)=>{
                                 
-                                if(e.target.value!==''){
-                                    useFilterAgency({
-                                        tray:tray,
-                                        data_org:original_data,
-                                        value:e.target.value,
-                                        update:updateCredits,
-                                        all:false
-                                    });
-                                }else{
-                                    useFilterAgency({
-                                        tray:tray,
-                                        data_org:original_data,
-                                        value:e.target.value,
-                                        update:updateCredits,
-                                        all:true
-                                    });
-                                }
+                                setFilters({
+                                    ...filters,
+                                    agencias:e.target.value
+                                });
+                                //Actualizamos la consulta
+                                updateFilter({
+                                    campain:campain,
+                                    bandeja:tray,
+                                    agente:localStorage.getItem('temp_uS'),
+                                    agencia:e.target.value,
+                                    mora:filters.mora,
+                                    estado_gestion:filters.estado_gestion,
+                                    compromiso:filters.compromiso
+                                });
                             }}
                         >
                             <option value={''}>--Todos--</option>
@@ -469,22 +619,27 @@ export default function Gestion(){
                                 <label>Min</label>
                                 <input 
                                     type="number"
-                                    value={mora.min}
+                                    value={filters.mora.min}
                                     onChange={(e)=>{
-                                        setMora({
-                                            ...mora,
-                                            min:Number(e.target.value)
-                                        });
-
-                                        useFilteMinMax({
-                                            tray:tray,
-                                            data_org:original_data,
-                                            value:{
+                                        setFilters({
+                                            ...filters,
+                                            mora:{
                                                 min:e.target.value,
-                                                max:mora.max
+                                                max:filters.mora.max
+                                            }
+                                        });
+                                        //Actualizamos la consulta
+                                        updateFilter({
+                                            campain:campain,
+                                            bandeja:tray,
+                                            agente:localStorage.getItem('temp_uS'),
+                                            agencia:filters.agencias,
+                                            mora:{
+                                                min:e.target.value,
+                                                max:filters.mora.max
                                             },
-                                            update:updateCredits,
-                                            all:false
+                                            estado_gestion:filters.estado_gestion,
+                                            compromiso:filters.compromiso
                                         });
                                     }}
                                 />
@@ -493,24 +648,28 @@ export default function Gestion(){
                                 <label>Max</label>
                                 <input 
                                     type="number"
-                                    value={mora.max}
+                                    value={filters.mora.max}
                                     onChange={(e)=>{
-                                        setMora({
-                                            ...mora,
-                                            max:Number(e.target.value)
+                                        setFilters({
+                                            ...filters,
+                                            mora:{
+                                                max:e.target.value,
+                                                min:filters.mora.min
+                                            }
                                         });
-
-                                        useFilteMinMax({
-                                            tray:tray,
-                                            data_org:original_data,
-                                            value:{
-                                                min:mora.min,
-                                                max:e.target.value
+                                        //Actualizamos la consulta
+                                        updateFilter({
+                                            campain:campain,
+                                            bandeja:tray,
+                                            agente:localStorage.getItem('temp_uS'),
+                                            agencia:filters.agencias,
+                                            mora:{
+                                                max:e.target.value,
+                                                min:filters.mora.min
                                             },
-                                            update:updateCredits,
-                                            all:false
+                                            estado_gestion:filters.estado_gestion,
+                                            compromiso:filters.compromiso
                                         });
-
                                     }}
                                 />
                             </div>
@@ -528,24 +687,22 @@ export default function Gestion(){
                     <div>
                         <label>Estado gestión</label>
                         <select
+                            value={filters.estado_gestion}
                             onChange={(e)=>{
-                                if(e.target.value!=='all'){
-                                    useFilterState({
-                                        tray:tray,
-                                        data_org:original_data,
-                                        value:e.target.value,
-                                        update:updateCredits,
-                                        all:false
-                                    })
-                                }else{
-                                    useFilterState({
-                                        tray:tray,
-                                        data_org:original_data,
-                                        value:e.target.value,
-                                        update:updateCredits,
-                                        all:true
-                                    })
-                                }
+                                setFilters({
+                                    ...filters,
+                                    estado_gestion:e.target.value
+                                });
+                                //Actualizamos la consulta
+                                updateFilter({
+                                    campain:campain,
+                                    bandeja:tray,
+                                    agente:localStorage.getItem('temp_uS'),
+                                    agencia:filters.agencias,
+                                    mora:filters.mora,
+                                    estado_gestion:e.target.value,
+                                    compromiso:filters.compromiso
+                                });
                             }}
                         >
                             <option value={"all"}>-- Seleccionar --</option>
@@ -575,16 +732,37 @@ export default function Gestion(){
 
                     <div>
                         <label>Compromiso</label>
+                        <input
+                            value={filters.compromiso}
+                            type="date"
+                            onChange={(e)=>{
+                                setFilters({
+                                    ...filters,
+                                    compromiso:e.target.value
+                                });
+                                //Actualizamos la consulta
+                                updateFilter({
+                                    campain:campain,
+                                    bandeja:tray,
+                                    agente:localStorage.getItem('temp_uS'),
+                                    agencia:filters.agencias,
+                                    mora:filters.mora,
+                                    estado_gestion:filters.estado_gestion,
+                                    compromiso:e.target.value
+                                });
+                            }}
+                        />
                     </div>
                 </div>
                 
                 {
                     (tray==='pending')
                     ?
-                        data.pending.map((credit,index,credits)=>(
+                        data.pending.data.map((credit,index,credits)=>(
                             <div className="Gestion__item">
                                 <button
                                     onClick={()=>{
+                                        
                                         setCurrenly(credit);
                                         setForm(true);
                                         setNext(credits[index++]);
@@ -605,10 +783,11 @@ export default function Gestion(){
                         ))
                     :   (tray==='inprocess')
                         ?
-                            data.inprocess.map((credit,index,credits)=>(
+                            data.inprocess.data.map((credit,index,credits)=>(
                                 <div className="Gestion__item">
                                     <button
                                         onClick={()=>{
+                                            console.log(data.inprocess)
                                             setCurrenly(credit);
                                             setForm(true);
                                             setNext(credits[index++])
@@ -627,29 +806,50 @@ export default function Gestion(){
                                     <p>{credit.date_promise}</p>
                                 </div>
                             ))
-                        :
-                            data.processed.map((credit,index,credits)=>(
-                                <div className="Gestion__item">
-                                    <button
-                                        onClick={()=>{
-                                            setCurrenly(credit);
-                                            setForm(true);
-                                            setNext(credits[index++])
-                                            setIndex(index-1)
-                                        }}
-                                    >
-                                        <img src="./icons/go.png"/>
-                                    </button>
-                                    <p>{credit.name}</p>
-                                    <p>{credit.ci}</p>
-                                    <p>{credit.agency}</p>
-                                    <p>{credit.dias_vencidos}</p>
-                                    <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
-                                    <p>{credit.pendingFees}</p>
-                                    <p>{credit.status_managment}</p>
-                                    <p>{credit.date_promise}</p>
-                                </div>
-                            ))
+                        :   (tray==='processed')
+                            ?
+                                data.processed.data.map((credit,index,credits)=>(
+                                    <div className="Gestion__item">
+                                        <button
+                                            onClick={()=>{
+                                                setCurrenly(credit);
+                                                setForm(true);
+                                                setNext(credits[index++])
+                                                setIndex(index-1)
+                                            }}
+                                        >
+                                            <img src="./icons/go.png"/>
+                                        </button>
+                                        <p>{credit.name}</p>
+                                        <p>{credit.ci}</p>
+                                        <p>{credit.agency}</p>
+                                        <p>{credit.dias_vencidos}</p>
+                                        <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
+                                        <p>{credit.pendingFees}</p>
+                                        <p>{credit.status_managment}</p>
+                                        <p>{credit.date_promise}</p>
+                                    </div>
+                                ))
+                            :   
+                                data.inactive.data.map((credit,index,credits)=>(
+                                    <div className="Gestion__item">
+                                        <button
+                                            onClick={()=>{
+                                                // ver si se queda así o solo quito el botón de guardar gestión y llamar
+                                            }}
+                                        >
+                                            <img src="./icons/go.png"/>
+                                        </button>
+                                        <p>{credit.name}</p>
+                                        <p>{credit.ci}</p>
+                                        <p>{credit.agency}</p>
+                                        <p>{credit.dias_vencidos}</p>
+                                        <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
+                                        <p>{credit.pendingFees}</p>
+                                        <p>{credit.status_managment}</p>
+                                        <p>{credit.date_promise}</p>
+                                    </div>
+                                ))
                 }
 
             </div>
@@ -715,6 +915,18 @@ export default function Gestion(){
                             structure={structure}
                             updateTrays={updateTray}
                             number={data[tray]}
+                            total={
+                                (tray==='pending')
+                                    ?
+                                        data.pending.total
+                                    :   (tray==='inprocess')
+                                        ?
+                                            data.inprocess.total
+                                        :   (tray==='processed')
+                                            ?   
+                                                data.processed.total
+                                            :   ""
+                                            }
                         /> 
                         
                     </div>

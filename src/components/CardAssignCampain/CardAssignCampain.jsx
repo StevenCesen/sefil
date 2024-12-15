@@ -419,7 +419,7 @@ export default function CardAssignCampain({data,updateCredits}){
             
             <label
                 className="CardAssignCampain__file">
-                Cargar datos (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
+                Cargar datos (<strong style={{fontWeight:"bold"}}>{charge.total}</strong>)
                 {/* <input id="campain" type="file"/> */}
                 {
                     // (charge.length>0)
@@ -451,7 +451,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                 placeholder="Ingrese nombre o creditos"
                             />
 
-                            <button 
+                            {/* <button 
                                 title="Todos los créditos volverán a la carga principal y loa agentes no tendrán créditos"
                                 className="CardAssignCampain__file--buttonReset"
                                 onClick={(e)=>{
@@ -474,7 +474,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                             e.target.textContent="Reiniciado";
                                         });
                                 }}
-                            >Reiniciar campaña</button>
+                            >Reiniciar campaña</button> */}
 
                             <button
                                 onClick={(e)=>{
@@ -730,12 +730,12 @@ export default function CardAssignCampain({data,updateCredits}){
                     ?
                         <div>
                             <label>
-                                Total (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
+                                Total (<strong style={{fontWeight:"bold"}}>{charge.total}</strong>)
                                 <input 
                                     type="number"
                                     value={total_assign}
                                     onChange={(e)=>{
-                                        if(e.target.value!==0 & e.target.value<=charge.length){
+                                        if(e.target.value!==0 & e.target.value<=charge.total){
                                             setTotalAssign(e.target.value);
                                         }
                                     }}
@@ -748,7 +748,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                     const agent_origin=agent.id;
                                     const dtsn=agent_dtsn;
 
-                                    let carga=charge;
+                                    let carga=charge.data;
 
                                     // Si hay un total a asignar corto la carga
                                     if(total_assign>0){
@@ -760,9 +760,10 @@ export default function CardAssignCampain({data,updateCredits}){
                                     if(agent_origin!=="" & dtsn!==""){
                                         setErrors([]);
                                         
-                                        carga.map(carga=>{
-                                            carga_enviar.push(carga.id);
-                                        });
+                                        //Enviar el filtro para asignar campaña
+                                        // carga.map(carga=>{
+                                        //     carga_enviar.push(carga.id);
+                                        // });
 
                                         e.target.textContent="Transfiriendo...";
                                         
@@ -773,7 +774,61 @@ export default function CardAssignCampain({data,updateCredits}){
                                             cartera:data.cartera
                                         });
 
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
+                                        let filters="";
+
+                                        if(item_filter.mora!==""){
+                                            if(item_filter.mora.min!=="" & Number(item_filter.mora.min)!==0){
+                                                filters+=`&mora_min=${item_filter.mora.min}`;
+                                            }
+                                            if(item_filter.mora.max!=="" & Number(item_filter.mora.max)!==0){
+                                                filters+=`&mora_max=${item_filter.mora.max}`;
+                                            }
+                                        }
+
+                                        if(item_filter.monto!==""){
+                                            if(item_filter.monto.min!=="" & Number(item_filter.monto.min)!==0){
+                                                filters+=`&monto_min=${item_filter.monto.min}`;
+                                            }
+                            
+                                            if(item_filter.monto.max!=="" & Number(item_filter.monto.max)!==0){
+                                                filters+=`&monto_max=${item_filter.monto.max}`;
+                                            }
+                                        }
+
+                                        if(item_filter.cuota!==""){
+                                            if(item_filter.cuota.min!=="" & Number(item_filter.cuota.min)!==0){
+                                                filters+=`&cuotas_min=${item_filter.cuota.min}`;
+                                            }
+                            
+                                            if(item_filter.cuota.max!=="" & Number(item_filter.cuota.max)!==0){
+                                                filters+=`&cuotas_max=${item_filter.cuota.max}`;
+                                            }
+                                        }
+
+                                        if(item_filter.estado_gestion!==""){
+                                            filters+=`&management=${item_filter.estado_gestion}`;
+                                        }
+
+                                        if(item_filter.estado!==""){
+                                            filters+=`&state=${item_filter.estado}`;
+                                        }
+
+                                        if(prev_agencies.length>0){
+                                            filters+=`&agencias=${JSON.stringify(prev_agencies)}`;
+                                        }
+
+                                        if(agent.id!==""){
+                                            filters+=`&user=${agent.id}`;
+                                        }
+
+                                        if(total_assign>0){
+                                            filters+=`&limite=${total_assign}`;
+                                        }
+
+                                        filters=filters.substring(1);
+                                        console.log(filters)
+
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}?${filters}`,{
                                             method:'PUT',
                                             headers: {
                                                 Accept: 'application/json',
@@ -854,7 +909,7 @@ export default function CardAssignCampain({data,updateCredits}){
                         </div>
                     :
                         <label>
-                            Total (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
+                            Total (<strong style={{fontWeight:"bold"}}>{charge.total}</strong>)
                         </label>
                         // <div>
                         //     <label>
@@ -1202,7 +1257,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                 <label>Estado</label>
                             </div>
                             {
-                                charge.map((credit,index)=>(
+                                charge.data.map((credit,index)=>(
                                     <CardItemCharge
                                         item={credit}
                                     />
