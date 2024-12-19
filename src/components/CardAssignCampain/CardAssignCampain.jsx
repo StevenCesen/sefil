@@ -46,12 +46,20 @@ export default function CardAssignCampain({data,updateCredits}){
     const [view_agencies,setView]=useState(false);
     const [business,setBusiness]=useState();
     const [charge,setCharge]=useState();
+
     const [agent,setAgents]=useState();
+    const [agents_origin,setOrigns]=useState();
+
     const [agent_dtsn,setDtsn]=useState();
+    const [agents_dtsn,setDtsns]=useState();
+
+    const [creditos,setCreditos]=useState();
+
     const [distributions,setDistributions]=useState();
     const [item_filter,setItems]=useState();
     const [coincidence,setCoincidence]=useState();
     const [view_agents,setViewAgents]=useState();
+    const [view_dtns,setViewDtns]=useState();
     const [prev_agencies,setPrevAgencies]=useState();
     const [errors,setErrors]=useState();
     const [total_assign,setTotalAssign]=useState();
@@ -59,6 +67,10 @@ export default function CardAssignCampain({data,updateCredits}){
 
     const update=(data)=>{
         setCharge(data);
+    }
+
+    const addMore=(data)=>{
+
     }
 
     const setInit=()=>{
@@ -93,7 +105,20 @@ export default function CardAssignCampain({data,updateCredits}){
         // Usamos el seleccionar de créditos
         // 1) Primero debemos saber cual es modo
         // 2) Enviamos la data del filtro correspondiente: Si es asociaación de cartera entonces es filt, si es transferencia, es user_filt
-        useAssignSearch(charge,'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,prev_agencies,copy.estado_gestion,agent.id,data.cartera);
+        useAssignSearch(
+            charge,
+            '',
+            update,
+            true,
+            coincidence,
+            copy.mora,
+            copy.cuota,
+            copy.monto,
+            copy.estado,
+            prev_agencies,
+            copy.estado_gestion,
+            (agents_origin.length>0) ? agents_origin : agent.id,
+            data.cartera);
     }
 
     function chunckArrayInGroups(arr, size) {
@@ -119,13 +144,21 @@ export default function CardAssignCampain({data,updateCredits}){
         setTransfer(false);
         setView(false);
         setViewAgents(false);
+        setViewDtns(false);
         setPrevAgencies([]);
         setDtsn('');
         setDetails(false);
         setErrors([]);
         setTotalAssign(0);
+        setOrigns([]);
+        setDtsns([]);
 
         setAgents({
+            id:'',
+            name:'-- Seleccionar --'
+        });
+
+        setDtsn({
             id:'',
             name:'-- Seleccionar --'
         });
@@ -143,6 +176,7 @@ export default function CardAssignCampain({data,updateCredits}){
             estado_gestion:'',
             agencia:[]
         });
+        setCreditos([]);
 
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
             headers: {
@@ -215,7 +249,7 @@ export default function CardAssignCampain({data,updateCredits}){
 
             <div className="CardAssignCampain__agents">
                 <label>
-                    <strong style={{fontWeight:'bold'}}> Agente</strong>
+                    <strong style={{fontWeight:'bold'}}> Agente origen</strong>
                     <div className="CardAssignCampain__agentsSelect">
                         <div 
                             onClick={(e)=>{
@@ -230,7 +264,7 @@ export default function CardAssignCampain({data,updateCredits}){
                             ?
                                 <div className="CardAssignCampain__agentsOptions">
                                         <div>
-                                            <label
+                                            {/* <label
                                                 style={{height:"30px",display:"flex",justifyContent:"center",alignItems:"center",cursor:"pointer"}}
                                                 onClick={(e)=>{
                                                     setAgents({
@@ -240,11 +274,11 @@ export default function CardAssignCampain({data,updateCredits}){
                                                     setCharge(JSON.parse(localStorage.getItem('filt')));
                                                     setViewAgents(false);
                                                 }}
-                                            >-- Todos --</label>
+                                            >-- Todos --</label> */}
                                         </div>
                                     {
                                         JSON.parse(data.agents).map((agent,index)=>(
-                                            <div>
+                                            <div className={(agents_origin.includes(agent.id)) ? "CardAssign--agentchoose" : ""}>
                                                 <label>{agent.name.split(" ")[0].substring(0,1)}. {agent.name.split(" ")[1]}</label>
                                                 <button
                                                     onClick={(e)=>{
@@ -270,7 +304,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                     item_filter.estado,
                                                                     prev_agencies,
                                                                     item_filter.estado_gestion,
-                                                                    agent.id,
+                                                                    (agents_origin.length>0) ? agents_origin : agent.id,
                                                                     data.cartera);
                                                             }
                                                         });
@@ -294,14 +328,52 @@ export default function CardAssignCampain({data,updateCredits}){
                                                     <img src="/icons/view.png"/>
                                                 </button>
 
-                                                {/* <button
-                                                    onClick={()=>{
-
-                                                    }}
+                                                <button
                                                     title="Agrupar"
                                                 >
-                                                    <img src="/icons/grou.png"/>
-                                                </button> */}
+                                                    <img 
+                                                        src="/icons/grou.png"
+                                                        onClick={(e)=>{
+                                                            let copy=agents_origin;
+                                                            let new_copy=[];
+
+                                                            if(e.target.parentElement.parentElement.matches('.CardAssign--agentchoose')){
+                                                                console.log("YA LA TENGO")
+                                                                e.target.parentElement.parentElement.classList.remove('CardAssign--agentchoose');
+                                                                
+                                                                copy.map(id=>{
+                                                                    
+                                                                    if(Number(id)!==Number(agent.id)){
+                                                                        new_copy.push(id)
+                                                                    }
+                                                                });
+                                                                console.log(new_copy)
+                                                                setOrigns(new_copy);
+
+                                                            }else{
+                                                                e.target.parentElement.parentElement.classList.add('CardAssign--agentchoose');
+                                                                copy.push(agent.id);
+                                                                new_copy=copy;
+                                                                setOrigns(copy);
+                                                            }
+
+                                                            useAssignSearch(
+                                                                charge,
+                                                                '',
+                                                                update,
+                                                                true,
+                                                                coincidence,
+                                                                item_filter.mora,
+                                                                item_filter.cuota,
+                                                                item_filter.monto,
+                                                                item_filter.estado,
+                                                                prev_agencies,
+                                                                item_filter.estado_gestion,
+                                                                (new_copy.length>0) ? new_copy : agent.id,
+                                                                data.cartera);
+                                                            }}
+                                                    />
+                                                </button>
                                             </div>
                                         ))
                                     }
@@ -309,7 +381,6 @@ export default function CardAssignCampain({data,updateCredits}){
                             :   <></>
                         }
                     </div>
-
                 </label>
                 {
                     (transfer & mode!=='assoc')
@@ -317,7 +388,7 @@ export default function CardAssignCampain({data,updateCredits}){
                         <>
                             <p>a</p>
                             
-                            <label>
+                            {/* <label>
                                 Agente
                                 <select
                                     value={agent_dtsn}
@@ -335,6 +406,67 @@ export default function CardAssignCampain({data,updateCredits}){
                                         ))
                                     }
                                 </select>
+                            </label> */}
+                            <label>
+                                <strong style={{fontWeight:'bold'}}> Agente destino</strong>
+                                <div className="CardAssignCampain__agentsSelect">
+                                    <div 
+                                        onClick={(e)=>{
+                                            setViewDtns(!view_dtns);
+                                        }}
+                                        className="CardAssignCampain__agentsResult"
+                                    >
+                                        <label>{
+                                            (agents_dtsn.length>0)
+                                            ?
+                                                JSON.parse(data.agents).map((agent,index)=>{
+                                                    (agents_dtsn.includes(agent.id)) ? agent.name: ""
+                })
+                                            :   agent_dtsn.name
+                                        }</label>
+                                    </div>
+                                    {
+                                        (view_dtns)
+                                        ?
+                                            <div className="CardAssignCampain__agentsOptions">
+                                                {
+                                                    JSON.parse(data.agents).map((agent,index)=>(
+                                                        <div className={(agents_dtsn.includes(agent.id)) ? "CardAssign--agentchoose" : ""}>
+                                                            <label>{agent.name.split(" ")[0].substring(0,1)}. {agent.name.split(" ")[1]}</label>
+                                                            <button
+                                                                title="Agrupar"
+                                                            >
+                                                                <img 
+                                                                    src="/icons/grou.png"
+                                                                    onClick={(e)=>{
+                                                                        let copy=agents_dtsn;
+                                                                        let new_copy=[];
+
+                                                                        if(e.target.parentElement.parentElement.matches('.CardAssign--agentchoose')){
+                                                                            e.target.parentElement.parentElement.classList.remove('CardAssign--agentchoose');
+                                                                            copy.map(id=>{
+                                                                                
+                                                                                if(Number(id)!==Number(agent.id)){
+                                                                                    new_copy.push(id)
+                                                                                }
+                                                                            });
+                                                                            setDtsns(new_copy);
+                                                                        }else{
+                                                                            e.target.parentElement.parentElement.classList.add('CardAssign--agentchoose');
+                                                                            copy.push(agent.id);
+                                                                            new_copy=copy;
+                                                                            setDtsns(copy);
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </button>
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                        :   <></>
+                                    }
+                                </div>
                             </label>
                         </>
                     :   (mode==='assoc') 
@@ -425,8 +557,6 @@ export default function CardAssignCampain({data,updateCredits}){
                     // (charge.length>0)
                     // ?
                         <>
-                            
-
                             <input 
                                 ref={busc}
                                 onChange={(e)=>{  
@@ -443,8 +573,9 @@ export default function CardAssignCampain({data,updateCredits}){
                                         item_filter.estado,
                                         item_filter.agencia,
                                         item_filter.estado_gestion,
-                                        agent.id,
-                                        data.cartera
+                                        (agents_origin.length>0) ? agents_origin : agent.id,
+                                        data.cartera,
+                                        setCreditos
                                     );
                                 }}
                                 type="text" 
@@ -507,7 +638,19 @@ export default function CardAssignCampain({data,updateCredits}){
                             if(e.target.checked){
                                 setInit();
                                 setCoincidence(e.target.value);
-                                useAssignSearch(charge,'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia,item_filter.estado_gestion);
+                                useAssignSearch(
+                                    charge,
+                                    '',
+                                    update,
+                                    true,
+                                    e.target.value,
+                                    item_filter.mora,
+                                    item_filter.cuota,
+                                    item_filter.monto,
+                                    item_filter.estado,
+                                    item_filter.agencia,
+                                    item_filter.estado_gestion
+                                );
                             }
                         }}
                         defaultChecked
@@ -515,7 +658,7 @@ export default function CardAssignCampain({data,updateCredits}){
                     Coincidir
                 </label>
 
-                <label>
+                {/* <label>
                     <input 
                         type="radio"
                         name="coincidence"
@@ -529,7 +672,7 @@ export default function CardAssignCampain({data,updateCredits}){
                         }}
                     />
                     No coincidir
-                </label>
+                </label> */}
             </div>
 
             <div className="CardAssignCampain__filters">
@@ -606,26 +749,29 @@ export default function CardAssignCampain({data,updateCredits}){
                             <option value={"MENSAJE DE TEXTO"}>MENSAJE DE TEXTO</option>
                             <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>
                             <option value={"CLIENTE SE NIEGA A PAGAR"}>CLIENTE SE NIEGA A PAGAR</option>
-                            <option value="CLIENTE INDICA QUE NO ES SU DEUDA">CLIENTE INDICA QUE NO ES SU DEUDA</option>
-                            <option value="PASAR A TRAMITE LEGAL">PASAR A TRAMITE LEGAL</option>
-                            <option value="VOLVER A LLAMAR">VOLVER A LLAMAR</option>
-                            <option value="CONVENIO DE PAGO">CONVENIO DE PAGO</option>
-                            <option value="CONTACTO INDICA QUE ESTA EQUIVOCADO">CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
-                            <option value="CLIENTE ESCUCHA Y NO HABLA">CLIENTE ESCUCHA Y NO HABLA</option>
-                            <option value="CLIENTE ESTA OCUPADO">CLIENTE ESTA OCUPADO</option>
-                            <option value="CONTESTA MENOR DE EDAD">CONTESTA MENOR DE EDAD</option>
-                            <option value="CORTA LA LLAMADA">CORTA LA LLAMADA</option>
-                            <option value="INUBICABLE">INUBICABLE</option>
-                            <option value="NO VIVE EN LA MISMA DIRECCIÓN">NO VIVE EN LA MISMA DIRECCIÓN</option>
-                            <option value="Recopilación de Información">Recopilación de Información</option>
-                            <option value="Documentación para demanda">Documentación para demanda</option>
-                            <option value="Presentación demanda">Presentación demanda</option>
-                            <option value="Citación judicial">Citación judicial</option>
-                            <option value="Ejecución">Ejecución</option>
-                            <option value="Peritaje">Peritaje</option>
-                            <option value="Embargo">Embargo</option>
-                            <option value="Sentencia">Sentencia</option>
-                            <option value="Archivo demanda">Archivo demanda</option>
+                            <option value={"SUSPENDIDO POR FALTA DE PAGO"}>SUSPENDIDO POR FALTA DE PAGO</option>
+                            <option value={"FUERA DEL AREA DE COBERTURA"}>FUERA DEL AREA DE COBERTURA</option>
+                            <option value={"CLIENTE INDICA QUE NO ES SU DEUDA"}>CLIENTE INDICA QUE NO ES SU DEUDA</option>
+                            <option value={"NUMERO INCORRECTO"}>NUMERO INCORRECTO</option>
+                            <option value={"PASAR A TRAMITE LEGAL"}>PASAR A TRAMITE LEGAL</option>
+                            <option value={"VOLVER A LLAMAR"}>VOLVER A LLAMAR</option>
+                            <option value={"CONVENIO DE PAGO"}>CONVENIO DE PAGO</option>
+                            <option value={"CONTACTO INDICA QUE ESTA EQUIVOCADO"}>CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
+                            <option value={"CLIENTE ESCUCHA Y NO HABLA"}>CLIENTE ESCUCHA Y NO HABLA</option>
+                            <option value={"CLIENTE ESTA OCUPADO"}>CLIENTE ESTA OCUPADO</option>
+                            <option value={"CONTESTA MENOR DE EDAD"}>CONTESTA MENOR DE EDAD</option>
+                            <option value={"CORTA LA LLAMADA"}>CORTA LA LLAMADA</option>
+                            <option value={"INUBICABLE"}>INUBICABLE</option>
+                            <option value={"NO VIVE EN LA MISMA DIRECCIÓN"}>NO VIVE EN LA MISMA DIRECCIÓN</option>
+                            <option value={"Recopilación de Información"}>Recopilación de Información</option>
+                            <option value={"Documentación para demanda"}>Documentación para demanda</option>
+                            <option value={"Presentación demanda"}>Presentación demanda</option>
+                            <option value={"Citación judicial"}>Citación judicial</option>
+                            <option value={"Ejecución"}>Ejecución</option>
+                            <option value={"Peritaje"}>Peritaje</option>
+                            <option value={"Embargo"}>Embargo</option>
+                            <option value={"Sentencia"}>Sentencia</option>
+                            <option value={"Archivo demanda"}>Archivo demanda</option>
                         </select>
                     </label>
 
@@ -757,7 +903,7 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                     let carga_enviar=[];
 
-                                    if(agent_origin!=="" & dtsn!==""){
+                                    if(agents_dtsn.length>0){
                                         setErrors([]);
                                         
                                         //Enviar el filtro para asignar campaña
@@ -769,6 +915,8 @@ export default function CardAssignCampain({data,updateCredits}){
                                         
                                         console.log({
                                             agent_origin:agent_origin,
+                                            agents_origin:agents_origin,
+                                            agents_destino:agents_dtsn,
                                             agent_destino:dtsn,
                                             carga:JSON.stringify(carga_enviar),
                                             cartera:data.cartera
@@ -817,15 +965,28 @@ export default function CardAssignCampain({data,updateCredits}){
                                             filters+=`&agencias=${JSON.stringify(prev_agencies)}`;
                                         }
 
-                                        if(agent.id!==""){
+                                        if(agents_origin.length>0){
+                                            filters+=`&users=${JSON.stringify(agents_origin)}`;
+                                        }else{
                                             filters+=`&user=${agent.id}`;
+                                        }
+
+                                        if(agents_dtsn.length>1){
+                                            filters+=`&destinos=${JSON.stringify(agents_dtsn)}`;
+                                        }else{
+                                            filters+=`&destino=${agents_dtsn[0]}`;
                                         }
 
                                         if(total_assign>0){
                                             filters+=`&limite=${total_assign}`;
                                         }
 
+                                        if(creditos.length>0){
+                                            filters+=`&creditos=${JSON.stringify(creditos)}`;
+                                        }
+
                                         filters=filters.substring(1);
+
                                         console.log(filters)
 
                                         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}?${filters}`,{
@@ -875,19 +1036,19 @@ export default function CardAssignCampain({data,updateCredits}){
                                                 e.target.textContent="Transferir carga";
                                             });
 
-                                    }else if(agent_origin===""){
-                                        addNotification({
-                                            title: 'ERR: Sin agente origen',
-                                            subtitle: `No hay un agente origen para transferir la carga.`,
-                                            message: `Elija un agente`,
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'black',
-                                            closeButton: 'Cerrar',
-                                            duration: 8000,
-                                        });
+                                    // }else if((agent_origin==="" & agents_origin.length===0)){
+                                    //     addNotification({
+                                    //         title: 'ERR: Sin agente origen',
+                                    //         subtitle: `No hay un agente origen para transferir la carga.`,
+                                    //         message: `Elija un agente`,
+                                    //         native: false,
+                                    //         backgroundTop: '#FF9619',
+                                    //         backgroundBottom: '#fdb864',
+                                    //         colorTop: 'white',
+                                    //         colorBottom: 'black',
+                                    //         closeButton: 'Cerrar',
+                                    //         duration: 8000,
+                                    //     });
                                     }else{
                                         addNotification({
                                             title: 'ERR: Sin agente destino',

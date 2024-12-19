@@ -14,6 +14,7 @@ export default function Gestion(){
 
     const [campain,setCampain]=useState('');
     const [campains,setCampains]=useState();
+    const [id_campain,setIdCampain]=useState();
 
     const [data,setData]=useState(); //Aquí tenemos todos los créditos
     const [view_form,setForm]=useState(false); //Este es para ver el formulario de gestión
@@ -40,7 +41,7 @@ export default function Gestion(){
         compromiso
     })=>{
         let filters="";
-
+        console.log(campain)
         filters+=`?campain=${campain}`;
 
         filters+=(bandeja==='pending') ? `&tray=PENDIENTE` : (bandeja==='inprocess') ? `&tray=EN PROCESO` : `&tray=GESTIONADO`;
@@ -70,6 +71,7 @@ export default function Gestion(){
             filters+=`&compromiso=${compromiso}`;
         }
 
+        console.log(filters)
         return filters;
     }
 
@@ -205,9 +207,9 @@ export default function Gestion(){
                 bandeja="PENDIENTE";
 
                 if(url.includes('filtertray')){
-                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${campain}`;
+                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${localStorage.getItem('cartera')}`;
                     filtro=generate_uri({
-                        campain:campain,
+                        campain:localStorage.getItem('cartera'),
                         bandeja:tray,
                         agente:localStorage.getItem('temp_uS'),
                         agencia:filters.agencias,
@@ -216,7 +218,7 @@ export default function Gestion(){
                         compromiso:filters.compromiso
                     });
                 }else{
-                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${campain}`;
+                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
                 }
 
             }else if(tray==='inprocess'){
@@ -224,9 +226,9 @@ export default function Gestion(){
                 bandeja="EN PROCESO";
 
                 if(url.includes('filtertray')){
-                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${campain}`;
+                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${localStorage.getItem('cartera')}`;
                     filtro=generate_uri({
-                        campain:campain,
+                        campain:localStorage.getItem('cartera'),
                         bandeja:tray,
                         agente:localStorage.getItem('temp_uS'),
                         agencia:filters.agencias,
@@ -235,7 +237,7 @@ export default function Gestion(){
                         compromiso:filters.compromiso
                     });
                 }else{
-                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${campain}`;
+                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
                 }
 
             }else if(tray==='processed'){
@@ -243,9 +245,9 @@ export default function Gestion(){
                 bandeja="GESTIONADO";
 
                 if(url.includes('filtertray')){
-                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${campain}`;
+                    complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${localStorage.getItem('cartera')}`;
                     filtro=generate_uri({
-                        campain:campain,
+                        campain:localStorage.getItem('cartera'),
                         bandeja:tray,
                         agente:localStorage.getItem('temp_uS'),
                         agencia:filters.agencias,
@@ -254,7 +256,7 @@ export default function Gestion(){
                         compromiso:filters.compromiso
                     });
                 }else{
-                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${campain}`;
+                    complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
                 }
             }
 
@@ -326,6 +328,34 @@ export default function Gestion(){
         }
     }
 
+    const updateCredits2=(data_c,tray)=>{
+        if(tray==='pending'){
+            let copy=data.pending;
+            copy.data=data_c;
+
+            setData({
+                ...data,
+                pending:copy
+            });
+        }else if(tray==='inprocess'){
+            let copy=data.inprocess;
+            copy.data=data_c;
+
+            setData({
+                ...data,
+                inprocess:copy
+            });
+        }else if(tray==='processed'){
+            let copy=data.processed;
+            copy.data=data_c;
+
+            setData({
+                ...data,
+                processed:copy
+            });
+        }
+    }
+
     const updateCredits=(data_c,tray)=>{
         if(tray==='pending'){
             setData({
@@ -340,7 +370,7 @@ export default function Gestion(){
         }else if(tray==='processed'){
             setData({
                 ...data,
-                processed:data_c 
+                processed:data_c
             });
         }
     }
@@ -372,7 +402,8 @@ export default function Gestion(){
 
         setCampain('SEFIL_1');
 
-        localStorage.setItem('campain_name','SEFIL_1')
+        localStorage.setItem('campain_name','SEFIL_1');
+        localStorage.setItem('cartera','SEFIL_1');
 
         // Consulto todas las compañas del usuario presente
         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
@@ -383,8 +414,6 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
-
-                console.log(data);
 
                 setData({
                     pending:data.pendiente,
@@ -411,11 +440,25 @@ export default function Gestion(){
                 });
                 setStructure(templates);
             });
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/indexcampains`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setCampains(data);
+                setIdCampain(`${data[0].id}/${data[0].name}`)
+            });
         
     },[]);
 
     if(!data) return <></>
     if(!structure) return <></>
+    if(!campains) return <></>
+    if(!id_campain) return <></>
 
     return (
         <div className="pageConsulta">
@@ -446,7 +489,7 @@ export default function Gestion(){
                         }}
                     >Gestionados ({data.processed.total})</button>
                     {
-                        (localStorage.getItem('rol')==='call')
+                        (localStorage.getItem('rol')==='campo')
                         ?
                         <button
                             onClick={()=>{
@@ -457,11 +500,11 @@ export default function Gestion(){
                     }
                     <label>
                         Campaña
-                        <select value={campain} onChange={(e)=>{
+                        <select value={id_campain} onChange={(e)=>{
                             if(e.target.value!==''){
-                                setCampain(e.target.value);
+                                setIdCampain(e.target.value);
                                 // Consulto todas las compañas del usuario presente
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=${e.target.value}`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=${e.target.value.split('/')[1]}`,{
                                     headers: {
                                         Accept: 'application/json',
                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -469,6 +512,7 @@ export default function Gestion(){
                                 })
                                     .then((response) => response.json())  
                                     .then((data) => {
+                                        localStorage.setItem('cartera',e.target.value.split('/')[1]);
                                         setData({
                                             pending:data.pendiente,
                                             inprocess:data.proceso,
@@ -478,9 +522,11 @@ export default function Gestion(){
                                     });
                             }
                         }}>
-                            <option value={"SEFIL_1"}>SEFIL 1</option>
-                            <option value={"SEFIL_2"}>SEFIL 2</option>
-                            <option value={"syncs"}>FACES</option>
+                            {
+                                campains.map((camp)=>(
+                                    <option value={`${camp.id}/${camp.cartera}`}>{camp.name}</option>
+                                ))
+                            }
                         </select>
                     </label>
                 </div>
@@ -515,17 +561,21 @@ export default function Gestion(){
                                             tray:tray,
                                             data_org:original_data,
                                             value:e.target.value,
-                                            update:updateCredits,
-                                            all:false
+                                            update:updateCredits2,
+                                            all:false,
+                                            campain:campain
                                         })
                                     }else{
-                                        useFilterText({
-                                            tray:tray,
-                                            data_org:original_data,
-                                            value:e.target.value,
-                                            update:updateCredits,
-                                            all:true
-                                        })
+                                        //Actualizamos la consulta
+                                        updateFilter({
+                                            campain:campain,
+                                            bandeja:tray,
+                                            agente:localStorage.getItem('temp_uS'),
+                                            agencia:filters.agencias,
+                                            mora:filters.mora,
+                                            estado_gestion:filters.estado_gestion,
+                                            compromiso:filters.compromiso
+                                        });
                                     }
                                 }}
                                 placeholder="Nombre"
@@ -543,17 +593,21 @@ export default function Gestion(){
                                             tray:tray,
                                             data_org:original_data,
                                             value:e.target.value,
-                                            update:updateCredits,
-                                            all:false
-                                        })
+                                            update:updateCredits2,
+                                            all:false,
+                                            campain:localStorage.getItem('cartera')
+                                        });
                                     }else{
-                                        useFilterText({
-                                            tray:tray,
-                                            data_org:original_data,
-                                            value:e.target.value,
-                                            update:updateCredits,
-                                            all:true
-                                        })
+                                        //Actualizamos la consulta
+                                        updateFilter({
+                                            campain:localStorage.getItem('cartera'),
+                                            bandeja:tray,
+                                            agente:localStorage.getItem('temp_uS'),
+                                            agencia:filters.agencias,
+                                            mora:filters.mora,
+                                            estado_gestion:filters.estado_gestion,
+                                            compromiso:filters.compromiso
+                                        });
                                     }
                                 }}
                                 placeholder="Cédula"
@@ -571,9 +625,10 @@ export default function Gestion(){
                                     ...filters,
                                     agencias:e.target.value
                                 });
+
                                 //Actualizamos la consulta
                                 updateFilter({
-                                    campain:campain,
+                                    campain:localStorage.getItem('cartera'),
                                     bandeja:tray,
                                     agente:localStorage.getItem('temp_uS'),
                                     agencia:e.target.value,
@@ -630,7 +685,7 @@ export default function Gestion(){
                                         });
                                         //Actualizamos la consulta
                                         updateFilter({
-                                            campain:campain,
+                                            campain:localStorage.getItem('cartera'),
                                             bandeja:tray,
                                             agente:localStorage.getItem('temp_uS'),
                                             agencia:filters.agencias,
@@ -659,7 +714,7 @@ export default function Gestion(){
                                         });
                                         //Actualizamos la consulta
                                         updateFilter({
-                                            campain:campain,
+                                            campain:localStorage.getItem('cartera'),
                                             bandeja:tray,
                                             agente:localStorage.getItem('temp_uS'),
                                             agencia:filters.agencias,
@@ -695,7 +750,7 @@ export default function Gestion(){
                                 });
                                 //Actualizamos la consulta
                                 updateFilter({
-                                    campain:campain,
+                                    campain:localStorage.getItem('cartera'),
                                     bandeja:tray,
                                     agente:localStorage.getItem('temp_uS'),
                                     agencia:filters.agencias,
@@ -705,7 +760,7 @@ export default function Gestion(){
                                 });
                             }}
                         >
-                            <option value={"all"}>-- Seleccionar --</option>
+                            <option value={""}>-- Seleccionar --</option>
                             <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
                             <option value={"Judicial"}>MENSAJE A TERCEROS</option>
                             <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
@@ -740,9 +795,10 @@ export default function Gestion(){
                                     ...filters,
                                     compromiso:e.target.value
                                 });
+                                
                                 //Actualizamos la consulta
                                 updateFilter({
-                                    campain:campain,
+                                    campain:localStorage.getItem('cartera'),
                                     bandeja:tray,
                                     agente:localStorage.getItem('temp_uS'),
                                     agencia:filters.agencias,
@@ -855,6 +911,196 @@ export default function Gestion(){
             </div>
 
             {
+                (localStorage.getItem('rol')==='campo' | localStorage.getItem('rol')==='super' | localStorage.getItem('rol')==='administrador')
+                ?
+                    <div className="Gestion__footerNav">
+                        <p>Registros del {data[tray].from} al {data[tray].to} de {data[tray].total}</p>
+                        <button
+                            onClick={(e)=>{
+                                if(data[tray].prev_page_url!==null){
+                                    const url=data[tray].prev_page_url;
+                                    let complemento="",filtro="";
+
+                                    if(url.includes('filtertray')){
+                                        complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${localStorage.getItem('cartera')}`;
+                                        filtro=generate_uri({
+                                            campain:localStorage.getItem('cartera'),
+                                            bandeja:tray,
+                                            agente:localStorage.getItem('temp_uS'),
+                                            agencia:filters.agencias,
+                                            mora:filters.mora,
+                                            estado_gestion:filters.estado_gestion,
+                                            compromiso:filters.compromiso
+                                        });
+                                    }else{
+                                        complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
+                                    }
+
+                                    console.log(complemento);
+                                    console.log(filtro);
+
+                                    fetch(`${url}${complemento}${filtro.replace('?','&')}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((datas) => {
+                        
+                                            if(tray==='pending'){
+                                                if(url.includes('filtertray')){
+                                                    setData({
+                                                        ...data,
+                                                        pending:datas
+                                                    });
+                                                    setCurrenly(datas.data[0]);
+                                                    setNext(datas.data[1]);
+                                                    setIndex(0);
+                                                }else{
+                                                    setData({
+                                                        ...data,
+                                                        pending:datas.pendiente
+                                                    });
+                                                    setCurrenly(datas.pendiente.data[0]);
+                                                    setNext(datas.pendiente.data[1]);
+                                                    setIndex(0);
+                                                }
+                                            }else if(tray==='inprocess'){
+                                                if(url.includes('filtertray')){
+                                                    setData({
+                                                        ...data,
+                                                        inprocess:datas
+                                                    });
+                                                    setCurrenly(datas.data[0]);
+                                                    setNext(datas.data[1]);
+                                                    setIndex(0);
+                                                }else{
+                                                    setData({
+                                                        ...data,
+                                                        inprocess:datas.proceso
+                                                    });
+                                                    setCurrenly(datas.proceso.data[0]);
+                                                    setNext(datas.proceso.data[1]);
+                                                    setIndex(0);
+                                                }
+                                            }else if(tray==='processed'){
+                                                if(url.includes('filtertray')){
+                                                    setData({
+                                                        ...data,
+                                                        processed:datas
+                                                    });
+                                                    setCurrenly(datas.data[0]);
+                                                    setNext(datas.data[1]);
+                                                    setIndex(0);
+                                                }else{
+                                                    setData({
+                                                        ...data,
+                                                        processed:datas.gestionado
+                                                    });
+                                                    setCurrenly(datas.gestionado.data[0]);
+                                                    setNext(datas.gestionado.data[1]);
+                                                    setIndex(0);
+                                                }
+                                            }
+                                        });
+                                }
+                            }}
+                        ></button>
+                        <button
+                            onClick={(e)=>{
+                                if(data[tray].next_page_url!==null){
+                                    const url=data[tray].next_page_url;
+                                    let complemento="",filtro="";
+
+                                    if(url.includes('filtertray')){
+                                        complemento=`&user=${localStorage.getItem('temp_uS')}&campain=${localStorage.getItem('cartera')}`;
+                                        filtro=generate_uri({
+                                            campain:campain,
+                                            bandeja:tray,
+                                            agente:localStorage.getItem('temp_uS'),
+                                            agencia:filters.agencias,
+                                            mora:filters.mora,
+                                            estado_gestion:filters.estado_gestion,
+                                            compromiso:filters.compromiso
+                                        });
+                                    }else{
+                                        complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
+                                    }
+
+                                    fetch(`${url}${complemento}${filtro.replace('?','&')}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((datas) => {
+                        
+                                            if(tray==='pending'){
+                                                if(url.includes('filtertray')){
+                                                    setData({
+                                                        ...data,
+                                                        pending:datas
+                                                    });
+                                                    setCurrenly(datas.data[0]);
+                                                    setNext(datas.data[1]);
+                                                    setIndex(0);
+                                                }else{
+                                                    setData({
+                                                        ...data,
+                                                        pending:datas.pendiente
+                                                    });
+                                                    setCurrenly(datas.pendiente.data[0]);
+                                                    setNext(datas.pendiente.data[1]);
+                                                    setIndex(0);
+                                                }
+                                            }else if(tray==='inprocess'){
+                                                if(url.includes('filtertray')){
+                                                    setData({
+                                                        ...data,
+                                                        inprocess:datas
+                                                    });
+                                                    setCurrenly(datas.data[0]);
+                                                    setNext(datas.data[1]);
+                                                    setIndex(0);
+                                                }else{
+                                                    setData({
+                                                        ...data,
+                                                        inprocess:datas.proceso
+                                                    });
+                                                    setCurrenly(datas.proceso.data[0]);
+                                                    setNext(datas.proceso.data[1]);
+                                                    setIndex(0);
+                                                }
+                                            }else if(tray==='processed'){
+                                                if(url.includes('filtertray')){
+                                                    setData({
+                                                        ...data,
+                                                        processed:datas
+                                                    });
+                                                    setCurrenly(datas.data[0]);
+                                                    setNext(datas.data[1]);
+                                                    setIndex(0);
+                                                }else{
+                                                    setData({
+                                                        ...data,
+                                                        processed:datas.gestionado
+                                                    });
+                                                    setCurrenly(datas.gestionado.data[0]);
+                                                    setNext(datas.gestionado.data[1]);
+                                                    setIndex(0);
+                                                }
+                                            }
+                                        });
+                                }
+                            }}
+                        ></button>
+                    </div>
+                :   <></>
+            }
+
+            {
                 (view_form)
                 ?   
                     <div className="CardPay">
@@ -908,7 +1154,7 @@ export default function Gestion(){
                             next={next_credit}
                             index={index}
                             setNext={updateNav}
-                            id_campain={campain}
+                            id_campain={id_campain}
                             setCancel={setStateCall}
                             setStatusGestion={setStateGestion}
                             state_gestion={state_gestion}

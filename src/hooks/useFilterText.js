@@ -1,47 +1,76 @@
-export default function useFilterText({tray,data_org,value,update,all}){
+export default function useFilterText({tray,data_org,value,update,all,campain}){
     let results=[];
 
     if(tray==='pending'){
-        // Buscar en pendientes
-        data_org.pending.map((credit)=>{
-            if(/^[A-Za-z ]+/.test(value)){
-                if(credit.name.toLowerCase().includes(value.toLowerCase())){
-                    results.push(credit);
-                }
-            }else{
-                if(credit.ci.includes(value)){
-                    results.push(credit);
-                }
+        let campo="";
+
+        if(/^[A-Za-z ]+/.test(value)){
+            campo="nombre";
+        }else{
+            campo="cedula";
+        }
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=PENDIENTE`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
             }
-        });
+        })
+            .then((response) => response.json())  
+            .then((datas) => {
+                datas.map(credito=>{
+                    results.push(credito);
+                });
+                update(results,tray);
+            });
 
     }else if(tray==='inprocess'){
         // Buscar en proceso
-        data_org.inprocess.map((credit)=>{
-            if(/^[A-Za-z ]+/.test(value)){
-                if(credit.name.toLowerCase().includes(value.toLowerCase())){
-                    results.push(credit);
-                }
-            }else{
-                if(credit.ci.includes(value)){
-                    results.push(credit);
-                }
+        let campo="";
+
+        if(/^[A-Za-z ]+/.test(value)){
+            campo="nombre";
+        }else{
+            campo="cedula";
+        }
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=EN PROCESO`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
             }
-        });
+        })
+            .then((response) => response.json())  
+            .then((datas) => {
+                datas.map(credito=>{
+                    results.push(credito);
+                });
+                update(results,tray);
+            });
        
     }else if(tray==='processed'){
-        // Buscar en procesados
-        data_org.processed.map((credit)=>{
-            if(/^[A-Za-z ]+/.test(value)){
-                if(credit.name.toLowerCase().includes(value.toLowerCase())){
-                    results.push(credit);
-                }
-            }else{
-                if(credit.ci.includes(value)){
-                    results.push(credit);
-                }
+        
+        let campo="";
+
+        if(/^[A-Za-z ]+/.test(value)){
+            campo="nombre";
+        }else{
+            campo="cedula";
+        }
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=GESTIONADO`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
             }
-        });
+        })
+            .then((response) => response.json())  
+            .then((datas) => {
+                datas.map(credito=>{
+                    results.push(credito);
+                });
+                update(results,tray);
+            });
 
     }else if(all){
         if(tray==='pending'){
@@ -52,6 +81,4 @@ export default function useFilterText({tray,data_org,value,update,all}){
             results=data_org.processed;
         }
     }
-
-    update(results,tray);
 }

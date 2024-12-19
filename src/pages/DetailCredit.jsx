@@ -380,6 +380,7 @@ export default function DetailCredit(){
                             <MyMapComponent
                                 center={{lat:parseFloat(credit.latitud),lng:parseFloat(credit.longitud)}}
                                 zoom={15}
+                                height={"300px"}
                             />
                         </Wrapper>
                     </div>

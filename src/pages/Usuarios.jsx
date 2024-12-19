@@ -67,8 +67,11 @@ export default function Usuarios(){
                                             new_permiss.push(permiso.children[0].value);
                                         }
                                     });
-                                    
-                                    // Actualizamos en el servidor
+
+                                    if(id==2){
+                                        new_permiss.push("User:minimize");
+                                    }
+                                
                                     const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/edit2/${id}`,{
                                         method:'PUT',
                                         body:new URLSearchParams({
@@ -160,19 +163,20 @@ export default function Usuarios(){
                                         
                                     }else if(e.target.value==='gestor'){
                                         permiss[0].permission=[];
-                                        permiss[0].permission.push('Consulta:all');
                                         permiss[0].permission.push('Gestion:all');
                                     
                                     }else if(e.target.value==='campo'){
                                         permiss[0].permission=[];
-                                        permiss[0].permission.push('Consulta:all');
                                         permiss[0].permission.push('Gestion:all');
+                                        permiss[0].permission.push('condonar:set');
+                                        permiss[0].permission.push('convenio:set');
 
                                     }else if(e.target.value==='administrador'){
                                         permiss[0].permission=[];
                                         permiss[0].permission.push('Consulta:all');
                                         permiss[0].permission.push('Cobranza:all');
                                         permiss[0].permission.push('Gestion:all');
+                                        permiss[0].permission.push('Monitor:all');
                                         permiss[0].permission.push('Comprobantes:all');
                                         permiss[0].permission.push('Reportes:all');
                                         permiss[0].permission.push('User:minimize');
@@ -199,9 +203,8 @@ export default function Usuarios(){
                                 }
                                 <option value="administrador">Administrador</option>
                                 <option value="call">Gestor | Call Center</option>
-                                <option value="campo">Gestor | Campo</option>
+                                <option value="call">Gestor | Campo</option>
                                 <option value="campo">Gestor | Judicial</option>
-                                <option value="cobranza">Cobranza</option>
                                 <option value="consulta">Consulta</option>
                             </select>
                         </span>

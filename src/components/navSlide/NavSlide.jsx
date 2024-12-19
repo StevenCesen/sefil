@@ -65,6 +65,15 @@ export default function NavSlide({actions,permission}){
                 : <></>
             }
 
+            {/* {
+                (1==1) ?
+                    <NavLink to="dashboard/direcciones" className="NavSlide__option">
+                        <img src="./icons/solar_cart-bold.png"/>
+                        <label>Direcciones</label>
+                        <span>Direcciones</span>
+                    </NavLink>
+                : <></>
+            } */}
 
             {
                 (options.includes('Gestion:all')) ?
@@ -100,6 +109,7 @@ export default function NavSlide({actions,permission}){
                                                         <>
                                                             <NavLink to={"dashboard/glist"}>Historial de gestiones</NavLink>
                                                             <NavLink to={"dashboard/call"}>Gestión</NavLink>
+                                                            <NavLink to={"dashboard/campain"}>Campañas</NavLink>
                                                         </>
                                                     :
                                                         <NavLink to={"dashboard/call"}>Gestión</NavLink>

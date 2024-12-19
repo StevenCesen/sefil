@@ -1,4 +1,4 @@
-export default function useAssignSearch(data,value,update,filter,mode,mora,cuota,monto,estado,agencia,estado_gestion,agente,cartera){
+export default function useAssignSearch(data,value,update,filter,mode,mora,cuota,monto,estado,agencia,estado_gestion,agente,cartera,setCreditos){
 
     if(filter){
         /** 
@@ -64,8 +64,10 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     filters+=`&agencias=${JSON.stringify(agencia)}`;
                 }
 
-                if(agente){
+                if(!Array.isArray(agente)){
                     filters+=`&user=${agente}`;
+                }else{
+                    filters+=`&users=${JSON.stringify(agente)}`
                 }
 
                 console.log(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`)
@@ -121,8 +123,6 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
 
 
         }else if(/^[0-9-_A-Za-z ]+/.test(value)){  //Búsqueda masiva de créditos
-            console.log("Entre a busqueda masiva")
-
             let values=value.split(' ');
             let syncs_id=[];
 
@@ -130,8 +130,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 syncs_id.push(value.split('-')[1]);
             });
 
-            console.log(cartera)
-            console.log(syncs_id)
+            setCreditos(syncs_id);
 
             fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE&creditos=${JSON.stringify(syncs_id)}`,{
                 headers: {

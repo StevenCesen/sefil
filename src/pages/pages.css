@@ -1744,7 +1744,7 @@
 /* ============================================ PÁGINA DE GESTIÓN =========================================== */
 .Gestion{
     width: 100%;
-    padding-bottom: 60px !important;
+    padding-bottom: 30px !important;
 }
 
 .Gestion>h4{
@@ -1862,6 +1862,31 @@
     background-color: #FEC888;
     border: none;
     margin-top: 5px;
+}
+
+.Gestion__footerNav{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.Gestion__footerNav>button{
+    width: 30px;
+    height: 30px;
+    border:none;
+    border: 1px solid rgb(189, 189, 189);
+}
+
+.Gestion__footerNav>:nth-child(2)::after{
+    content: "<";
+    display: block;
+}
+
+.Gestion__footerNav>:nth-child(3)::after{
+    content: ">";
+    display: block; 
 }
 
 /* ============================================== CAMPAÑAS ================================================ */
@@ -2261,6 +2286,44 @@
     border-radius: 2px;
     background-color: var(--bg-alert-successful);
     color: var(--color-3);
+}
+
+.Directions__mapa{
+    width: 100%;
+    height: calc(100vh - 100px);
+}
+
+.Directions__search{
+    position: fixed;
+    top: 100px;
+    z-index: 100;
+    background-color: var(--bg-2);
+    padding: 20px 20px;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.Directions__search>label{
+    width: 100%;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.Directions__search>div{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.Directions__search>label>input,.Directions__search>div>select{
+    height: 35px;
+    border: none;
+    border: 1px solid rgb(204, 204, 204);
 }
 
 @media screen and (min-width:300px) and (max-width:540px) {

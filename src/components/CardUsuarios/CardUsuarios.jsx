@@ -40,6 +40,10 @@ const list={
     "convenio":{
         "action":"convenio:set",
         "checked":false
+    },
+    "monitor":{
+        "action":"Monitor:all",
+        "checked":false
     }
 };
 
@@ -62,6 +66,7 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
         list.bd.checked=user_permisos.includes(list.bd.action);
         list.condonar.checked=user_permisos.includes(list.condonar.action);
         list.convenio.checked=user_permisos.includes(list.convenio.action);
+        list.monitor.checked=user_permisos.includes(list.monitor.action);
 
         setPermisos({
             ...permisos,
@@ -101,6 +106,10 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                 ...permisos.convenio,
                 checked:user_permisos.includes(list.convenio.action)
             },
+            monitor:{
+                ...permisos.monitor,
+                checked:user_permisos.includes(list.monitor.action)
+            }
         });
 
     },[]);
@@ -126,11 +135,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                     checked:e.target.checked
                                 }
                             });
-                            // const data={
-                            //     "permiso":permisos.consulta.action,
-                            //     "status":e.target.checked
-                            // };
-                            // useUpdatePermiss(data,id);
                             setChange(true);
                         }} 
                         type="checkbox" 
@@ -150,11 +154,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                 }
                             });
                             
-                            // const data={
-                            //     "permiso":permisos.recaudacion.action,
-                            //     "status":e.target.checked
-                            // };
-                            // useUpdatePermiss(data,id);
                             setChange(true);
 
                         }} 
@@ -174,17 +173,30 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                     checked:e.target.checked
                                 }
                             });
-                            // const data={
-                            //     "permiso":permisos.cobranza.action,
-                            //     "status":e.target.checked
-                            // };
-                            // useUpdatePermiss(data,id);
                             setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.cobranza.checked}
                     />
                     Cobranza
+                </label>
+                <label>
+                    <input
+                        value={permisos.monitor.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                monitor:{
+                                    ...permisos.monitor,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.monitor.checked}
+                    />
+                    Monitor
                 </label>
                 <label>
                     <input
@@ -197,11 +209,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                     checked:e.target.checked
                                 }
                             });
-                            // const data={
-                            //     "permiso":permisos.condonar.action,
-                            //     "status":e.target.checked
-                            // };
-                            // useUpdatePermiss(data,id);
                             setChange(true);
                         }} 
                         type="checkbox" 
@@ -220,11 +227,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                     checked:e.target.checked
                                 }
                             });
-                            // const data={
-                            //     "permiso":permisos.convenio.action,
-                            //     "status":e.target.checked
-                            // };
-                            // useUpdatePermiss(data,id);
                             setChange(true);
                         }} 
                         type="checkbox" 
@@ -243,11 +245,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                     checked:e.target.checked
                                 }
                             });
-                            // const data={
-                            //     "permiso":permisos.comprobantes.action,
-                            //     "status":e.target.checked
-                            // };
-                            // useUpdatePermiss(data,id);
                             setChange(true);
                         }} 
                         type="checkbox" 
@@ -266,11 +263,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                     checked:e.target.checked
                                 }
                             });
-                            // const data={
-                            //     "permiso":permisos.reportes.action,
-                            //     "status":e.target.checked
-                            // };
-                            // useUpdatePermiss(data,id);
                             setChange(true);
                         }} 
                         type="checkbox" 
@@ -282,36 +274,14 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                     <input
                         value={permisos.usuarios.action}
                         onChange={(e)=>{
-                            if(permission.includes('User:minimize')){
-                                {
-                                    addNotification({
-                                        title: 'No autorizado',
-                                        subtitle: 'No puedes activar esta opción',
-                                        message: 'Se necesita autorización de SUPER USUARIO',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration: 3000,
-                                    });
+                            setPermisos({
+                                ...permisos,
+                                usuarios:{
+                                    ...permisos.usuarios,
+                                    checked:e.target.checked
                                 }
-                            }else{
-                                setPermisos({
-                                    ...permisos,
-                                    usuarios:{
-                                        ...permisos.usuarios,
-                                        checked:e.target.checked
-                                    }
-                                });
-                                // const data={
-                                //     "permiso":permisos.usuarios.action,
-                                //     "status":e.target.checked
-                                // };
-                                // useUpdatePermiss(data,id);
-                                setChange(true);
-                            }
+                            });
+                            setChange(true);
                         }} 
                         type="checkbox" 
                         checked={permisos.usuarios.checked}
@@ -329,11 +299,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                     checked:e.target.checked
                                 }
                             });
-                            // const data={
-                            //     "permiso":permisos.bd.action,
-                            //     "status":e.target.checked
-                            // };
-                            // useUpdatePermiss(data,id);
                             setChange(true);
                         }} 
                         type="checkbox" 
@@ -346,8 +311,54 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
             <button>
                 <img src="./icons/options.png" onClick={(e)=>{useMenu(e.target,menu,'CardUsuarios__actions--active',null)}}/>
                 <div ref={menu} className="CardUsuarios__actions">
-                    <button>Editar datos</button>
-                    <button>Borrar</button>
+                    <button
+                        onClick={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                consulta:{
+                                    ...permisos.consulta,
+                                    checked:false
+                                },
+                                recaudacion:{
+                                    ...permisos.recaudacion,
+                                    checked:false
+                                },
+                                cobranza:{
+                                    ...permisos.cobranza,
+                                    checked:false
+                                },
+                                comprobantes:{
+                                    ...permisos.comprobantes,
+                                    checked:false
+                                },
+                                reportes:{
+                                    ...permisos.reportes,
+                                    checked:false
+                                },
+                                usuarios:{
+                                    ...permisos.usuarios,
+                                    checked:false
+                                },
+                                bd:{
+                                    ...permisos.bd,
+                                    checked:false
+                                },
+                                condonar:{
+                                    ...permisos.condonar,
+                                    checked:false
+                                },
+                                convenio:{
+                                    ...permisos.convenio,
+                                    checked:false
+                                },
+                                monitor:{
+                                    ...permisos.monitor,
+                                    checked:false
+                                }
+                            });
+                            setChange(true);
+                        }}
+                    >Inactivar</button>
                 </div>
             </button>
         </div>

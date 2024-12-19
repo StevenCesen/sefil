@@ -22,6 +22,10 @@
     margin-top: 10px;
 }
 
+.CardAssign--agentchoose{
+    background-color: var(--bg-choosed);
+}
+
 .CardAssignCampain__searchCredit>input{
     width: 100%;
     height: 40px;

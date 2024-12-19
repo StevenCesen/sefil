@@ -16,6 +16,7 @@ import Campain from "./Campain";
 import Template from "./Template";
 import GHistorial from "./Historial";
 import Clist from "./Clist";
+import Directions from "./Directions";
 
 const data=[
     {
@@ -170,19 +171,23 @@ export default function Dashboard({rol}){
                                                                         ?
                                                                             <Setting/>
                                                                         :   
-                                                                            (localStorage.getItem('rol')==='administrador') ?
-                                                                                <Home/>
+                                                                            (page.action==='direcciones')
+                                                                            ?
+                                                                                <Directions/>
                                                                             :
-                                                                                (localStorage.getItem('rol')!=='super')
-                                                                                ? 
+                                                                                (localStorage.getItem('rol')==='administrador') ?
+                                                                                    <Home/>
+                                                                                :
+                                                                                    (localStorage.getItem('rol')!=='super')
+                                                                                    ? 
 
-                                                                                    (localStorage.getItem('rol')==='cobranza' | localStorage.getItem('rol')==='consulta')
-                                                                                    ?
-                                                                                        <Consulta/>
-                                                                                    : 
-                                                                                        <Gestion/>
+                                                                                        (localStorage.getItem('rol')==='cobranza' | localStorage.getItem('rol')==='consulta')
+                                                                                        ?
+                                                                                            <Consulta/>
+                                                                                        : 
+                                                                                            <Gestion/>
 
-                                                                                :   <Setting/>
+                                                                                    :   <Setting/>
             }
         </div>
     );

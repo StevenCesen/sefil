@@ -269,7 +269,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
         // Esto se envía al backend para guardar la gestión
         setDataGestion({
-            id_campain:id_campain,
+            id_campain:id_campain.split('/')[0],
             id_call:'', //Llamada con gestión
             id_calls_extras:[],
             id_credit:currently.id_credito,
@@ -286,6 +286,8 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
             cartera:currently.cartera,
             monto:currently.totalAmount
         });
+
+        console.log(id_campain.split('/')[0])
 
     },[currently]);
 
@@ -445,7 +447,18 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                             </div> */}
                             <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                                 <label>Total pendiente</label>
-                                <p>{useFormatterNumber({value:Number(info_credit.totalAmount),currency:'USD'})}</p>
+                                <p>{
+                                    (currently.cartera=="syncs")
+                                    ?
+                                        useFormatterNumber({value:(info_credit.collectionState==='Vigente') 
+                                            ? Number(info_credit.monthlyFeeAmount) 
+                                            : Number(info_credit.totalAmount) ,currency:'USD'})
+                                    :   
+                                        useFormatterNumber({value:(info_credit.collectionState==='Vigente') 
+                                            ? Number(info_credit.monthlyFeeAmount) 
+                                            : (Number(info_credit.totalAmount)+Number(gasto_cobranza)) ,currency:'USD'})
+                                    } 
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -582,7 +595,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                 ))
                             }
                             
-
                             {/* <p style={{fontWeight:'600'}}>Contactos secundarios</p>
                             {
                                 phones_secondaries.map((phone,index)=>(
@@ -600,7 +612,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                     <CardCall
                         phone={phone_actual}
                         channel={localStorage.getItem('extension')}
-                        id_campain={id_campain}
+                        id_campain={id_campain.split('/')[0]}
                         id_credit={info_credit.id}
                         cartera={data_gestion.cartera}
                         change={changeNro}
@@ -657,7 +669,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
     
                                         if(count===0){
                                             const data={
-                                                id_campain:data_gestion.id_campain,
+                                                id_campain:id_campain.split('/')[0],
                                                 id_credit:data_gestion.id_credit,
                                                 cartera:data_gestion.cartera
                                             };
@@ -677,7 +689,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                     .then((response) => response.json())  
                                                     .then((data) => {
 
-                                                        updateTrays(data.data,'inprocess');
+                                                        //updateTrays(data.data,'inprocess');
     
                                                         if(data.state===200){
                                                             setNext(index);
@@ -707,6 +719,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 });
                                             }
                                         }
+                                        
                                     }else{
                                         setNext(index);
                                     }
@@ -963,7 +976,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                     duration:3000,
                                                 });
 
-                                                updateTrays(data.data,'processed');
+                                                //updateTrays(data.data,'processed');
 
                                                 let elements=document.getElementsByClassName('DetailCredit__body--focus');
                                                 elements=[].slice.call(elements);
@@ -975,7 +988,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 form.current.reset();
 
                                                 setDataGestion({
-                                                    id_campain:id_campain,
+                                                    id_campain:id_campain.split('/')[0],
                                                     id_call:'',
                                                     id_calls_extras:[],
                                                     id_credit:currently.id_credito,

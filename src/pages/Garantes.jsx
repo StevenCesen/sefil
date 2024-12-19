@@ -144,6 +144,7 @@ export default function Garantes(){
                                         <MyMapComponent
                                             center={{lat:parseFloat(contacto.latitud),lng:parseFloat(contacto.longitud)}}
                                             zoom={15}
+                                            height={"300px"}
                                         />
                                     </Wrapper>
                                 </div>
