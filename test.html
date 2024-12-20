@@ -1,123 +1,90 @@
-<!-- export default function usePrelacion(value,data_original,setPrelacion,setData){
-    let prelacion={
-        totalAmount:0.00,
-        saldo_capital:0.00,
-        interes:0.00,
-        mora:0.00,
-        seguro_desgravamen:0.00,
-        gastos_cobranza:0.00,
-        gastos_judiciales:0.00,
-        otros_valores:0.00
-    };
-
-    if(calcRestante(Number(value),Number(data_original.mora))){ //El monto abonado si alcanza para cancelar toda la mora
-        value=value-Number(data_original.mora);
-
-        if(calcRestante(Number(value),Number(data_original.interes))){ //El monto abonado si alcanza para cancelar toda el interés
-            value=value-Number(data_original.interes);
-
-            if(calcRestante(Number(value),Number(data_original.seguro_desgravamen))){ //El monto abonado si alcanza para cancelar todo el seguro
-                value=value-Number(data_original.seguro_desgravamen);
-
-                if(calcRestante(Number(value),Number(data_original.gastos_judiciales))){ //El monto abonado si alcanza para cancelar todos los gastos judiciales
-                    value=value-Number(data_original.gastos_judiciales);
-
-                    if(calcRestante(Number(value),Number(data_original.otros_valores))){
-                        value=value-Number(data_original.otros_valores);
-
-                        if(calcRestante(Number(value),Number(data_original.saldo_capital))){ //El monto abonado si alcanza para cancelar todo el capital
-                            value=value-Number(data_original.saldo_capital);
-                    
-                            if(calcRestante(Number(value),Number(data_original.gastos_cobranza))){ //El monto abonado si alcanza para cancelar todos los gastos de cobranza
-                                value=value-Number(data_original.gastos_cobranza);
-                                //AQUÍ FINALIZA EL PROGRAMA
-                            }else{
-                                prelacion.gastos_cobranza=Number(data_original.gastos_cobranza)-Number(value);
-    
-                                prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
-                            }
-                    
-                        }else{
-                            prelacion.saldo_capital=Number(data_original.saldo_capital)-Number(value);
-                            prelacion.gastos_cobranza=data_original.gastos_cobranza;
-    
-                            prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
-                        
-                        }
-
-                    }else{
-                        prelacion.otros_valores=Number(data_original.otros_valores)-Number(value);
-                        prelacion.gastos_cobranza=data_original.gastos_cobranza;
-                        prelacion.saldo_capital=data_original.saldo_capital;
-    
-                        prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
-                        
-                    }
-
-                }else{
-                    prelacion.gastos_judiciales=Number(data_original.gastos_judiciales)-Number(value);
-                    prelacion.saldo_capital=data_original.saldo_capital;
-                    prelacion.gastos_cobranza=data_original.gastos_cobranza;
-                    prelacion.otros_valores=data_original.otros_valores;
-
-                    prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
-                    
-                }
-
-            }else{
-                prelacion.seguro_desgravamen=Number(data_original.seguro_desgravamen)-Number(value);
-                prelacion.gastos_judiciales=data_original.gastos_judiciales;
-                prelacion.saldo_capital=data_original.saldo_capital;
-                prelacion.gastos_cobranza=data_original.gastos_cobranza;
-                prelacion.otros_valores=data_original.otros_valores;
-
-                prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
-                
-            }
-
-        }else{
-            prelacion.interes=Number(data_original.interes)-Number(value);
-            prelacion.seguro_desgravamen=data_original.seguro_desgravamen;
-            prelacion.gastos_judiciales=data_original.gastos_judiciales;
-            prelacion.saldo_capital=data_original.saldo_capital;
-            prelacion.gastos_cobranza=data_original.gastos_cobranza;
-            prelacion.otros_valores=data_original.otros_valores;
-
-            prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
-            
-        }
-    }else{
-        prelacion.mora=Number(data_original.mora)-Number(value);
-        prelacion.interes=data_original.interes;
-        prelacion.seguro_desgravamen=data_original.seguro_desgravamen;
-        prelacion.gastos_judiciales=data_original.gastos_judiciales;
-        prelacion.saldo_capital=data_original.saldo_capital;
-        prelacion.gastos_cobranza=data_original.gastos_cobranza;
-        prelacion.otros_valores=data_original.otros_valores;
-
-      
-        prelacion.totalAmount=Number(prelacion.mora)+Number(prelacion.interes)+Number(prelacion.seguro_desgravamen)+Number(prelacion.gastos_judiciales)+Number(prelacion.saldo_capital)+Number(prelacion.gastos_cobranza)+Number(prelacion.otros_valores);
-        
-    }
-
-    setPrelacion(prelacion);
-    setData(prelacion);
-} -->
-
-
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLICK TO COPY</title>
-</head>
-<body>
-   <script>
-    let order="httos://jhaoadheuf/ajjdkf/filtertray";
-    
-    console.log(order.includes('23456'));
-
-   </script>
-</body>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        
+        <audio id="audio" controls></audio>
+        <p></p>
+        <input id="record" type="button" value="Grabar" />
+        <input id="pause" type="button" value="Pausar" disabled />
+        <input id="resume" type="button" value="Continuar" disabled />
+        <input id="stop" type="button" value="Parar" disabled />
+        <script>
+        
+        if (navigator.mediaDevices) {
+        
+          var chunks = [];
+          var audio = document.getElementById('audio');
+          var record = document.getElementById('record');
+          var pause = document.getElementById('pause');
+          var resume = document.getElementById('resume');
+          var stop = document.getElementById('stop');
+        
+        
+          navigator.mediaDevices.getUserMedia({
+            audio: true
+          })
+            .then(function(stream) {
+        
+            var mediaRecorder = new MediaRecorder(stream);
+        
+            record.onclick = function() {
+                if (mediaRecorder.state != 'inactive') {
+                  return;
+              }
+                record.disabled = true;
+              pause.disabled = false;
+              stop.disabled = false;
+              mediaRecorder.start();
+            }
+            pause.onclick = function() {
+                if (mediaRecorder.state != 'recording') {
+                  return;
+              }
+                pause.disabled = true;
+              resume.disabled = false;
+              mediaRecorder.pause();
+            }
+            resume.onclick = function() {
+                if (mediaRecorder.state != 'paused') {
+                  return;
+              }
+                pause.disabled = false;
+              resume.disabled = true;
+              mediaRecorder.resume();
+            }
+            stop.onclick = function() {
+                if (mediaRecorder.state == 'inactive') {
+                  return;
+              }
+                record.disabled = false;
+              pause.disabled = true;
+              resume.disabled = true;
+              stop.disabled = true;
+              mediaRecorder.stop();
+            }
+        
+            mediaRecorder.onstop = function(e) {
+              audio.controls = true;
+              var blob = new Blob(chunks, {
+                'type': 'audio/ogg; codecs=opus'
+              });
+              
+              chunks = [];
+              audio.src = URL.createObjectURL(blob);
+            }
+        
+            mediaRecorder.ondataavailable = function(e) {
+              chunks.push(e.data);
+            }
+          })
+            .catch(function(err) {
+            console.log('The following error occurred: ' + err);
+          })
+        }
+        </script>    
+        
+    </body>
 </html>
