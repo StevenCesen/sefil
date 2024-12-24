@@ -15,7 +15,7 @@ export default function GGestion(){
     }
 
     useEffect(()=>{
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/templates`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/templates`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`

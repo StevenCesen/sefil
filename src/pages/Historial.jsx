@@ -8,6 +8,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
 import CardCurrentGestion from "../components/CardCurrentGestion/CardCurrentGestion";
 import useFilterGestions from "../hooks/useFilterGestions";
 import useReturnFilter from "../hooks/useReturnFilter";
+import Loader from "../components/Loader/loader";
 
 export default function GHistorial(){
 
@@ -16,6 +17,7 @@ export default function GHistorial(){
     const [current,setCurrent]=useState();
     const [agents,setAgents]=useState();
     const [filters,setFilters]=useState();
+    const [loading,setLoading]=useState();
 
     const params=new URLSearchParams(useLocation().search);
     const param=useParams();
@@ -23,7 +25,7 @@ export default function GHistorial(){
     const [data,setData]=useState(); //Aquí tenemos todos los créditos
     
     const updateData=(url)=>{
-
+        setLoading(true);
         fetch(url,{
             headers: {
                 Accept: 'application/json',
@@ -56,9 +58,7 @@ export default function GHistorial(){
                         date_promise:filters.date_promise,
                         agente:filters.agente
                     });
-                    console.log(filters)
-                    console.log(filter);
-
+                    
                     if(data.next_page_url!==null){
                         data.next_page_url+=`&${filter}`;
                     }
@@ -69,6 +69,7 @@ export default function GHistorial(){
                 }
                 
                 setData(data);
+                setLoading(false);
             });
     }
 
@@ -84,8 +85,10 @@ export default function GHistorial(){
             date_promise:"",
             agente:""
         });
+
+        setLoading(false);
         
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/agents`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/users/agents`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -96,7 +99,7 @@ export default function GHistorial(){
                 setAgents(data);
             });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -107,7 +110,7 @@ export default function GHistorial(){
                 setCampains(data.data);
 
                 if(param.ci!==undefined){
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?credit=${param.ci}&cartera=${params.get('cartera')}`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/managmentall?credit=${param.ci}&cartera=${params.get('cartera')}`,{
                         headers: {
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -131,7 +134,7 @@ export default function GHistorial(){
                         });
                 }else{
 
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/managmentall`,{
                         headers: {
 
                             Accept: 'application/json',
@@ -148,10 +151,10 @@ export default function GHistorial(){
 
     },[]);
 
-    if(!campains) return <></>
-    if(!data) return <></>
-    if(!current) return <></>
-    if(!agents) return <></>
+    if(!campains) return <Loader/>
+    if(!data) return <Loader/>
+    if(!current) return <Loader/>
+    if(!agents) return <Loader/>
 
     return (
         <div className="pageConsulta">
@@ -176,6 +179,7 @@ export default function GHistorial(){
                             value={filters.fecha_gestion}
                             type="date"
                             onChange={(e)=>{
+
                                 setFilters({
                                     ...filters,
                                     fecha_gestion:e.target.value
@@ -190,8 +194,10 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    setData:setData,
+                                    loader:setLoading
                                 });
+
                             }}
                         />
                     </label>
@@ -214,7 +220,8 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    setData:setData,
+                                    loader:setLoading
                                 });
                             }}
                         >
@@ -246,7 +253,8 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    setData:setData,
+                                    loader:setLoading
                                 });
                             }}
                         />
@@ -271,7 +279,8 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    setData:setData,
+                                    loader:setLoading
                                 });
                             }}
                         />
@@ -296,7 +305,8 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    setData:setData,
+                                    loader:setLoading
                                 });
                             }}
                         >
@@ -325,7 +335,8 @@ export default function GHistorial(){
                                     state_gestion:e.target.value,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    setData:setData,
+                                    loader:setLoading
                                 });
                             }}
                         >
@@ -376,7 +387,8 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:e.target.value,
                                     agente:filters.agente,
-                                    setData:setData
+                                    setData:setData,
+                                    loader:setLoading
                                 });
                             }}
                         />
@@ -401,7 +413,8 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:e.target.value,
-                                    setData:setData
+                                    setData:setData,
+                                    loader:setLoading
                                 });
                             }}
                         >
@@ -476,6 +489,13 @@ export default function GHistorial(){
                             data={current}
                         />
                     </div>
+                :   <></>
+            }
+
+            {
+                (loading)
+                ?
+                    <Loader/>
                 :   <></>
             }
 

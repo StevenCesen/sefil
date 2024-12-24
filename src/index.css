@@ -21,6 +21,11 @@
   --color:#459d9a;
   --bg-transparent:rgba(0, 0, 0, 0);
   --box-shadow: 0 2px 5px rgba(119, 119, 119, 0.319);
+
+  --bg-tried-1:rgb(196, 245, 214);
+  --bg-tried-2:rgb(245, 243, 155);
+  --bg-tried-3:rgb(247, 214, 154);
+  --bg-tried-4:rgb(248, 199, 199);
 }
 
 *{

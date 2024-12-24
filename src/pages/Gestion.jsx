@@ -9,12 +9,14 @@ import useFilterAgency from "../hooks/useFilterAgency";
 import useFilterText from "../hooks/useFilterText";
 import useFilterState from "../hooks/useFilterState";
 import useFilteMinMax from "../hooks/useFilterMinMax";
+import Loader from "../components/Loader/loader";
 
 export default function Gestion(){
 
     const [campain,setCampain]=useState('');
     const [campains,setCampains]=useState();
     const [id_campain,setIdCampain]=useState();
+    const [alert,setAlert]=useState();
 
     const [data,setData]=useState(); //Aquí tenemos todos los créditos
     const [view_form,setForm]=useState(false); //Este es para ver el formulario de gestión
@@ -30,6 +32,7 @@ export default function Gestion(){
     const [tray,setTray]=useState();
 
     const [filters,setFilters]=useState();
+    const [loading,setLoading]=useState();
 
     const generate_uri=({
         campain,
@@ -41,7 +44,7 @@ export default function Gestion(){
         compromiso
     })=>{
         let filters="";
-        console.log(campain)
+    
         filters+=`?campain=${campain}`;
 
         filters+=(bandeja==='pending') ? `&tray=PENDIENTE` : (bandeja==='inprocess') ? `&tray=EN PROCESO` : `&tray=GESTIONADO`;
@@ -71,7 +74,6 @@ export default function Gestion(){
             filters+=`&compromiso=${compromiso}`;
         }
 
-        console.log(filters)
         return filters;
     }
 
@@ -87,7 +89,9 @@ export default function Gestion(){
             compromiso
         });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filtertray${filters}`,{
+        setLoading(true);
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains/filtertray${filters}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -111,6 +115,7 @@ export default function Gestion(){
                         processed:datas
                     });
                 }
+                setLoading(false);
             });
 
     }
@@ -118,60 +123,80 @@ export default function Gestion(){
     const updateTray=(credit_id,destination)=>{
         let copy=data;
         let prev_credito=[];
-        let new_pending=[],new_inprocess=[],new_processed=[];
+        let actual_bandeja=[];
 
-        if(tray==='pending'){
-            copy.pending.map(credito=>{
-                if(credito.id_credito===credit_id){
-                    prev_credito=credito;
-                }else{
-                    new_pending.push(credito);
-                }
-            });
+        //Le quitó al actual
+        copy[tray].data.map(credito=>{
+            if(Number(credito.id)===Number(credit_id)){
+                prev_credito=credito;
+            }else{
+                actual_bandeja.push(credito);
+            }
+        });
 
-            new_inprocess=copy.inprocess;
-            new_processed=copy.processed;
+        copy[tray].data=actual_bandeja;
+        copy[tray].total=copy[tray].total-1;
 
-        }else if(tray==='inprocess'){
-            copy.inprocess.map(credito=>{
-                if(credito.id_credito===credit_id){
-                    prev_credito=credito;
-                }else{
-                    new_inprocess.push(credito);
-                }
-            });
-            new_pending=copy.pending;
-            new_processed=copy.processed;
-        }else if(tray==='processed'){
-            copy.processed.map(credito=>{
-                if(credito.id_credito===credit_id){
-                    prev_credito=credito;
-                }else{
-                    new_processed.push(credito);
-                }
-            });
-            new_pending=copy.pending;
-            new_inprocess=copy.inprocess;
-        }
+        //Le agrego al destino
+        copy[destination].data.push(prev_credito);
+        copy[destination].total=copy[destination].total+1;
 
-        if(destination==='pending'){
-            copy.pending.push(prev_credito);
-        }else if(destination==='inprocess'){
-            copy.inprocess.push(prev_credito);
-        }else if(destination==='processed'){
-            copy.processed.push(prev_credito);
-        }
+        // if(tray==='pending'){
+        //     copy.pending.data.map(credito=>{
+        //         if(Number(credito.id)===Number(credit_id)){
+        //             prev_credito=credito;
+        //         }else{
+        //             new_pending.push(credito);
+        //         }
+        //     });
+
+        //     new_inprocess=copy.inprocess;
+        //     new_processed=copy.processed;
+
+        // }else if(tray==='inprocess'){
+            
+        //     copy.inprocess.data.map(credito=>{
+        //         if(Number(credito.id)===Number(credit_id)){
+        //             prev_credito=credito;
+        //         }else{
+        //             new_inprocess.push(credito);
+        //         }
+        //     });
+        //     new_pending=copy.pending;
+        //     new_processed=copy.processed;
+
+        // }else if(tray==='processed'){
+        //     copy.processed.data.map(credito=>{
+        //         if(Number(credito.id)===Number(credit_id)){
+        //             prev_credito=credito;
+        //         }else{
+        //             new_processed.push(credito);
+        //         }
+        //     });
+        //     new_pending=copy.pending;
+        //     new_inprocess=copy.inprocess;
+        // }
+
+        // if(destination==='pending'){
+        //     copy.pending.data.push(prev_credito);
+        // }else if(destination==='inprocess'){
+        //     copy.inprocess.data.push(prev_credito);
+        // }else if(destination==='processed'){
+        //     copy.processed.data.push(prev_credito);
+        // }
 
         setData({
-            pending:new_pending,
-            inprocess:new_inprocess,
-            processed:new_processed
+            ...data,
+            pending:copy.pending,
+            inprocess:copy.inprocess,
+            processed:copy.processed
         });
     }
 
     // Para pasar al siguiente crédito
     const updateNav=(index)=>{
-        if(index<9){
+        if(index<(data[tray].data.length-1)){
+            setAlert(false);
             if(tray==='pending'){
                 if(index<(data.pending.data.length-1)){
                     setCurrenly(data.pending.data[index+1]);
@@ -202,7 +227,7 @@ export default function Gestion(){
             //Actualizamos con los siguientes registros
             let url="",bandeja="",complemento="",filtro="";
 
-            if(tray==='pending'){
+            if(tray==='pending' & data.pending.next_page_url!==null){
                 url=data.pending.next_page_url;
                 bandeja="PENDIENTE";
 
@@ -221,7 +246,7 @@ export default function Gestion(){
                     complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
                 }
 
-            }else if(tray==='inprocess'){
+            }else if(tray==='inprocess' & data.inprocess.next_page_url!==null){
                 url=data.inprocess.next_page_url;
                 bandeja="EN PROCESO";
 
@@ -240,7 +265,7 @@ export default function Gestion(){
                     complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
                 }
 
-            }else if(tray==='processed'){
+            }else if(tray==='processed' & data.processed.next_page_url!==null){
                 url=data.processed.next_page_url;
                 bandeja="GESTIONADO";
 
@@ -260,71 +285,79 @@ export default function Gestion(){
                 }
             }
 
-            fetch(`${url}${complemento}${filtro.replace('?','&')}`,{
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-                .then((response) => response.json())  
-                .then((datas) => {
+            if(url!==""){
+                setLoading(true);
 
-                    if(tray==='pending'){
-                        if(url.includes('filtertray')){
-                            setData({
-                                ...data,
-                                pending:datas
-                            });
-                            setCurrenly(datas.data[0]);
-                            setNext(datas.data[1]);
-                            setIndex(0);
-                        }else{
-                            setData({
-                                ...data,
-                                pending:datas.pendiente
-                            });
-                            setCurrenly(datas.pendiente.data[0]);
-                            setNext(datas.pendiente.data[1]);
-                            setIndex(0);
-                        }
-                    }else if(tray==='inprocess'){
-                        if(url.includes('filtertray')){
-                            setData({
-                                ...data,
-                                inprocess:datas
-                            });
-                            setCurrenly(datas.data[0]);
-                            setNext(datas.data[1]);
-                            setIndex(0);
-                        }else{
-                            setData({
-                                ...data,
-                                inprocess:datas.proceso
-                            });
-                            setCurrenly(datas.proceso.data[0]);
-                            setNext(datas.proceso.data[1]);
-                            setIndex(0);
-                        }
-                    }else if(tray==='processed'){
-                        if(url.includes('filtertray')){
-                            setData({
-                                ...data,
-                                processed:datas
-                            });
-                            setCurrenly(datas.data[0]);
-                            setNext(datas.data[1]);
-                            setIndex(0);
-                        }else{
-                            setData({
-                                ...data,
-                                processed:datas.gestionado
-                            });
-                            setCurrenly(datas.gestionado.data[0]);
-                            setNext(datas.gestionado.data[1]);
-                            setIndex(0);
-                        }
+                fetch(`${url}${complemento}${filtro.replace('?','&')}`,{
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
-                });
+                })
+                    .then((response) => response.json())  
+                    .then((datas) => {
+                        setLoading(false);
+
+                        if(tray==='pending'){
+                            if(url.includes('filtertray')){
+                                setData({
+                                    ...data,
+                                    pending:datas
+                                });
+                                setCurrenly(datas.data[0]);
+                                setNext(datas.data[1]);
+                                setIndex(0);
+                            }else{
+                                setData({
+                                    ...data,
+                                    pending:datas.pendiente
+                                });
+                                setCurrenly(datas.pendiente.data[0]);
+                                setNext(datas.pendiente.data[1]);
+                                setIndex(0);
+                            }
+                        }else if(tray==='inprocess'){
+                            if(url.includes('filtertray')){
+                                setData({
+                                    ...data,
+                                    inprocess:datas
+                                });
+                                setCurrenly(datas.data[0]);
+                                setNext(datas.data[1]);
+                                setIndex(0);
+                            }else{
+                                setData({
+                                    ...data,
+                                    inprocess:datas.proceso
+                                });
+                                setCurrenly(datas.proceso.data[0]);
+                                setNext(datas.proceso.data[1]);
+                                setIndex(0);
+                            }
+                        }else if(tray==='processed'){
+                            if(url.includes('filtertray')){
+                                setData({
+                                    ...data,
+                                    processed:datas
+                                });
+                                setCurrenly(datas.data[0]);
+                                setNext(datas.data[1]);
+                                setIndex(0);
+                            }else{
+                                setData({
+                                    ...data,
+                                    processed:datas.gestionado
+                                });
+                                setCurrenly(datas.gestionado.data[0]);
+                                setNext(datas.gestionado.data[1]);
+                                setIndex(0);
+                            }
+                        }
+                    });
+            }else{
+                setForm(false);
+                setLoading(false);
+            }
         }
     }
 
@@ -378,6 +411,7 @@ export default function Gestion(){
     useEffect(()=>{
 
         location.hash='/dashboard/call';
+
         setForm(false);
         setStateCall(true);
         setStateGestion(true);
@@ -385,6 +419,9 @@ export default function Gestion(){
         setIndex(0);
         useWindows();
         setTray('pending');
+        setLoading(false);
+        setAlert(false);
+
         setMora({
             min:"",
             max:""
@@ -406,7 +443,7 @@ export default function Gestion(){
         localStorage.setItem('cartera','SEFIL_1');
 
         // Consulto todas las compañas del usuario presente
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -414,7 +451,7 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((data) => {
-
+    
                 setData({
                     pending:data.pendiente,
                     inprocess:data.proceso,
@@ -424,7 +461,7 @@ export default function Gestion(){
         
             });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/templates`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/templates`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -441,7 +478,7 @@ export default function Gestion(){
                 setStructure(templates);
             });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/indexcampains`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/indexcampains`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -455,10 +492,10 @@ export default function Gestion(){
         
     },[]);
 
-    if(!data) return <></>
-    if(!structure) return <></>
-    if(!campains) return <></>
-    if(!id_campain) return <></>
+    if(!data) return <Loader/>
+    if(!structure) return <Loader/>
+    if(!campains) return <Loader/>
+    if(!id_campain) return <Loader/>
 
     return (
         <div className="pageConsulta">
@@ -503,8 +540,9 @@ export default function Gestion(){
                         <select value={id_campain} onChange={(e)=>{
                             if(e.target.value!==''){
                                 setIdCampain(e.target.value);
+                                setLoading(true);
                                 // Consulto todas las compañas del usuario presente
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=${e.target.value.split('/')[1]}`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=${e.target.value.split('/')[1]}`,{
                                     headers: {
                                         Accept: 'application/json',
                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -519,6 +557,7 @@ export default function Gestion(){
                                             processed:data.gestionado,
                                             inactive:data.inactivos
                                         });
+                                        setLoading(false);
                                     });
                             }
                         }}>
@@ -534,7 +573,7 @@ export default function Gestion(){
 
             <div className="Gestion">
 
-                <h4>Campaña actual: {localStorage.getItem('campain_name').toUpperCase()} - Bandeja actual: {
+                <h4>Campaña actual: {localStorage.getItem('cartera').toUpperCase()} - Bandeja actual: {
                     (tray==='pending')
                     ?
                         'PENDIENTES'
@@ -761,6 +800,7 @@ export default function Gestion(){
                             }}
                         >
                             <option value={""}>-- Seleccionar --</option>
+                            <option value={"PENDIENTE"}>PENDIENTE</option>
                             <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
                             <option value={"Judicial"}>MENSAJE A TERCEROS</option>
                             <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
@@ -815,7 +855,21 @@ export default function Gestion(){
                     (tray==='pending')
                     ?
                         data.pending.data.map((credit,index,credits)=>(
-                            <div className="Gestion__item">
+                            <div className={`Gestion__item ${
+                                (credit.nro_tried==1)
+                                ?
+                                    "Gestion__item--level1"
+                                :   (credit.nro_tried==1)
+                                    ?   
+                                        "Gestion__item--level2"
+                                    :   (credit.nro_tried==3)
+                                        ?
+                                            "Gestion__item--level3"
+                                        :   (credit.nro_tried>=4)
+                                            ?
+                                                "Gestion__item--level4"
+                                            :   ""
+                            }`}>
                                 <button
                                     onClick={()=>{
                                         
@@ -840,10 +894,23 @@ export default function Gestion(){
                     :   (tray==='inprocess')
                         ?
                             data.inprocess.data.map((credit,index,credits)=>(
-                                <div className="Gestion__item">
+                                <div className={`Gestion__item ${
+                                    (credit.nro_tried==1)
+                                    ?
+                                        "Gestion__item--level1"
+                                    :   (credit.nro_tried==1)
+                                        ?   
+                                            "Gestion__item--level2"
+                                        :   (credit.nro_tried==3)
+                                            ?
+                                                "Gestion__item--level3"
+                                            :   (credit.nro_tried>=4)
+                                                ?
+                                                    "Gestion__item--level4"
+                                                :   ""
+                                }`}>
                                     <button
                                         onClick={()=>{
-                                            console.log(data.inprocess)
                                             setCurrenly(credit);
                                             setForm(true);
                                             setNext(credits[index++])
@@ -865,7 +932,21 @@ export default function Gestion(){
                         :   (tray==='processed')
                             ?
                                 data.processed.data.map((credit,index,credits)=>(
-                                    <div className="Gestion__item">
+                                    <div className={`Gestion__item ${
+                                        (credit.nro_tried==1)
+                                        ?
+                                            "Gestion__item--level1"
+                                        :   (credit.nro_tried==1)
+                                            ?   
+                                                "Gestion__item--level2"
+                                            :   (credit.nro_tried==3)
+                                                ?
+                                                    "Gestion__item--level3"
+                                                :   (credit.nro_tried>=4)
+                                                    ?
+                                                        "Gestion__item--level4"
+                                                    :   ""
+                                    }`}>
                                         <button
                                             onClick={()=>{
                                                 setCurrenly(credit);
@@ -888,7 +969,21 @@ export default function Gestion(){
                                 ))
                             :   
                                 data.inactive.data.map((credit,index,credits)=>(
-                                    <div className="Gestion__item">
+                                    <div className={`Gestion__item ${
+                                        (credit.nro_tried==1)
+                                        ?
+                                            "Gestion__item--level1"
+                                        :   (credit.nro_tried==1)
+                                            ?   
+                                                "Gestion__item--level2"
+                                            :   (credit.nro_tried==3)
+                                                ?
+                                                    "Gestion__item--level3"
+                                                :   (credit.nro_tried>=4)
+                                                    ?
+                                                        "Gestion__item--level4"
+                                                    :   ""
+                                    }`}>
                                         <button
                                             onClick={()=>{
                                                 // ver si se queda así o solo quito el botón de guardar gestión y llamar
@@ -915,6 +1010,7 @@ export default function Gestion(){
                 ?
                     <div className="Gestion__footerNav">
                         <p>Registros del {data[tray].from} al {data[tray].to} de {data[tray].total}</p>
+
                         <button
                             onClick={(e)=>{
                                 if(data[tray].prev_page_url!==null){
@@ -936,8 +1032,7 @@ export default function Gestion(){
                                         complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
                                     }
 
-                                    console.log(complemento);
-                                    console.log(filtro);
+                                    setLoading(true);
 
                                     fetch(`${url}${complemento}${filtro.replace('?','&')}`,{
                                         headers: {
@@ -1003,6 +1098,7 @@ export default function Gestion(){
                                                     setIndex(0);
                                                 }
                                             }
+                                            setLoading(false);
                                         });
                                 }
                             }}
@@ -1028,6 +1124,8 @@ export default function Gestion(){
                                         complemento=`&agente=${localStorage.getItem('temp_uS')}&cartera=${localStorage.getItem('cartera')}`;
                                     }
 
+                                    setLoading(true);
+
                                     fetch(`${url}${complemento}${filtro.replace('?','&')}`,{
                                         headers: {
                                             Accept: 'application/json',
@@ -1092,6 +1190,7 @@ export default function Gestion(){
                                                     setIndex(0);
                                                 }
                                             }
+                                            setLoading(false);
                                         });
                                 }
                             }}
@@ -1161,6 +1260,7 @@ export default function Gestion(){
                             structure={structure}
                             updateTrays={updateTray}
                             number={data[tray]}
+                            alert={alert}
                             total={
                                 (tray==='pending')
                                     ?
@@ -1177,6 +1277,13 @@ export default function Gestion(){
                         
                     </div>
 
+                :   <></>
+            }
+
+            {
+                (loading)
+                ?
+                    <Loader/>
                 :   <></>
             }
 

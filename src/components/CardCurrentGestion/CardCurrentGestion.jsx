@@ -22,7 +22,7 @@ export default function CardCurrentGestion({data}){
         }
 
         ids.map(async (id)=>{
-            await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/calls/${id}`,{
+            await fetch(`${import.meta.env.VITE_URL_BASE}/calls/${id}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`

@@ -70,9 +70,9 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     filters+=`&users=${JSON.stringify(agente)}`
                 }
 
-                console.log(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`)
+                console.log(`${import.meta.env.VITE_URL_BASE}/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`)
 
-                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`,{
+                fetch(`${import.meta.env.VITE_URL_BASE}/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`,{
                     headers: {
                         Accept: 'application/json',
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -132,7 +132,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
 
             setCreditos(syncs_id);
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE&creditos=${JSON.stringify(syncs_id)}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/campains/filter?cartera=${cartera}&status_c=ACTIVE&creditos=${JSON.stringify(syncs_id)}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`

@@ -48,7 +48,7 @@ export default function Campain(){
         setTransfer(false);
         setData({});
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`

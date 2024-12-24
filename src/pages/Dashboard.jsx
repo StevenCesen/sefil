@@ -17,6 +17,7 @@ import Template from "./Template";
 import GHistorial from "./Historial";
 import Clist from "./Clist";
 import Directions from "./Directions";
+import Loader from "../components/Loader/loader";
 
 const data=[
     {
@@ -94,22 +95,30 @@ export default function Dashboard({rol}){
     
     const [permission,setPermission]=useState([]);
     const [actions,setActions]=useState([]);
+    const [loading,setLoading]=useState(true);
 
     const page=useParams();
 
     useEffect(()=>{
         //Consulta a API, para setear permisos
+        window.addEventListener("load",setLoading(false));
+
         data.map((user)=>{
             if(rol===user.rol){
                 setPermission(user.permission);
                 setActions(user.actions);
             }
         });
+    
+        return () => window.removeEventListener("load",setLoading(false));
 
     },[]);
-
+    
     return (
         <div className="Dashboard__currentPage">
+            {
+                console.log(loading)
+            }
             {
                 (page.action==='consulta')
                 ?

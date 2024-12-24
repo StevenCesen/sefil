@@ -20,7 +20,7 @@ export default function Directions(){
 
         setCartera("SEFIL_1");
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/pointsmap?user_id=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains/pointsmap?user_id=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -61,7 +61,7 @@ export default function Directions(){
                         value={cartera}
                         onChange={(e)=>{
                             setCartera(e.target.value);
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/pointsmap?user_id=${localStorage.getItem('temp_uS')}&cartera=${e.target.value}`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/campains/pointsmap?user_id=${localStorage.getItem('temp_uS')}&cartera=${e.target.value}`,{
                                 headers: {
                                     Accept: 'application/json',
                                     Authorization: `Bearer ${localStorage.getItem('token')}`

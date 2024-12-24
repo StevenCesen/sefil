@@ -80,7 +80,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                 } */}
                 
                 <p>{cartera.state}</p>
-                <NavLink target="blank" to={`${import.meta.env.VITE_URL_BASE}/public/api/exportar?cartera=${cartera.name}`}>Excel</NavLink>
+                <NavLink target="blank" to={`${import.meta.env.VITE_URL_BASE}/exportar?cartera=${cartera.name}`}>Excel</NavLink>
                 <div>
                     <div>
                         <label>
@@ -105,7 +105,7 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                             />
                         </label>
                     </div>
-                    <NavLink target="blank" to={`${import.meta.env.VITE_URL_BASE}/public/api/pays?cartera=${cartera.name}&fecha_inicio=${date_start}&fecha_final=${date_end}`}>Excel</NavLink>
+                    <NavLink target="blank" to={`${import.meta.env.VITE_URL_BASE}/pays?cartera=${cartera.name}&fecha_inicio=${date_start}&fecha_final=${date_end}`}>Excel</NavLink>
                 </div>
                 <button
                     onClick={(e)=>{

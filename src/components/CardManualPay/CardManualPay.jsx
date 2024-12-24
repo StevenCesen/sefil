@@ -135,9 +135,6 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                     <button
                         onClick={(e)=>{
                             e.target.textContent="Cargando...";
-                            
-                            console.log(pays.to)
-                            console.log(pays.last_page)
 
                             if(pays.to<pays.last_page){
                                 //Actualizo el crédito
@@ -152,7 +149,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     judicial_actual:pagos.judicial_actual
                                 });
 
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/edit`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/pays/edit`,{
                                     method:'POST',
                                     headers: {
                                         Accept: 'application/json',
@@ -164,7 +161,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                         
                                         if(data.state===200){
                                             //Devuelvo el siguiente pago
-                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/denied?page=${(pays.from)-1}&cartera=${cartera}`,{
+                                            fetch(`${import.meta.env.VITE_URL_BASE}/pays/denied?page=${(pays.from)-1}&cartera=${cartera}`,{
                                                 headers: {
                                                     Accept: 'application/json',
                                                 }
@@ -193,7 +190,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                 });
                                 
 
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/edit`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/pays/edit`,{
                                     method:'POST',
                                     headers: {
                                         Accept: 'application/json',

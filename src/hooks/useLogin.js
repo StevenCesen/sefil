@@ -1,6 +1,7 @@
 
 export default async function useLogin(data,tag,btn){
-    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/login`,{
+
+    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/login`,{
         method:'POST',
         body:data 
     });
@@ -13,7 +14,6 @@ export default async function useLogin(data,tag,btn){
             btn.current.textContent='Ingresar';
         }else{
 
-            console.log(response)
             localStorage.setItem('token',response.token);
             localStorage.setItem('permission',response.permission);
             localStorage.setItem('name',response.name);

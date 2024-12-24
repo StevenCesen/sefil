@@ -27,7 +27,7 @@ export default function Template(){
 
     useEffect(()=>{
         setView(false);
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/templates/${param.ci}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/templates/${param.ci}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -277,7 +277,7 @@ export default function Template(){
                         onClick={(e)=>{
                             e.target.textContent="Guardando...";
 
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/templates/${param.ci}`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/templates/${param.ci}`,{
                                 method:'PUT',
                                 headers: {
                                     Accept: 'application/json',

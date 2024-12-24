@@ -276,7 +276,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     localStorage.setItem('state_call',true);
                                     localStorage.setItem('progreso','(Llamando)');
 
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/incall`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/incall`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -331,7 +331,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 setWhatCall(true);
                                 localStorage.setItem('progreso','(Grabando, ve a WhatsApp)');
 
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/incall`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/incall`,{
                                     headers: {
                                         Accept: 'application/json',
                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -400,7 +400,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 
                                 console.log(data_send);
 
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/calls`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/calls`,{
                                     method:'POST',
                                     headers: {
                                         Accept: 'application/json',

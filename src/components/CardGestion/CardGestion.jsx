@@ -18,7 +18,7 @@ const render = (status) => {
     return <p>{status}</p>;
 };
 
-export default function CardGestion({currently,total,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays,number}){
+export default function CardGestion({currently,total,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays,number,alert}){
     
     const [call,setCall]=useState(false);
     const [credit,setCredit]=useState(); //Información netamente de la persona actual
@@ -51,9 +51,9 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
     const [new_phone,setNumber]=useState();
     const [view_new_phone,setViewNewPhone]=useState();
+    const [total_tray,setTotalTray]=useState();
 
     const form=useRef();
-    const button_seguir=useRef();
     const ref_titular=useRef();
 
     const close=()=>{
@@ -149,7 +149,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
         setViewCondonation(false);
         setPDFcondonation(false);
         // Seleccionamos el historial de gestiones del crédito actual
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments?id_credit=${currently.id_credito}&cartera=${currently.cartera}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/managments?id_credit=${currently.id_credito}&cartera=${currently.cartera}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -162,7 +162,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
         if(currently.cartera==='SEFIL_1' | currently.cartera==='SEFIL_2'){
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/genGastos?cartera=${currently.cartera}&credito=${currently.id}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/genGastos?cartera=${currently.cartera}&credito=${currently.id}`,{
                 method:'GET',
                 headers: {
                     Accept: 'application/json'
@@ -287,7 +287,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
             monto:currently.totalAmount
         });
 
-        console.log(id_campain.split('/')[0])
+        setTotalTray(total);
 
     },[currently]);
 
@@ -306,7 +306,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                     <div ref={ref_titular} className={`DetailCredit__body DetailCredit__body--focus ${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Castigado' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnCo" : ""}`}>
                         <h3
                             onClick={(e)=>{
-
                                 useClickToCopy(e.target.textContent);
 
                                 if(incall===false){
@@ -513,7 +512,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 estado:'ACTIVE'
                                             };
 
-                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/contacts`,{
+                                            fetch(`${import.meta.env.VITE_URL_BASE}/contacts`,{
                                                 method:'POST',
                                                 headers: {
                                                     Accept: 'application/json',
@@ -631,7 +630,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                         <div className="Ggestion__principalHead">
                             <div>
                                 <h3 className="Ggestion__title">Gestión ({message_state})</h3>
-                                <p>Quedan ({total})</p>
+                                <p>Quedan ({total_tray})</p>
                             </div>
                             
                             {/* En este botón se hace verificación de estados de llamadas para guardar en bandeja de "EN PROCESO" */}
@@ -674,11 +673,10 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 cartera:data_gestion.cartera
                                             };
 
-                                            console.log(data);
                                             e.target.textContent="Espere...";
 
                                             if(data.id_campain!==undefined & data.id_credit!==undefined & data.cartera!==undefined){
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/trays`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/trays`,{
                                                     method:'POST',
                                                     headers: {
                                                         Accept: 'application/json',
@@ -688,9 +686,8 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 })
                                                     .then((response) => response.json())  
                                                     .then((data) => {
-
-                                                        //updateTrays(data.data,'inprocess');
-    
+                                                        updateTrays(data.data,'inprocess');
+                                                      
                                                         if(data.state===200){
                                                             setNext(index);
                                                             e.target.textContent="Seguir";
@@ -704,6 +701,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                         }else{
                                             if(state_gestion){
                                                 setNext(index);
+                                                setTotalTray(total-1);
                                             }else{
                                                 addNotification({
                                                     title: 'Gestión en curso',
@@ -950,7 +948,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                     
                                     console.log(data_send);
                                     
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managments`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/managments`,{
                                         method:'POST',
                                         headers: {
                                             Accept: 'application/json',
@@ -976,7 +974,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                     duration:3000,
                                                 });
 
-                                                //updateTrays(data.data,'processed');
+                                                updateTrays(data.data,'processed');
 
                                                 let elements=document.getElementsByClassName('DetailCredit__body--focus');
                                                 elements=[].slice.call(elements);
@@ -1043,7 +1041,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                 <>
                                     <button
                                         onClick={(e)=>{
-                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/group/${info_credit.id}?cartera=${info_credit.cartera}`,{
+                                            fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/group/${info_credit.id}?cartera=${info_credit.cartera}`,{
                                                 headers: {
                                                     Accept: 'application/json',
                                                     Authorization: `Bearer ${localStorage.getItem('token')}`

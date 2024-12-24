@@ -5,9 +5,6 @@ import Eye from "../components/Eye/Eye";
 import addNotification from "react-push-notification";
 
 export default function Me(){
-    const param = useParams();
-    const cartera=new URLSearchParams(useLocation().search);
-
     const [password,setPassword]=useState('');
     const pass=useRef();
 
@@ -44,7 +41,9 @@ export default function Me(){
             closeButton: 'Cerrar',
             duration:4000,
         });
+
         setPassword('');
+
     },[]);
 
     return (
@@ -79,7 +78,7 @@ export default function Me(){
                                 onClick={(e)=>{
                                     e.target.textContent="Enviando...";
 
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/sendcode?id=${localStorage.getItem('temp_uS')}&code=${generateUUID()}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/sendcode?id=${localStorage.getItem('temp_uS')}&code=${generateUUID()}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -160,7 +159,7 @@ export default function Me(){
                                 e.target.textContent='Actualizando...';
                                 
                                 if(accept & code!==""){
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/password/${localStorage.getItem('temp_uS')}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/users/password/${localStorage.getItem('temp_uS')}`,{
                                         method:'PUT',
                                         headers: {
                                             Accept: 'application/json',

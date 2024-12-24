@@ -1,5 +1,6 @@
-export default function useFilterGestions({fecha_gestion,campain,name,ci,type,state_gestion,date_promise,agente,setData}){
+export default function useFilterGestions({fecha_gestion,campain,name,ci,type,state_gestion,date_promise,agente,setData,loader}){
     let filters="";
+    loader(true);
 
     if(fecha_gestion!==""){
         const fecha=`${fecha_gestion.split('-')[0]}/${fecha_gestion.split('-')[1]}/${fecha_gestion.split('-')[2]}`;
@@ -37,7 +38,7 @@ export default function useFilterGestions({fecha_gestion,campain,name,ci,type,st
     filters=filters.substring(1);
     console.log(filters)
 
-    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?${filters}`,{
+    fetch(`${import.meta.env.VITE_URL_BASE}/managmentall?${filters}`,{
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -55,5 +56,6 @@ export default function useFilterGestions({fecha_gestion,campain,name,ci,type,st
             }
 
             setData(data);
+            loader(false);
         });
 }

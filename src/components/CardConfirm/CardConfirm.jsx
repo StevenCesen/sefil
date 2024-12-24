@@ -10,7 +10,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
 
     useEffect(()=>{
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/sofiaconfig`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/sofiaconfig`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -190,7 +190,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
 
                                 console.log(dates);
 
-                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gastos/${dates.id}`,{
+                                fetch(`${import.meta.env.VITE_URL_BASE}/gastos/${dates.id}`,{
                                     method:'POST',
                                     headers: {
                                         Accept: 'application/json',

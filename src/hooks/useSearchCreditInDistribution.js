@@ -1,5 +1,5 @@
 export default async function useSearchCreditInDistribution({value,distribution,cartera,setAgent,setCredit}){
-    const request=await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/search?cartera=${cartera}&credito=${value}`);
+    const request=await fetch(`${import.meta.env.VITE_URL_BASE}/cartera/search?cartera=${cartera}&credito=${value}`);
     const response=await request.json();
 
     setAgent({

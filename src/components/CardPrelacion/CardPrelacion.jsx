@@ -199,7 +199,7 @@ export default function CardPrelacion({cartera}){
                             }
                         });
 
-                        const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+                        const request= await fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
                             method:'POST',
                             body:new URLSearchParams({
                                 cartera:cartera.name,

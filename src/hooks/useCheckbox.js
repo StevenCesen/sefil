@@ -4,7 +4,7 @@ export default function useCheckbox(name,setFilter){
 
     inputs.map((input)=>{
         if(input.checked){
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/report/pays?${name}=${input.value}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/report/pays?${name}=${input.value}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`

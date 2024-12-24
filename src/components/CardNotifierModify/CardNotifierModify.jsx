@@ -249,7 +249,7 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                     setData(condonation);
                                     setPDF(true);
                                     
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/condonar/${id}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/condonar/${id}`,{
                                         method:'PUT',
                                         body:new URLSearchParams(data),
                                         headers: {
@@ -275,7 +275,7 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                         cartera:cartera
                                     }
                                     
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/condonar/${id}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/condonar/${id}`,{
                                         method:'PUT',
                                         body:new URLSearchParams(data),
                                         headers: {
@@ -441,7 +441,7 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
 
                                     console.log(data)
                                     
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/estructurar/${id}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/estructurar/${id}`,{
                                         method:'PUT',
                                         body:new URLSearchParams(data),
                                         headers: {
@@ -465,7 +465,7 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                         status:'rechazado'
                                     }
                                     
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/estructurar/${id}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/estructurar/${id}`,{
                                         method:'PUT',
                                         body:new URLSearchParams(data),
                                         headers: {

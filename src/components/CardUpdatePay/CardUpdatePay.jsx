@@ -33,7 +33,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
             state:state
         });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/denied?cartera=${name}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/pays/denied?cartera=${name}`,{
             headers: {
                 Accept: 'application/json',
             }
@@ -41,7 +41,6 @@ export default function CardUpdatePay({name,fecha_carga,state}){
             .then((response) => response.json())  
             .then((data) => {
                 setPays(data);
-                console.log(data);
             });
             
     },[]);
@@ -77,7 +76,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                                 </button>
                                 <button 
                                     onClick={(e)=>{
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/pays/denegados?cartera=SEFIL_2`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/pays/denegados?cartera=SEFIL_2`;
                                     }}
                                     style={{marginLeft:5,padding:5,color:'var(--color-2)',backgroundColor:"inherit",border:'1px solid'}}
                                 >
@@ -89,7 +88,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                     }
                 </p>
                 
-                <NavLink to={`${import.meta.env.VITE_URL_BASE}/public/api/nopays?cartera=${name}`}>Descargar</NavLink>
+                <NavLink to={`${import.meta.env.VITE_URL_BASE}/nopays?cartera=${name}`}>Descargar</NavLink>
 
                 <button
                     onClick={(e)=>{
@@ -116,7 +115,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                             data_import.append('file',file.files[0]);
                             e.target.textContent='Verificando pagos, espere...';
 
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/pagosUpdate`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/cartera/pagosUpdate`,{
                                 method:'POST',
                                 body:data_import,
                                 headers: {

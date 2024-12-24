@@ -5,6 +5,7 @@ import DetailCredit from "./DetailCredit";
 import { useEffect, useRef, useState } from "react";
 import useSearch from "../hooks/useSearch";
 import useFormatterNumber from "../hooks/useFormatterNumber";
+import Loader from "../components/Loader/loader";
 
 export default function Cobranza(){
     const param = useParams();
@@ -39,6 +40,7 @@ export default function Cobranza(){
     const [business,setBusiness]=useState();
 
     const [aux_busines,setAux]=useState("");
+    const [loading,setLoading]=useState();
 
     const updateCredits=(data)=>{
         setCredits({
@@ -71,17 +73,7 @@ export default function Cobranza(){
         setFound([]);
         setReference("");
         setReference2("");
-
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
-                setBusiness(data.data);
-            });
+        setLoading(false);
         
         setCredits({
             ...credits,
@@ -94,7 +86,7 @@ export default function Cobranza(){
 
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null){
             setAux(localStorage.getItem('cartera'));
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${localStorage.getItem('cartera')}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -106,9 +98,19 @@ export default function Cobranza(){
                 });
         }
 
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setBusiness(data.data);
+            });
     },[]);
 
-    if(!business) return <></>  
+    if(!business) return <Loader/>
 
     return (
         <div className="pageConsulta">
@@ -121,7 +123,10 @@ export default function Cobranza(){
                                 const ci=e.target.value;
                                 if(aux_busines!==""){
                                     useSearch(ci,aux_busines,updateCredits,setCredits);
+                                }else{
+                                    setLoading(false);
                                 }
+
                             }} placeholder="Ingrese cédula o nombre"/>
                         </label>
 
@@ -133,7 +138,9 @@ export default function Cobranza(){
                                     setReference(e.target.value);
 
                                     if(value!==""){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/search/${value}`,{
+                                        setLoading(true);
+
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/search/${value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -142,6 +149,7 @@ export default function Cobranza(){
                                             .then((response) => response.json())  
                                             .then((data) => {
                                                 setFound(data.data);
+                                                setLoading(false);
                                             });
                                     }
                                 }}
@@ -173,7 +181,8 @@ export default function Cobranza(){
                                     setReference2(e.target.value);
 
                                     if(value!==""){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/code/${value}`,{
+                                        setLoading(true);
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/code/${value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -182,6 +191,7 @@ export default function Cobranza(){
                                             .then((response) => response.json())  
                                             .then((data) => {
                                                 setFound(data.data);
+                                                setLoading(false);
                                             });
                                     }
                                 }}
@@ -209,9 +219,10 @@ export default function Cobranza(){
                             Empresa
                             <select value={aux_busines} onChange={(e)=>{
                                 if(e.target.value!=='default'){
+                                    setLoading(true);
                                     setAux(e.target.value);
                                     localStorage.setItem('cartera',e.target.value);
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${e.target.value}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -220,6 +231,7 @@ export default function Cobranza(){
                                         .then((response) => response.json())  
                                         .then((data) => {
                                             setCredits(data);
+                                            setLoading(false);
                                         });
                                 }
                             }}>
@@ -248,9 +260,10 @@ export default function Cobranza(){
                                     <select
                                         value={type_client}
                                         onChange={(e)=>{
+                                            setLoading(true);
                                             setClient(e.target.value);
                                             if(e.target.value==='GARANTE'){
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filterGarante`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/credit/filterGarante`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -258,10 +271,11 @@ export default function Cobranza(){
                                                 })
                                                     .then((response) => response.json())  
                                                     .then((data) => {
-                                                        updateCredits(data.data)
+                                                        updateCredits(data.data);
+                                                        setLoading(false);
                                                     });
                                             }else{
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit?cartera=SEFIL_1`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/credit?cartera=SEFIL_1`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -269,7 +283,8 @@ export default function Cobranza(){
                                                 })
                                                     .then((response) => response.json())  
                                                     .then((data) => {
-                                                        updateCredits(data.data)
+                                                        updateCredits(data.data);
+                                                        setLoading(false);
                                                     });
                                             }
 
@@ -291,8 +306,9 @@ export default function Cobranza(){
                                         onChange={(e)=>{
                                             if(e.target.value!=='default'){
                                                 setAux(e.target.value);
+                                                setLoading(true);
                                                 localStorage.setItem('cartera',e.target.value);
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${e.target.value}`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -301,6 +317,7 @@ export default function Cobranza(){
                                                     .then((response) => response.json())  
                                                     .then((data) => {
                                                         setCredits(data);
+                                                        setLoading(false);
                                                     });
                                             }
                                         }}
@@ -322,7 +339,8 @@ export default function Cobranza(){
                                         placeholder="Cantón"
                                         onChange={(e)=>{
                                             setInput(e.target.value);
-                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?canton=${canton_input}`,{
+                                            setLoading(true);
+                                            fetch(`${import.meta.env.VITE_URL_BASE}/credit/filter?canton=${canton_input}`,{
                                                 headers: {
                                                     Accept: 'application/json',
                                                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -330,7 +348,8 @@ export default function Cobranza(){
                                             })
                                                 .then((response) => response.json())  
                                                 .then((data) => {
-                                                    updateCredits(data.data)
+                                                    updateCredits(data.data);
+                                                    setLoading(false);
                                                 });
                                         }}
                                     />
@@ -344,9 +363,9 @@ export default function Cobranza(){
                                         value={parroquia}
                                         onChange={(e)=>{
                                             setParroquia(e.target.value);
-
+                                            setLoading(true);
                                             if(e.target.value==='vigente'){
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estadoNot=Cancelado`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/credit/filter?estadoNot=Cancelado`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -354,10 +373,11 @@ export default function Cobranza(){
                                                 })
                                                     .then((response) => response.json())  
                                                     .then((data) => {
-                                                        updateCredits(data.data)
+                                                        updateCredits(data.data);
+                                                        setLoading(false);
                                                     });
                                             }else{
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -365,9 +385,11 @@ export default function Cobranza(){
                                                 })
                                                     .then((response) => response.json())  
                                                     .then((data) => {
-                                                        updateCredits(data.data)
+                                                        updateCredits(data.data);
+                                                        setLoading(false);
                                                     });
                                             }
+                                            
                                         }}
                                     >
                                         <option value={"vigente"}>Vigente</option>
@@ -395,7 +417,6 @@ export default function Cobranza(){
                                     </div> 
                                 ))
                             }
-
 
                         </div>
 
@@ -433,6 +454,13 @@ export default function Cobranza(){
                 }
 
             </div>
+
+            {
+                (loading)
+                ?
+                    <Loader/>
+                :   <></>
+            }
         </div>
     );
 }

@@ -154,7 +154,7 @@ export default function DetailCredit(){
         setEdit(false);
         setEditJudicial(false);
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -174,7 +174,7 @@ export default function DetailCredit(){
         */
 
         try {
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gastos?credito=${param.get('id')}&cartera=${cartera.id}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/gastos?credito=${param.get('id')}&cartera=${cartera.id}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -212,7 +212,7 @@ export default function DetailCredit(){
         }
         
         // Calculamos el valor de gasto actualizado
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/genGastos?cartera=${cartera.id}&credito=${param.get('id')}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/genGastos?cartera=${cartera.id}&credito=${param.get('id')}`,{
             method:'GET',
             headers: {
                 Accept: 'application/json'
@@ -256,7 +256,7 @@ export default function DetailCredit(){
                 <div>
                     <p>Créditos asociados</p>
                     <select onChange={(e)=>{
-                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/view?cartera=${cartera.id}&credit=${e.target.value}`,{
+                        fetch(`${import.meta.env.VITE_URL_BASE}/credit/view?cartera=${cartera.id}&credit=${e.target.value}`,{
                             headers: {
                                 Accept: 'application/json',
                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -439,7 +439,7 @@ export default function DetailCredit(){
                                                                     //Aquí actualizamos el estado para que desaparezca el botón
                                                                     // setPDF(true);
                                                                     if(viewGastos.status===false){
-                                                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
+                                                                        fetch(`${import.meta.env.VITE_URL_BASE}/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
                                                                             headers: {
                                                                                 Accept: 'application/json',
                                                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -537,7 +537,7 @@ export default function DetailCredit(){
                                                 //Aquí actualizamos el estado para que desaparezca el botón
                                                 // setPDF(true);
                                                 if(viewGastos.status===false){
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`

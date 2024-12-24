@@ -37,7 +37,7 @@ export default function useFilterCreditsInGestion({campain,name,ci,agencia,mora,
     
     console.log(filters)
 
-    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?${filters}`,{
+    fetch(`${import.meta.env.VITE_URL_BASE}/managmentall?${filters}`,{
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`

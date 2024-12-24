@@ -65,6 +65,9 @@ export default function CardAssignCampain({data,updateCredits}){
     const [total_assign,setTotalAssign]=useState();
     const [view_details,setDetails]=useState();
 
+    const ref_origin=useRef();
+    const ref_destino=useRef();
+
     const update=(data)=>{
         setCharge(data);
     }
@@ -178,7 +181,7 @@ export default function CardAssignCampain({data,updateCredits}){
         });
         setCreditos([]);
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -195,7 +198,7 @@ export default function CardAssignCampain({data,updateCredits}){
             setCharge([]);
 
         }else{
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/all?cartera=${data.cartera}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/credit/all?cartera=${data.cartera}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -257,7 +260,7 @@ export default function CardAssignCampain({data,updateCredits}){
                             }}
                             className="CardAssignCampain__agentsResult"
                         >
-                            <label>{agent.name}</label>
+                            <label ref={ref_origin}>{agent.name}</label>
                         </div>
                         {
                             (view_agents)
@@ -345,9 +348,13 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                     
                                                                     if(Number(id)!==Number(agent.id)){
                                                                         new_copy.push(id)
+                                                                    }else{
+                                                                        let texto=ref_origin.current.textContent;
+                                                                            texto=texto.replace(agent.name,'');
+                                                                        ref_origin.current.textContent=texto;
                                                                     }
                                                                 });
-                                                                console.log(new_copy)
+                                                            
                                                                 setOrigns(new_copy);
 
                                                             }else{
@@ -355,6 +362,10 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                 copy.push(agent.id);
                                                                 new_copy=copy;
                                                                 setOrigns(copy);
+                                                                let texto=ref_origin.current.textContent;
+                                                                    texto+=`,${agent.name}`;
+                                                                    texto=texto.replace('-- Seleccionar --,','');
+                                                                ref_origin.current.textContent=texto;
                                                             }
 
                                                             useAssignSearch(
@@ -416,14 +427,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                         }}
                                         className="CardAssignCampain__agentsResult"
                                     >
-                                        <label>{
-                                            (agents_dtsn.length>0)
-                                            ?
-                                                JSON.parse(data.agents).map((agent,index)=>{
-                                                    (agents_dtsn.includes(agent.id)) ? agent.name: ""
-                })
-                                            :   agent_dtsn.name
-                                        }</label>
+                                        <label ref={ref_destino}>-- Seleccionar--</label>
                                     </div>
                                     {
                                         (view_dtns)
@@ -447,15 +451,25 @@ export default function CardAssignCampain({data,updateCredits}){
                                                                             copy.map(id=>{
                                                                                 
                                                                                 if(Number(id)!==Number(agent.id)){
-                                                                                    new_copy.push(id)
+                                                                                    new_copy.push(id);
+                                                                                }else{
+                                                                                    let texto=ref_destino.current.textContent;
+                                                                                        texto=texto.replace(agent.name,'');
+                                                                                    ref_destino.current.textContent=texto;
                                                                                 }
                                                                             });
+
                                                                             setDtsns(new_copy);
+
                                                                         }else{
                                                                             e.target.parentElement.parentElement.classList.add('CardAssign--agentchoose');
                                                                             copy.push(agent.id);
                                                                             new_copy=copy;
                                                                             setDtsns(copy);
+                                                                            let texto=ref_destino.current.textContent;
+                                                                                    texto+=`,${agent.name}`;
+                                                                                texto=texto.replace('-- Seleccionar--,','');
+                                                                            ref_destino.current.textContent=texto;
                                                                         }
                                                                     }}
                                                                 />
@@ -781,8 +795,6 @@ export default function CardAssignCampain({data,updateCredits}){
                             <button
                                 onClick={(e)=>{
                                     setView(!view_agencies); 
-                                    console.log(prev_agencies);
-
                                 }}
                             >--Seleccionar</button>
                             {
@@ -989,7 +1001,7 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                         console.log(filters)
 
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}?${filters}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/campains/${data.id}?${filters}`,{
                                             method:'PUT',
                                             headers: {
                                                 Accept: 'application/json',

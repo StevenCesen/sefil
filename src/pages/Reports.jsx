@@ -163,7 +163,7 @@ export default function Reports(){
         setNumber(0);
         setTypeSearch('0');
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalMonths`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/getTotalMonths`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -174,7 +174,7 @@ export default function Reports(){
                 setTotalMonths(data);
             });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/busines/estado`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/busines/estado`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -202,7 +202,7 @@ export default function Reports(){
                 });
             });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/departament?role=cobranza`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/users/departament?role=cobranza`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -211,7 +211,7 @@ export default function Reports(){
             .then((response) => response.json())  
             .then((data) => setAgents(data));
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -222,7 +222,7 @@ export default function Reports(){
                 setBusiness(data.data);
             });
         
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/report/pays`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/report/pays`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -231,7 +231,7 @@ export default function Reports(){
             .then((response) => response.json())  
             .then((data) => setReports(data));
         
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/estado?cartera=${empresa}&agencia=${""}&provincia=${""}&canton=${""}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/cartera/estado?cartera=${empresa}&agencia=${""}&provincia=${""}&canton=${""}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -250,7 +250,7 @@ export default function Reports(){
         setAgencyAmount("catacocha");
         setUnificate('normal');
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/distribution?cartera=${empresa}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/cartera/distribution?cartera=${empresa}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -265,7 +265,7 @@ export default function Reports(){
                 setNro(data);
             });
         
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/amounts?cartera=${empresa}&agencia=catacocha`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/cartera/amounts?cartera=${empresa}&agencia=catacocha`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -280,7 +280,7 @@ export default function Reports(){
                 setAmount(data.data);
             });
         
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/mora?cartera=${empresa}&agency=all`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/cartera/mora?cartera=${empresa}&agency=all`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -460,7 +460,7 @@ export default function Reports(){
                                         setAgencyAmount('all');
 
                                         setAgencyMora('all');
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/mora?cartera=${e.target.value}&agency=all`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/cartera/mora?cartera=${e.target.value}&agency=all`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -485,7 +485,7 @@ export default function Reports(){
                             <NavLink 
                                 className="Reports__button"
                                 onClick={(e)=>{
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/estado?cartera=${empresa}&agencia=${select_value}&provincia=${provincia}&canton=${canton}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/cartera/estado?cartera=${empresa}&agencia=${select_value}&provincia=${provincia}&canton=${canton}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -495,7 +495,7 @@ export default function Reports(){
                                         .then((data) => {
                                             setResults(data);
                                         });
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/distribution?cartera=${empresa}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/cartera/distribution?cartera=${empresa}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -506,7 +506,7 @@ export default function Reports(){
                                             setNro(data);
                                         });
                                     
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/amounts?cartera=${empresa}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/cartera/amounts?cartera=${empresa}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -517,7 +517,7 @@ export default function Reports(){
                                             setAmount(data.data);
                                         });
 
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/amounts?cartera=${empresa}&agencia=${select_agency_amount}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/cartera/amounts?cartera=${empresa}&agencia=${select_agency_amount}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -707,7 +707,7 @@ export default function Reports(){
                                                         const mes_final=fecha_final.split('-')[1];
 
                                                         if(mes_final){
-                                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalMonths?year=${year_inicio}&mes_inicio=${mes_inicio}&mes_final=${mes_final}`,{
+                                                            fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/getTotalMonths?year=${year_inicio}&mes_inicio=${mes_inicio}&mes_final=${mes_final}`,{
                                                                 headers: {
                                                                     Accept: 'application/json',
                                                                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -737,7 +737,7 @@ export default function Reports(){
                                                         const mes_inicio=fecha_inicio.split('-')[1];
 
                                                         if(mes_inicio){
-                                                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/getTotalMonths?year=${year_inicio}&mes_inicio=${mes_inicio}&mes_final=${mes_final}`,{
+                                                            fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/getTotalMonths?year=${year_inicio}&mes_inicio=${mes_inicio}&mes_final=${mes_final}`,{
                                                                 headers: {
                                                                     Accept: 'application/json',
                                                                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -852,7 +852,7 @@ export default function Reports(){
                                 <select 
                                     onChange={(e)=>{
                                         setAgencyAmount(e.target.value);
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/amounts?cartera=${empresa}&agencia=${e.target.value}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/cartera/amounts?cartera=${empresa}&agencia=${e.target.value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -905,7 +905,7 @@ export default function Reports(){
                                 <select 
                                     onChange={(e)=>{
                                         setAgencyMora(e.target.value);
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/mora?cartera=${empresa}&agency=${e.target.value}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/cartera/mora?cartera=${empresa}&agency=${e.target.value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -1104,7 +1104,7 @@ export default function Reports(){
                                         const splits_final=fecha_final.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/cierre?cartera=${empresa}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}&agente=${agent}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/cierre?cartera=${empresa}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}&agente=${agent}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1161,7 +1161,7 @@ export default function Reports(){
                                         const splits_final=fecha_final_1.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/condonaciones?cartera=${empresa_1}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/condonaciones?cartera=${empresa_1}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1217,7 +1217,7 @@ export default function Reports(){
                                         const splits_final=fecha_final_2.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/gcobranza?cartera=${empresa_2}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/gcobranza?cartera=${empresa_2}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1273,7 +1273,7 @@ export default function Reports(){
                                         const splits_final=fecha_final_2.split('-');
                                         const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
 
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/greverse?cartera=${empresa_2}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/greverse?cartera=${empresa_2}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}`;
                                     }}
                                 >Generar EXCEL</NavLink>
                             </div>
@@ -1316,7 +1316,7 @@ export default function Reports(){
                                             const splits_final=fecha_final.split('-');
                                             const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
                                             
-                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/gjudicial?fecha_inicio=${inicio}&user=${localStorage.getItem('name')}&fecha_final=${final}`;
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/gjudicial?fecha_inicio=${inicio}&user=${localStorage.getItem('name')}&fecha_final=${final}`;
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>
@@ -1387,7 +1387,7 @@ export default function Reports(){
                                             const splits_final=fecha_final.split('-');
                                             const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
                                             
-                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/cobros?cartera=${empresa}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}&unificate=${type_unificate}`;
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/cobros?cartera=${empresa}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}&unificate=${type_unificate}`;
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>
@@ -1439,7 +1439,7 @@ export default function Reports(){
                                         className="Reports__button"
                                         
                                         onClick={(e)=>{
-                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/evolution?cartera=${empresa}&user=${localStorage.getItem('name')}&type=${type_search}&number=${number}`;
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/evolution?cartera=${empresa}&user=${localStorage.getItem('name')}&type=${type_search}&number=${number}`;
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>
@@ -1467,7 +1467,7 @@ export default function Reports(){
                                         className="Reports__button"
                                         
                                         onClick={(e)=>{
-                                            location.href=`${import.meta.env.VITE_URL_BASE}/public/api/reporteAsignacion?cartera=${empresa}`;
+                                            location.href=`${import.meta.env.VITE_URL_BASE}/reporteAsignacion?cartera=${empresa}`;
                                         }}
                                     >Generar EXCEL</NavLink>
                                 </div>

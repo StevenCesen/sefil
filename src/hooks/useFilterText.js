@@ -10,7 +10,7 @@ export default function useFilterText({tray,data_org,value,update,all,campain}){
             campo="cedula";
         }
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=PENDIENTE`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=PENDIENTE`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -34,7 +34,7 @@ export default function useFilterText({tray,data_org,value,update,all,campain}){
             campo="cedula";
         }
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=EN PROCESO`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=EN PROCESO`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -58,7 +58,7 @@ export default function useFilterText({tray,data_org,value,update,all,campain}){
             campo="cedula";
         }
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=GESTIONADO`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains/dates?${campo}=${value}&cartera=${localStorage.getItem('cartera')}&agente=${localStorage.getItem('temp_uS')}&tray=GESTIONADO`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`

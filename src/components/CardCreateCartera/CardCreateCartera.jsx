@@ -53,7 +53,7 @@ export default function CardCreateCartera(){
                             data_import.append('file_original',cartera_original.current.files[0]);
                             e.target.textContent='Importando cartera, espere...';
 
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/create`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/cartera/create`,{
                                 method:'POST',
                                 body:data_import,
                                 headers: {

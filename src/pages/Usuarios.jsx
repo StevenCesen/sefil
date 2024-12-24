@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import CardUsuarios from "../components/CardUsuarios/CardUsuarios";
 import addNotification from "react-push-notification";
+import Loader from "../components/Loader/loader";
 
 export default function Usuarios(){
 
-    const [users,setUsers]=useState([]);
+    const [users,setUsers]=useState();
     const content_users=useRef();
     const [new_user,setNew]=useState(true);
     const [new_change,setNewChange]=useState();
@@ -18,7 +19,7 @@ export default function Usuarios(){
     });
 
     useEffect(()=>{
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/users`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -31,6 +32,8 @@ export default function Usuarios(){
         setNew(false);
         setNewChange(false);
     },[]);
+
+    if(!users) return <Loader/>
 
     return (
         <div className="pageUsuarios" ref={content_users}>
@@ -72,7 +75,7 @@ export default function Usuarios(){
                                         new_permiss.push("User:minimize");
                                     }
                                 
-                                    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/edit2/${id}`,{
+                                    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/users/edit2/${id}`,{
                                         method:'PUT',
                                         body:new URLSearchParams({
                                             permission:JSON.stringify([{
@@ -218,7 +221,7 @@ export default function Usuarios(){
 
                             e.target.textContent='Guardando...';
 
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/register`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/register`,{
                                 method:'POST',
                                 body:new_data,
                                 headers: {

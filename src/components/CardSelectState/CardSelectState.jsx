@@ -43,7 +43,7 @@ export default function CardSelectState({mode,current_option}){
                                                 onClick={(e)=>{
                                                     setView(!view)
                                                     setCurrent(option);
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/broadcast/${localStorage.getItem('temp_uS')}?state=${option}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/users/broadcast/${localStorage.getItem('temp_uS')}?state=${option}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`

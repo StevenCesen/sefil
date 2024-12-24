@@ -13,7 +13,7 @@ export default function CardReverse({id,name,fecha,update}){
             <button
                 onClick={(e)=>{
                     e.target.textContent="Procesando...";
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/reverse/${id}`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/reverse/${id}`,{
                         headers: {
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`

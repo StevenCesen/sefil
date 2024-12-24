@@ -76,7 +76,7 @@ export default function CardNewTemplate({add_template,form}){
                 <button
                     onClick={(e)=>{
                         e.target.textContent="Guardando...";
-                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/templates`,{
+                        fetch(`${import.meta.env.VITE_URL_BASE}/templates`,{
                             method:'POST',
                             headers: {
                                 Accept: 'application/json',

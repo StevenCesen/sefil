@@ -82,7 +82,7 @@ export default function Comprobantes(){
             setVal(param.id);
         }
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -248,7 +248,7 @@ export default function Comprobantes(){
                                         {
                                             (comprobante.id!=='FACES') &&
                                                 <button onClick={(e)=>{
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/${comprobante.id}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/${comprobante.id}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -301,7 +301,6 @@ export default function Comprobantes(){
                             : <></>
                         }
                     </div>
-
 
                 </div>
 

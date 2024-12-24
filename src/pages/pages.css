@@ -1779,6 +1779,23 @@
     border-top-right-radius: 5px;
 }
 
+.Gestion__item--level1{
+    background-color: var(--bg-tried-1) !important;
+}
+
+.Gestion__item--level2{
+    background-color: var(--bg-tried-2) !important;
+}
+
+.Gestion__item--level3{
+    background-color: var(--bg-tried-3) !important;
+}
+
+.Gestion__item--level4{
+    background-color: var(--bg-tried-4) !important;
+}
+
+
 .Gestion__item>button{
     background-color: var(--bg-alert-successful);
     height: 35px;

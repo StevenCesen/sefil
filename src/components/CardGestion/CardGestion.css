@@ -165,6 +165,11 @@
     overflow-y: auto;
 }
 
+.DetailCredit__dial:last-child{
+    height: 350px;
+    overflow-y: auto;
+}
+
 .Ggestion__buttons{
     width: 100%;
     display: flex;

@@ -71,7 +71,7 @@ export default function Clist(){
 
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null & param.ci==undefined){
             setAux(localStorage.getItem('cartera'));
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${localStorage.getItem('cartera')}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -82,7 +82,7 @@ export default function Clist(){
                     setCredits(data);
                 });
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/listAgents?cartera=syncs`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=syncs`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -99,7 +99,7 @@ export default function Clist(){
             setAgents([]);
             setAgent([]);
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs/${param.ci}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/syncs/${param.ci}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -309,7 +309,7 @@ export default function Clist(){
 
                                                     setMessage('Cargando...');
 
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/distribution?cartera=syncs&id=${e.target.value}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/campains/distribution?cartera=syncs&id=${e.target.value}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -324,7 +324,7 @@ export default function Clist(){
                                                             });
                                                         });
                                                 }else{
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs/${param.ci}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/syncs/${param.ci}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -356,7 +356,7 @@ export default function Clist(){
                                                 console.log(e.target.value)
 
                                                 if(e.target.value==='vigente'){
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estadoNot=Cancelado`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/filter?estadoNot=Cancelado`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -367,7 +367,7 @@ export default function Clist(){
                                                             updateCredits(data.data)
                                                         });
                                                 }else{
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -395,7 +395,7 @@ export default function Clist(){
                                             <NavLink to={`/dashboard/clist/${credit.id}`} onClick={(e)=>{
                                                 e.preventDefault();
                                                 
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs/${credit.id}`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/syncs/${credit.id}`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`

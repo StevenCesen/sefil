@@ -29,7 +29,7 @@ export default function CardCreateCampain({setData}){
         setNew(false);
         
         //Bajamos los agentes
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/agents`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/users/agents`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -48,7 +48,7 @@ export default function CardCreateCampain({setData}){
             });
         
         //Bajamos las carteras
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -247,7 +247,7 @@ export default function CardCreateCampain({setData}){
                         console.log(data)
 
                         if(campain.name!=='' & campain.fecha_init!='' & campain.fecha_finish!=''){
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
                                 method:'POST',
                                 headers: {
                                     Accept: 'application/json',

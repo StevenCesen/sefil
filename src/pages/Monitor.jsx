@@ -3,6 +3,7 @@ import "./pages.css";
 import { useContext, useEffect, useState } from "react";
 import CardUserState from "../components/CardUserState/CardUserState.jsx";
 import { GestionContext } from "../contexts/GestionContext.jsx";
+import Loader from "../components/Loader/loader.jsx";
 
 export default function Monitor(){
 
@@ -10,6 +11,7 @@ export default function Monitor(){
     const [campains,setCampains]=useState();
     const [campain,setCampain]=useState();
     const [interval_agents,setIntervalAgent]=useState();
+    const [loading,setLoading]=useState();
 
     const updateState=()=>{
         setIntervalAgent(
@@ -17,7 +19,7 @@ export default function Monitor(){
 
                 (location.hash==="#/dashboard/monitor") 
                 ?
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/users`,{
                         headers: {
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -65,8 +67,9 @@ export default function Monitor(){
     }
 
     useEffect(()=>{
+        setLoading(false);
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -90,7 +93,7 @@ export default function Monitor(){
         if(localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='super' | localStorage.getItem('permission').split(',').includes('Monitor:all')){
             updateState();
             
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/users`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -135,8 +138,8 @@ export default function Monitor(){
         
     },[]);
 
-    if(!agents) return <></>
-    if(!campains) return <></>
+    if(!agents) return <><Loader/></>
+    if(!campains) return <><Loader/></>
 
     return (
         <div className="pageConsulta">
@@ -158,6 +161,7 @@ export default function Monitor(){
                         value={campain}
                         onChange={(e)=>{
                             setCampain(e.target.value);
+                            setLoading(true);
                             localStorage.setItem('filter_campain',e.target.value)
 
                             if(e.target.value!==""){
@@ -179,7 +183,8 @@ export default function Monitor(){
                     
                                 setAgents(agents_new);
                             }
-                            
+
+                            setLoading(false);
                         }}
                     >
                         <option value={""}>-- Todas --</option>
@@ -281,6 +286,12 @@ export default function Monitor(){
                 }
 
             </div>
+            {
+                (loading)
+                ?
+                    <Loader/>
+                :   <></>
+            }
         </div>
     );
 }

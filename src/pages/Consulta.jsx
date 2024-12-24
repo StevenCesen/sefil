@@ -4,6 +4,7 @@ import CardCredit from "../components/CardCredit/CardCredit";
 import { useEffect, useState } from "react";
 import useSearch from "../hooks/useSearch.js";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
+import Loader from "../components/Loader/loader.jsx";
 
 export default function Consulta(){
     const param = useParams();
@@ -15,6 +16,7 @@ export default function Consulta(){
     const [parroquia,setParroquia]=useState('all');
     const [agents,setAgents]=useState();
     const [agent,setAgent]=useState();
+    const [loading,setLoading]=useState();
 
     const [credits,setCredits]=useState({
         current_page:1,
@@ -61,8 +63,9 @@ export default function Consulta(){
         setCanton('all');
         setParroquia('all');
         setAgent("all");
+        setLoading(false);
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -84,7 +87,7 @@ export default function Consulta(){
 
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null){
             setAux(localStorage.getItem('cartera'));
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${localStorage.getItem('cartera')}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -95,7 +98,7 @@ export default function Consulta(){
                     setCredits(data);
                 });
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -109,9 +112,9 @@ export default function Consulta(){
 
     },[]);
 
-    if(!business) return <></>  
-    if(!agents) return <></>  
-    if(!agent) return <></>
+    if(!business) return <Loader/>  
+    if(!agents) return <Loader/>
+    if(!agent) return <Loader/>
 
     return (
         <div className="pageConsulta">
@@ -132,8 +135,9 @@ export default function Consulta(){
                     <select value={aux_busines} onChange={(e)=>{
                         if(e.target.value!=='default'){
                             setAux(e.target.value);
+                            setLoading(true);
                             localStorage.setItem('cartera',e.target.value);
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${e.target.value}`,{
                                 headers: {
                                     Accept: 'application/json',
                                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -142,6 +146,7 @@ export default function Consulta(){
                                 .then((response) => response.json())  
                                 .then((data) => {
                                     setCredits(data);
+                                    setLoading(false);
                                 });
                         }
                     }}>
@@ -165,9 +170,10 @@ export default function Consulta(){
                             <select
                                 value={type_client}
                                 onChange={(e)=>{
+                                    setLoading(true);
                                     setClient(e.target.value);
                                     if(e.target.value==='GARANTE'){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filterGarante`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/credit/filterGarante`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -175,10 +181,11 @@ export default function Consulta(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                updateCredits(data.data)
+                                                updateCredits(data.data);
+                                                setLoading(false);
                                             });
                                     }else{
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit?cartera=SEFIL_1`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/credit?cartera=SEFIL_1`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -186,7 +193,8 @@ export default function Consulta(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                updateCredits(data.data)
+                                                updateCredits(data.data);
+                                                setLoading(false);
                                             });
                                     }
 
@@ -208,8 +216,9 @@ export default function Consulta(){
                                 onChange={(e)=>{
                                     if(e.target.value!=='default'){
                                         setAux(e.target.value);
+                                        setLoading(true);
                                         localStorage.setItem('cartera',e.target.value);
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${e.target.value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -218,9 +227,10 @@ export default function Consulta(){
                                             .then((response) => response.json())  
                                             .then((data) => {
                                                 setCredits(data);
+                                                setLoading(false);
                                             });
 
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -229,6 +239,7 @@ export default function Consulta(){
                                             .then((response) => response.json())  
                                             .then((data) => {
                                                 setAgents(data);
+                                                setLoading(false);
                                             });
                                     }
                                 }}
@@ -250,7 +261,8 @@ export default function Consulta(){
                                 placeholder="Cantón"
                                 onChange={(e)=>{
                                     setInput(e.target.value);
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?canton=${canton_input}`,{
+                                    setLoading(true);
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/filter?canton=${canton_input}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -258,7 +270,8 @@ export default function Consulta(){
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            updateCredits(data.data)
+                                            updateCredits(data.data);
+                                            setLoading(false);
                                         });
                                 }}
                             />
@@ -272,9 +285,10 @@ export default function Consulta(){
                                 onChange={(e)=>{
 
                                     setAgent(e.target.value);
+                                    setLoading(true);
 
                                     if(e.target.value!=='all'){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/distribution?cartera=${localStorage.getItem('cartera')}&id=${e.target.value}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/campains/distribution?cartera=${localStorage.getItem('cartera')}&id=${e.target.value}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -292,6 +306,8 @@ export default function Consulta(){
                                                         });
                                                     }
                                                 });
+
+                                                setLoading(false);
                                             });
                                     }
 
@@ -312,10 +328,10 @@ export default function Consulta(){
                                 value={parroquia}
                                 onChange={(e)=>{
                                     setParroquia(e.target.value);
-                                    console.log(e.target.value)
+                                    setLoading(true);
 
                                     if(e.target.value==='vigente'){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estadoNot=Cancelado`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/credit/filter?estadoNot=Cancelado`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -323,10 +339,11 @@ export default function Consulta(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                updateCredits(data.data)
+                                                updateCredits(data.data);
+                                                setLoading(false);
                                             });
                                     }else{
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -334,7 +351,8 @@ export default function Consulta(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                updateCredits(data.data)
+                                                updateCredits(data.data);
+                                                setLoading(false);
                                             });
                                     }
                                 }}
@@ -390,6 +408,12 @@ export default function Consulta(){
                 }
 
             </div>
+            {
+                (loading)
+                ?
+                    <Loader/>
+                :   <></>
+            }
         </div>
     );
 }

@@ -8,7 +8,7 @@ function GestionContextProvider({children}){
 
     useEffect(()=>{
         if(localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='super'){
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/users`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`

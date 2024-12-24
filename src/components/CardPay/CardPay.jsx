@@ -108,7 +108,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
             value:data.gastos_cobranza
         });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/prelacion?cartera=${cartera}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines/prelacion?cartera=${cartera}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -509,7 +509,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                 //Compruebo si no existe el mismo codigo de deposito
                                 if(data_encode.forma_pago!=='efectivo'){
                                     
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
                                             headers: {
                                                 Accept: 'application/json'
                                             }
@@ -519,7 +519,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                                 /*========================================================EL CÓDIGO DE DEPOSITO ES ÚNICO Y NO EXISTE AÚN EN BASE================================================*/
     
                                                 if(data.state===200){
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/pay/${id}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${id}`,{
                                                         method:'PUT',
                                                         headers: {
                                                             Accept: 'application/json',
@@ -566,7 +566,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                     /*========================================================PAGO EXITOSO================================================*/
                                     console.log(data_encode);
 
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/pay/${id}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${id}`,{
                                             method:'PUT',
                                             headers: {
                                                 Accept: 'application/json',
