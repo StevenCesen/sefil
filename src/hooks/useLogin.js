@@ -1,5 +1,5 @@
 
-export default async function useLogin(data,tag,btn){
+export default async function useLogin(data,tag,btn,setload){
 
     const request= await fetch(`${import.meta.env.VITE_URL_BASE}/login`,{
         method:'POST',
@@ -12,6 +12,7 @@ export default async function useLogin(data,tag,btn){
         if(!response.token){
             tag.current.textContent='Usuario inválido, revisa las credenciales';
             btn.current.textContent='Ingresar';
+            setload(false);
         }else{
 
             localStorage.setItem('token',response.token);
@@ -20,17 +21,22 @@ export default async function useLogin(data,tag,btn){
             localStorage.setItem('rol',response.rol);
             localStorage.setItem('temp_uS',response.id);
             localStorage.setItem('extension',response.extension);
+            localStorage.setItem('timestamp_cc',new Date().getTime());
+            localStorage.setItem('estado','CONECTADO');
 
             if(response.changePassword){
-                location.href='#/dashboard/me'
+                localStorage.setItem('change_ps',true);
+                location.href='#/dashboard/me';
                 location.reload();
             }else{
-                location.href='./'
+                localStorage.setItem('change_ps',false);
+                location.href='./';
             }
         }
     }else{
         tag.current.textContent='Usuario inválido, revisa las credenciales';
         btn.current.textContent='Ingresar';
+        setload(false);
     }
 
 }

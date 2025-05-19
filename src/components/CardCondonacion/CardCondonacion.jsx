@@ -10,12 +10,12 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
     useEffect(()=>{
         setValues({
             capital:capital,
-            mora:mora,
-            interes:interes,
-            seguro_desgravamen:seguro_desgravamen,
-            gastos_judiciales:gastos_judiciales,
-            gastos_cobranza:gastos_cobranza,
-            otros_valores:otros_valores
+            mora:(mora>0) ? mora : 0,
+            interes:(interes>0) ? interes : 0,
+            seguro_desgravamen:(seguro_desgravamen>0) ? seguro_desgravamen : 0,
+            gastos_judiciales:(gastos_judiciales>0) ? gastos_judiciales : 0,
+            gastos_cobranza:(gastos_cobranza>0) ? gastos_cobranza : 0,
+            otros_valores:(otros_valores>0) ? otros_valores : 0
         });
     },[]);
 
@@ -116,23 +116,23 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
 
                         const data={
                             prevDates:JSON.stringify({
-                                mora:mora,
-                                interes:interes,
+                                mora:(mora>0) ? mora : 0,
+                                interes:(interes>0) ? interes : 0,
                                 capital:capital,
-                                seguro_desgravamen:seguro_desgravamen,
-                                gastos_cobranza:gastos_cobranza,
-                                gastos_judiciales:gastos_judiciales,
-                                otros_valores:otros_valores
+                                seguro_desgravamen:(seguro_desgravamen>0) ? seguro_desgravamen : 0,
+                                gastos_cobranza:(gastos_cobranza>0) ? gastos_cobranza : 0,
+                                gastos_judiciales:(gastos_judiciales>0) ? gastos_judiciales : 0,
+                                otros_valores:(otros_valores>0) ? otros_valores : 0
                             }),
                             postDates:JSON.stringify(credit),
-                            totalAmount:String(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)),
+                            totalAmount:String(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores)),
                             saldo_capital:credit.capital,
                             interes:credit.interes,
                             mora:credit.mora,
                             seguro_desgravamen:credit.seguro_desgravamen,
                             gastos_cobranza:credit.gastos_cobranza,
                             gastos_judiciales:credit.gastos_judiciales,
-                            otros_valores:credit.otros_valores,
+                            otros_valores:(credit.otros_valores>0) ? credit.otros_valores : 0,
                             credito:Number(id),
                             cartera:cartera
                         }

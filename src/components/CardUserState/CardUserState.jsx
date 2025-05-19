@@ -4,7 +4,11 @@ import "./CardUserState.css";
 export default function CardUserState({name,state,time,mode,data,name_campain}){
 
     const [calc_time,setContinue]=useState();
-    const [times,setTime]=useState();
+    const [times,setTime]=useState({
+        second:Number(0),
+        minutes:Number(0),
+        hour:Number(0)
+    });
 
     const init = ({hour,sec,min})=>{
         let second=sec;
@@ -12,54 +16,56 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
         let hours=hour;
         // let second=times.second;
         // let minutos=times.minutes;
+
+        setTime({
+            second:Number(0),
+            minutes:Number(0),
+            hour:Number(0)
+        });
         
-        setContinue(
-            setInterval(() => {
-                second++;
-    
-                if(second<60){
+        setInterval(() => {
+            second++;
 
-                    setTime({
-                        second:(second<10) ? `0${second}` : second,
-                        minutes:(minutos<10) ? `0${minutos}` : minutos,
-                        hour:(hours<10) ? `0${hours}` : hours
-                    });
+            if(second<60){
 
-                }else if(minutos<59){
-                    second=0;
-                    minutos++;
-                    
-                    setTime({
-                        minutes:(minutos<10) ? `0${minutos}` : minutos,
-                        second:(second<10) ? `0${second}` : second,
-                        hour:(hours<10) ? `0${hours}` : hours
-                    });
-                }else if(hours<24){
-                    second=0;
-                    minutos=0;
-                    hours++;
+                setTime({
+                    second:(second<10) ? `0${second}` : second,
+                    minutes:(minutos<10) ? `0${minutos}` : minutos,
+                    hour:(hours<10) ? `0${hours}` : hours
+                });
 
-                    setTime({
-                        minutes:(minutos<10) ? `0${minutos}` : minutos,
-                        second:(second<10) ? `0${second}` : second,
-                        hour:(hours<10) ? `0${hours}` : hours
-                    });
-                }else{
-                    second=0;
-                    minutos=0;
-                    hours=0;
-                }
-            }, 1000)
-        )
+            }else if(minutos<59){
+                second=0;
+                minutos++;
+                
+                setTime({
+                    minutes:(minutos<10) ? `0${minutos}` : minutos,
+                    second:(second<10) ? `0${second}` : second,
+                    hour:(hours<10) ? `0${hours}` : hours
+                });
+            }else if(hours<24){
+                second=0;
+                minutos=0;
+                hours++;
+
+                setTime({
+                    minutes:(minutos<10) ? `0${minutos}` : minutos,
+                    second:(second<10) ? `0${second}` : second,
+                    hour:(hours<10) ? `0${hours}` : hours
+                });
+            }else{
+                second=0;
+                minutos=0;
+                hours=0;
+            }
+        }, 1000)
     }
 
     useEffect(()=>{
         // setTime({
-        //     second:Number(time.split(':')[2]),
-        //     minutes:Number(time.split(':')[1]),
-        //     hour:Number(time.split(':')[0])
-        //     // second:0,
-        //     // minutes:0
+        //     minutes:(Number(time.split(':')[1])<10) ? `0${Number(time.split(':')[1])}` : Number(time.split(':')[1]),
+        //     second:(Number(time.split(':')[2])<10) ? `0${Number(time.split(':')[2])}` : Number(time.split(':')[2]),
+        //     hour:(Number(time.split(':')[0])<10) ? `0${Number(time.split(':')[0])}` : Number(time.split(':')[0])
         // });
 
         // init({
@@ -68,15 +74,54 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
         //     hour:Number(time.split(':')[0])
         // });
 
-        setTime({
-            minutes:(Number(time.split(':')[1])<10) ? `0${Number(time.split(':')[1])}` : Number(time.split(':')[1]),
-            second:(Number(time.split(':')[2])<10) ? `0${Number(time.split(':')[2])}` : Number(time.split(':')[2]),
-            hour:(Number(time.split(':')[0])<10) ? `0${Number(time.split(':')[0])}` : Number(time.split(':')[0])
-        });
+        console.log(time)
 
-        //return () => clearInterval(calc_time);
+        let second=Number(time.split(':')[2]);
+        let minutos=Number(time.split(':')[1]);
+        let hours=Number(time.split(':')[0]);
+        // let second=times.second;
+        // let minutos=times.minutes;
+        
+        const timer=setInterval(() => {
+            second++;
+
+            if(second<60){
+
+                setTime({
+                    second:(second<10) ? `0${second}` : second,
+                    minutes:(minutos<10) ? `0${minutos}` : minutos,
+                    hour:(hours<10) ? `0${hours}` : hours
+                });
+
+            }else if(minutos<59){
+                second=0;
+                minutos++;
+                
+                setTime({
+                    minutes:(minutos<10) ? `0${minutos}` : minutos,
+                    second:(second<10) ? `0${second}` : second,
+                    hour:(hours<10) ? `0${hours}` : hours
+                });
+            }else if(hours<24){
+                second=0;
+                minutos=0;
+                hours++;
+
+                setTime({
+                    minutes:(minutos<10) ? `0${minutos}` : minutos,
+                    second:(second<10) ? `0${second}` : second,
+                    hour:(hours<10) ? `0${hours}` : hours
+                });
+            }else{
+                second=0;
+                minutos=0;
+                hours=0;
+            }
+        }, 1000)
+
+        return () => clearInterval(timer);
     
-    },[time]);
+    },[state]);
 
     if(!times) return <></>
 
@@ -115,9 +160,8 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
                             <label>{data.nro_gestions_efec_dia}</label>
                         </p>
                         <p style={{fontSize:"16px"}}>{data.nro_pendientes}</p>
-                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
+                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
                             <label>{data.nro_proceso}</label>
-                            <label>{data.nro_proceso_dia}</label>
                         </p>
                         <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderRight:"1px solid grey"}}>
                             <label>{data.nro_calls_acum}</label>

@@ -106,48 +106,51 @@ export default function Campain(){
 
                         {
                             campains.data.map((campain,index)=>(
-                                <div 
-                                    key={index}
-                                    className="Campain__item"
-                                >
-                                    <label>{campain.name}</label>
-                                    <label>{campain.state}</label>
-                                    <label>{campain.fecha_init}</label>
-                                    <label>{campain.fecha_finish}</label>
-                                    {
-                                        (campain.state!=='FINALIZADA')
-                                        ?
-                                            <div>
-                                                <button
-                                                    onClick={()=>{
-                                                        setData(campain);
-                                                        setEdit(true);
-                                                    }}
-                                                >
-                                                    <img title="Editar campaña" src="./icons/edit.png"/>
-                                                </button>
+                                (campain.state==="ACTIVA")
+                                ?
+                                    <div 
+                                        key={index}
+                                        className="Campain__item"
+                                    >
+                                        <label>{campain.name}</label>
+                                        <label>{campain.state}</label>
+                                        <label>{campain.fecha_init}</label>
+                                        <label>{campain.fecha_finish}</label>
+                                        {
+                                            (campain.state!=='FINALIZADA')
+                                            ?
+                                                <div>
+                                                    <button
+                                                        onClick={()=>{
+                                                            setData(campain);
+                                                            setEdit(true);
+                                                        }}
+                                                    >
+                                                        <img title="Editar campaña" src="./icons/edit.png"/>
+                                                    </button>
 
-                                                <button
-                                                    onClick={()=>{
-                                                        setData(campain);
-                                                        setTransfer(true);
-                                                    }}
-                                                >
-                                                    <img title="Asignar campaña" src="./icons/transfer.png"/>
-                                                </button>
+                                                    <button
+                                                        onClick={()=>{
+                                                            setData(campain);
+                                                            setTransfer(true);
+                                                        }}
+                                                    >
+                                                        <img title="Asignar campaña" src="./icons/transfer.png"/>
+                                                    </button>
 
-                                                <button
-                                                    onClick={()=>{
-                                                        console.log("Exportación de datos")
-                                                    }}
-                                                >
-                                                    <img title="Exportar campaña" src="./icons/expor.png"/>
-                                                </button>
-                                                
-                                            </div>
-                                        :   <></>
-                                    }
-                                </div>
+                                                    <button
+                                                        onClick={()=>{
+                                                        
+                                                        }}
+                                                    >
+                                                        <img title="Exportar campaña" src="./icons/expor.png"/>
+                                                    </button>
+                                                    
+                                                </div>
+                                            :   <></>
+                                        }
+                                    </div>
+                                :   <></>
                             ))
                         }
 

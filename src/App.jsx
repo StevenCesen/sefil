@@ -4,8 +4,9 @@ import Login from './pages/Login'
 import Header from './components/Header/Header'
 import NavSlide from './components/navSlide/NavSlide'
 import { useEffect, useState } from 'react'
-import { Notifications } from 'react-push-notification';
+import addNotification, { Notifications } from 'react-push-notification';
 import "./index.css";
+import Me from './pages/Me'
 
 function App() {
   
@@ -29,6 +30,7 @@ function App() {
             localStorage.removeItem('permission');
             localStorage.removeItem('name');
             localStorage.removeItem('extension');
+            
             setSession({
               state:true
             });
@@ -60,13 +62,23 @@ function App() {
         ?
           <Login/>
         :
-          <div className="Dashboard">
-            <NavSlide
-              actions={''}
-              permission={''}
-            />
-            <Outlet/>
-          </div>
+          (localStorage.getItem('change_ps')==="true")
+          ?
+            <div className="Dashboard">
+              <NavSlide
+                actions={''}
+                permission={''}
+              />
+              <Me/>
+            </div>
+          :
+            <div className="Dashboard">
+              <NavSlide
+                actions={''}
+                permission={''}
+              />
+              <Outlet/>
+            </div>
       }
       </>
   )

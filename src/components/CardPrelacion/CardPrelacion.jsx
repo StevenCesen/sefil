@@ -33,6 +33,8 @@ export default function CardPrelacion({cartera}){
         let items=document.getElementsByClassName('CardSelectsFrom')[0].children;
         items=[].slice.call(items);
 
+        console.log(items);
+
         items.map((item)=>{
             if(item.textContent===value){
                 item.classList.remove('CardSelectsFrom__labelOff');
@@ -131,10 +133,11 @@ export default function CardPrelacion({cartera}){
                                             e.target.removeChild(document.getElementById('message-drop'));
                                         }
 
-                                        let elements=document.getElementsByClassName('CardSelectsTo__label');
+                                        let elements=document.querySelectorAll('.CardSelectsTo__label');
                                         elements=[].slice.call(elements);
 
                                         const data = e.dataTransfer.getData("Text");
+                                    
                                         let count=0;
 
                                         elements.map((element)=>{

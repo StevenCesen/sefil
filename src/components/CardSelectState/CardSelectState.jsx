@@ -15,7 +15,6 @@ export default function CardSelectState({mode,current_option}){
     ];
 
     useEffect(()=>{
-        console.log(mode)
         setView(false);
         setCurrent(current_option);
 
@@ -41,7 +40,9 @@ export default function CardSelectState({mode,current_option}){
                                             <label 
                                                 key={index}
                                                 onClick={(e)=>{
-                                                    setView(!view)
+                                                    localStorage.setItem('estado',option);
+
+                                                    setView(!view);
                                                     setCurrent(option);
                                                     fetch(`${import.meta.env.VITE_URL_BASE}/users/broadcast/${localStorage.getItem('temp_uS')}?state=${option}`,{
                                                         headers: {

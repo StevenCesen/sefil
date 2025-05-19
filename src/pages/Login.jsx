@@ -4,6 +4,7 @@ import useLogin from "../hooks/useLogin";
 import { NavLink, redirect } from "react-router-dom";
 import Eye from "../components/Eye/Eye";
 import useSessions from "../hooks/useSessions";
+import Loader from "../components/Loader/loader";
 
 export default function Login(){
 
@@ -11,6 +12,7 @@ export default function Login(){
         ci:'',
         password:''
     });
+    const [loading,setLoading]=useState();
 
     const response=useRef();
     const btn=useRef();
@@ -22,7 +24,7 @@ export default function Login(){
             "password":user.password
         });
         
-        useLogin(formdata,response,btn);
+        useLogin(formdata,response,btn,setLoading);
     }
 
     if (useSessions()) {
@@ -35,6 +37,7 @@ export default function Login(){
     
                     <form className="Login__form" autoComplete="off" onSubmit={e=>{
                         e.preventDefault();
+                        setLoading(true);
                         login();
                     }}>
                         <label>
@@ -81,6 +84,12 @@ export default function Login(){
                     </form>
                     <p ref={response}></p>
                 </div>
+                {
+                    (loading)
+                    ?
+                        <Loader/>
+                    :   <></>
+                }
             </div>
         );
     } 

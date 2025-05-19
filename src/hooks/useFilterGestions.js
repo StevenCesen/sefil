@@ -1,6 +1,8 @@
-export default function useFilterGestions({fecha_gestion,campain,name,ci,type,state_gestion,date_promise,agente,setData,loader}){
+export default function useFilterGestions({fecha_gestion,campain,name,ci,type,state_gestion,date_promise,agente,credito,setData,loader,gestion_channel_whatsapp}){
     let filters="";
     loader(true);
+
+    console.log(credito)
 
     if(fecha_gestion!==""){
         const fecha=`${fecha_gestion.split('-')[0]}/${fecha_gestion.split('-')[1]}/${fecha_gestion.split('-')[2]}`;
@@ -33,6 +35,14 @@ export default function useFilterGestions({fecha_gestion,campain,name,ci,type,st
 
     if(agente!==""){
         filters+=`&agent=${agente}`;
+    }
+
+    if(credito!=="" & credito!==undefined){
+        filters+=`&credito=${credito}`;
+    }
+
+    if(gestion_channel_whatsapp!==""){
+        filters+=`&channel=whatsapp`
     }
 
     filters=filters.substring(1);

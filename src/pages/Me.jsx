@@ -171,6 +171,7 @@ export default function Me(){
                                         .then((data) => {
                                             if(data.state===200){
                                                 e.target.textContent='Actualizada';
+                                                localStorage.setItem('change_ps',false);
                                             }else{
                                                 e.target.textContent='Actualizar';
                                                 addNotification({

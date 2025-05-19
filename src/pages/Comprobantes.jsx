@@ -328,7 +328,6 @@ export default function Comprobantes(){
             
             {
                 (view) &&
-                
                     <div className="CardPay">
                         <button onClick={()=>{setView(!view)}}>Volver</button>
             

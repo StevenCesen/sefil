@@ -9,7 +9,7 @@ export default async function useVerifyStruct(id){
     
     const response=await request.json();
 
-    console.log(response)
+    console.log(response);
     
     if(response.status===200){
         return true;

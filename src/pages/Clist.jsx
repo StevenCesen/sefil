@@ -15,6 +15,7 @@ export default function Clist(){
     const [parroquia,setParroquia]=useState('all');
     const [agents,setAgents]=useState();
     const [agent,setAgent]=useState();
+    const [view_phones,setPhones]=useState();
 
     const [message,setMessage]=useState("");
 
@@ -65,6 +66,7 @@ export default function Clist(){
             links:[]
         });
         setMessage("");
+        setPhones(false);
 
         localStorage.setItem('cartera','syncs');
         setAux(localStorage.getItem('cartera'));
@@ -107,11 +109,9 @@ export default function Clist(){
             })
                 .then((response) => response.json())  
                 .then((data) => {
-                    console.log(data);
                     setCredit(data);
                 });
         }
-
     },[]);
 
     if(!agents) return <></>  
@@ -138,36 +138,88 @@ export default function Clist(){
 
                             <div className="DetailCredit__datesCredit">
                                 <div>
-                                    <label>Cliente:</label>
-                                    <label>{data_credit.name}</label>
+                                    <div>
+                                        <label>Cliente:</label>
+                                        <label>{data_credit.name}</label>
+                                    </div>
+                                    <div>
+                                        <label>Contrato:</label>
+                                        <label>syncs-{data_credit.sync_id}</label>
+                                    </div>
+                                    <div>
+                                        <label>Estado Sincronización:</label>
+                                        <label>{data_credit.status}</label>
+                                    </div>
+                                    <div>
+                                        <label>Estado Crédito:</label>
+                                        <label>{data_credit.collection_state}</label>
+                                    </div>
+                                    <div>
+                                        <label>Agencia:</label>
+                                        <label>{data_credit.Agencia}</label>
+                                    </div>
+                                    <div>
+                                        <label>Frecuencia:</label>
+                                        <label>{data_credit.frequency}</label>
+                                    </div>
+                                    <div>
+                                        <label>Fecha terminación:</label>
+                                        <label>{data_credit.due_date}</label>
+                                    </div>
+                                    <div>
+                                        <label>Días en mora:</label>
+                                        <label>{data_credit.days_past_due}</label>
+                                    </div>
+                                    <div>
+                                        <label>Cuotas:</label>
+                                        <label>{data_credit.total_fees}</label>
+                                    </div>
+                                    <div>
+                                        <label>Cuotas pagadas:</label>
+                                        <label>{data_credit.paid_fees}</label>
+                                    </div>
+                                    <div>
+                                        <label>Valor cuota:</label>
+                                        <label>{useFormatterNumber({value:data_credit.monthly_fee_amount,currency:'USD'})}</label>
+                                    </div>
                                 </div>
                                 <div>
-                                    <label>Contrato:</label>
-                                    <label>syncs-{data_credit.sync_id}</label>
-                                </div>
-                                <div>
-                                    <label>Estado Sincronización:</label>
-                                    <label>{data_credit.status}</label>
-                                </div>
-                                <div>
-                                    <label>Agencia:</label>
-                                    <label>{data_credit.Agencia}</label>
-                                </div>
-                                <div>
-                                    <label>Frecuencia:</label>
-                                    <label>{data_credit.frequency}</label>
-                                </div>
-                                <div>
-                                    <label>Total pendiente:</label>
-                                    <label>{data_credit.total_amount}</label>
-                                </div>
-                                <div>
-                                    <label>Cuotas:</label>
-                                    <label>{data_credit.total_fees}</label>
-                                </div>
-                                <div>
-                                    <label>Cuotas pagadas:</label>
-                                    <label>{data_credit.paid_fees}</label>
+                                    <div>
+                                        <label>Capital:</label>
+                                        <label>{useFormatterNumber({value:data_credit.saldo_capital,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Interés:</label>
+                                        <label>{useFormatterNumber({value:data_credit.interes,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Mora:</label>
+                                        <label>{useFormatterNumber({value:data_credit.mora,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Seguro desgravamen:</label>
+                                        <label>{useFormatterNumber({value:data_credit.seguro_desgravamen,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Gastos judiciales:</label>
+                                        <label>{useFormatterNumber({value:data_credit.gastos_judiciales,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Gastos de cobranza:</label>
+                                        <label>{useFormatterNumber({value:data_credit.gastos_cobranza,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Otros valores:</label>
+                                        <label>{useFormatterNumber({value:data_credit.otros_valores,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Valor cuota:</label>
+                                        <label>{useFormatterNumber({value:data_credit.monthly_fee_amount,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Total pendiente:</label>
+                                        <label>{useFormatterNumber({value:data_credit.total_amount,currency:'USD'})}</label>
+                                    </div>
                                 </div>
                             </div>
 
@@ -177,6 +229,7 @@ export default function Clist(){
                                     <label>Nombre</label>
                                     <label>Tipo</label>
                                     <label>CI</label>
+                                    <label></label>
                                 </div>
 
                                 {
@@ -185,6 +238,34 @@ export default function Clist(){
                                             <label>{contacto.fullName}</label>
                                             <label>{contacto.type}</label>
                                             <label>{contacto.documento}</label>
+                                            <label>
+                                                <img 
+                                                    src="./icons/arrowDown.png"
+                                                    onClick={(e)=>{
+                                                        if(e.target.parentElement.nextElementSibling.style.display==="block"){
+                                                            e.target.parentElement.nextElementSibling.style.display="none";
+                                                        }else{
+                                                            e.target.parentElement.nextElementSibling.style.display="block";
+                                                        }
+                                                    }}
+                                                />
+                                            </label>
+
+                                            {
+                                            
+                                                <div>
+                                                    {
+                                                        (contacto.mobile_phones!=="")
+                                                        ?
+                                                            contacto.mobile_phones.split(',').map(phone=>(
+                                                                <p><strong>MÓVIL:</strong> {phone}</p>
+                                                            ))
+                                                        : ""
+                                                    }
+                                                </div>
+                                            
+                                            }
+
                                         </div>
                                     ))
                                 }
@@ -195,20 +276,20 @@ export default function Clist(){
                                 <h3>Gestiones</h3>
                                 <div className="DetailCredit__gestionesHead">
                                     <label>Fecha</label>
-                                    <label>Cliente</label>
-                                    <label>Campaña</label>
+                                    <label>Cédula</label>
                                     <label>Estado Gest.</label>
-                                    <label>Fecha Comp.</label>
+                                    <label>Compromiso</label>
+                                    <label>Observ.</label>
                                 </div>
 
                                 {
                                     data_credit.gestiones.map((gestion,index)=>(
                                         <div key={index} className="DetailCredit__gestionesItem">
                                             <label>{gestion.fecha}</label>
-                                            <label>{gestion.client_name}</label>
-                                            <label>{gestion.campain_name}</label>
-                                            <label>{gestion.state_gestion}</label>
+                                            <label>{gestion.client_ci}</label>
+                                            <label>{gestion.substate_gestion}</label>
                                             <label>{gestion.date_promise}</label>
+                                            <label><strong>{gestion.byUser.toUpperCase()}: </strong><br/>{gestion.observation}</label>
                                         </div>
                                     ))
                                 }

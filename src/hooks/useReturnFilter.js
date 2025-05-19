@@ -1,4 +1,4 @@
-export default function useReturnFilter({fecha_gestion,campain,name,ci,type,state_gestion,date_promise,agente}){
+export default function useReturnFilter({fecha_gestion,campain,name,ci,type,state_gestion,date_promise,agente,gestion_channel_whatsapp}){
     let filters="";
 
     if(fecha_gestion!==""){
@@ -32,6 +32,10 @@ export default function useReturnFilter({fecha_gestion,campain,name,ci,type,stat
 
     if(agente!==""){
         filters+=`&agent=${agente}`;
+    }
+
+    if(gestion_channel_whatsapp!==""){
+        filters+=`&channel=whatsapp`;
     }
 
     return filters;

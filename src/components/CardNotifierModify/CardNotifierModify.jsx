@@ -6,7 +6,7 @@ import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useFadeArray from "../../hooks/useFadeArray";
 import { NavLink } from "react-router-dom";
 
-export default function CardNotifierModify({title,message,credito,cartera,fecha_pago,user_generate,prev_data,total,current_data,id,name,ci,setData,setPDF}){
+export default function CardNotifierModify({title,message,credito,cartera,fecha_pago,user_generate,prev_data,total,current_data,id,name,ci,setData,setPDF,setPush}){
 
     const [condonation,setCondonation]=useState({});
     const [number,setNumber]=useState(0);
@@ -21,12 +21,18 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
     const updateCuota=({cuota,valor})=>{
         let copy=restruct.cuotas;
 
-        copy.map((item)=>{
-            if(Number(cuota)===Number(item.cuota)){
-                item.valor=valor
+        copy.map((item,n)=>{
+            if(Number(cuota)==1){
+                if(Number(cuota)===Number(item.cuota) & n==1){
+                    item.valor=valor
+                }
+            }else{
+                if(Number(cuota)===Number(item.cuota)){
+                    item.valor=valor
+                }
             }
         });
-
+        
         setRestruct({
             ...restruct,
             cuotas:copy
@@ -36,6 +42,7 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
     useEffect(()=>{
         
         if(title.toLowerCase()==='condonación'){
+            
             setCondonation({
                 capital:(Number(prev_data.capital)-Number(current_data.capital)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
                 mora:(Number(prev_data.mora)-Number(current_data.mora)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
@@ -43,9 +50,10 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                 seguro_desgravamen:(Number(prev_data.seguro_desgravamen)-Number(current_data.seguro_desgravamen)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
                 gastos_cobranza:(Number(prev_data.gastos_cobranza)-Number(current_data.gastos_cobranza)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
                 gastos_judiciales:(Number(prev_data.gastos_judiciales)-Number(current_data.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
-                otros_valores:(Number(prev_data.otros_valores)-Number(current_data.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                otros_valores:(Number(prev_data.otros_valores)-Number(current_data.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'),
             });
-        }else if(title.toLowerCase()==='reestructuración'){
+
+        }else if(title.toLowerCase()==='convenio de pago'){
             setNumber(current_data.length);
             setRestruct({
                 cuotas:current_data
@@ -61,13 +69,13 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
             <p className="CardNotifierModify__title">{message} | Generado por: {user_generate}</p>
             
             <p className="CardNotifierModify__title">Datos generados por el agente: </p>
-
+            
             <p className="CardNotifierModify__title">CLIENTE: {name}</p>
 
             <p className="CardNotifierModify__title">CÉDULA: {ci}</p>
 
             <div className="CardNotifierModify__subhead">
-                <NavLink to={`/dashboard/recaudacion/view/${cartera}?id=${credito}`} onClick={()=>{localStorage.setItem('hash','#/dashboard/consulta')}}> Ir al crédito</NavLink>
+                <NavLink to={`/dashboard/recaudacion/view/${cartera}?id=${credito}`} target="_blank" onClick={()=>{localStorage.setItem('hash','#/dashboard/consulta')}}> Ir al crédito</NavLink>
                 <p>Cartera: {cartera}</p>
             </div>
 
@@ -190,9 +198,21 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                             <label><strong>Total condonado:</strong></label>
                             <label>$ {((Number(condonation.capital)+Number(condonation.mora)+Number(condonation.interes)+Number(condonation.seguro_desgravamen)+Number(condonation.gastos_cobranza)+Number(condonation.gastos_judiciales))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</label>
                         </div>
-
+                        <div className="CardNotifierModify__datesCondonacion" style={{marginTop:"10px"}}>
+                            <label><strong>Total a pagar:</strong></label>
+                            <label>$ {((
+                                (Number(prev_data.capital)-Number(condonation.capital))+
+                                (Number(prev_data.mora)-Number(condonation.mora))+
+                                (Number(prev_data.interes)-Number(condonation.interes))+
+                                (Number(prev_data.seguro_desgravamen)-Number(condonation.seguro_desgravamen))+
+                                (Number(prev_data.gastos_cobranza)-Number(condonation.gastos_cobranza))+
+                                (Number(prev_data.gastos_judiciales)-Number(condonation.gastos_judiciales))+
+                                (Number(prev_data.otros_valores)-Number(condonation.otros_valores))
+                            )).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</label>
+                        </div>
+                        
                         <div className="CardNotifierModify__buttons">
-                            <button 
+                            <button
                                 className="CardNotifierModify__button--success"
                                 onClick={(e)=>{
                                     e.target.textContent="Autorizando...";
@@ -259,7 +279,8 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            dataContext.removePush(id);
+                                            const parent=e.target.parentElement.parentElement.parentElement.parentElement;
+                                            parent.removeChild(e.target.parentElement.parentElement.parentElement);
                                         });
                                 }}
                             >Guardar y autorizar</button>
@@ -285,7 +306,8 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            dataContext.removePush(id);
+                                            const parent=e.target.parentElement.parentElement.parentElement.parentElement;
+                                            parent.removeChild(e.target.parentElement.parentElement.parentElement);
                                         });
                                 }}
                             >Rechazar</button>
@@ -360,7 +382,6 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                             step={0.01}
                                             value={cuota.valor}
                                             onChange={(e)=>{
-                                                
                                                 updateCuota({
                                                     cuota:cuota.cuota,
                                                     valor:e.target.value
@@ -379,11 +400,14 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                                 if(val_prev>total){
 
                                                     if(diferencia>0){
+
                                                         updateCuota({
                                                             cuota:cuota.cuota,
                                                             valor:diferencia.toFixed(2)
                                                         });
+
                                                         setTotal(total);
+
                                                     }else{
                                                         updateCuota({
                                                             cuota:cuota.cuota,
@@ -403,6 +427,7 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                                         closeButton: 'Cerrar',
                                                         duration: 3500
                                                     });
+
                                                 }else{
                                                     setTotal(val_prev);
                                                 }
@@ -451,7 +476,8 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            dataContext.removePush(id);
+                                            const parent=e.target.parentElement.parentElement.parentElement.parentElement;
+                                            parent.removeChild(e.target.parentElement.parentElement.parentElement);
                                         });
                                 }}
                             >Guardar y autorizar</button>
@@ -462,8 +488,11 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                     e.target.textContent="Rechazando...";
 
                                     const data={
-                                        status:'rechazado'
+                                        status:'rechazado',
+                                        credito:credito,
+                                        cartera:cartera
                                     }
+                                    console.log(data);
                                     
                                     fetch(`${import.meta.env.VITE_URL_BASE}/credit/estructurar/${id}`,{
                                         method:'PUT',
@@ -475,7 +504,8 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            dataContext.removePush(id);
+                                            const parent=e.target.parentElement.parentElement.parentElement.parentElement;
+                                            parent.removeChild(e.target.parentElement.parentElement.parentElement);
                                         });
                                 }}
                             >Rechazar</button>

@@ -16,11 +16,27 @@ export default function MenuNotifier(){
 
     const dataContext=useContext(NotifierContext);
 
+    const updatePusher=(id)=>{
+        
+    }
+
     useEffect(()=>{
         setMenu(false);
         setView(view_pdf);
         setCondonation([]);
-        setPusher(dataContext.data_push);
+        //  Renderizar convenios y condonaciones
+        fetch(`${import.meta.env.VITE_URL_BASE}/credit/estructurar`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setPusher(data);
+                console.log(data);
+            });
+
     },[dataContext]);
 
     if(!pusher) return <></>
@@ -29,9 +45,7 @@ export default function MenuNotifier(){
         <div className="MenuNotifier">
             <img src="./icons/push.png" onClick={(e)=>{setMenu(!menu)}}/>
             {
-                (localStorage.getItem('pusher')!==null) &&
-                    (pusher.length>0) &&
-                        <span>{pusher.length}</span>
+                <span>{(pusher.length>0) ? pusher.length : ""}</span>    
             }
     
             {
@@ -40,7 +54,7 @@ export default function MenuNotifier(){
                         {
                             pusher.map((push,index)=>(
                                 
-                                (Number(push.message.action)===1)
+                                (Number(push.action)===1) //IMPRESIÓN DE COMPROBANTES
                                 ? 
                                     <CardNotifierSimple
                                         message={push.message.message}
@@ -50,22 +64,23 @@ export default function MenuNotifier(){
                                         credito={push.message.credito}
                                     />
                                 :
-                                    <CardNotifierModify
+                                    <CardNotifierModify  //PARA CONVENIOS
                                         key={index}
-                                        title={push.message.title}
-                                        message={push.message.message}
-                                        credito={push.message.credito}
-                                        cartera={push.message.cartera}
-                                        fecha_pago={push.message.fecha_pago}
-                                        total={push.message.totalAmount}
-                                        user_generate={push.message.byUser}
-                                        prev_data={push.message.prev_data}
-                                        current_data={push.message.current_data}
-                                        id={push.message.id}
-                                        name={push.message.name}
-                                        ci={push.message.ci}
+                                        title={push.title}
+                                        message={push.message}
+                                        credito={push.credito}
+                                        cartera={push.cartera}
+                                        fecha_pago={push.fecha_pago}
+                                        total={push.valor_cuota}
+                                        user_generate={push.byUser}
+                                        prev_data={push.prev_data}
+                                        current_data={push.current_data}
+                                        id={push.id}
+                                        name={push.name}
+                                        ci={push.ci}
                                         setData={setCondonation}
                                         setPDF={setView}
+                                        setPush={setPusher}
                                     />
                             ))
                         }
@@ -89,7 +104,6 @@ export default function MenuNotifier(){
                         </PDFViewer>
                     </div>
             }
-
         </div>
     );
 }

@@ -44,6 +44,78 @@ const list={
     "monitor":{
         "action":"Monitor:all",
         "checked":false
+    },
+    "direccion":{
+        "action":"Direcciones:all",
+        "checked":false
+    },
+    "estado_cartera":{
+        "action":"estado_cartera:all",
+        "checked":false
+    },
+    "cierre_caja":{
+        "action":"cierre_caja:all",
+        "checked":false
+    },
+    "gastos_gestion":{
+        "action":"gastos_gestion:all",
+        "checked":false
+    },
+    "historico_condonaciones":{
+        "action":"historico_condonaciones:all",
+        "checked":false
+    },
+    "estadistica_gestion":{
+        "action":"estadistica_gestion:all",
+        "checked":false
+    },
+    "estado_convenios":{
+        "action":"estado_convenios:all",
+        "checked":false
+    },
+    "no_efectivos":{
+        "action":"no_efectivos:all",
+        "checked":false
+    },
+    "gestiones_pago":{
+        "action":"gestiones_pago:all",
+        "checked":false
+    },
+    "pagos":{
+        "action":"pagos:all",
+        "checked":false
+    },
+    "pagos_efectivo":{
+        "action":"pagos_efectivo:all",
+        "checked":false
+    },
+    "pagos_revertidos":{
+        "action":"pagos_revertidos:all",
+        "checked":false
+    },
+    "gastos_cobranza":{
+        "action":"gastos_cobranza:all",
+        "checked":false
+    },
+    "gastos_condonaciones":{
+        "action":"gastos_condonaciones:all",
+        "checked":false
+    },
+    "gastos_judiciales":{
+        "action":"gastos_judiciales:all",
+        "checked":false
+    },
+    "reporte_faces":{
+        "action":"reporte_faces:all",
+        "checked":false
+    },
+    "evolucion_creditos":{
+        "action":"evolucion_creditos:all",
+        "checked":false
+    },
+    "asignacion_campain":{
+        "action":"asignacion_campain:all",
+        "checked":false
     }
 };
 
@@ -57,6 +129,7 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
     useEffect(()=>{
         setUser(permission);
 
+        console.log(permission)
         list.consulta.checked=user_permisos.includes(list.consulta.action);
         list.recaudacion.checked=user_permisos.includes(list.recaudacion.action);
         list.cobranza.checked=user_permisos.includes(list.cobranza.action);
@@ -66,7 +139,29 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
         list.bd.checked=user_permisos.includes(list.bd.action);
         list.condonar.checked=user_permisos.includes(list.condonar.action);
         list.convenio.checked=user_permisos.includes(list.convenio.action);
+        
         list.monitor.checked=user_permisos.includes(list.monitor.action);
+        list.estadistica_gestion.checked=user_permisos.includes(list.estadistica_gestion.action);
+        list.no_efectivos.checked=user_permisos.includes(list.no_efectivos.action);
+
+        list.pagos_efectivo.checked=user_permisos.includes(list.pagos_efectivo.action);
+        list.pagos_revertidos.checked=user_permisos.includes(list.pagos_revertidos.action);
+        list.gastos_cobranza.checked=user_permisos.includes(list.gastos_cobranza.action);
+        list.gastos_condonaciones.checked=user_permisos.includes(list.gastos_condonaciones.action);
+        list.pagos.checked=user_permisos.includes(list.pagos.action);
+
+        list.gastos_judiciales.checked=user_permisos.includes(list.gastos_judiciales.action);
+        list.estado_convenios.checked=user_permisos.includes(list.estado_convenios.action);
+        list.gestiones_pago.checked=user_permisos.includes(list.gestiones_pago.action);
+        list.reporte_faces.checked=user_permisos.includes(list.reporte_faces.action);
+        list.estado_cartera.checked=user_permisos.includes(list.estado_cartera.action);
+        list.evolucion_creditos.checked=user_permisos.includes(list.evolucion_creditos.action);
+        list.asignacion_campain.checked=user_permisos.includes(list.asignacion_campain.action);
+
+        list.direccion.checked=user_permisos.includes(list.direccion.action);
+        list.cierre_caja.checked=user_permisos.includes(list.cierre_caja.action);
+        list.gastos_gestion.checked=user_permisos.includes(list.gastos_gestion.action);
+        list.historico_condonaciones.checked=user_permisos.includes(list.historico_condonaciones.action);
 
         setPermisos({
             ...permisos,
@@ -109,6 +204,78 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
             monitor:{
                 ...permisos.monitor,
                 checked:user_permisos.includes(list.monitor.action)
+            },
+            direccion:{
+                ...permisos.direccion,
+                checked:user_permisos.includes(list.direccion.action)
+            },
+            estado_cartera:{
+                ...permisos.estado_cartera,
+                checked:user_permisos.includes(list.estado_cartera.action)
+            },
+            cierre_caja:{
+                ...permisos.cierre_caja,
+                checked:user_permisos.includes(list.cierre_caja.action)
+            },
+            gastos_gestion:{
+                ...permisos.gastos_gestion,
+                checked:user_permisos.includes(list.gastos_gestion.action)
+            },
+            historico_condonaciones:{
+                ...permisos.historico_condonaciones,
+                checked:user_permisos.includes(list.historico_condonaciones.action)
+            },
+            estadistica_gestion:{
+                ...permisos.estadistica_gestion,
+                checked:user_permisos.includes(list.estadistica_gestion.action)
+            },
+            estado_convenios:{
+                ...permisos.estado_convenios,
+                checked:user_permisos.includes(list.estado_convenios.action)
+            },
+            no_efectivos:{
+                ...permisos.no_efectivos,
+                checked:user_permisos.includes(list.no_efectivos.action)
+            },
+            gestiones_pago:{
+                ...permisos.gestiones_pago,
+                checked:user_permisos.includes(list.gestiones_pago.action)
+            },
+            pagos:{
+                ...permisos.pagos,
+                checked:user_permisos.includes(list.pagos.action)
+            },
+            pagos_efectivo:{
+                ...permisos.pagos_efectivo,
+                checked:user_permisos.includes(list.pagos_efectivo.action)
+            },
+            pagos_revertidos:{
+                ...permisos.pagos_revertidos,
+                checked:user_permisos.includes(list.pagos_revertidos.action)
+            },
+            gastos_cobranza:{
+                ...permisos.gastos_cobranza,
+                checked:user_permisos.includes(list.gastos_cobranza.action)
+            },
+            gastos_condonaciones:{
+                ...permisos.gastos_condonaciones,
+                checked:user_permisos.includes(list.gastos_condonaciones.action)
+            },
+            gastos_judiciales:{
+                ...permisos.gastos_judiciales,
+                checked:user_permisos.includes(list.gastos_judiciales.action)
+            },
+            reporte_faces:{
+                ...permisos.reporte_faces,
+                checked:user_permisos.includes(list.reporte_faces.action)
+            },
+            evolucion_creditos:{
+                ...permisos.evolucion_creditos,
+                checked:user_permisos.includes(list.evolucion_creditos.action)
+            },
+            asignacion_campain:{
+                ...permisos.asignacion_campain,
+                checked:user_permisos.includes(list.asignacion_campain.action)
             }
         });
 
@@ -180,6 +347,7 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                     />
                     Cobranza
                 </label>
+
                 <label>
                     <input
                         value={permisos.monitor.action}
@@ -197,6 +365,155 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                         checked={permisos.monitor.checked}
                     />
                     Monitor
+                </label>
+
+                <label>
+                    <input
+                        value={permisos.estadistica_gestion.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                estadistica_gestion:{
+                                    ...permisos.estadistica_gestion,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.estadistica_gestion.checked}
+                    />
+                    Reporte estadísticas de gestión
+                </label>
+
+                <label>
+                    <input
+                        value={permisos.no_efectivos.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                no_efectivos:{
+                                    ...permisos.no_efectivos,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.no_efectivos.checked}
+                    />
+                    Reporte créditos no efectivos
+                </label>
+
+                <label>
+                    <input
+                        value={permisos.pagos_efectivo.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                pagos_efectivo:{
+                                    ...permisos.pagos_efectivo,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.pagos_efectivo.checked}
+                    />
+                    Pagos efectivos
+                </label>
+                <label>
+                    <input
+                        value={permisos.pagos_revertidos.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                pagos_revertidos:{
+                                    ...permisos.pagos_revertidos,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.pagos_revertidos.checked}
+                    />
+                    Pagos revertidos
+                </label>
+                <label>
+                    <input
+                        value={permisos.gastos_cobranza.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                gastos_cobranza:{
+                                    ...permisos.gastos_cobranza,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.gastos_cobranza.checked}
+                    />
+                    Gastos cobranza
+                </label>
+                <label>
+                    <input
+                        value={permisos.gastos_condonaciones.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                gastos_condonaciones:{
+                                    ...permisos.gastos_condonaciones,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.gastos_condonaciones.checked}
+                    />
+                    Reporte de condonaciones
+                </label>
+                <label>
+                    <input
+                        value={permisos.pagos.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                pagos:{
+                                    ...permisos.pagos,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.pagos.checked}
+                    />
+                    Pagos contabilidad
+                </label>
+            
+
+                <label>
+                    <input
+                        value={permisos.direccion.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                direccion:{
+                                    ...permisos.direccion,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.direccion.checked}
+                    />
+                    Direcciones
                 </label>
                 <label>
                     <input
@@ -252,7 +569,135 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                     />
                     Comprobantes
                 </label>
+
                 <label>
+                    <input
+                        value={permisos.gastos_judiciales.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                gastos_judiciales:{
+                                    ...permisos.gastos_judiciales,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.gastos_judiciales.checked}
+                    />
+                    Gastos judiciales cargados
+                </label>
+                <label>
+                    <input
+                        value={permisos.estado_convenios.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                estado_convenios:{
+                                    ...permisos.estado_convenios,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.estado_convenios.checked}
+                    />
+                    Reporte estado de convenios
+                </label>
+                <label>
+                    <input
+                        value={permisos.gestiones_pago.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                gestiones_pago:{
+                                    ...permisos.gestiones_pago,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.gestiones_pago.checked}
+                    />
+                    Pagos con gestión
+                </label>
+                <label>
+                    <input
+                        value={permisos.reporte_faces.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                reporte_faces:{
+                                    ...permisos.reporte_faces,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.reporte_faces.checked}
+                    />
+                    Reporte de gestion FACES
+                </label>
+                <label>
+                    <input
+                        value={permisos.estado_cartera.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                estado_cartera:{
+                                    ...permisos.estado_cartera,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.estado_cartera.checked}
+                    />
+                    Reporte de estado de cartera
+                </label>
+                <label>
+                    <input
+                        value={permisos.evolucion_creditos.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                evolucion_creditos:{
+                                    ...permisos.evolucion_creditos,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.evolucion_creditos.checked}
+                    />
+                    Evolución de créditos y pagos (SEFIL)
+                </label>
+                <label>
+                    <input
+                        value={permisos.asignacion_campain.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                asignacion_campain:{
+                                    ...permisos.asignacion_campain,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.asignacion_campain.checked}
+                    />
+                    Asignación de campaña
+                </label>
+
+                {/* <label>
                     <input
                         value={permisos.reportes.action}
                         onChange={(e)=>{
@@ -269,7 +714,7 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                         checked={permisos.reportes.checked}
                     />
                     Reportes
-                </label>
+                </label> */}
                 <label>
                     <input
                         value={permisos.usuarios.action}
@@ -306,6 +751,61 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                     />
                     Bases de datos y backup
                 </label>
+                
+                {/* <label>
+                    <input
+                        value={permisos.cierre_caja.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                cierre_caja:{
+                                    ...permisos.cierre_caja,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.cierre_caja.checked}
+                    />
+                    Reporte de cierre de caja
+                </label> */}
+                {/* <label>
+                    <input
+                        value={permisos.gastos_gestion.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                gastos_gestion:{
+                                    ...permisos.gastos_gestion,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }} 
+                        type="checkbox" 
+                        checked={permisos.gastos_gestion.checked}
+                    />
+                    Reporte de gastos de gestión
+                </label> */}
+                {/* <label>
+                    <input
+                        value={permisos.historico_condonaciones.action}
+                        onChange={(e)=>{
+                            setPermisos({
+                                ...permisos,
+                                historico_condonaciones:{
+                                    ...permisos.historico_condonaciones,
+                                    checked:e.target.checked
+                                }
+                            });
+                            setChange(true);
+                        }}
+                        type="checkbox"
+                        checked={permisos.historico_condonaciones.checked}
+                    />
+                    Reporte histórico de condonaciones
+                </label> */}
             </span>
             
             <button>
@@ -353,6 +853,10 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                                 },
                                 monitor:{
                                     ...permisos.monitor,
+                                    checked:false
+                                },
+                                direccion:{
+                                    ...permisos.direccion,
                                     checked:false
                                 }
                             });

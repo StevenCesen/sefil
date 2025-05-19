@@ -209,6 +209,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                     ?
                         <button 
                             onClick={async (e)=>{
+                                localStorage.setItem('timestamp_cc',new Date().getTime());
                                 try {
                                     if(!whats_call){
                                         const request=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
@@ -255,6 +256,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                         <button 
                             onClick={async (e)=>{
                                 let recorder,stream;
+                                localStorage.setItem('timestamp_cc',new Date().getTime());
 
                                 if(((number_in==="") ? phone.nro : number_in)===0){
                                     addNotification({
@@ -307,8 +309,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                         state:true
                                     });
                                 }
-
-                            }} 
+                            }}
                             className="CardCall__button CardCall__button--call"
                         >
                             <img
@@ -326,7 +327,8 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                             className="CardCall__button CardCall__button--whats"
                             onClick={async (e)=>{
                                 let recorder,stream;
-        
+                                localStorage.setItem('timestamp_cc',new Date().getTime());
+                                
                                 setInit(true);
                                 setWhatCall(true);
                                 localStorage.setItem('progreso','(Grabando, ve a WhatsApp)');

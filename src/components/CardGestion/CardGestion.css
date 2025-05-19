@@ -460,6 +460,30 @@
     outline: none;
 }
 
+.Ggestion__inputNumber{
+    
+}
+
+.Ggestion__inputNumber>input[type=number]{
+    width: 100px;
+    height: 35px;
+    margin-top: 5px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.Ggestion__inputNumber>label{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.Ggestion__inputNumber>label>input[type=checkbox]{
+    margin-right: 5px;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+}
+
 .CardGestion__buttonDetails{
     width: 100%;
     background-color: inherit;
@@ -537,4 +561,238 @@
     font-size: 14px;
     border-radius: 2px;
     cursor: pointer;
+}
+
+@media screen and (min-width:300px) and (max-width:540px) {
+    
+}
+
+@media screen and (min-width:541px) and (max-width:1000px) {
+    .Ggestion{
+        width: 95%;
+        height: 100%;
+        overflow-y: auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-content: flex-start;
+        align-items: flex-start;
+        background-color: var(--bg-2);
+        border-radius: 5px;
+        padding: 10px 10px 0;
+    }
+    
+    .DetailCredit__detail{
+        width: 100%;
+        border: 1px solid var(--bg-alert-successful);
+        border-radius: 5px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .DetailCredit__body{
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 10px 10px;
+    }
+    
+    .DetailCredit__footer{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--bg-alert-successful);
+        padding: 10px 10px;
+    }
+    
+    .DetailCredit__footer>p{
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--color-3);
+    }
+
+    .CardGestion__itemsDetail{
+        width: 100%;
+        display: grid;
+        grid-template-columns: 50% 50%;
+    }
+    
+    .DetailCredit__info{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 10px;
+    }
+    
+    .DetailCredit__info>div{
+        width: 70%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 10px 10px;
+        border: 1px solid var(--bg-alert-successful);
+        border-radius: 2px;
+    }
+    
+    .Ggestion__regist{
+        width: 100%;
+        background-color: var(--bg-2);
+        padding: 10px 10px;
+        border-radius: 5px;
+        /* margin-bottom: 20px; */
+    }
+    
+    .DetailCredit__dial{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .DetailCredit__dial>div{
+        width: 100%;
+        overflow-y: auto;
+    }
+    
+    .DetailCredit__dial:last-child{
+        height: 350px;
+        overflow-y: auto;
+    }
+
+    .Ggestion__principal{
+        width: 100%;
+        display: grid;
+        grid-template-columns: 80% 20%;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .Ggestion__principalHead{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        height: initial !important;
+        margin-bottom: 20px;
+    }
+    
+    .Ggestion__principalHead>div{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-right: 0;
+    }
+    
+    .Ggestion__principalHead>div>p{
+        font-weight: bold;
+        font-size: 15px;
+    }
+    
+    .Ggestion__title{
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+    
+    .Ggestion__contact{
+        width: 80%;
+        display: grid;
+        grid-template-columns: 70% 30%;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .Ggestion__contact>p{
+        font-weight: 100;
+    }
+    
+    .Ggestion__contactSecond{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    
+    .Ggestion__contactSecond>p{
+        width: 100%;
+    }
+    
+    .Ggestion__contactSecond>p:last-child{
+        width: 100%;
+        font-weight: 100;
+    }
+    
+    .Ggestion__contact>div{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .Ggestion__contact>div>button{
+        height: 35px;
+        width: 35px;
+        border-radius: 2px;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .Ggestion__contact>div>button>img{
+        width: 85%;
+    }
+    
+    .Ggestion__historial{
+        width: 100%;
+        height: 300px;
+        overflow-y: auto;
+        margin-bottom: 5px;
+        margin-top: 10px;
+    }
+    
+    .Ggestion__historial>div>button{
+        border: none;
+        border:1px solid rgb(204, 204, 204);
+        font-weight: bold;
+        border-radius: 2px;
+    }
+    
+    .Ggestion__historial>div:first-child{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        gap: 5px;
+        align-items: center;
+        margin-bottom: 5px;
+        position: sticky;
+        top:0;
+        background-color: var(--bg-2);
+    }
+    
+    .Ggestion__historialHead{
+        height: 60px;
+        position: sticky;
+        top:0;
+    }
+    
+    .CardGestion__buttonDetails{
+        width: 100%;
+        background-color: inherit;
+        border:none;
+        text-align: left;
+        padding-left:10px;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--color-1);
+        cursor: pointer;
+    }
 }

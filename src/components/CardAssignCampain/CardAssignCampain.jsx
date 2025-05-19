@@ -757,7 +757,8 @@ export default function CardAssignCampain({data,updateCredits}){
                             <option value={"PENDIENTE"}>PENDIENTE</option>
                             <option value={"EN PROCESO"}>EN PROCESO</option>
                             <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
-                            <option value={"Judicial"}>MENSAJE A TERCEROS</option>
+                            <option value={"OFERTA DE PAGO"}>OFERTA DE PAGO</option>
+                            <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>
                             <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
                             <option value={"YA PAGÓ"}>YA PAGÓ</option>
                             <option value={"MENSAJE DE TEXTO"}>MENSAJE DE TEXTO</option>
@@ -769,6 +770,7 @@ export default function CardAssignCampain({data,updateCredits}){
                             <option value={"NUMERO INCORRECTO"}>NUMERO INCORRECTO</option>
                             <option value={"PASAR A TRAMITE LEGAL"}>PASAR A TRAMITE LEGAL</option>
                             <option value={"VOLVER A LLAMAR"}>VOLVER A LLAMAR</option>
+                            <option value={"NO CONTESTA"}>NO CONTESTA</option>
                             <option value={"CONVENIO DE PAGO"}>CONVENIO DE PAGO</option>
                             <option value={"CONTACTO INDICA QUE ESTA EQUIVOCADO"}>CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
                             <option value={"CLIENTE ESCUCHA Y NO HABLA"}>CLIENTE ESCUCHA Y NO HABLA</option>

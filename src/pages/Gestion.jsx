@@ -24,6 +24,7 @@ export default function Gestion(){
     const [index,setIndex]=useState(); //Este es para llevar el indice actual
     const [credit_actual,setCurrenly]=useState();
     const [original_data,setOriginal]=useState();
+    const [results_campo,setResults]=useState();
 
     const [state_call,setStateCall]=useState(false);
     const [state_gestion,setStateGestion]=useState(false);
@@ -99,6 +100,7 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((datas) => {
+                console.log(datas);
                 if(bandeja==='pending'){
                     setData({
                         ...data,
@@ -117,7 +119,7 @@ export default function Gestion(){
                 }
                 setLoading(false);
             });
-
+        
     }
 
     const updateTray=(credit_id,destination)=>{
@@ -443,23 +445,44 @@ export default function Gestion(){
         localStorage.setItem('cartera','SEFIL_1');
 
         // Consulto todas las compañas del usuario presente
-        fetch(`${import.meta.env.VITE_URL_BASE}/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
+        // fetch(`${import.meta.env.VITE_URL_BASE}/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
+        //     headers: {
+        //         Accept: 'application/json',
+        //         Authorization: `Bearer ${localStorage.getItem('token')}`
+        //     }
+        // })
+        //     .then((response) => response.json())  
+        //     .then((data) => {
     
-                setData({
-                    pending:data.pendiente,
-                    inprocess:data.proceso,
-                    processed:data.gestionado,
-                    inactive:data.inactivos
-                });
+        //         setData({
+        //             pending:data.pendiente,
+        //             inprocess:data.proceso,
+        //             processed:data.gestionado,
+        //             inactive:data.inactivos
+        //         });
         
-            });
+        //     });
+
+        setResults(0);
+
+        setData({
+            pending:{
+                total:0,
+                data:[]
+            },
+            inprocess:{
+                total:0,
+                data:[]
+            },
+            processed:{
+                total:0,
+                data:[]
+            },
+            inactive:{
+                total:0,
+                data:[]
+            }
+        });
 
         fetch(`${import.meta.env.VITE_URL_BASE}/templates`,{
             headers: {
@@ -478,7 +501,7 @@ export default function Gestion(){
                 setStructure(templates);
             });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/indexcampains`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/indexcampains?agente=${localStorage.getItem('temp_uS')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -510,6 +533,32 @@ export default function Gestion(){
 
                 <div className="DetailCredit__head--label">
 
+                    {/* <div className="DetailCredit__head--recuperado">
+                        <div>
+                            <svg width="45" height="45" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 12.5C11.0717 12.5 10.1815 12.8687 9.52513 13.5251C8.86875 14.1815 8.5 15.0717 8.5 16C8.5 16.9283 8.86875 17.8185 9.52513 18.4749C10.1815 19.1313 11.0717 19.5 12 19.5C12.9283 19.5 13.8185 19.1313 14.4749 18.4749C15.1313 17.8185 15.5 16.9283 15.5 16C15.5 15.0717 15.1313 14.1815 14.4749 13.5251C13.8185 12.8687 12.9283 12.5 12 12.5ZM10.5 16C10.5 15.6022 10.658 15.2206 10.9393 14.9393C11.2206 14.658 11.6022 14.5 12 14.5C12.3978 14.5 12.7794 14.658 13.0607 14.9393C13.342 15.2206 13.5 15.6022 13.5 16C13.5 16.3978 13.342 16.7794 13.0607 17.0607C12.7794 17.342 12.3978 17.5 12 17.5C11.6022 17.5 11.2206 17.342 10.9393 17.0607C10.658 16.7794 10.5 16.3978 10.5 16Z" fill="#7CBD9C"/>
+                                <path d="M17.526 5.11716L14.347 0.660156L2.658 9.99816L2.01 9.99116V10.0012H1.5V22.0012H22.5V10.0012H21.538L19.624 4.40216L17.526 5.11716ZM19.425 10.0012H9.397L16.866 7.45516L18.388 6.96816L19.425 10.0012ZM15.55 5.79116L7.84 8.41916L13.946 3.54116L15.55 5.79116ZM3.5 18.1702V13.8302C3.92218 13.6812 4.30565 13.4396 4.62231 13.1231C4.93896 12.8066 5.18077 12.4232 5.33 12.0012H18.67C18.8191 12.4234 19.0609 12.807 19.3775 13.1236C19.6942 13.4403 20.0777 13.6821 20.5 13.8312V18.1712C20.0777 18.3203 19.6942 18.562 19.3775 18.8787C19.0609 19.1953 18.8191 19.5789 18.67 20.0012H5.332C5.18218 19.5788 4.93996 19.1953 4.62302 18.8785C4.30607 18.5618 3.9224 18.3197 3.5 18.1702Z" fill="#7CBD9C"/>
+                            </svg>
+                        </div>
+                    </div> */}
+
+                    {
+                        (results_campo!==0)
+                        ?
+                            <>
+                                {/* <label>
+                                    Monto asignado
+                                    <p>{useFormatterNumber({value:results_campo.monto_asignado,currency:'USD'})}</p>
+                                </label>
+                                
+                                <label>
+                                    Monto recuperado
+                                    <p>{useFormatterNumber({value:results_campo.monto_recuperado,currency:'USD'})}</p>
+                                </label> */}
+                            </>
+                        :   <></>
+                    }
+
                     <button
                         onClick={()=>{
                             setTray('pending')
@@ -540,8 +589,9 @@ export default function Gestion(){
                         <select value={id_campain} onChange={(e)=>{
                             if(e.target.value!==''){
                                 setIdCampain(e.target.value);
+                                setCampain(e.target.value.split('/')[1]);
                                 setLoading(true);
-                                // Consulto todas las compañas del usuario presente
+                            
                                 fetch(`${import.meta.env.VITE_URL_BASE}/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=${e.target.value.split('/')[1]}`,{
                                     headers: {
                                         Accept: 'application/json',
@@ -559,8 +609,22 @@ export default function Gestion(){
                                         });
                                         setLoading(false);
                                     });
+                                
+                                if(localStorage.getItem('rol')==='campo' & e.target.value.split('/')[1]==='syncs'){
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/getResultsByAgent?user_id=${localStorage.getItem('temp_uS')}&campain=${e.target.value.split('/')[0]}`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            setResults(data);
+                                        });
+                                }
                             }
                         }}>
+                            <option value="">-- Seleccionar --</option>
                             {
                                 campains.map((camp)=>(
                                     <option value={`${camp.id}/${camp.cartera}`}>{camp.name}</option>
@@ -595,7 +659,8 @@ export default function Gestion(){
                             Nombre
                             <input
                                 onChange={(e)=>{
-                                    if(e.target.value!==''){
+                                    if(e.target.value!=='' & e.target.value.length>5){
+                                        
                                         useFilterText({
                                             tray:tray,
                                             data_org:original_data,
@@ -603,8 +668,9 @@ export default function Gestion(){
                                             update:updateCredits2,
                                             all:false,
                                             campain:campain
-                                        })
-                                    }else{
+                                        });
+
+                                    }else if(e.target.value===''){
                                         //Actualizamos la consulta
                                         updateFilter({
                                             campain:campain,
@@ -617,7 +683,7 @@ export default function Gestion(){
                                         });
                                     }
                                 }}
-                                placeholder="Nombre"
+                                placeholder="Nombre o crédito"
                             />
                         </label>
                     </div>
@@ -801,8 +867,10 @@ export default function Gestion(){
                         >
                             <option value={""}>-- Seleccionar --</option>
                             <option value={"PENDIENTE"}>PENDIENTE</option>
+                            <option value={"OFERTA DE PAGO"}>OFERTA DE PAGO</option>
+                            <option value={"VISITA CAMPO"}>VISITA CAMPO</option>
                             <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
-                            <option value={"Judicial"}>MENSAJE A TERCEROS</option>
+                            <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>
                             <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
                             <option value={"YA PAGÓ"}>YA PAGÓ</option>
                             <option value={"MENSAJE DE TEXTO"}>MENSAJE DE TEXTO</option>
@@ -810,6 +878,7 @@ export default function Gestion(){
                             <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>
                             <option value={"NUMERO INCORRECTO"}>NUMERO INCORRECTO</option>
                             <option value={"FUERA DEL AREA DE COBERTURA"}>FUERA DEL AREA DE COBERTURA</option>
+                            <option value={"SUSPENDIDO POR FALTA DE PAGO"}>SUSPENDIDO POR FALTA DE PAGO</option>
                             <option value={"CLIENTE SE NIEGA A PAGAR"}>CLIENTE SE NIEGA A PAGAR</option>
                             <option value="CLIENTE INDICA QUE NO ES SU DEUDA">CLIENTE INDICA QUE NO ES SU DEUDA</option>
                             <option value="PASAR A TRAMITE LEGAL">PASAR A TRAMITE LEGAL</option>
@@ -855,21 +924,7 @@ export default function Gestion(){
                     (tray==='pending')
                     ?
                         data.pending.data.map((credit,index,credits)=>(
-                            <div className={`Gestion__item ${
-                                (credit.nro_tried==1)
-                                ?
-                                    "Gestion__item--level1"
-                                :   (credit.nro_tried==1)
-                                    ?   
-                                        "Gestion__item--level2"
-                                    :   (credit.nro_tried==3)
-                                        ?
-                                            "Gestion__item--level3"
-                                        :   (credit.nro_tried>=4)
-                                            ?
-                                                "Gestion__item--level4"
-                                            :   ""
-                            }`}>
+                            <div className={`Gestion__item `}>
                                 <button
                                     onClick={()=>{
                                         
@@ -894,21 +949,7 @@ export default function Gestion(){
                     :   (tray==='inprocess')
                         ?
                             data.inprocess.data.map((credit,index,credits)=>(
-                                <div className={`Gestion__item ${
-                                    (credit.nro_tried==1)
-                                    ?
-                                        "Gestion__item--level1"
-                                    :   (credit.nro_tried==1)
-                                        ?   
-                                            "Gestion__item--level2"
-                                        :   (credit.nro_tried==3)
-                                            ?
-                                                "Gestion__item--level3"
-                                            :   (credit.nro_tried>=4)
-                                                ?
-                                                    "Gestion__item--level4"
-                                                :   ""
-                                }`}>
+                                <div className={`Gestion__item`}>
                                     <button
                                         onClick={()=>{
                                             setCurrenly(credit);
@@ -932,21 +973,7 @@ export default function Gestion(){
                         :   (tray==='processed')
                             ?
                                 data.processed.data.map((credit,index,credits)=>(
-                                    <div className={`Gestion__item ${
-                                        (credit.nro_tried==1)
-                                        ?
-                                            "Gestion__item--level1"
-                                        :   (credit.nro_tried==1)
-                                            ?   
-                                                "Gestion__item--level2"
-                                            :   (credit.nro_tried==3)
-                                                ?
-                                                    "Gestion__item--level3"
-                                                :   (credit.nro_tried>=4)
-                                                    ?
-                                                        "Gestion__item--level4"
-                                                    :   ""
-                                    }`}>
+                                    <div className={`Gestion__item`}>
                                         <button
                                             onClick={()=>{
                                                 setCurrenly(credit);
@@ -969,24 +996,29 @@ export default function Gestion(){
                                 ))
                             :   
                                 data.inactive.data.map((credit,index,credits)=>(
-                                    <div className={`Gestion__item ${
-                                        (credit.nro_tried==1)
-                                        ?
-                                            "Gestion__item--level1"
-                                        :   (credit.nro_tried==1)
-                                            ?   
-                                                "Gestion__item--level2"
-                                            :   (credit.nro_tried==3)
-                                                ?
-                                                    "Gestion__item--level3"
-                                                :   (credit.nro_tried>=4)
-                                                    ?
-                                                        "Gestion__item--level4"
-                                                    :   ""
-                                    }`}>
+                                    // ${
+                                    //     (credit.nro_tried==1)
+                                    //     ?
+                                    //         "Gestion__item--level1"
+                                    //     :   (credit.nro_tried==1)
+                                    //         ?   
+                                    //             "Gestion__item--level2"
+                                    //         :   (credit.nro_tried==3)
+                                    //             ?
+                                    //                 "Gestion__item--level3"
+                                    //             :   (credit.nro_tried>=4)
+                                    //                 ?
+                                    //                     "Gestion__item--level4"
+                                    //                 :   ""
+                                    // }
+                                    <div className={`Gestion__item `}>
                                         <button
                                             onClick={()=>{
                                                 // ver si se queda así o solo quito el botón de guardar gestión y llamar
+                                                setCurrenly(credit);
+                                                setForm(true);
+                                                setNext(credits[index++])
+                                                setIndex(index-1)
                                             }}
                                         >
                                             <img src="./icons/go.png"/>
@@ -1261,6 +1293,7 @@ export default function Gestion(){
                             updateTrays={updateTray}
                             number={data[tray]}
                             alert={alert}
+                            bandeja={tray}
                             total={
                                 (tray==='pending')
                                     ?
@@ -1272,7 +1305,7 @@ export default function Gestion(){
                                             ?   
                                                 data.processed.total
                                             :   ""
-                                            }
+                            }
                         /> 
                         
                     </div>

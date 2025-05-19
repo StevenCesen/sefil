@@ -13,12 +13,13 @@ import { PDFViewer } from "@react-pdf/renderer";
 import PDFcondonacion from "../PDFcondonacion";
 import CardStructure from "../CardStructure/CardStructure";
 import useVerifyStruct from "../../hooks/useVerifyRestruct";
+import CardViewConvenio from "../CardViewConvenio/CardViewConvenio";
 
 const render = (status) => {
     return <p>{status}</p>;
 };
 
-export default function CardGestion({currently,total,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays,number,alert}){
+export default function CardGestion({currently,total,index,setNext,id_campain,setCancel,setStatusGestion,state_gestion,structure,updateTrays,number,alert,bandeja}){
     
     const [call,setCall]=useState(false);
     const [credit,setCredit]=useState(); //Información netamente de la persona actual
@@ -55,6 +56,8 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
     const form=useRef();
     const ref_titular=useRef();
+    const [view_convenio,setViewConvenio]=useState();
+    const [convenio_data,setConvenioData]=useState();
 
     const close=()=>{
         setCall(false);
@@ -148,6 +151,9 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
         setReestructurar(false);
         setViewCondonation(false);
         setPDFcondonation(false);
+
+        let cuota_mensual=0, total_pendiente=0, fecha_pago="";
+
         // Seleccionamos el historial de gestiones del crédito actual
         fetch(`${import.meta.env.VITE_URL_BASE}/managments?id_credit=${currently.id_credito}&cartera=${currently.cartera}`,{
             headers: {
@@ -160,20 +166,118 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                 setHistorial(data.data.data);
             });
 
-        if(currently.cartera==='SEFIL_1' | currently.cartera==='SEFIL_2'){
+        if((currently.cartera==='SEFIL_1' | currently.cartera==='SEFIL_2')){
+            if(currently.collectionState!=="Convenio de pago"){
+                fetch(`${import.meta.env.VITE_URL_BASE}/genGastos?cartera=${currently.cartera}&credito=${currently.id_credito}`,{
+                    method:'GET',
+                    headers: {
+                        Accept: 'application/json'
+                    }
+                })
+                    .then((response) => response.json())  
+                    .then((data) => {
+                        setGasto(data.gastos);
+                    });
+            }
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/genGastos?cartera=${currently.cartera}&credito=${currently.id}`,{
+            setInfo({
+                id:currently.id_credito,
+                name:currently.name,
+                ci:currently.ci,
+                monthlyFeeAmount:(currently.collectionState==='Convenio de pago') ? cuota_mensual : currently.monthlyFeeAmount,
+                dias_vencidos:currently.dias_vencidos,
+                paymentDate:(currently.collectionState==='Convenio de pago') ? fecha_pago : currently.paymentDate,
+                pendingFees:currently.pendingFees,
+                paidFees:currently.paidFees,
+                collectionState:currently.collectionState,
+                totalAmount:(currently.collectionState==='Convenio de pago') ? currently.totalAmount: currently.totalAmount,
+                agency:currently.agency,
+                capital:currently.saldo_capital,
+                mora:currently.mora,
+                interes:currently.interes,
+                seguro:currently.seguro_desgravamen,
+                gastos:currently.gastos_cobranza,
+                otros:currently.otros_valores,
+                judicial:currently.gastos_judiciales,
+                cartera:currently.cartera
+            });
+
+        }else if((currently.cartera==='SEFIL_1' | currently.cartera==='SEFIL_2')){
+            setGasto(0);
+            setConvenioData([]);
+
+            fetch(`${import.meta.env.VITE_URL_BASE}/credit/viewconvenio?credito=${currently.id_credito}&cartera=${currently.cartera}`,{
                 method:'GET',
                 headers: {
-                    Accept: 'application/json'
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             })
                 .then((response) => response.json())  
                 .then((data) => {
-                    setGasto(data.gastos);
+                    setConvenioData(data[0]);
+                    
+                    let flag=true;
+
+                    JSON.parse(data.data[0].detail).map((cuota,n)=>{
+                        if(cuota.estado==='PENDIENTE' & flag & n>0){
+                            cuota_mensual+=Number(cuota.valor);
+                            total_pendiente+=Number(cuota.valor);
+                            fecha_pago=cuota.fecha_pago;
+                            flag=false;
+                        }else if(cuota.estado==='PENDIENTE' & flag){
+                            cuota_mensual+=Number(cuota.valor);
+                            total_pendiente+=Number(cuota.valor);
+                            fecha_pago=cuota.fecha_pago;
+                        }
+                    });
+
+                    setInfo({
+                        id:currently.id_credito,
+                        name:currently.name,
+                        ci:currently.ci,
+                        monthlyFeeAmount:(currently.collectionState==='Convenio de pago') ? cuota_mensual : currently.monthlyFeeAmount,
+                        dias_vencidos:currently.dias_vencidos,
+                        paymentDate:(currently.collectionState==='Convenio de pago') ? fecha_pago : currently.paymentDate,
+                        pendingFees:currently.pendingFees,
+                        paidFees:currently.paidFees,
+                        collectionState:currently.collectionState,
+                        totalAmount:(currently.collectionState==='Convenio de pago') ? currently.totalAmount : currently.totalAmount,
+                        agency:currently.agency,
+                        capital:currently.saldo_capital,
+                        mora:currently.mora,
+                        interes:currently.interes,
+                        seguro:currently.seguro_desgravamen,
+                        gastos:currently.gastos_cobranza,
+                        otros:currently.otros_valores,
+                        judicial:currently.gastos_judiciales,
+                        cartera:currently.cartera
+                    });
+
                 });
         }else{
             setGasto(0);
+            setInfo({
+                id:currently.id_credito,
+                name:currently.name,
+                ci:currently.ci,
+                monthlyFeeAmount:currently.monthlyFeeAmount,
+                dias_vencidos:currently.dias_vencidos,
+                paymentDate:currently.paymentDate,
+                pendingFees:currently.pendingFees,
+                paidFees:currently.paidFees,
+                collectionState:currently.collectionState,
+                totalAmount:currently.totalAmount,
+                agency:currently.agency,
+                capital:currently.saldo_capital,
+                mora:currently.mora,
+                interes:currently.interes,
+                seguro:currently.seguro_desgravamen,
+                gastos:currently.gastos_cobranza,
+                otros:currently.otros_valores,
+                judicial:currently.gastos_judiciales,
+                cartera:currently.cartera
+            });
         }
         
         setCall(false);
@@ -187,28 +291,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
         //  ASOCIAR ESTE MENSAJE DE ACUERDO A LA ULTIMA GESTIÓN DEL DÍA
         setMessage('No gestionado aún');
-        
-        setInfo({
-            id:currently.id_credito,
-            name:currently.name,
-            ci:currently.ci,
-            monthlyFeeAmount:currently.monthlyFeeAmount,
-            dias_vencidos:currently.dias_vencidos,
-            paymentDate:currently.paymentDate,
-            pendingFees:currently.pendingFees,
-            paidFees:currently.paidFees,
-            collectionState:currently.collectionState,
-            totalAmount:currently.totalAmount,
-            agency:currently.agency,
-            capital:currently.saldo_capital,
-            mora:currently.mora,
-            interes:currently.interes,
-            seguro:currently.seguro_desgravamen,
-            gastos:currently.gastos_cobranza,
-            otros:currently.otros_valores,
-            judicial:currently.gastos_judiciales,
-            cartera:currently.cartera
-        });
 
         localStorage.setItem('cartera',currently.cartera);
         localStorage.setItem('id_credito',currently.id_credito);
@@ -238,9 +320,23 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
         // Seleccionamos la plantilla
         let temp=[];
 
-        if(localStorage.getItem('rol')==='super' | localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='call'){
+        if(localStorage.getItem('rol')==='call'){
+            
             temp=JSON.parse(structure[2]);
 
+            setTemplate({
+                states:temp.default[1].options,
+                substates:temp.default[2].suboptions
+            });
+
+        }else if(localStorage.getItem('rol')==='super' | localStorage.getItem('rol')==='administrador'){
+            
+            if(currently.dias_vencidos>=91){
+                temp=JSON.parse(structure[1]);
+            }else{
+                temp=JSON.parse(structure[2]);
+            }
+            
             setTemplate({
                 states:temp.default[1].options,
                 substates:temp.default[2].suboptions
@@ -284,8 +380,12 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
             type:currently.tipo,
             dias_vencidos:currently.dias_vencidos,
             cartera:currently.cartera,
-            monto:currently.totalAmount
+            monto:currently.totalAmount,
+            monto_pagar:0.00,
+            nro_notificacion:""
         });
+
+        console.log(currently);
 
         setTotalTray(total);
 
@@ -427,6 +527,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                 <label>Días de mora</label>
                                 <p>{info_credit.dias_vencidos}</p>
                             </div>
+
                             {
                                 (currently.cartera!=='syncs')
                                 ?
@@ -440,10 +541,12 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                         <p>{info_credit.paymentDate}</p>
                                     </div>
                             }
+
                             {/* <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                                 <label>Monto total</label>
                                 <p>{useFormatterNumber({value:(Number(info_credit.totalAmount)+((gasto_cobranza>0) ? gasto_cobranza : 0)),currency:'USD'})}</p>
                             </div> */}
+
                             <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
                                 <label>Total pendiente</label>
                                 <p>{
@@ -454,11 +557,51 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                             : Number(info_credit.totalAmount) ,currency:'USD'})
                                     :   
                                         useFormatterNumber({value:(info_credit.collectionState==='Vigente') 
-                                            ? Number(info_credit.monthlyFeeAmount) 
-                                            : (Number(info_credit.totalAmount)+Number(gasto_cobranza)) ,currency:'USD'})
-                                    } 
+                                            ?   (Number(info_credit.totalAmount)+Number(gasto_cobranza))
+                                            :   (Number(info_credit.totalAmount)+Number(gasto_cobranza))
+                                        ,currency:'USD'})
+                                    }
                                 </p>
                             </div>
+
+                            {
+                                (currently.cartera=="syncs")
+                                ?
+                                    <>
+                                        
+                                        {
+                                            (currently.oferta!=="")
+                                            ?
+                                                <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                                                    <label>Oferta pago</label>
+                                                    <p>{currently.oferta}</p>
+                                                </div>
+                                            :   <></>
+                                        }
+
+                                        {
+                                            (currently.compromiso!=="")
+                                            ?
+                                                <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                                                    <label>Compromiso</label>
+                                                    <p>{currently.compromiso}</p>
+                                                </div>
+                                            :   <></>
+                                        }
+
+                                        {
+                                            (currently.notificacion!=="")
+                                            ?
+                                                <div className={`${(info_credit.collectionState==='Cartera Vendida' | info_credit.collectionState==='Vencido' | info_credit.collectionState==='Castigado' |info_credit.collectionState==='VENCIDO TOTAL') ? "DetailCredit__footer--warnTm DetailCredit__footer--warnCo" : ""}`}>
+                                                    <label>Notificación extrajudicial</label>
+                                                    <p>{currently.notificacion}</p>
+                                                </div>
+                                            :   <></>
+                                        }
+                                    </>
+                                :   <></>
+                            }
+
                         </div>
                     </div>
 
@@ -608,18 +751,23 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                         </div>
                     </div>
 
-                    <CardCall
-                        phone={phone_actual}
-                        channel={localStorage.getItem('extension')}
-                        id_campain={id_campain.split('/')[0]}
-                        id_credit={info_credit.id}
-                        cartera={data_gestion.cartera}
-                        change={changeNro}
-                        setCancel={setCancel}
-                        addCall={add_id_call}
-                        addStates={add_state_call}
-                        setInit={setIncall}
-                    />
+                    {
+                        (bandeja!=='inactive')
+                        ?
+                            <CardCall
+                                phone={phone_actual}
+                                channel={localStorage.getItem('extension')}
+                                id_campain={id_campain.split('/')[0]}
+                                id_credit={info_credit.id}
+                                cartera={data_gestion.cartera}
+                                change={changeNro}
+                                setCancel={setCancel}
+                                addCall={add_id_call}
+                                addStates={add_state_call}
+                                setInit={setIncall}
+                            />
+                        :   <></>
+                    }
                     
                 </div>
             </div>
@@ -796,7 +944,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
                             <div className="Ggestion__twoGroup">
                                 <label className="Ggestion__input" style={{width:"calc((100% / 3) - 15px)"}}>
-                                    Fecha de compromiso
+                                    Fecha de oferta / compromiso
                     
                                     <input
                                         onChange={(e)=>{
@@ -808,14 +956,68 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                         value={data_gestion.date_promise}
                                         type="date" 
                                     />
+                                    {
+                                        (data_gestion.substate_gestion==='COMPROMISO DE PAGO')
+                                        ?   
+                                            <label className="Ggestion__input" style={{width:"150px",display:'inline-flex',marginTop:"10px"}}>
+                                                Nro. notificación
+                                                <input 
+                                                    value={data_gestion.nro_notificacion} 
+                                                    type="text" 
+                                                    placeholder="00XXX"
+                                                    onChange={(e)=>{
+                                                        setDataGestion({
+                                                            ...data_gestion,
+                                                            nro_notificacion:e.target.value
+                                                        });
+                                                    }}
+                                                />
+                                            </label>
+                                        :   <></>
+                                    }
                                 </label>
 
-                                {/* <label className="Ggestion__select">
-                                    Motivo No Pago
-                                    <select className="Ggestion__select">
+                                <label className="Ggestion__input">
+                                    Monto a pagar
+                                    {/* <select className="Ggestion__select">
                                         <option value={"NO CONTESTA"}>--Seleccionar--</option>
-                                    </select>
-                                </label> */}
+                                    </select> */}
+                                    <div className="Ggestion__inputNumber">
+                                        <input 
+                                            type="number" 
+                                            value={data_gestion.monto_pagar} 
+                                            step={0.01}
+                                            onChange={(e)=>{
+                                                setDataGestion({
+                                                    ...data_gestion,
+                                                    monto_pagar: e.target.value
+                                                });
+                                            }}
+                                        />
+
+                                        <label>
+                                            <input 
+                                                type="checkbox"
+                                                onChange={(e)=>{
+                                                    if(e.target.checked){
+
+                                                        setDataGestion({
+                                                            ...data_gestion,
+                                                            monto_pagar: (info_credit.collectionState==='Vigente') ? info_credit.monthlyFeeAmount : info_credit.totalAmount
+                                                        });
+
+                                                    }else{
+                                                        setDataGestion({
+                                                            ...data_gestion,
+                                                            monto_pagar:0
+                                                        });
+                                                    }
+                                                }}
+                                            />
+                                            Total
+                                        </label>
+                                    </div>
+                                </label>
 
                             </div>
 
@@ -838,7 +1040,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                         </form>
                     </div>
                     {
-                        (localStorage.getItem('permission').split(',').includes("convenio:set") | localStorage.getItem('permission').split(',').includes("condonar:set"))
+                        ((localStorage.getItem('permission').split(',').includes("convenio:set") | localStorage.getItem('permission').split(',').includes("condonar:set")) & bandeja!=='inactive')
                         ?
                             <div className="Ggestion__principalActions">
                                 <h3>Acciones</h3>
@@ -896,135 +1098,180 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                         >Convenio</button>
                                     :   <></>
                                 }
-                                
+                                {
+                                    (info_credit.collectionState==='Convenio de pago')
+                                    ?   <button
+                                            onClick={async (e)=>{
+
+                                                const request= await fetch(`${import.meta.env.VITE_URL_BASE}/credit/viewconvenio?credito=${info_credit.id}&cartera=${data_gestion.cartera}`,{
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    }
+                                                });
+                                                
+                                                const response=await request.json();
+                                                setViewConvenio(true);
+                                                setConvenioData(response.data[0]);
+                                            }}
+                                        >Ver convenio</button>
+                                    :   <></>
+                                }
                             </div>
                         :   <></>
                     }
                 </div>
 
-                <div className="Ggestion__buttons">
-                    <button
-                        className="Ggestion__buttons--save"
-                        onClick={(e)=>{
+                {
+                    (bandeja!=='inactive')
+                    ?
+                        <div className="Ggestion__buttons">
+                            <button
+                                className="Ggestion__buttons--save"
+                                onClick={(e)=>{
 
-                            e.target.textContent="Guardando...";
-                        
-                            if((data_gestion.date_promise==='' & data_gestion.substate_gestion=='COMPROMISO DE PAGO') | data_gestion.substate_gestion===''){
-                                e.target.textContent="Intentar de nuevo";
+                                    e.target.textContent="Guardando...";
+                                
+                                    if((data_gestion.date_promise==='' & data_gestion.substate_gestion=='COMPROMISO DE PAGO') | data_gestion.substate_gestion===''){
+                                        e.target.textContent="Intentar de nuevo";
 
-                                addNotification({
-                                    title: 'Datos imcompletos',
-                                    subtitle: 'Por favor, llene todos los datos de la gestión',
-                                    message: '',
-                                    native: false,
-                                    backgroundTop: '#FF9619',
-                                    backgroundBottom: '#fdb864',
-                                    colorTop: 'white',
-                                    colorBottom: 'white',
-                                    closeButton: 'Cerrar',
-                                    duration: 3000,
-                                });
+                                        addNotification({
+                                            title: 'Datos imcompletos',
+                                            subtitle: 'Por favor, llene todos los datos de la gestión',
+                                            message: '',
+                                            native: false,
+                                            backgroundTop: '#FF9619',
+                                            backgroundBottom: '#fdb864',
+                                            colorTop: 'white',
+                                            colorBottom: 'white',
+                                            closeButton: 'Cerrar',
+                                            duration: 3000,
+                                        });
 
-                            }else{
-
-                                if(incall===false){
-                                    setStatusGestion(true);
-
-                                    const data_send=data_gestion;
-
-                                    if(Array.isArray(data_send.id_calls_extras)){
-                                        if(data_send.id_calls_extras.length>0){
-                                            data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
-                                        }else{
-                                            data_send.id_call=0;
-                                        }
                                     }else{
-                                        data_send.id_calls_extras=JSON.parse(data_send.id_calls_extras);
-                                        data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
-                                    }
 
-                                    data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
-                                    data_send.cartera=localStorage.getItem('cartera');
-                                    
-                                    console.log(data_send);
-                                    
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/managments`,{
-                                        method:'POST',
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        },
-                                        body:new URLSearchParams(data_send)
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            
-                                            if(data.status===200){
-                                                setMessage('Gestionado');
+                                        if(incall===false){
+
+                                            if(data_gestion.substate_gestion=='COMPROMISO DE PAGO' & data_gestion.nro_notificacion===""){
+                                                
                                                 addNotification({
-                                                    title: 'Éxito',
-                                                    subtitle: 'Gestión guardada correctamente',
+                                                    title: 'ERR: COMPROMISO DE PAGO',
+                                                    subtitle: 'Por favor, ingrese un NRO DE NOTIFICACIÓN para el COMPROMISO DE PAGO, caso contrario, seleccione OFERTA DE PAGO.',
                                                     message: '',
                                                     native: false,
-                                                    backgroundTop: '#009793',
-                                                    backgroundBottom: '#459d9a',
+                                                    backgroundTop: '#FF9619',
+                                                    backgroundBottom: '#fdb864',
                                                     colorTop: 'white',
                                                     colorBottom: 'white',
                                                     closeButton: 'Cerrar',
-                                                    duration:3000,
-                                                });
-
-                                                updateTrays(data.data,'processed');
-
-                                                let elements=document.getElementsByClassName('DetailCredit__body--focus');
-                                                elements=[].slice.call(elements);
-
-                                                elements.map((ele)=>{
-                                                    ele.classList.remove('DetailCredit__body--focus');
-                                                });
-
-                                                form.current.reset();
-
-                                                setDataGestion({
-                                                    id_campain:id_campain.split('/')[0],
-                                                    id_call:'',
-                                                    id_calls_extras:[],
-                                                    id_credit:currently.id_credito,
-                                                    state_gestion:'',
-                                                    substate_gestion:'',
-                                                    date_promise:'',
-                                                    observation:'',
-                                                    byUser:'',
-                                                    fecha:'',
-                                                    client_name:currently.name,
-                                                    cartera:currently.cartera
+                                                    duration: 5000,
                                                 });
 
                                                 e.target.textContent="Guardar";
-                                            }else{
-                                                e.target.textContent="Error, inténtalo de nuevo";
-                                            }
-                                        });
 
-                                }else{
-                                    addNotification({
-                                        title: 'ERR: Llamada',
-                                        subtitle: 'Por favor, termine la llamada o espere que se guarde para registrar gestión.',
-                                        message: '',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration: 3000,
-                                    });
-                                    e.target.textContent="Guardar";
-                                }
-                            }
-                        }}
-                    >Guardar</button>
-                </div>
+                                            }else{
+                                                setStatusGestion(true);
+                                                const data_send=data_gestion;
+
+                                                if(Array.isArray(data_send.id_calls_extras)){
+                                                    if(data_send.id_calls_extras.length>0){
+                                                        data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
+                                                    }else{
+                                                        data_send.id_call=0;
+                                                    }
+                                                }else{
+                                                    data_send.id_calls_extras=JSON.parse(data_send.id_calls_extras);
+                                                    data_send.id_call=data_send.id_calls_extras[data_send.id_calls_extras.length-1];
+                                                }
+
+                                                data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
+                                                data_send.cartera=localStorage.getItem('cartera');
+                                                
+                                                console.log(data_send);
+                                                
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/managments`,{
+                                                    method:'POST',
+                                                    headers: {
+                                                        Accept: 'application/json',
+                                                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                    },
+                                                    body:new URLSearchParams(data_send)
+                                                })
+                                                    .then((response) => response.json())  
+                                                    .then((data) => {
+                                                        
+                                                        if(data.status===200){
+                                                            setMessage('Gestionado');
+                                                            addNotification({
+                                                                title: 'Éxito',
+                                                                subtitle: 'Gestión guardada correctamente',
+                                                                message: '',
+                                                                native: false,
+                                                                backgroundTop: '#009793',
+                                                                backgroundBottom: '#459d9a',
+                                                                colorTop: 'white',
+                                                                colorBottom: 'white',
+                                                                closeButton: 'Cerrar',
+                                                                duration:3000,
+                                                            });
+
+                                                            updateTrays(data.data,'processed');
+
+                                                            let elements=document.getElementsByClassName('DetailCredit__body--focus');
+                                                            elements=[].slice.call(elements);
+
+                                                            elements.map((ele)=>{
+                                                                ele.classList.remove('DetailCredit__body--focus');
+                                                            });
+
+                                                            form.current.reset();
+
+                                                            setDataGestion({
+                                                                id_campain:id_campain.split('/')[0],
+                                                                id_call:'',
+                                                                id_calls_extras:[],
+                                                                id_credit:currently.id_credito,
+                                                                state_gestion:'',
+                                                                substate_gestion:'',
+                                                                date_promise:'',
+                                                                observation:'',
+                                                                byUser:'',
+                                                                fecha:'',
+                                                                client_name:currently.name,
+                                                                cartera:currently.cartera
+                                                            });
+
+                                                            setStates([]);
+
+                                                            e.target.textContent="Guardar";
+                                                        }else{
+                                                            e.target.textContent="Error, inténtalo de nuevo";
+                                                        }
+                                                    });
+                                            }
+
+                                        }else{
+                                            addNotification({
+                                                title: 'ERR: Llamada',
+                                                subtitle: 'Por favor, termine la llamada o espere que se guarde para registrar gestión.',
+                                                message: '',
+                                                native: false,
+                                                backgroundTop: '#FF9619',
+                                                backgroundBottom: '#fdb864',
+                                                colorTop: 'white',
+                                                colorBottom: 'white',
+                                                closeButton: 'Cerrar',
+                                                duration: 3000,
+                                            });
+
+                                            e.target.textContent="Guardar";
+                                        }
+                                    }
+                                }}
+                            >Guardar</button>
+                        </div>
+                    :   <></>
+                }
 
                 <div className="Ggestion__historial">
                     <div>
@@ -1051,6 +1298,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 .then((data) => {
                                                     setPagos(data);
                                                 });
+
                                             setTray('Pagos');
                                         }}
                                     >Pagos</button>
@@ -1167,7 +1415,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                         otros_valores={credit.otros_valores}
                         total={Number(credit.totalAmount)}
                         set={setViewCondonation}
-                        id={currently.id}
+                        id={currently.id_credito}
                         cartera={currently.cartera}
                         setData={setData}
                         view={view}
@@ -1201,6 +1449,18 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
             }
 
             {
+                (view_convenio) 
+                ?
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setViewConvenio(false)}}>Volver</button>
+                        <CardViewConvenio
+                            restruct={convenio_data}
+                        />
+                    </div>
+                :   <></>
+            }
+            
+            {
                 (view_reestructurar) &&
                     <CardStructure
                         original_dates={{
@@ -1215,9 +1475,10 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                         }}
                         total={credit.totalAmount}
                         set={setReestructurar}
-                        id={currently.id}
+                        id={currently.id_credito}
                         cartera={currently.cartera}
                         cobranza={gasto_cobranza}
+                        status_cobranza={'no'}
                     />
             }
 
