@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import "./CardNotifierModify.css";
 import { NotifierContext } from "../../contexts/notifierContext";
-import addNotification from "react-push-notification";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useFadeArray from "../../hooks/useFadeArray";
 import { NavLink } from "react-router-dom";
+import Push from "../Push/Push";
 
 export default function CardNotifierModify({title,message,credito,cartera,fecha_pago,user_generate,prev_data,total,current_data,id,name,ci,setData,setPDF,setPush}){
 
@@ -415,17 +415,11 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                                         });
                                                     }
 
-                                                    addNotification({
-                                                        title: 'ERROR SUMATORIA',
-                                                        subtitle: 'Se sobrepaso el valor total del desgloce',
-                                                        message: 'Por favor, revise los valores',
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 3500
+                                                    Push({
+                                                        title:'ERR: Sumatoria incorrecta',
+                                                        message:`Se sobrepaso el valor total del desgloce.`,
+                                                        timeout:3000,
+                                                        type:400
                                                     });
 
                                                 }else{

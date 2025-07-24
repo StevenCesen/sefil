@@ -4,9 +4,10 @@ import Login from './pages/Login'
 import Header from './components/Header/Header'
 import NavSlide from './components/navSlide/NavSlide'
 import { useEffect, useState } from 'react'
-import addNotification, { Notifications } from 'react-push-notification';
 import "./index.css";
 import Me from './pages/Me'
+import Push from './components/Push/Push'
+
 
 function App() {
   
@@ -54,9 +55,8 @@ function App() {
 
   return (
       <>
-      <Notifications className="push" position={'top-right'}/>
       <Header/>
-      
+      <Push/>
       {
         (!useSessions() & !session.state) 
         ?

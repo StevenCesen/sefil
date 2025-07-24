@@ -19,8 +19,8 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import addNotification from "react-push-notification";
 import PDFreport from "../components/PDFreport";
+import Push from "../components/Push/Push";
 
 ChartJS.register(
     CategoryScale,
@@ -534,18 +534,14 @@ export default function Reports(){
                                 .then((response) => response.json())  
                                 .then((data) => {
                                     setAmount(data.data);
-                                    addNotification({
-                                        title: 'Éxito',
-                                        subtitle: 'Filtro aplicado correctamente',
-                                        message: '',
-                                        native: false,
-                                        backgroundTop: '#009793',
-                                        backgroundBottom: '#459d9a',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration:3000,
+
+                                    Push({
+                                        title:'Éxito',
+                                        message:`Filtro aplicado correctamente.`,
+                                        timeout:5000,
+                                        type:200
                                     });
+
                                 });
 
                         }}

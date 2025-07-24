@@ -8,10 +8,10 @@ import "../components/CardUsuarios/CardUsuarios.css"
 import PDF from "../components/PDF.jsx";
 import { PDFViewer } from "@react-pdf/renderer";
 import useSearchVouchers from "../hooks/useSearchVouchers.js";
-import addNotification from "react-push-notification";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
 import useRol from "../hooks/useRol.js";
 import CardReverse from "../components/CardReverse/CardReverse.jsx";
+import Push from "../components/Push/Push.jsx";
 
 export default function Comprobantes(){
     const param = useParams();
@@ -209,18 +209,14 @@ export default function Comprobantes(){
                                             <button
                                                 onClick={(e)=>{
                                                     if(useRol()!=='administrador'){
-                                                        addNotification({
-                                                            title: 'No autorizado',
-                                                            subtitle: 'No puedes acceder a esta opción',
-                                                            message: '',
-                                                            native: false,
-                                                            backgroundTop: '#FF9619',
-                                                            backgroundBottom: '#fdb864',
-                                                            colorTop: 'white',
-                                                            colorBottom: 'white',
-                                                            closeButton: 'Cerrar',
-                                                            duration: 3000,
+
+                                                        Push({
+                                                            title:'ERR: No autorizado',
+                                                            message:`No puedes acceder a esta opción.`,
+                                                            timeout:5000,
+                                                            type:300
                                                         });
+
                                                     }else{
                                                         setReverse(true);
                                                         setComprobante({
@@ -257,17 +253,12 @@ export default function Comprobantes(){
                                                         .then((response) => response.json())  
                                                         .then((data) => {
                                                             if('status' in data){
-                                                                addNotification({
-                                                                    title: 'No autorizado',
-                                                                    subtitle: 'No se pudo recibir información de este comprobante',
-                                                                    message: 'Cantidad excedida, se ha notificado al administrador',
-                                                                    native: false,
-                                                                    backgroundTop: '#FF9619',
-                                                                    backgroundBottom: '#fdb864',
-                                                                    colorTop: 'white',
-                                                                    colorBottom: 'white',
-                                                                    closeButton: 'Cerrar',
-                                                                    duration: 5000,
+                                                                
+                                                                Push({
+                                                                    title:'ERR: No autorizado',
+                                                                    message:`Cantidad excedida, se ha notificado al administrador.`,
+                                                                    timeout:5000,
+                                                                    type:300
                                                                 });
                                                             
                                                             }else{

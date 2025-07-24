@@ -2,7 +2,6 @@ import { NavLink } from "react-router-dom";
 import "./pages.css";
 import {useEffect, useState } from "react";
 import CardGestion from "../components/CardGestion/CardGestion";
-import addNotification from "react-push-notification";
 import useWindows from "../hooks/useWindows";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import useFilterAgency from "../hooks/useFilterAgency";
@@ -100,7 +99,6 @@ export default function Gestion(){
         })
             .then((response) => response.json())  
             .then((datas) => {
-                console.log(datas);
                 if(bandeja==='pending'){
                     setData({
                         ...data,
@@ -1246,33 +1244,23 @@ export default function Gestion(){
                                     if(state_gestion){
                                         setForm(false);
                                     }else{
-                                        addNotification({
-                                            title: 'Gestión en curso',
-                                            subtitle: 'Se ha realizado una llamada y no se ha guardado gestión',
-                                            message: 'Por favor, guarde la gestión',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3000,
+
+                                        Push({
+                                            title:'ERR: Gestión en progreso',
+                                            message:`Se ha realizado una llamada y no se ha guardado gestión.`,
+                                            timeout:5000,
+                                            type:300
                                         });
+                                    
                                     }
                                     
                                 }else{
-                                
-                                    addNotification({
-                                        title: 'Gestión en curso',
-                                        subtitle: 'Se ha realizado una llamada y no se ha guardado',
-                                        message: 'Por favor, guarde la llamada',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration: 3000,
+
+                                    Push({
+                                        title:'ERR: Gestión en progreso',
+                                        message:`Se ha realizado una llamada y no se ha guardado.`,
+                                        timeout:5000,
+                                        type:300
                                     });
                                 }
                             }}

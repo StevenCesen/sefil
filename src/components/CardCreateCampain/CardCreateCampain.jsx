@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./CardCreateCampain.css"
-import addNotification from "react-push-notification";
+import Push from "../Push/Push";
 
 export default function CardCreateCampain({setData}){
 
@@ -272,33 +272,21 @@ export default function CardCreateCampain({setData}){
     
                                 });
 
-                            addNotification({
-                                title: 'Éxito',
-                                subtitle: 'Campaña creada correctamente',
-                                message: '',
-                                native: false,
-                                backgroundTop: '#009793',
-                                backgroundBottom: '#459d9a',
-                                colorTop: 'white',
-                                colorBottom: 'white',
-                                closeButton: 'Cerrar',
-                                duration:3000,
+                            Push({
+                                title:'Éxito',
+                                message:`Campaña creada correctamente.`,
+                                timeout:3000,
+                                type:200
                             });
 
                         }else{
                             e.target.textContent='Guardar';
 
-                            addNotification({
-                                title: 'Datos imcompletos',
-                                subtitle: 'Por favor, llene todos los datos de la nueva campaña',
-                                message: '',
-                                native: false,
-                                backgroundTop: '#FF9619',
-                                backgroundBottom: '#fdb864',
-                                colorTop: 'white',
-                                colorBottom: 'white',
-                                closeButton: 'Cerrar',
-                                duration: 3000,
+                            Push({
+                                title:'ERR: Datos incompletos',
+                                message:`Por favor, llene todos los campos.`,
+                                timeout:3000,
+                                type:200
                             });
                             
                         }

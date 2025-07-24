@@ -1,8 +1,8 @@
 import { NavLink } from "react-router-dom";
 import "./CardUpdatePay.css";
 import { useEffect, useRef, useState } from "react";
-import addNotification from "react-push-notification";
 import CardManualPay from "../CardManualPay/CardManualPay";
+import Push from "../Push/Push";
 
 
 export default function CardUpdatePay({name,fecha_carga,state}){
@@ -96,17 +96,11 @@ export default function CardUpdatePay({name,fecha_carga,state}){
 
                         if(file.files[0]===undefined){
 
-                            addNotification({
-                                title: 'Error archivo',
-                                subtitle: 'Se debe cargar un archivo',
-                                message: 'Por favor, elige un archivo en formato EXCEL e intenta de nuevo',
-                                native: false,
-                                backgroundTop: '#FF9619',
-                                backgroundBottom: '#fdb864',
-                                colorTop: 'white',
-                                colorBottom: 'white',
-                                closeButton: 'Cerrar',
-                                duration: 4000,
+                            Push({
+                                title:'ERR: formato de archivo inválido',
+                                message:`Por favor, elige un archivo en formato EXCEL e intenta de nuevo.`,
+                                timeout:3000,
+                                type:400
                             });
 
                         }else{
@@ -128,49 +122,34 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                                     if(!('fallas' in data)){
                                         if(data.pagos_erroneos.data.length>0){
                                             setPays(data.pagos_erroneos);
-                                            addNotification({
-                                                title: 'Pagos subidos',
-                                                subtitle: 'Carga completa, con pendientes',
-                                                message: 'Se han encontrado pagos con diferencias',
-                                                native: false,
-                                                backgroundTop: '#FF9619',
-                                                backgroundBottom: '#fdb864',
-                                                colorTop: 'white',
-                                                colorBottom: 'white',
-                                                closeButton: 'Cerrar',
-                                                duration: 4000,
+
+                                            Push({
+                                                title:'Éxito',
+                                                message:`Pagos subidos correctamente con pendientes.`,
+                                                timeout:3000,
+                                                type:200
                                             });
 
                                             e.target.textContent='Subido con pagos erróneos';
 
                                         }else{
-                                            addNotification({
-                                                title: 'Pagos subidos',
-                                                subtitle: 'Carga completa sin pendientes',
-                                                message: '',
-                                                native: false,
-                                                backgroundTop: '#009793',
-                                                backgroundBottom: '#459d9a',
-                                                colorTop: 'white',
-                                                colorBottom: 'white',
-                                                closeButton: 'Cerrar',
-                                                duration: 4000,
+                                    
+                                            Push({
+                                                title:'Éxito',
+                                                message:`Pagos subidos correctamente sin pendientes.`,
+                                                timeout:3000,
+                                                type:200
                                             });
 
                                             e.target.textContent='Importación correcta';
                                         }
                                     }else{
-                                        addNotification({
-                                            title: 'Error',
-                                            subtitle: 'Formato incorrecto',
-                                            message: 'El archivo cargado no cumple con el formato',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3000,
+
+                                        Push({
+                                            title:'ERR: Formato incorrecto',
+                                            message:`El archivo cargado no cumple con el formato.`,
+                                            timeout:3000,
+                                            type:400
                                         });
 
                                         e.target.textContent='Intentar de nuevo';

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import "./CardUsuarios.css";
 import useMenu from "../../hooks/useMenu";
 import useUpdatePermiss from "../../hooks/useUpdatePermiss";
-import addNotification from 'react-push-notification';
 
 const list={
     "consulta":{

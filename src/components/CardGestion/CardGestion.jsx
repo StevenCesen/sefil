@@ -3,7 +3,6 @@ import { NavLink, useParams } from "react-router-dom";
 import "./CardGestion.css"
 import CardCall from "../CardCall/CardCall";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
-import addNotification from "react-push-notification";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useClickToCopy from "../../hooks/useClickToCopy";
 import MyMapComponent from "../Map/Map";
@@ -14,6 +13,8 @@ import PDFcondonacion from "../PDFcondonacion";
 import CardStructure from "../CardStructure/CardStructure";
 import useVerifyStruct from "../../hooks/useVerifyRestruct";
 import CardViewConvenio from "../CardViewConvenio/CardViewConvenio";
+import Push from "../Push/Push";
+import CardSendMail from "../CardSendMail/CardSendMail";
 
 const render = (status) => {
     return <p>{status}</p>;
@@ -58,6 +59,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
     const ref_titular=useRef();
     const [view_convenio,setViewConvenio]=useState();
     const [convenio_data,setConvenioData]=useState();
+    const [view_sendmail,setViewSendmail]=useState();
 
     const close=()=>{
         setCall(false);
@@ -151,6 +153,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
         setReestructurar(false);
         setViewCondonation(false);
         setPDFcondonation(false);
+        setViewSendmail(false);
 
         let cuota_mensual=0, total_pendiente=0, fecha_pago="";
 
@@ -598,6 +601,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 </div>
                                             :   <></>
                                         }
+
                                     </>
                                 :   <></>
                             }
@@ -706,17 +710,12 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                             index:index
                                                         });
                                                     }else{
-                                                        addNotification({
-                                                            title: 'ERR: Llamada',
-                                                            subtitle: 'Por favor, termine la llamada para marcar a otro número.',
-                                                            message: '',
-                                                            native: false,
-                                                            backgroundTop: '#FF9619',
-                                                            backgroundBottom: '#fdb864',
-                                                            colorTop: 'white',
-                                                            colorBottom: 'white',
-                                                            closeButton: 'Cerrar',
-                                                            duration: 3000,
+
+                                                        Push({
+                                                            title:'ERR: Llamada en progreso',
+                                                            message:`Por favor, termine la llamada para marcar a otro número.`,
+                                                            timeout:3000,
+                                                            type:400
                                                         });
                                                     }
                                                 
@@ -792,19 +791,13 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                     form.current.reset();
                                 
                                     if(incall){
-                                        
-                                        addNotification({
-                                            title: 'ERR: Llamada',
-                                            subtitle: 'Por favor, termine la llamada o espere que se guarde para continuar.',
-                                            message: '',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3000,
+                                        Push({
+                                            title:'ERR: Llamada en progreso',
+                                            message:`Por favor, termine la llamada para marcar a otro número.`,
+                                            timeout:3000,
+                                            type:400
                                         });
+
                                         e.target.textContent="Seguir";
 
                                     }else if(states.length>0){
@@ -851,17 +844,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 setNext(index);
                                                 setTotalTray(total-1);
                                             }else{
-                                                addNotification({
-                                                    title: 'Gestión en curso',
-                                                    subtitle: 'Se ha realizado una llamada con estado CONTACTADO y no se ha guardado gestión',
-                                                    message: 'Por favor, guarde la gestión',
-                                                    native: false,
-                                                    backgroundTop: '#FF9619',
-                                                    backgroundBottom: '#fdb864',
-                                                    colorTop: 'white',
-                                                    colorBottom: 'white',
-                                                    closeButton: 'Cerrar',
-                                                    duration: 3500
+                                                Push({
+                                                    title:'Gestión en curso',
+                                                    message:`Se ha realizado una llamada con estado CONTACTADO y no se ha guardado gestión.`,
+                                                    timeout:3000,
+                                                    type:400
                                                 });
                                             }
                                         }
@@ -1054,18 +1041,14 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 if(await useVerifyCondonation(currently.id)){
                                                     setViewCondonation(!view_condonation);
                                                 }else{
-                                                    addNotification({
-                                                        title: 'ERROR',
-                                                        subtitle: 'Crédito con condonación',
-                                                        message: 'No se puede, ya se ha registrado una condonación',
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 3500
+                                                    
+                                                    Push({
+                                                        title:'ERR: Condonación existente',
+                                                        message:`No se puede, ya se ha registrado una condonación.`,
+                                                        timeout:3000,
+                                                        type:400
                                                     });
+
                                                     clean;
                                                 }
                                             }}
@@ -1081,17 +1064,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 if(await useVerifyStruct(currently.id)){
                                                     setReestructurar(!view_reestructurar);
                                                 }else{
-                                                    addNotification({
-                                                        title: 'ERROR',
-                                                        subtitle: 'Crédito con convenio',
-                                                        message: 'No se puede, hay un convenio ya creado',
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 3500
+                                                    Push({
+                                                        title:'ERR: Convenio existente',
+                                                        message:`No se puede, hay un convenio ya creado.`,
+                                                        timeout:3000,
+                                                        type:400
                                                     });
                                                 }
                                             }}
@@ -1117,6 +1094,16 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                         >Ver convenio</button>
                                     :   <></>
                                 }
+                                <button
+                                    onClick={async (e)=>{
+                                        setViewSendmail(true);
+                                    }}
+                                >Enviar correo</button>
+                                <button
+                                    onClick={async (e)=>{
+                                        
+                                    }}
+                                >Enviar SMS</button>
                             </div>
                         :   <></>
                     }
@@ -1135,17 +1122,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                     if((data_gestion.date_promise==='' & data_gestion.substate_gestion=='COMPROMISO DE PAGO') | data_gestion.substate_gestion===''){
                                         e.target.textContent="Intentar de nuevo";
 
-                                        addNotification({
-                                            title: 'Datos imcompletos',
-                                            subtitle: 'Por favor, llene todos los datos de la gestión',
-                                            message: '',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3000,
+                                        Push({
+                                            title:'ERR: Datos imcompletos',
+                                            message:`Por favor, llene todos los datos de la gestión.`,
+                                            timeout:3000,
+                                            type:400
                                         });
 
                                     }else{
@@ -1153,18 +1134,12 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                         if(incall===false){
 
                                             if(data_gestion.substate_gestion=='COMPROMISO DE PAGO' & data_gestion.nro_notificacion===""){
-                                                
-                                                addNotification({
-                                                    title: 'ERR: COMPROMISO DE PAGO',
-                                                    subtitle: 'Por favor, ingrese un NRO DE NOTIFICACIÓN para el COMPROMISO DE PAGO, caso contrario, seleccione OFERTA DE PAGO.',
-                                                    message: '',
-                                                    native: false,
-                                                    backgroundTop: '#FF9619',
-                                                    backgroundBottom: '#fdb864',
-                                                    colorTop: 'white',
-                                                    colorBottom: 'white',
-                                                    closeButton: 'Cerrar',
-                                                    duration: 5000,
+
+                                                Push({
+                                                    title:'ERR: Compromiso de pago',
+                                                    message:`Por favor, ingrese un NRO DE NOTIFICACIÓN para el COMPROMISO DE PAGO, caso contrario, seleccione OFERTA DE PAGO.`,
+                                                    timeout:5000,
+                                                    type:400
                                                 });
 
                                                 e.target.textContent="Guardar";
@@ -1202,17 +1177,12 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                         
                                                         if(data.status===200){
                                                             setMessage('Gestionado');
-                                                            addNotification({
-                                                                title: 'Éxito',
-                                                                subtitle: 'Gestión guardada correctamente',
-                                                                message: '',
-                                                                native: false,
-                                                                backgroundTop: '#009793',
-                                                                backgroundBottom: '#459d9a',
-                                                                colorTop: 'white',
-                                                                colorBottom: 'white',
-                                                                closeButton: 'Cerrar',
-                                                                duration:3000,
+
+                                                            Push({
+                                                                title:'Éxito',
+                                                                message:`Gestión guardada correctamente.`,
+                                                                timeout:3000,
+                                                                type:200
                                                             });
 
                                                             updateTrays(data.data,'processed');
@@ -1251,17 +1221,12 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                             }
 
                                         }else{
-                                            addNotification({
-                                                title: 'ERR: Llamada',
-                                                subtitle: 'Por favor, termine la llamada o espere que se guarde para registrar gestión.',
-                                                message: '',
-                                                native: false,
-                                                backgroundTop: '#FF9619',
-                                                backgroundBottom: '#fdb864',
-                                                colorTop: 'white',
-                                                colorBottom: 'white',
-                                                closeButton: 'Cerrar',
-                                                duration: 3000,
+
+                                            Push({
+                                                title:'ERR: llamada en progreso',
+                                                message:`Por favor, termine la llamada o espere que se guarde para registrar gestión.`,
+                                                timeout:3000,
+                                                type:400
                                             });
 
                                             e.target.textContent="Guardar";
@@ -1480,6 +1445,17 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                         cobranza={gasto_cobranza}
                         status_cobranza={'no'}
                     />
+            }
+
+            {
+                (view_sendmail)
+                ?   
+                    <CardSendMail
+                        clients={currently.contactos}
+                        days_past_due={currently.dias_vencidos}
+                        total_amount={currently.totalAmount}
+                    />
+                :   <></>
             }
 
         </div>

@@ -23,7 +23,6 @@ export default function useFilterText({tray,data_org,value,update,all,campain}){
                 });
                 update(results,tray);
             });
-
     }else if(tray==='inprocess'){
         // Buscar en proceso
         let campo="";

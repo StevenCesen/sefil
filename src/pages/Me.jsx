@@ -2,7 +2,7 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { useEffect, useRef, useState } from "react";
 import Eye from "../components/Eye/Eye";
-import addNotification from "react-push-notification";
+import Push from "../components/Push/Push";
 
 export default function Me(){
     const [password,setPassword]=useState('');
@@ -29,17 +29,12 @@ export default function Me(){
     useEffect(()=>{
         setAccept(false);
         setCode('');
-        addNotification({
-            title: 'Actualización de contraseña',
-            subtitle: 'Por tu seguridad, deberás actualizar la contraseña cada mes',
-            message: '',
-            native: false,
-            backgroundTop: '#009793',
-            backgroundBottom: '#459d9a',
-            colorTop: 'white',
-            colorBottom: 'white',
-            closeButton: 'Cerrar',
-            duration:4000,
+
+        Push({
+            title:'Actualización de contraseña',
+            message:`Por tu seguridad, deberás actualizar la contraseña cada mes.`,
+            timeout:5000,
+            type:300
         });
 
         setPassword('');
@@ -174,48 +169,35 @@ export default function Me(){
                                                 localStorage.setItem('change_ps',false);
                                             }else{
                                                 e.target.textContent='Actualizar';
-                                                addNotification({
-                                                    title: 'Error',
-                                                    subtitle: data.message,
-                                                    message: 'Ingresa una nueva contraseña',
-                                                    native: false,
-                                                    backgroundTop: '#FF9619',
-                                                    backgroundBottom: '#fdb864',
-                                                    colorTop: 'white',
-                                                    colorBottom: 'white',
-                                                    closeButton: 'Cerrar',
-                                                    duration: 3000,
+
+                                                Push({
+                                                    title:'ERR: Contraseña',
+                                                    message:`Ingresa una nueva contraseña.`,
+                                                    timeout:5000,
+                                                    type:400
                                                 });
+
                                             }
                                         });
                                 }else if(code===""){
                                     e.target.textContent='Actualizar';
-                                    addNotification({
-                                        title: 'Error',
-                                        subtitle: "Se requiere código de seguridad",
-                                        message: 'Revise su correo electrónico e introduzca el código, o comuníquese con administración',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration: 4000,
+                                    Push({
+                                        title:'ERR: Contraseña',
+                                        message:`Revise su correo electrónico e introduzca el código, o comuníquese con administración.`,
+                                        timeout:5000,
+                                        type:400
                                     });
+                                
                                 }else{
                                     e.target.textContent='Actualizar';
-                                    addNotification({
-                                        title: 'Error',
-                                        subtitle: "Por favor, revisa que la contraseña cumpla con el formato",
-                                        message: 'Completa tu contraseña',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration: 3000,
+
+                                    Push({
+                                        title:'ERR: Contraseña',
+                                        message:`Por favor, revisa que la contraseña cumpla con el formato.`,
+                                        timeout:5000,
+                                        type:400
                                     });
+
                                 }
                                 
                             }}

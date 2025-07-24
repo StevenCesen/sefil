@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./CardSelectState.css";
+import sendpush from "../../helpers/sendpush";
 
 export default function CardSelectState({mode,current_option}){
     
@@ -8,7 +9,6 @@ export default function CardSelectState({mode,current_option}){
 
     const options=[
         'CONECTADO',
-        // 'FUERA DE LÍNEA',
         'EN RECESO',
         'EN ALMUERZO',
         'EN REUNIÓN'
@@ -17,7 +17,6 @@ export default function CardSelectState({mode,current_option}){
     useEffect(()=>{
         setView(false);
         setCurrent(current_option);
-
     },[current_option]);
 
     return (
@@ -52,7 +51,13 @@ export default function CardSelectState({mode,current_option}){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then((data) => {
-                                                            console.log(data);
+                                                            // handlerPush();
+                                                            sendpush({
+                                                                title:'Estado',
+                                                                message:'Tu estado ha cambiado',
+                                                                type:'Push--sucessful',
+                                                                timeout:3000
+                                                            });
                                                         });
                                                 }}
                                             >{option}</label>

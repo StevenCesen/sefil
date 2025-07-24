@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "../CardEditJudicial/CardEditJudicial.css";
-import addNotification from "react-push-notification";
+import Push from "../Push/Push";
 
 export default function CardEditConvenio({restruct,update,close,ci,credito}){
 
@@ -65,18 +65,13 @@ export default function CardEditConvenio({restruct,update,close,ci,credito}){
                                 update(false);
                                 close(false);
 
-                                addNotification({
-                                    title: 'Convenio de pago anulado',
-                                    subtitle: `Recargue la página.`,
-                                    message: ``,
-                                    native: false,
-                                    backgroundTop: '#FF9619',
-                                    backgroundBottom: '#fdb864',
-                                    colorTop: 'white',
-                                    colorBottom: 'black',
-                                    closeButton: 'Cerrar',
-                                    duration: 8000,
+                                Push({
+                                    title:'Convenio de pago anulado',
+                                    message:`Recargue la página.`,
+                                    timeout:3000,
+                                    type:200
                                 });
+                                
                             });
 
                     }}

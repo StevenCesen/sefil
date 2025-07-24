@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
-import addNotification from "react-push-notification";
 import useSessions from "../hooks/useSessions";
 import useLogout from "../hooks/useLogout";
+import Push from "../components/Push/Push";
 
 const SessionContext=createContext();
 
@@ -19,18 +19,14 @@ function SessionContextProvider({children}){
 
                 if(Number(localStorage.getItem('temp_uS'))!==2 & Number(localStorage.getItem('temp_uS'))!==19){
                     if((current_time - localStorage.getItem('timestamp_cc'))>=840000 & localStorage.getItem('estado')==='CONECTADO' & (current_time - localStorage.getItem('timestamp_cc'))<=843000){
-                        addNotification({
-                            title: 'Sesión por expirar',
-                            subtitle: `Tu sesión se cerrará en un minuto por falta de actividad`,
-                            message: ``,
-                            native: false,
-                            backgroundTop: '#FF9619',
-                            backgroundBottom: '#fdb864',
-                            colorTop: 'white',
-                            colorBottom: 'black',
-                            closeButton: 'Cerrar',
-                            duration: 5000
+                
+                        Push({
+                            title:'Sesión por expirar',
+                            message:`Tu sesión se cerrará en un minuto por falta de actividad.`,
+                            timeout:5000,
+                            type:300
                         });
+
                     }else if((current_time - localStorage.getItem('timestamp_cc'))>=900000 & localStorage.getItem('estado')==='CONECTADO'){
                         useLogout(null);
                         addNotification({
@@ -44,6 +40,13 @@ function SessionContextProvider({children}){
                             colorBottom: 'black',
                             closeButton: 'Cerrar',
                             duration: 5000,
+                        });
+
+                        Push({
+                            title:'Sesión cerrada',
+                            message:`Tu sesión se cerró por falta de actividad.`,
+                            timeout:5000,
+                            type:400
                         });
                     }
                 }

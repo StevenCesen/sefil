@@ -9,8 +9,9 @@ export default function Gcontactabilidad(){
     const [filter,setFilter]=useState();
     const [campains,setCampains]=useState();
     const [loading,setLoading]=useState();
-    
-    const updateData=({campain,tipo})=>{
+    const [agents,setAgents]=useState();
+
+    const updateData=({campain,tipo,agent})=>{
         let filter="";
         setLoading(true);
 
@@ -21,6 +22,12 @@ export default function Gcontactabilidad(){
         if(tipo!==""){
             filter+=`&tipo=${tipo}`;
         }
+
+        if(agent!=""){
+            filter+=`&user_id=${agent}`
+        }
+
+        console.log(filter)
 
         fetch(`${import.meta.env.VITE_URL_BASE}/gcontactabilidad?${filter}`,{
             headers: {
@@ -39,7 +46,8 @@ export default function Gcontactabilidad(){
 
         setFilter({
             campain:'',
-            tipo:1
+            tipo:1,
+            agent:''
         });
 
         setLoading(true);
@@ -57,6 +65,18 @@ export default function Gcontactabilidad(){
                 setCampains(data.data);
                 setLoading(false);
             });
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=syncs`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then((response) => response.json())  
+                .then((data) => {
+                    setAgents(data);
+                    setLoading(false);
+                });
 
     },[]);
 
@@ -90,7 +110,8 @@ export default function Gcontactabilidad(){
 
                                 updateData({
                                     campain:e.target.value,
-                                    tipo:filter.tipo
+                                    tipo:filter.tipo,
+                                    agent:filter.agent
                                 });
                             }}
                         >
@@ -114,7 +135,8 @@ export default function Gcontactabilidad(){
 
                                 updateData({
                                     campain:filter.campain,
-                                    tipo:e.target.value
+                                    tipo:e.target.value,
+                                    agent:filter.tipo
                                 });
                             }}
                         >
@@ -130,7 +152,31 @@ export default function Gcontactabilidad(){
                         <label>Crédito</label>
                         <label>Titular</label>
                         <label>Cédula</label>
-                        <label>Agente gestion</label>
+                        <label>
+                            Agente gestion
+                            <select
+                                value={filter.agent}
+                                onChange={(e)=>{
+                                    setFilter({
+                                        ...filter,
+                                        agent:e.target.value
+                                    });
+
+                                    updateData({
+                                        campain:filter.campain,
+                                        tipo:filter.tipo,
+                                        agent:e.target.value
+                                    });
+                                }}
+                            >
+                                <option value={""}>--Seleccionar--</option>
+                                {
+                                    agents.map(agent=>(
+                                        <option value={agent.id}>{agent.name}</option>
+                                    ))
+                                }
+                            </select>
+                        </label>
                         <label>Bandeja actual</label>
                         <label>Estado últ. gestión</label>
                         <label>Días de mora</label>

@@ -14,9 +14,9 @@ import PDFgastos from "../components/PDFgastos";
 import PDFcondonacion from "../components/PDFcondonacion";
 import CardConfirm from "../components/CardConfirm/CardConfirm";
 import CardEditJudicial from "../components/CardEditJudicial/CardEditJudicial";
-import addNotification from "react-push-notification";
 import CardEditConvenio from "../components/CardEditConvenio/CardEditConvenio";
 import Loader from "../components/Loader/loader";
+import Push from "../components/Push/Push";
 
 const render = (status) => {
     return <h1>{status}</h1>;
@@ -500,17 +500,11 @@ export default function DetailCredit(){
                                                                         if(date_comparative===cuota.fecha_pago || JSON.parse(restruct.detail)[n-1].estado==='PAGADO'){
                                                                             setPay(!pay);
                                                                         }else{
-                                                                            addNotification({
-                                                                                title: 'ERROR PAGO',
-                                                                                subtitle: `No se puede realizar pago`,
-                                                                                message: `Existe una cuota anterior sin pago o aún no es la fecha de pago.`,
-                                                                                native: false,
-                                                                                backgroundTop: '#FF9619',
-                                                                                backgroundBottom: '#fdb864',
-                                                                                colorTop: 'white',
-                                                                                colorBottom: 'black',
-                                                                                closeButton: 'Cerrar',
-                                                                                duration: 5000,
+                                                                            Push({
+                                                                                title:'ERR: Pago',
+                                                                                message:`Existe una cuota anterior sin pago o aún no es la fecha de pago.`,
+                                                                                timeout:5000,
+                                                                                type:300
                                                                             });
                                                                         }
                                                                         
@@ -625,17 +619,12 @@ export default function DetailCredit(){
                                                     setReestructurar(!view_reestructurar);
                                                     
                                                 }else{
-                                                    addNotification({
-                                                        title: 'ERROR',
-                                                        subtitle: 'Crédito con convenio',
-                                                        message: 'No se puede, hay un convenio ya creado',
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 3500
+                                                    
+                                                    Push({
+                                                        title:'ERR: Convenio existente',
+                                                        message:`No se puede, hay un convenio ya creado.`,
+                                                        timeout:5000,
+                                                        type:300
                                                     });
                                                 }
                                             }}>Convenio de pago</button>
@@ -647,17 +636,12 @@ export default function DetailCredit(){
                                     if(await useVerifyCondonation(param.get('id'))){
                                         setViewCondonation(!view_condonation);
                                     }else{
-                                        addNotification({
-                                            title: 'ERROR',
-                                            subtitle: 'Crédito con condonación',
-                                            message: 'No se puede, ya se ha registrado una condonación',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3500
+                                        
+                                        Push({
+                                            title:'ERR: Condonación existente',
+                                            message:`No se puede, ya se ha registrado una condonación.`,
+                                            timeout:5000,
+                                            type:300
                                         });
                                         clean;
                                     }

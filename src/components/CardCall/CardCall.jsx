@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CardCall.css"
-import addNotification from "react-push-notification";
 import useBlobToBase64 from "../../hooks/useBlobToBase64";
+import Push from "../Push/Push";
 
 const states_call=[
     'NO CONTACTADO',
@@ -152,17 +152,11 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                         if(localStorage.getItem('state_call')=="false"){
                             setIn(e.target.value);
                         }else{
-                            addNotification({
-                                title: 'ERR: Llamada en progreso',
-                                subtitle: 'Termine o guarde la llamada para digitar otro número.',
-                                message: '',
-                                native: false,
-                                backgroundTop: '#FF9619',
-                                backgroundBottom: '#fdb864',
-                                colorTop: 'white',
-                                colorBottom: 'white',
-                                closeButton: 'Cerrar',
-                                duration: 3000,
+                            Push({
+                                title:'ERR: Llamada en progreso',
+                                message:`Termine o guarde la llamada para digitar otro número.`,
+                                timeout:3000,
+                                type:400
                             });
                         }
                     }}
@@ -259,17 +253,12 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 localStorage.setItem('timestamp_cc',new Date().getTime());
 
                                 if(((number_in==="") ? phone.nro : number_in)===0){
-                                    addNotification({
-                                        title: 'Sin número',
-                                        subtitle: 'No hay número para realizar la llamada',
-                                        message: '',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration: 3000,
+        
+                                    Push({
+                                        title:'ERR: Sin número',
+                                        message:`No hay número para realizar la llamada`,
+                                        timeout:3000,
+                                        type:400
                                     });
 
                                 }else{
@@ -375,17 +364,12 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
 
                             if(call_state===''){
                                 e.target.textContent='Intentar de nuevo';
-                                addNotification({
-                                    title: 'Sin estado de llamada',
-                                    subtitle: 'Por favor, selecciona un estado de llamada',
-                                    message: '',
-                                    native: false,
-                                    backgroundTop: '#FF9619',
-                                    backgroundBottom: '#fdb864',
-                                    colorTop: 'white',
-                                    colorBottom: 'white',
-                                    closeButton: 'Cerrar',  
-                                    duration: 3000,
+        
+                                Push({
+                                    title:'ERR: Sin estado de llamada',
+                                    message:`Por favor, selecciona un estado de llamada`,
+                                    timeout:3000,
+                                    type:400
                                 });
 
                             }else{

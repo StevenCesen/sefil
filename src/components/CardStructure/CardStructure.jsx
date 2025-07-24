@@ -3,7 +3,7 @@ import "./CardStructure.css";
 import useFadeArray from "../../hooks/useFadeArray";
 import useStruct from "../../hooks/useStruct";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
-import addNotification from "react-push-notification";
+import Push from "../Push/Push";
 
 export default function CardStructure({original_dates,total,id,set,cartera,cobranza,status_cobranza}){
 
@@ -17,7 +17,6 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
 
     useEffect(()=>{
         setDesgloce('automatico');
-        console.log(cobranza)
         setNumber(1);
         setTotalAmount(Number(total)+Number((status_cobranza!=='pay' | status_cobranza==true) ? cobranza : 0));
         setTotalSum(0);
@@ -171,17 +170,11 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                                                     
                                                     setTotalSum(totalAmount);
 
-                                                    addNotification({
-                                                        title: 'ERROR SUMATORIA',
-                                                        subtitle: 'Se sobrepaso el valor total del desgloce',
-                                                        message: 'Por favor, revise los valores',
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 3500
+                                                    Push({
+                                                        title:'ERR: sumatoria incorrecta',
+                                                        message:`Se sobrepaso el valor total del desgloce.`,
+                                                        timeout:3000,
+                                                        type:400
                                                     });
 
                                                 }else{
@@ -260,17 +253,11 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                     if(errors>0){
                         e.target.textContent="Guardar cambios";
 
-                        addNotification({
-                            title: 'ERROR FECHAS',
-                            subtitle: 'Existen cuotas que no tienen fecha',
-                            message: 'Por favor, revise las fechas',
-                            native: false,
-                            backgroundTop: '#FF9619',
-                            backgroundBottom: '#fdb864',
-                            colorTop: 'white',
-                            colorBottom: 'white',
-                            closeButton: 'Cerrar',
-                            duration: 3500
+                        Push({
+                            title:'ERR: no hay fecha',
+                            message:`Existen cuotas que no tienen fecha.`,
+                            timeout:3000,
+                            type:400
                         });
                         
                     }else if(tipo_desgloce==='automatico' | tipo_desgloce==='manual'){
@@ -280,17 +267,11 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                     }else{
                         e.target.textContent="Guardar cambios";
 
-                        addNotification({
-                            title: 'ERROR SUMATORIA',
-                            subtitle: 'El desgloce de cuotas no suman el monto total adeudado',
-                            message: 'Por favor, revise los valores',
-                            native: false,
-                            backgroundTop: '#FF9619',
-                            backgroundBottom: '#fdb864',
-                            colorTop: 'white',
-                            colorBottom: 'white',
-                            closeButton: 'Cerrar',
-                            duration: 3500
+                        Push({
+                            title:'ERR: sumatoria incorrecta',
+                            message:`Se sobrepaso el valor total del desgloce.`,
+                            timeout:3000,
+                            type:400
                         });
                     }
 

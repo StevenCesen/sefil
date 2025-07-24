@@ -6,7 +6,6 @@ import useAssignSearch from "../../hooks/useAssignSearch";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import CardItemCharge from "../CardItemCharge/CardItemCharge";
 import useVerifyUnique from "../../hooks/useVerifyUnique";
-import addNotification from "react-push-notification";
 import useSearchCreditInDistribution from "../../hooks/useSearchCreditInDistribution";
 import CardItemErrorCharge from "../CardItemErrorCharge/CardItemErrorCharge";
 
@@ -40,7 +39,6 @@ const agencias=[
 ];
 
 export default function CardAssignCampain({data,updateCredits}){
-
     const [transfer,setTransfer]=useState(false);
     const [mode,setMode]=useState('manual');
     const [view_agencies,setView]=useState(false);
@@ -98,16 +96,12 @@ export default function CardAssignCampain({data,updateCredits}){
         return count;
     }
 
-    // Para setear los rangos en filtros
     const updateRange=(key,value)=>{
         let copy=item_filter;
 
         copy[key]=value;
         setItems(item_filter);
 
-        // Usamos el seleccionar de créditos
-        // 1) Primero debemos saber cual es modo
-        // 2) Enviamos la data del filtro correspondiente: Si es asociaación de cartera entonces es filt, si es transferencia, es user_filt
         useAssignSearch(
             charge,
             '',
@@ -237,8 +231,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                     setAgent:setAgents,
                                     setCredit:update
                                 });
-                            } 
-
+                            }
                         }
                         
                     }}
@@ -1019,30 +1012,21 @@ export default function CardAssignCampain({data,updateCredits}){
                                             .then((response) => response.json())  
                                             .then((data) => {
                                                 if(data.errors.length>0){
-                                                    addNotification({
-                                                        title: 'ERR: Cruce',
-                                                        subtitle: `${data.errors.length} créditos ya están asignados a otro usuario.`,
-                                                        message: ``,
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'black',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 8000,
+                                                    
+                                                    Push({
+                                                        title:'ERR: Cruce',
+                                                        message:`${data.errors.length} créditos ya están asignados a otro usuario.`,
+                                                        timeout:8000,
+                                                        type:400
                                                     });
+
                                                 }else{
-                                                    addNotification({
-                                                        title: 'Éxito',
-                                                        subtitle: 'Carga transferida',
-                                                        message: '',
-                                                        native: false,
-                                                        backgroundTop: '#009793',
-                                                        backgroundBottom: '#459d9a',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration:3000,
+                                                    
+                                                    Push({
+                                                        title:'Éxito',
+                                                        message:`Carga transferida`,
+                                                        timeout:3000,
+                                                        type:200
                                                     });
 
                                                     updateCredits(data);
@@ -1064,17 +1048,11 @@ export default function CardAssignCampain({data,updateCredits}){
                                     //         duration: 8000,
                                     //     });
                                     }else{
-                                        addNotification({
-                                            title: 'ERR: Sin agente destino',
-                                            subtitle: `No hay un agente de destino para transferir la carga.`,
-                                            message: `Elija un agente`,
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'black',
-                                            closeButton: 'Cerrar',
-                                            duration: 8000,
+                                        Push({
+                                            title:'ERR: Sin agente destino',
+                                            message:`No hay un agente de destino para transferir la carga.`,
+                                            timeout:8000,
+                                            type:400
                                         });
                                     }
                                 }}
@@ -1446,14 +1424,3 @@ export default function CardAssignCampain({data,updateCredits}){
         </div>
     );
 }
-
-/**
- * 
- *  Cargar datos ({
-        (data.type_assign==='api') 
-        ?   (charge.length===0)
-            ?   'Cargando...' 
-            :   (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
-        :   (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
-    })
- */

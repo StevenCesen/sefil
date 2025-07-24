@@ -1,4 +1,3 @@
-import addNotification from "react-push-notification";
 import "./CardReverse.css";
 
 export default function CardReverse({id,name,fecha,update}){
@@ -27,17 +26,11 @@ export default function CardReverse({id,name,fecha,update}){
 
                                 update();
 
-                                addNotification({
-                                    title: 'Éxito',
-                                    subtitle: 'Comprobante revertido correctamente',
-                                    message: '',
-                                    native: false,
-                                    backgroundTop: '#009793',
-                                    backgroundBottom: '#459d9a',
-                                    colorTop: 'white',
-                                    colorBottom: 'white',
-                                    closeButton: 'Cerrar',
-                                    duration:3000,
+                                Push({
+                                    title:'Éxito',
+                                    message:`Comprobante revertido.`,
+                                    timeout:3000,
+                                    type:200
                                 });
 
                             }else{
@@ -45,17 +38,11 @@ export default function CardReverse({id,name,fecha,update}){
                                 e.target.textContent="Revertir";
                                 update();
 
-                                addNotification({
-                                    title: 'Tiempo expirado',
-                                    subtitle: 'No se puede revertir este comprobante',
-                                    message: 'Se ha sobrepasado el período de un día después de la emisión',
-                                    native: false,
-                                    backgroundTop: '#FF9619',
-                                    backgroundBottom: '#fdb864',
-                                    colorTop: 'white',
-                                    colorBottom: 'white',
-                                    closeButton: 'Cerrar',
-                                    duration: 5000,
+                                Push({
+                                    title:'ERR: Tiempo expirado',
+                                    message:`Se ha sobrepasado el período de un día después de la emisión.`,
+                                    timeout:5000,
+                                    type:400
                                 });
                             }
                         });

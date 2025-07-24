@@ -2,7 +2,6 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import {useEffect, useState } from "react";
 import CardGestion from "../components/CardGestion/CardGestion";
-import addNotification from "react-push-notification";
 import useWindows from "../hooks/useWindows";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import CardCurrentGestion from "../components/CardCurrentGestion/CardCurrentGestion";

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import CardUsuarios from "../components/CardUsuarios/CardUsuarios";
-import addNotification from "react-push-notification";
 import Loader from "../components/Loader/loader";
+import Push from "../components/Push/Push";
 
 export default function Usuarios(){
 
@@ -95,34 +95,25 @@ export default function Usuarios(){
                                 });
 
                                 if(count===0){
-                                    addNotification({
-                                        title: 'Éxito',
-                                        subtitle: 'Permiso actualizado correctamente',
-                                        message: '',
-                                        native: false,
-                                        backgroundTop: '#009793',
-                                        backgroundBottom: '#459d9a',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration:3000,
+
+                                    Push({
+                                        title:'Éxito',
+                                        message:`Permiso actualizado correctamente.`,
+                                        timeout:5000,
+                                        type:200
                                     });
 
                                     setNewChange(false);
 
                                 }else{
-                                    addNotification({
-                                        title: 'Error',
-                                        subtitle: 'No se pudo actualizar permiso',
-                                        message: 'Inténtalo otra vez',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration:3000,
+
+                                    Push({
+                                        title:'Éxito',
+                                        message:`No se pudo actualizar permiso.`,
+                                        timeout:5000,
+                                        type:400
                                     });
+                                    
                                 }
 
                             }}
