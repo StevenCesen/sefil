@@ -77,7 +77,7 @@ export default function Garantes(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                console.log(data)
+                                               
                                             });
                                     }}>
                                         <option value={''}>GARANTE | {garantes.credito}</option>

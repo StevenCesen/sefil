@@ -2,7 +2,7 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { useEffect, useRef, useState } from "react";
 import Eye from "../components/Eye/Eye";
-import Push from "../components/Push/Push";
+import sendpush from "../helpers/sendpush";
 
 export default function Me(){
     const [password,setPassword]=useState('');
@@ -30,11 +30,11 @@ export default function Me(){
         setAccept(false);
         setCode('');
 
-        Push({
-            title:'Actualización de contraseña',
-            message:`Por tu seguridad, deberás actualizar la contraseña cada mes.`,
-            timeout:5000,
-            type:300
+        sendpush({
+            title:'Actualización de contraseña.',
+            message:'Por tu seguridad, deberás actualizar la contraseña cada mes.',
+            type:'Push--info',
+            timeout:5000
         });
 
         setPassword('');
@@ -170,32 +170,33 @@ export default function Me(){
                                             }else{
                                                 e.target.textContent='Actualizar';
 
-                                                Push({
-                                                    title:'ERR: Contraseña',
-                                                    message:`Ingresa una nueva contraseña.`,
-                                                    timeout:5000,
-                                                    type:400
+                                                sendpush({
+                                                    title:'ERR: Contraseña.',
+                                                    message:'Ingresa una nueva contraseña.',
+                                                    type:'Push--danger',
+                                                    timeout:5000
                                                 });
 
                                             }
                                         });
                                 }else if(code===""){
                                     e.target.textContent='Actualizar';
-                                    Push({
-                                        title:'ERR: Contraseña',
-                                        message:`Revise su correo electrónico e introduzca el código, o comuníquese con administración.`,
-                                        timeout:5000,
-                                        type:400
+
+                                    sendpush({
+                                        title:'ERR: Contraseña.',
+                                        message:'Revise su correo electrónico e introduzca el código, o comuníquese con administración.',
+                                        type:'Push--danger',
+                                        timeout:5000
                                     });
                                 
                                 }else{
                                     e.target.textContent='Actualizar';
 
-                                    Push({
-                                        title:'ERR: Contraseña',
-                                        message:`Por favor, revisa que la contraseña cumpla con el formato.`,
-                                        timeout:5000,
-                                        type:400
+                                    sendpush({
+                                        title:'ERR: Contraseña.',
+                                        message:'Por favor, revisa que la contraseña cumpla con el formato.',
+                                        type:'Push--danger',
+                                        timeout:5000
                                     });
 
                                 }

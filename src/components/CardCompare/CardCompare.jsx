@@ -120,8 +120,6 @@ export default function CardCompare({agents}){
 
         let temp=[],completados=[];
 
-        console.log(response)
-
         response.data.map(agente=>{
             temp.push(...agente.estados.items.map(e => e.estado));
         })
@@ -148,8 +146,6 @@ export default function CardCompare({agents}){
             item.nro_gestiones=nro_gestiones;
             item.nro_gestiones_efectivas=nro_gestiones_efectivas;
         });
-
-        console.log(completados);
 
         setDataEstados(completados);
 
@@ -299,16 +295,6 @@ export default function CardCompare({agents}){
                                                     prev_trays.push(e.target.value);
 
                                                     setSelectTrays(prev_trays);
-                                                    // updateFilter({
-                                                    //     campain:filters.campain,
-                                                    //     state:filters.state_gestion,
-                                                    //     agencia:filters.agencia,
-                                                    //     agente:filters.agente,
-                                                    //     corte:filters.corte,
-                                                    //     trays:prev_trays,
-                                                    //     group:filters.group,
-                                                    //     estado:filters.estado
-                                                    // });
                                                 }else{
 
                                                     const prev_trays=select_trays;
@@ -320,16 +306,6 @@ export default function CardCompare({agents}){
                                                     });
 
                                                     setSelectTrays(new_trays);
-                                                    // updateFilter({
-                                                    //     campain:filters.campain,
-                                                    //     state:filters.state_gestion,
-                                                    //     agencia:filters.agencia,
-                                                    //     agente:filters.agente,
-                                                    //     corte:filters.corte,
-                                                    //     trays:new_trays,
-                                                    //     group:filters.group,
-                                                    //     estado:filters.estado
-                                                    // });
                                                 }
                                             }}
                                         />

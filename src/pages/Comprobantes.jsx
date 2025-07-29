@@ -1,9 +1,7 @@
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
-import CardCredit from "../components/CardCredit/CardCredit";
 import { useEffect, useRef, useState } from "react";
 import useSearch from "../hooks/useSearch.js";
-import useMenu from "../hooks/useMenu.js";
 import "../components/CardUsuarios/CardUsuarios.css"
 import PDF from "../components/PDF.jsx";
 import { PDFViewer } from "@react-pdf/renderer";
@@ -11,7 +9,7 @@ import useSearchVouchers from "../hooks/useSearchVouchers.js";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
 import useRol from "../hooks/useRol.js";
 import CardReverse from "../components/CardReverse/CardReverse.jsx";
-import Push from "../components/Push/Push.jsx";
+import sendpush from "../helpers/sendpush.js";
 
 export default function Comprobantes(){
     const param = useParams();
@@ -209,12 +207,12 @@ export default function Comprobantes(){
                                             <button
                                                 onClick={(e)=>{
                                                     if(useRol()!=='administrador'){
-
-                                                        Push({
-                                                            title:'ERR: No autorizado',
-                                                            message:`No puedes acceder a esta opción.`,
-                                                            timeout:5000,
-                                                            type:300
+                                                        
+                                                        sendpush({
+                                                            title:'ERR: No autorizado.',
+                                                            message:'No puedes acceder a esta opción.',
+                                                            type:'Push--danger',
+                                                            timeout:5000
                                                         });
 
                                                     }else{
@@ -253,12 +251,12 @@ export default function Comprobantes(){
                                                         .then((response) => response.json())  
                                                         .then((data) => {
                                                             if('status' in data){
-                                                                
-                                                                Push({
-                                                                    title:'ERR: No autorizado',
-                                                                    message:`Cantidad excedida, se ha notificado al administrador.`,
-                                                                    timeout:5000,
-                                                                    type:300
+
+                                                                sendpush({
+                                                                    title:'ERR: No autorizado.',
+                                                                    message:'Cantidad excedida, se ha notificado al administrador.',
+                                                                    type:'Push--danger',
+                                                                    timeout:5000
                                                                 });
                                                             
                                                             }else{
@@ -294,26 +292,6 @@ export default function Comprobantes(){
                     </div>
 
                 </div>
-
-                {
-                    // (comprobantes.total>10) &&
-                    //     <div className="DetailCredit__access">
-                    //         <p>Registros del {comprobantes.from}-{comprobantes.to} de {comprobantes.total}</p>
-                    //         <div>
-                    //         {
-                    //             comprobantes.links.map((button,index)=>(
-                    //                 (index===0)?
-                    //                     <NavLink key={index} onClick={()=>{updateData(button.url)}}>Anterior</NavLink>
-                    //                 : 
-                    //                     (index===(comprobantes.links.length-1)) ?
-                    //                         <NavLink key={index} onClick={()=>{updateData(button.url)}}>Siguiente</NavLink>
-                    //                     :
-                    //                         <></>
-                    //             ))
-                    //         }
-                    //         </div>
-                    //     </div>
-                }
 
             </div>
             

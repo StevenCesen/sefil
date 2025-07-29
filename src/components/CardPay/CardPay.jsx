@@ -75,9 +75,6 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
     };
 
     useEffect(()=>{
-        console.log(data);
-        console.log(data_convenio);
-
         setData({
             ...pay,
             forma_pago:'',
@@ -564,8 +561,6 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                             });
                                 }else{
                                     /*========================================================PAGO EXITOSO================================================*/
-                                    console.log(data_encode);
-
                                     fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${id}`,{
                                             method:'PUT',
                                             headers: {
@@ -576,7 +571,6 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                                         })
                                             .then((response) => response.json())  
                                             .then(async (data) => {
-                                                console.log(data)
                                                 if(data.status===200){
 
                                                     if('id' in data.gasto){
@@ -622,7 +616,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
                         width={'500px'} 
                         height={'500px'}
                         onClick={(e)=>{
-                            console.log(e.target.children)
+                            
                         }}
                     >
                         <PDF 

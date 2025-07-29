@@ -70,8 +70,6 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     filters+=`&users=${JSON.stringify(agente)}`
                 }
 
-                console.log(`${import.meta.env.VITE_URL_BASE}/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`)
-
                 fetch(`${import.meta.env.VITE_URL_BASE}/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`,{
                     headers: {
                         Accept: 'application/json',
@@ -119,7 +117,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
 
     }else if(value.length>3){
         if(/^[A-Za-z ]+/.test(value) & !/[0-9]+/.test(value)){
-            console.log("Entre a busqueda por nombre y número de crédito");
+            
         }else if(/^[0-9-_A-Za-z ]+/.test(value)){  //Búsqueda masiva de créditos
             let values=value.split(' ');
             let syncs_id=[];

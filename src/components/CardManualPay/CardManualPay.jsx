@@ -149,8 +149,6 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     judicial_actual:pagos.judicial_actual
                                 });
 
-                                console.log(pay_denied);
-
                                 fetch(`${import.meta.env.VITE_URL_BASE}/pays/edit`,{
                                     method:'POST',
                                     headers: {
@@ -191,15 +189,15 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     judicial_actual:pagos.judicial_actual
                                 });
                                 
-                                console.log({
-                                    cartera:cartera,
-                                    credito:pagos.credito,
-                                    saldo_capital_actual:pagos.saldo_capital_actual,
-                                    interes_actual:pagos.interes_actual,
-                                    mora_actual:pagos.mora_actual,
-                                    seguro_actual:pagos.seguro_actual,
-                                    judicial_actual:pagos.judicial_actual
-                                });
+                                // console.log({
+                                //     cartera:cartera,
+                                //     credito:pagos.credito,
+                                //     saldo_capital_actual:pagos.saldo_capital_actual,
+                                //     interes_actual:pagos.interes_actual,
+                                //     mora_actual:pagos.mora_actual,
+                                //     seguro_actual:pagos.seguro_actual,
+                                //     judicial_actual:pagos.judicial_actual
+                                // });
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/pays/edit`,{
                                     method:'POST',

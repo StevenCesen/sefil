@@ -21,6 +21,7 @@ import {
 } from 'chart.js';
 import PDFreport from "../components/PDFreport";
 import Push from "../components/Push/Push";
+import sendpush from "../helpers/sendpush";
 
 ChartJS.register(
     CategoryScale,
@@ -534,12 +535,12 @@ export default function Reports(){
                                 .then((response) => response.json())  
                                 .then((data) => {
                                     setAmount(data.data);
-
-                                    Push({
+                                    
+                                    sendpush({
                                         title:'Éxito',
-                                        message:`Filtro aplicado correctamente.`,
-                                        timeout:5000,
-                                        type:200
+                                        message:'Filtro aplicado correctamente.',
+                                        type:'Push--sucessful',
+                                        timeout:5000
                                     });
 
                                 });
@@ -717,7 +718,6 @@ export default function Reports(){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then((data) => {
-                                                            console.log(data);
                                                             setTotalMonths(data);
                                                         });
                                                 }
@@ -747,7 +747,6 @@ export default function Reports(){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then((data) => {
-                                                            console.log(data);
                                                             setTotalMonths(data);
                                                         });
                                                 }

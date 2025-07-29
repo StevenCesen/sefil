@@ -1,4 +1,4 @@
-import Push from "../components/Push/Push";
+import sendpush from "../helpers/sendpush";
 
 export default async function useUpdatePermiss(data,id){
     const request= await fetch(`${import.meta.env.VITE_URL_BASE}/users/edit/${id}`,{
@@ -12,19 +12,19 @@ export default async function useUpdatePermiss(data,id){
 
     const response=await request.json();
     
-    if(response.status===200){
-        Push({
-            title:'Éxito',
-            message:`Permiso actualizado correctamente.`,
-            timeout:5000,
-            type:200
+    if(response.status===200){ 
+        sendpush({
+            title:'Éxito.',
+            message:'Permiso actualizado correctamente.',
+            type:'Push--sucessful',
+            timeout:3000
         });
     }else{
-        Push({
+        sendpush({
             title:'ERR',
-            message:`No se pudo actualizar permiso.`,
-            timeout:5000,
-            type:400
+            message:'No se pudo actualizar permiso.',
+            type:'Push--danger',
+            timeout:3000
         });
     }
 }

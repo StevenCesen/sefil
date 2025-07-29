@@ -27,8 +27,6 @@ export default function Gcontactabilidad(){
             filter+=`&user_id=${agent}`
         }
 
-        console.log(filter)
-
         fetch(`${import.meta.env.VITE_URL_BASE}/gcontactabilidad?${filter}`,{
             headers: {
                 Accept: 'application/json',

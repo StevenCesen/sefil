@@ -2,8 +2,6 @@ import { NavLink } from "react-router-dom";
 import "./CardUpdatePay.css";
 import { useEffect, useRef, useState } from "react";
 import CardManualPay from "../CardManualPay/CardManualPay";
-import Push from "../Push/Push";
-
 
 export default function CardUpdatePay({name,fecha_carga,state}){
     
@@ -96,11 +94,11 @@ export default function CardUpdatePay({name,fecha_carga,state}){
 
                         if(file.files[0]===undefined){
 
-                            Push({
-                                title:'ERR: formato de archivo inválido',
-                                message:`Por favor, elige un archivo en formato EXCEL e intenta de nuevo.`,
-                                timeout:3000,
-                                type:400
+                            sendpush({
+                                title:'ERR: formato de archivo inválido.',
+                                message:'Por favor, elige un archivo en formato EXCEL e intenta de nuevo.',
+                                type:'Push--danger',
+                                timeout:3000
                             });
 
                         }else{
@@ -123,22 +121,22 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                                         if(data.pagos_erroneos.data.length>0){
                                             setPays(data.pagos_erroneos);
 
-                                            Push({
-                                                title:'Éxito',
-                                                message:`Pagos subidos correctamente con pendientes.`,
-                                                timeout:3000,
-                                                type:200
+                                            sendpush({
+                                                title:'Éxito.',
+                                                message:'Pagos subidos correctamente con pendientes.',
+                                                type:'Push--warning',
+                                                timeout:3000
                                             });
 
                                             e.target.textContent='Subido con pagos erróneos';
 
                                         }else{
                                     
-                                            Push({
-                                                title:'Éxito',
-                                                message:`Pagos subidos correctamente sin pendientes.`,
-                                                timeout:3000,
-                                                type:200
+                                            sendpush({
+                                                title:'Éxito.',
+                                                message:'Pagos subidos correctamente sin pendientes.',
+                                                type:'Push--warning',
+                                                timeout:3000
                                             });
 
                                             e.target.textContent='Importación correcta';

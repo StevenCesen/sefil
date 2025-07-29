@@ -9,6 +9,7 @@ import useFilterText from "../hooks/useFilterText";
 import useFilterState from "../hooks/useFilterState";
 import useFilteMinMax from "../hooks/useFilterMinMax";
 import Loader from "../components/Loader/loader";
+import sendpush from "../helpers/sendpush";
 
 export default function Gestion(){
 
@@ -140,50 +141,6 @@ export default function Gestion(){
         //Le agrego al destino
         copy[destination].data.push(prev_credito);
         copy[destination].total=copy[destination].total+1;
-
-        // if(tray==='pending'){
-        //     copy.pending.data.map(credito=>{
-        //         if(Number(credito.id)===Number(credit_id)){
-        //             prev_credito=credito;
-        //         }else{
-        //             new_pending.push(credito);
-        //         }
-        //     });
-
-        //     new_inprocess=copy.inprocess;
-        //     new_processed=copy.processed;
-
-        // }else if(tray==='inprocess'){
-            
-        //     copy.inprocess.data.map(credito=>{
-        //         if(Number(credito.id)===Number(credit_id)){
-        //             prev_credito=credito;
-        //         }else{
-        //             new_inprocess.push(credito);
-        //         }
-        //     });
-        //     new_pending=copy.pending;
-        //     new_processed=copy.processed;
-
-        // }else if(tray==='processed'){
-        //     copy.processed.data.map(credito=>{
-        //         if(Number(credito.id)===Number(credit_id)){
-        //             prev_credito=credito;
-        //         }else{
-        //             new_processed.push(credito);
-        //         }
-        //     });
-        //     new_pending=copy.pending;
-        //     new_inprocess=copy.inprocess;
-        // }
-
-        // if(destination==='pending'){
-        //     copy.pending.data.push(prev_credito);
-        // }else if(destination==='inprocess'){
-        //     copy.inprocess.data.push(prev_credito);
-        // }else if(destination==='processed'){
-        //     copy.processed.data.push(prev_credito);
-        // }
 
         setData({
             ...data,
@@ -441,25 +398,6 @@ export default function Gestion(){
 
         localStorage.setItem('campain_name','SEFIL_1');
         localStorage.setItem('cartera','SEFIL_1');
-
-        // Consulto todas las compañas del usuario presente
-        // fetch(`${import.meta.env.VITE_URL_BASE}/gestion/trays?agente=${localStorage.getItem('temp_uS')}&cartera=SEFIL_1`,{
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())  
-        //     .then((data) => {
-    
-        //         setData({
-        //             pending:data.pendiente,
-        //             inprocess:data.proceso,
-        //             processed:data.gestionado,
-        //             inactive:data.inactivos
-        //         });
-        
-        //     });
 
         setResults(0);
 
@@ -1245,22 +1183,21 @@ export default function Gestion(){
                                         setForm(false);
                                     }else{
 
-                                        Push({
-                                            title:'ERR: Gestión en progreso',
-                                            message:`Se ha realizado una llamada y no se ha guardado gestión.`,
-                                            timeout:5000,
-                                            type:300
+                                        sendpush({
+                                            title:'ERR: Gestión en progreso.',
+                                            message:'Se ha realizado una llamada y no se ha guardado gestión.',
+                                            type:'Push--danger',
+                                            timeout:5000
                                         });
                                     
                                     }
                                     
                                 }else{
-
-                                    Push({
-                                        title:'ERR: Gestión en progreso',
-                                        message:`Se ha realizado una llamada y no se ha guardado.`,
-                                        timeout:5000,
-                                        type:300
+                                    sendpush({
+                                        title:'ERR: Gestión en progreso.',
+                                        message:'Se ha realizado una llamada y no se ha guardado.',
+                                        type:'Push--danger',
+                                        timeout:5000
                                     });
                                 }
                             }}

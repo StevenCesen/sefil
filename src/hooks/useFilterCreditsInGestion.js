@@ -31,12 +31,6 @@ export default function useFilterCreditsInGestion({campain,name,ci,agencia,mora,
         filters+=`&agencia=${agencia}`;
     }
 
-    // if(date_promise!==""){
-    //     filters+=`&promise=${date_promise}`;
-    // }
-    
-    console.log(filters)
-
     fetch(`${import.meta.env.VITE_URL_BASE}/managmentall?${filters}`,{
         headers: {
             Accept: 'application/json',

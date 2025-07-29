@@ -14,8 +14,6 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
         let second=sec;
         let minutos=min;
         let hours=hour;
-        // let second=times.second;
-        // let minutos=times.minutes;
 
         setTime({
             second:Number(0),
@@ -62,25 +60,10 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
     }
 
     useEffect(()=>{
-        // setTime({
-        //     minutes:(Number(time.split(':')[1])<10) ? `0${Number(time.split(':')[1])}` : Number(time.split(':')[1]),
-        //     second:(Number(time.split(':')[2])<10) ? `0${Number(time.split(':')[2])}` : Number(time.split(':')[2]),
-        //     hour:(Number(time.split(':')[0])<10) ? `0${Number(time.split(':')[0])}` : Number(time.split(':')[0])
-        // });
-
-        // init({
-        //     sec:Number(time.split(':')[2]),
-        //     min:Number(time.split(':')[1]),
-        //     hour:Number(time.split(':')[0])
-        // });
-
-        console.log(time)
 
         let second=Number(time.split(':')[2]);
         let minutos=Number(time.split(':')[1]);
         let hours=Number(time.split(':')[0]);
-        // let second=times.second;
-        // let minutos=times.minutes;
         
         const timer=setInterval(() => {
             second++;

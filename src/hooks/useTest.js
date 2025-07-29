@@ -12,7 +12,4 @@ export default function useTest(){
         interes:20,
         seguro:35
     }
-
-    console.log(pago.order[3])
-
 }

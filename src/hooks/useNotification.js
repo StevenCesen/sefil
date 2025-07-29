@@ -17,10 +17,6 @@ export default function useNotification(setNewPush){
         //Muestro la notificación con el mensaje
         const notification = new Notification('Cobranza',options);
         
-        //Reproducir un audio
-        //new Audio("./notification.mp3").play();
-        console.log(data)
-        //Actualizo el localstorage
         if(localStorage.getItem('pusher')!==null){
             let prev_data=JSON.parse(localStorage.getItem('pusher'));
             prev_data.push(data);

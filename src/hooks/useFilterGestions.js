@@ -2,8 +2,6 @@ export default function useFilterGestions({fecha_gestion,campain,name,ci,type,st
     let filters="";
     loader(true);
 
-    console.log(credito)
-
     if(fecha_gestion!==""){
         const fecha=`${fecha_gestion.split('-')[0]}/${fecha_gestion.split('-')[1]}/${fecha_gestion.split('-')[2]}`;
         filters+=`&fecha=${fecha}`;
@@ -46,7 +44,6 @@ export default function useFilterGestions({fecha_gestion,campain,name,ci,type,st
     }
 
     filters=filters.substring(1);
-    console.log(filters)
 
     fetch(`${import.meta.env.VITE_URL_BASE}/managmentall?${filters}`,{
         headers: {

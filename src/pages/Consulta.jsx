@@ -175,34 +175,6 @@ export default function Consulta(){
                     }} placeholder="Ingrese cédula o nombre"/>
                 </label>
 
-                {/* <label>
-                    Empresa
-                    <select value={aux_busines} onChange={(e)=>{
-                        if(e.target.value!=='default'){
-                            setAux(e.target.value);
-                            setLoading(true);
-                            localStorage.setItem('cartera',e.target.value);
-                            fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${e.target.value}`,{
-                                headers: {
-                                    Accept: 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                }
-                            })
-                                .then((response) => response.json())  
-                                .then((data) => {
-                                    setCredits(data);
-                                    setLoading(false);
-                                });
-                        }
-                    }}>
-                            <option value={"default"}>--Seleccionar--</option>
-                        {
-                            business.map((bus,index)=>(
-                                <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
-                            ))
-                        }
-                    </select>
-                </label> */}
             </div>
 
             <div className="pageConsulta__results">

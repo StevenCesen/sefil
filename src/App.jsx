@@ -8,7 +8,6 @@ import "./index.css";
 import Me from './pages/Me'
 import Push from './components/Push/Push'
 
-
 function App() {
   
   const [session,setSession]=useState({});

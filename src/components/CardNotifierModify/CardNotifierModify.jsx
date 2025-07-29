@@ -4,7 +4,7 @@ import { NotifierContext } from "../../contexts/notifierContext";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useFadeArray from "../../hooks/useFadeArray";
 import { NavLink } from "react-router-dom";
-import Push from "../Push/Push";
+import sendpush from "../../helpers/sendpush";
 
 export default function CardNotifierModify({title,message,credito,cartera,fecha_pago,user_generate,prev_data,total,current_data,id,name,ci,setData,setPDF,setPush}){
 
@@ -415,11 +415,11 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                                         });
                                                     }
 
-                                                    Push({
-                                                        title:'ERR: Sumatoria incorrecta',
-                                                        message:`Se sobrepaso el valor total del desgloce.`,
-                                                        timeout:3000,
-                                                        type:400
+                                                    sendpush({
+                                                        title:'ERR: Sumatoria incorrecta.',
+                                                        message:'Se sobrepaso el valor total del desgloce.',
+                                                        type:'Push--danger',
+                                                        timeout:3000
                                                     });
 
                                                 }else{
@@ -457,8 +457,6 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                         credito:credito,
                                         cartera:cartera
                                     }
-
-                                    console.log(data)
                                     
                                     fetch(`${import.meta.env.VITE_URL_BASE}/credit/estructurar/${id}`,{
                                         method:'PUT',
@@ -486,7 +484,6 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                         credito:credito,
                                         cartera:cartera
                                     }
-                                    console.log(data);
                                     
                                     fetch(`${import.meta.env.VITE_URL_BASE}/credit/estructurar/${id}`,{
                                         method:'PUT',
@@ -504,7 +501,6 @@ export default function CardNotifierModify({title,message,credito,cartera,fecha_
                                 }}
                             >Rechazar</button>
                         </div>
-
                     </div>
             }
         </div>

@@ -120,7 +120,7 @@ export default function Monitor(){
             const conn = new WebSocket('wss://check.sefil.com.ec/ws');
 
             conn.onopen = function(e) {
-                console.log("Connection established!");
+                console.log("WSS: Connection established!");
             };
             
             conn.onmessage = function(e) {

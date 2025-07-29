@@ -179,17 +179,6 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                             }else if(dates.formaPago!=='EFECTIVO' & (dates.metodo==='' | dates.metodo==='EFECTIVO' | dates.referencia==='' | dates.idBanco==='')){
                                 e.target.textContent="Error, forma de pago y método no corresponden o falta información de banco";
                             }else{
-                                //setView(false);
-                                // setGastos({
-                                //     status:false,
-                                //     email:dates.email,
-                                //     valor_gasto:dates.value,
-                                //     fecha:"2024-05-27",
-                                //     clave_acceso:"NO/D"
-                                // });
-
-                                console.log(dates);
-
                                 fetch(`${import.meta.env.VITE_URL_BASE}/gastos/${dates.id}`,{
                                     method:'POST',
                                     headers: {

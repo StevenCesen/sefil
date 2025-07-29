@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CardCall.css"
 import useBlobToBase64 from "../../hooks/useBlobToBase64";
-import Push from "../Push/Push";
+import sendpush from "../../helpers/sendpush";
 
 const states_call=[
     'NO CONTACTADO',
@@ -18,8 +18,6 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
     const [call_state,setState]=useState();
     const [continue_call,setContinue]=useState();
     const [status_call,setStatusCall]=useState();
-    const [end_session,setEnd]=useState(false);
-    const [view_states,setView]=useState(false);
     const [record,setRecord]=useState({});
     const [whats_call,setWhatCall]=useState();
 
@@ -69,15 +67,12 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                     }
                 }
 
-                console.log(response);
-
                 if(response.estado=='Busy'){
                     
                     try {
                         const hangup=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
                         const respo=await hangup.json();
                     } catch (error) {
-                        console.log(error);
                         recorder.stop();
 
                         recorder.addEventListener('dataavailable',async e => {
@@ -123,8 +118,8 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
         setRecord('');
         setState('');
         setWhatCall(false);
-        setView(false);
-        setEnd(false);
+        
+        // setEnd(false);
         setIn("");
         setContinue();
 
@@ -152,11 +147,11 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                         if(localStorage.getItem('state_call')=="false"){
                             setIn(e.target.value);
                         }else{
-                            Push({
-                                title:'ERR: Llamada en progreso',
-                                message:`Termine o guarde la llamada para digitar otro número.`,
-                                timeout:3000,
-                                type:400
+                            sendpush({
+                                title:'ERR: Llamada en progreso.',
+                                message:'Termine o guarde la llamada para digitar otro número.',
+                                type:'Push--danger',
+                                timeout:3000
                             });
                         }
                     }}
@@ -208,7 +203,6 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     if(!whats_call){
                                         const request=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
                                         const response=await request.json();
-                                        console.log(response);
                                     }
 
                                     record.stop();
@@ -223,15 +217,15 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 } catch (error) {
                                     clearInterval(continue_call);
                                     clearInterval(status_call);
-                                    setEnd(true);
+                                    // setEnd(true);
                                     setView(true);
                                     setWhatCall(false);
                                 }
                                 localStorage.setItem('progreso','(Recien marcado)');
                                 clearInterval(continue_call);
                                 clearInterval(status_call);
-                                setEnd(true);
-                                setView(true);
+                                // setEnd(true);
+                                // setView(true);
                                 setWhatCall(false);
                                 localStorage.setItem('state_call',"setState");
                             }} 
@@ -254,11 +248,11 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
 
                                 if(((number_in==="") ? phone.nro : number_in)===0){
         
-                                    Push({
-                                        title:'ERR: Sin número',
-                                        message:`No hay número para realizar la llamada`,
-                                        timeout:3000,
-                                        type:400
+                                    sendpush({
+                                        title:'ERR: Sin número.',
+                                        message:'No hay número para realizar la llamada.',
+                                        type:'Push--sucessful',
+                                        timeout:3000
                                     });
 
                                 }else{
@@ -275,13 +269,20 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                     })
                                         .then((response) => response.json())  
                                         .then((data) => {
-                                            console.log(data);
+                                            
                                         });
 
                                     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                                     recorder = new MediaRecorder(stream);
                                     recorder.start();
                                     setRecord(recorder);
+
+                                    sendpush({
+                                        title:'Estado de llamada.',
+                                        message:'Se ha iniciado la grabación de llamada.',
+                                        type:'Push--sucessful',
+                                        timeout:3000
+                                    });
 
                                     try {
                                         const request=await fetch(`originate.php?exten=${(number_in==="") ? phone.nro : number_in}&id=9&channel=${localStorage.getItem('extension')}`);
@@ -338,6 +339,13 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                 recorder.start();
                                 setRecord(recorder);
 
+                                sendpush({
+                                    title:'Estado de llamada.',
+                                    message:'Se ha iniciado la grabación de llamada.',
+                                    type:'Push--sucessful',
+                                    timeout:3000
+                                });
+
                                 init();
 
                                 setDataCall({
@@ -364,12 +372,12 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
 
                             if(call_state===''){
                                 e.target.textContent='Intentar de nuevo';
-        
-                                Push({
-                                    title:'ERR: Sin estado de llamada',
-                                    message:`Por favor, selecciona un estado de llamada`,
-                                    timeout:3000,
-                                    type:400
+                                
+                                sendpush({
+                                    title:'ERR: Sin estado de llamada.',
+                                    message:'Por favor, selecciona un estado de llamada.',
+                                    type:'Push--warning',
+                                    timeout:3000
                                 });
 
                             }else{
@@ -403,7 +411,7 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                             clearInterval(status_call);
                                             addStates(call_state);
                                             setCancel(true);
-                                            setView(false);
+                                            // setView(false);
                                             setTime({
                                                 second:0,
                                                 minutes:0
@@ -423,6 +431,13 @@ export default function CardCall({change,phone,channel,id_credit,cartera,id_camp
                                             localStorage.setItem('state_call',"false");
 
                                             e.target.textContent="Guardado";
+
+                                            sendpush({
+                                                title:'Estado de llamada.',
+                                                message:'Se ha guardado la llamada correctamente.',
+                                                type:'Push--sucessful',
+                                                timeout:3000
+                                            });
 
                                         }else{
                                             e.target.textContent="Intentar de nuevo";

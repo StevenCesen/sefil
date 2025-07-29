@@ -13,7 +13,7 @@ export default function CardSelectState({mode,current_option}){
         'EN ALMUERZO',
         'EN REUNIÓN'
     ];
-
+    
     useEffect(()=>{
         setView(false);
         setCurrent(current_option);
@@ -51,7 +51,6 @@ export default function CardSelectState({mode,current_option}){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then((data) => {
-                                                            // handlerPush();
                                                             sendpush({
                                                                 title:'Estado',
                                                                 message:'Tu estado ha cambiado',

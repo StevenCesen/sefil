@@ -63,7 +63,6 @@ export default function Gconvenios(){
         filter=filter.substring(1);
         
         setLoading(true);
-        console.log(filter)
 
         fetch(`${import.meta.env.VITE_URL_BASE}/pruebaconvenios?${filter}`,{
             headers: {
@@ -182,24 +181,6 @@ export default function Gconvenios(){
                         </label>
                         <label>
                             Fecha pago pendiente
-                            {/* <input 
-                                type="date"
-                                value={filters.pend_date}
-                                onChange={(e)=>{
-                                    setFilters({
-                                        ...filters,
-                                        pend_date:e.target.value
-                                    });
-
-                                    updateFilter({
-                                        agente:filters.agente,
-                                        ult_date:filters.ult_date,
-                                        pend_date:e.target.value,
-                                        nro_cuotas:filters.nro_cuotas,
-                                        cartera:filters.cartera
-                                    });
-                                }}
-                            /> */}
                         </label>
                         <label>
                             Nro. cuotas

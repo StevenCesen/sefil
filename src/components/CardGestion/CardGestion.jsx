@@ -1,5 +1,4 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
 import "./CardGestion.css"
 import CardCall from "../CardCall/CardCall";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
@@ -13,8 +12,9 @@ import PDFcondonacion from "../PDFcondonacion";
 import CardStructure from "../CardStructure/CardStructure";
 import useVerifyStruct from "../../hooks/useVerifyRestruct";
 import CardViewConvenio from "../CardViewConvenio/CardViewConvenio";
-import Push from "../Push/Push";
 import CardSendMail from "../CardSendMail/CardSendMail";
+import CardSendSMS from "../CardSendSMS/CardSendSMS";
+import sendpush from "../../helpers/sendpush";
 
 const render = (status) => {
     return <p>{status}</p>;
@@ -60,6 +60,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
     const [view_convenio,setViewConvenio]=useState();
     const [convenio_data,setConvenioData]=useState();
     const [view_sendmail,setViewSendmail]=useState();
+    const [view_sendsms,setViewSendsms]=useState();
 
     const close=()=>{
         setCall(false);
@@ -154,6 +155,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
         setViewCondonation(false);
         setPDFcondonation(false);
         setViewSendmail(false);
+        setViewSendsms(false);
 
         let cuota_mensual=0, total_pendiente=0, fecha_pago="";
 
@@ -710,12 +712,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                             index:index
                                                         });
                                                     }else{
-
-                                                        Push({
-                                                            title:'ERR: Llamada en progreso',
-                                                            message:`Por favor, termine la llamada para marcar a otro número.`,
-                                                            timeout:3000,
-                                                            type:400
+                                                        sendpush({
+                                                            title:'ERR: Llamada en progreso.',
+                                                            message:'Por favor, termine la llamada para marcar a otro número.',
+                                                            type:'Push--danger',
+                                                            timeout:3000
                                                         });
                                                     }
                                                 
@@ -735,18 +736,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                     </div>
                                 ))
                             }
-                            
-                            {/* <p style={{fontWeight:'600'}}>Contactos secundarios</p>
-                            {
-                                phones_secondaries.map((phone,index)=>(
-                                    <div key={index} className="Ggestion__contact">
-                                        <div className="Ggestion__contactSecond">
-                                            <p>{phone.parentesco}</p>
-                                            <p>{phone.nro} ({phone.efec})</p>
-                                        </div> 
-                                    </div>
-                                ))
-                            } */}
                         </div>
                     </div>
 
@@ -791,11 +780,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                     form.current.reset();
                                 
                                     if(incall){
-                                        Push({
-                                            title:'ERR: Llamada en progreso',
-                                            message:`Por favor, termine la llamada para marcar a otro número.`,
-                                            timeout:3000,
-                                            type:400
+                                        sendpush({
+                                            title:'ERR: Llamada en progreso.',
+                                            message:'Por favor, termine la llamada para marcar a otro número.',
+                                            type:'Push--danger',
+                                            timeout:3000
                                         });
 
                                         e.target.textContent="Seguir";
@@ -844,11 +833,12 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 setNext(index);
                                                 setTotalTray(total-1);
                                             }else{
-                                                Push({
-                                                    title:'Gestión en curso',
-                                                    message:`Se ha realizado una llamada con estado CONTACTADO y no se ha guardado gestión.`,
-                                                    timeout:3000,
-                                                    type:400
+                                                
+                                                sendpush({
+                                                    title:'Gestión en curso.',
+                                                    message:'Se ha realizado una llamada con estado CONTACTADO y no se ha guardado gestión.',
+                                                    type:'Push--sucessful',
+                                                    timeout:3000
                                                 });
                                             }
                                         }
@@ -887,7 +877,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                     Estado
                                     <select 
                                         onChange={(e)=>{
-                                        console.log(e)
                                             setDataGestion({
                                                 ...data_gestion,
                                                 state_gestion:e.target.value
@@ -908,7 +897,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                     Subestado
                                     <select
                                         onChange={(e)=>{
-                                            console.log(e)
                                             setDataGestion({
                                                 ...data_gestion,
                                                 substate_gestion:e.target.value
@@ -966,9 +954,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
                                 <label className="Ggestion__input">
                                     Monto a pagar
-                                    {/* <select className="Ggestion__select">
-                                        <option value={"NO CONTESTA"}>--Seleccionar--</option>
-                                    </select> */}
                                     <div className="Ggestion__inputNumber">
                                         <input 
                                             type="number" 
@@ -1041,12 +1026,12 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 if(await useVerifyCondonation(currently.id)){
                                                     setViewCondonation(!view_condonation);
                                                 }else{
-                                                    
-                                                    Push({
-                                                        title:'ERR: Condonación existente',
-                                                        message:`No se puede, ya se ha registrado una condonación.`,
-                                                        timeout:3000,
-                                                        type:400
+                                                
+                                                    sendpush({
+                                                        title:'ERR: Condonación existente.',
+                                                        message:'No se puede, ya se ha registrado una condonación.',
+                                                        type:'Push--danger',
+                                                        timeout:3000
                                                     });
 
                                                     clean;
@@ -1064,11 +1049,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 if(await useVerifyStruct(currently.id)){
                                                     setReestructurar(!view_reestructurar);
                                                 }else{
-                                                    Push({
-                                                        title:'ERR: Convenio existente',
-                                                        message:`No se puede, hay un convenio ya creado.`,
-                                                        timeout:3000,
-                                                        type:400
+                                                    sendpush({
+                                                        title:'ERR: Convenio existente.',
+                                                        message:'No se puede, hay un convenio ya creado.',
+                                                        type:'Push--danger',
+                                                        timeout:3000
                                                     });
                                                 }
                                             }}
@@ -1101,7 +1086,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                 >Enviar correo</button>
                                 <button
                                     onClick={async (e)=>{
-                                        
+                                        setViewSendsms(true);
                                     }}
                                 >Enviar SMS</button>
                             </div>
@@ -1122,11 +1107,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                     if((data_gestion.date_promise==='' & data_gestion.substate_gestion=='COMPROMISO DE PAGO') | data_gestion.substate_gestion===''){
                                         e.target.textContent="Intentar de nuevo";
 
-                                        Push({
-                                            title:'ERR: Datos imcompletos',
-                                            message:`Por favor, llene todos los datos de la gestión.`,
-                                            timeout:3000,
-                                            type:400
+                                        sendpush({
+                                            title:'ERR: Datos imcompletos.',
+                                            message:'Por favor, llene todos los datos de la gestión.',
+                                            type:'Push--danger',
+                                            timeout:5000
                                         });
 
                                     }else{
@@ -1135,11 +1120,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
                                             if(data_gestion.substate_gestion=='COMPROMISO DE PAGO' & data_gestion.nro_notificacion===""){
 
-                                                Push({
-                                                    title:'ERR: Compromiso de pago',
-                                                    message:`Por favor, ingrese un NRO DE NOTIFICACIÓN para el COMPROMISO DE PAGO, caso contrario, seleccione OFERTA DE PAGO.`,
-                                                    timeout:5000,
-                                                    type:400
+                                                sendpush({
+                                                    title:'ERR: NRO Notificación.',
+                                                    message:'Por favor, ingrese un NRO DE NOTIFICACIÓN para el COMPROMISO DE PAGO, caso contrario, seleccione OFERTA DE PAGO.',
+                                                    type:'Push--danger',
+                                                    timeout:5000
                                                 });
 
                                                 e.target.textContent="Guardar";
@@ -1162,8 +1147,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                 data_send.id_calls_extras=JSON.stringify(data_send.id_calls_extras);
                                                 data_send.cartera=localStorage.getItem('cartera');
                                                 
-                                                console.log(data_send);
-                                                
                                                 fetch(`${import.meta.env.VITE_URL_BASE}/managments`,{
                                                     method:'POST',
                                                     headers: {
@@ -1178,11 +1161,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                         if(data.status===200){
                                                             setMessage('Gestionado');
 
-                                                            Push({
-                                                                title:'Éxito',
-                                                                message:`Gestión guardada correctamente.`,
-                                                                timeout:3000,
-                                                                type:200
+                                                            sendpush({
+                                                                title:'Éxito.',
+                                                                message:'Gestión guardada correctamente.',
+                                                                type:'Push--sucessful',
+                                                                timeout:3000
                                                             });
 
                                                             updateTrays(data.data,'processed');
@@ -1222,11 +1205,11 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
                                         }else{
 
-                                            Push({
+                                            sendpush({
                                                 title:'ERR: llamada en progreso',
-                                                message:`Por favor, termine la llamada o espere que se guarde para registrar gestión.`,
-                                                timeout:3000,
-                                                type:400
+                                                message:'Por favor, termine la llamada o espere que se guarde para registrar gestión.',
+                                                type:'Push--warning',
+                                                timeout:3000
                                             });
 
                                             e.target.textContent="Guardar";
@@ -1451,6 +1434,17 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                 (view_sendmail)
                 ?   
                     <CardSendMail
+                        clients={currently.contactos}
+                        days_past_due={currently.dias_vencidos}
+                        total_amount={currently.totalAmount}
+                    />
+                :   <></>
+            }
+
+            {
+                (view_sendsms)
+                ?   
+                    <CardSendSMS
                         clients={currently.contactos}
                         days_past_due={currently.dias_vencidos}
                         total_amount={currently.totalAmount}

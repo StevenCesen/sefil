@@ -1,3 +1,4 @@
+import sendpush from "../../helpers/sendpush";
 import "./CardReverse.css";
 
 export default function CardReverse({id,name,fecha,update}){
@@ -25,24 +26,23 @@ export default function CardReverse({id,name,fecha,update}){
                                 e.target.textContent="Revertido";
 
                                 update();
-
-                                Push({
-                                    title:'Éxito',
-                                    message:`Comprobante revertido.`,
-                                    timeout:3000,
-                                    type:200
+                                
+                                sendpush({
+                                    title:'Éxito.',
+                                    message:'Comprobante revertido.',
+                                    type:'Push--sucessful',
+                                    timeout:3000
                                 });
 
                             }else{
 
                                 e.target.textContent="Revertir";
                                 update();
-
-                                Push({
+                                sendpush({
                                     title:'ERR: Tiempo expirado',
-                                    message:`Se ha sobrepasado el período de un día después de la emisión.`,
-                                    timeout:5000,
-                                    type:400
+                                    message:'Se ha sobrepasado el período de un día después de la emisión.',
+                                    type:'Push--danger',
+                                    timeout:3000
                                 });
                             }
                         });

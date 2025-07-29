@@ -3,13 +3,11 @@ import "./CardStructure.css";
 import useFadeArray from "../../hooks/useFadeArray";
 import useStruct from "../../hooks/useStruct";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
-import Push from "../Push/Push";
 
 export default function CardStructure({original_dates,total,id,set,cartera,cobranza,status_cobranza}){
 
     const [tipo_desgloce,setDesgloce]=useState();
     const [nro_cuotas,setNumber]=useState();
-    const [date,setDate]=useState();
     const [totalAmount,setTotalAmount]=useState();
     const [totalSum,setTotalSum]=useState();
     const [monto_cuota,setMonto]=useState();
@@ -101,11 +99,6 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                     >Calcular</button>
                 </div>
 
-                {/* <div className="CardCondonacion__select">
-                    <label>Fecha de pago:</label>
-                    <input type="date" onChange={(e)=>{setDate(e.target.value)}}/>
-                </div> */}
-                
                 {
                     (tipo_desgloce==='automatico') ?
                         <div className="CardCondonacion__quotes">
@@ -170,11 +163,11 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                                                     
                                                     setTotalSum(totalAmount);
 
-                                                    Push({
-                                                        title:'ERR: sumatoria incorrecta',
-                                                        message:`Se sobrepaso el valor total del desgloce.`,
-                                                        timeout:3000,
-                                                        type:400
+                                                    sendpush({
+                                                        title:'ERR: sumatoria incorrecta.',
+                                                        message:'Se sobrepaso el valor total del desgloce.',
+                                                        type:'Push--danger',
+                                                        timeout:3000
                                                     });
 
                                                 }else{
@@ -247,17 +240,15 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                         original_dates:JSON.stringify(original_dates),
                         totalAmount:totalAmount
                     }
-
-                    console.log(data);
                     
                     if(errors>0){
                         e.target.textContent="Guardar cambios";
 
-                        Push({
-                            title:'ERR: no hay fecha',
-                            message:`Existen cuotas que no tienen fecha.`,
-                            timeout:3000,
-                            type:400
+                        sendpush({
+                            title:'ERR: no hay fecha.',
+                            message:'Existen cuotas que no tienen fecha.',
+                            type:'Push--danger',
+                            timeout:3000
                         });
                         
                     }else if(tipo_desgloce==='automatico' | tipo_desgloce==='manual'){
@@ -267,11 +258,11 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                     }else{
                         e.target.textContent="Guardar cambios";
 
-                        Push({
-                            title:'ERR: sumatoria incorrecta',
-                            message:`Se sobrepaso el valor total del desgloce.`,
-                            timeout:3000,
-                            type:400
+                        sendpush({
+                            title:'ERR: sumatoria incorrecta.',
+                            message:'Se sobrepaso el valor total del desgloce.',
+                            type:'Push--danger',
+                            timeout:3000
                         });
                     }
 

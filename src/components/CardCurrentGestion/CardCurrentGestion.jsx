@@ -8,7 +8,6 @@ export default function CardCurrentGestion({data}){
 
     const updateCall=(call)=>{
         let copy=(calls.length>0) ? calls : [];
-        console.log(copy)
         copy.push(call);
         setCalls(copy);
     }

@@ -507,7 +507,7 @@ export default function Stadistics(){
                                             <NavLink to={`/dashboard/stadistics/${credit.id}`} onClick={(e)=>{
                                                 e.preventDefault();
                                                 setLoading(true);
-                                                console.log(credit.id)
+                                               
                                                 fetch(`${import.meta.env.VITE_URL_BASE}/campains/gestionwithpays?campain=29&id_credito=${credit.id}&cartera=syncs`,{
                                                     headers: {
                                                         Accept: 'application/json',
@@ -516,7 +516,7 @@ export default function Stadistics(){
                                                 })
                                                     .then((response) => response.json())  
                                                     .then((data) => {
-                                                        console.log(data);
+                                                       
                                                         setCredit(data);
                                                         setLoading(false);
                                                         location.hash=`/dashboard/stadistics/${credit.id}`;

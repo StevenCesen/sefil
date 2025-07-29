@@ -83,7 +83,7 @@ export default function Campain(){
                         <CardSync/>
                     </div>
                 </div>
-
+                    
                 <div className="Campain__list">
                     <div className="Campain__access">
                         <h4 className="Campain__subtitle">Campañas</h4>

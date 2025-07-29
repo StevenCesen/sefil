@@ -80,8 +80,6 @@ export default function Setting(){
                                 ))
                             }
 
-                            {/* <CardExportPays/> */}
-
                         </>
                     :
                         (param.ci==='importpays')

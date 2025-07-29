@@ -16,7 +16,7 @@ import CardConfirm from "../components/CardConfirm/CardConfirm";
 import CardEditJudicial from "../components/CardEditJudicial/CardEditJudicial";
 import CardEditConvenio from "../components/CardEditConvenio/CardEditConvenio";
 import Loader from "../components/Loader/loader";
-import Push from "../components/Push/Push";
+import sendpush from "../helpers/sendpush";
 
 const render = (status) => {
     return <h1>{status}</h1>;
@@ -169,14 +169,6 @@ export default function DetailCredit(){
             .then((data) => {
                 setCredit(data);
             });
-        
-
-        // Para verificar si existe registrado un gasto de cobranza y estado pendiente
-        /*
-            true: hay un gasto en estado pendiente
-            false: no hay un gasto en estado pendiente
-            pay: hay gastos ya cobrados
-        */
 
         try {
             fetch(`${import.meta.env.VITE_URL_BASE}/gastos?credito=${param.get('id')}&cartera=${cartera.id}`,{
@@ -187,9 +179,6 @@ export default function DetailCredit(){
             })
                 .then((response) => response.json())  
                 .then((data) => {
-                    
-                    console.log("WS");
-                    console.log(data);
 
                     if(data.id===false){
                         setGastos({
@@ -231,7 +220,7 @@ export default function DetailCredit(){
                     }
                 });
         } catch (error) {
-            console.log(error)
+           
         }
         
         setPush({
@@ -500,14 +489,13 @@ export default function DetailCredit(){
                                                                         if(date_comparative===cuota.fecha_pago || JSON.parse(restruct.detail)[n-1].estado==='PAGADO'){
                                                                             setPay(!pay);
                                                                         }else{
-                                                                            Push({
-                                                                                title:'ERR: Pago',
-                                                                                message:`Existe una cuota anterior sin pago o aún no es la fecha de pago.`,
-                                                                                timeout:5000,
-                                                                                type:300
+                                                                            sendpush({
+                                                                                title:'ERR: Pago.',
+                                                                                message:'Existe una cuota anterior sin pago o aún no es la fecha de pago.',
+                                                                                type:'Push--danger',
+                                                                                timeout:5000
                                                                             });
                                                                         }
-                                                                        
                                                                     }}
                                                                 >Pago</button>
 
@@ -619,12 +607,11 @@ export default function DetailCredit(){
                                                     setReestructurar(!view_reestructurar);
                                                     
                                                 }else{
-                                                    
-                                                    Push({
-                                                        title:'ERR: Convenio existente',
-                                                        message:`No se puede, hay un convenio ya creado.`,
-                                                        timeout:5000,
-                                                        type:300
+                                                    sendpush({
+                                                        title:'ERR: Convenio existente.',
+                                                        message:'No se puede, hay un convenio ya creado.',
+                                                        type:'Push--danger',
+                                                        timeout:5000
                                                     });
                                                 }
                                             }}>Convenio de pago</button>
@@ -636,12 +623,11 @@ export default function DetailCredit(){
                                     if(await useVerifyCondonation(param.get('id'))){
                                         setViewCondonation(!view_condonation);
                                     }else{
-                                        
-                                        Push({
-                                            title:'ERR: Condonación existente',
-                                            message:`No se puede, ya se ha registrado una condonación.`,
-                                            timeout:5000,
-                                            type:300
+                                        sendpush({
+                                            title:'ERR: Condonación existente.',
+                                            message:'No se puede, ya se ha registrado una condonación.',
+                                            type:'Push--danger',
+                                            timeout:5000
                                         });
                                         clean;
                                     }

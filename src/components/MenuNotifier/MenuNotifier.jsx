@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import "./MenuNotifier.css";
 import CardNotifierModify from "../CardNotifierModify/CardNotifierModify";
-import { NavLink } from "react-router-dom";
 import { NotifierContext } from "../../contexts/notifierContext";
 import CardNotifierSimple from "../CardNotifierSimple/CardNotifierSimple";
 import PDFcondonacion from "../PDFcondonacion";
@@ -15,10 +14,6 @@ export default function MenuNotifier(){
     const [condonation,setCondonation]=useState();
 
     const dataContext=useContext(NotifierContext);
-
-    const updatePusher=(id)=>{
-        
-    }
 
     useEffect(()=>{
         setMenu(false);
@@ -34,7 +29,6 @@ export default function MenuNotifier(){
             .then((response) => response.json())  
             .then((data) => {
                 setPusher(data);
-                console.log(data);
             });
 
     },[dataContext]);

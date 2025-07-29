@@ -14,8 +14,4 @@ export default function useCheckbox(name,setFilter){
                 .then((data) => setFilter(data));
         }
     });
-
-    // setFilter(value);
-
-
 }

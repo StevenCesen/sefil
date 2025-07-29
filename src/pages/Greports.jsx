@@ -147,8 +147,6 @@ export default function Greports(){
                 filter+=`&trays=${new_trays.replaceAll(']',')')}`;
             }
 
-            console.log(filter)
-
             const request= await fetch(`${import.meta.env.VITE_URL_BASE}/resume/repo?${filter}`,{
                 headers: {
                     Accept: 'application/json',
@@ -173,8 +171,6 @@ export default function Greports(){
             if(estado!=="" & estado!=="TODOS"){
                 filter+=`&estado=${estado}`;
             }
-
-            console.log(filter)
 
             const request= await fetch(`${import.meta.env.VITE_URL_BASE}/resume/currentday?${filter}`,{
                 headers: {

@@ -1,6 +1,5 @@
 import { NavLink, useParams } from "react-router-dom";
 import "./pages.css";
-import CardCredit from "../components/CardCredit/CardCredit";
 import DetailCredit from "./DetailCredit";
 import { useEffect, useRef, useState } from "react";
 import useSearch from "../hooks/useSearch";

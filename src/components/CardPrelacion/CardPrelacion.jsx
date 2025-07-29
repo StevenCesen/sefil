@@ -33,8 +33,6 @@ export default function CardPrelacion({cartera}){
         let items=document.getElementsByClassName('CardSelectsFrom')[0].children;
         items=[].slice.call(items);
 
-        console.log(items);
-
         items.map((item)=>{
             if(item.textContent===value){
                 item.classList.remove('CardSelectsFrom__labelOff');

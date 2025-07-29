@@ -14,80 +14,13 @@ export default function ReportCobranza(){
         fecha:''
     });
 
-    const [reports,setReports]=useState();
-
-    const [results,setResults]=useState();
-
-    const [provincia,setProvincia]=useState("loja");
-    
-    const [canton,setCanton]=useState("all");
-
-    const [empresa,setEmpresa]=useState("SEFIL_1");
-    const [empresa_1,setEmpresa1]=useState("SEFIL_1");
     const [empresa_2,setEmpresa2]=useState("");
-
-    const [fecha_inicio,setFechaInicio]=useState("");
-    const [fecha_final,setFechaFinal]=useState("");
-    const [agent,setAgent]=useState("");
-
-    const [fecha_inicio_1,setFechaInicio1]=useState("");
-    const [fecha_final_1,setFechaFinal1]=useState("");
 
     const [fecha_inicio_2,setFechaInicio2]=useState("");
     const [fecha_final_2,setFechaFinal2]=useState("");
 
-    const [nro_credit,setNro]=useState();
-    const [amount_credits,setAmount]=useState();
-    const [mora,setMoraCredit]=useState();
-    const [select_agency_amount,setAgencyAmount]=useState();
-    const [select_agency_mora,setAgencyMora]=useState();
-    const [type_unificate,setUnificate]=useState('normal');
-
-    const [pdf_report,setReport]=useState();
-
-    const [carteras,setCarteras]=useState();
-
-    const [total_months,setTotalMonths]=useState();
-
-    const [number,setNumber]=useState();
-    const [type_search,setTypeSearch]=useState();
-
-    const param=useParams();
-
-    const updateMonto=(value)=>{
-        setReports(value);
-    };
-
-    const updateForma=(value)=>{
-        // setFilter({
-        //     ...filter,
-        //     forma_pago:value
-        // });
-        setReports(value);
-    };
-
-    const updateTransaccion=(value)=>{
-        setReports(value);
-    };
-
-    const updateAgente=(value)=>{
-        setReports(value);
-    };
-
-    const updateMes=(value)=>{
-        setReports(value);
-    };
-
-    const updateFecha=(value)=>{
-        setReports(value);
-    };
-
-
-    const [agents,setAgents]=useState();
     const [business,setBusiness]=useState();
-    const [select_value,setSelect]=useState("all");
     const [campains,setCampains]=useState();
-    const [campain,setCampain]=useState();
 
     useEffect(()=>{
         setReport({

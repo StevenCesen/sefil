@@ -439,7 +439,6 @@ export default function Clist(){
                                                     type="number"
                                                     defaultValue={filter.mora_max}
                                                     onKeyDown={(e)=>{
-                                                        console.log(e)
                                                         setFilter({
                                                             ...filter,
                                                             mora_max:e.target.value

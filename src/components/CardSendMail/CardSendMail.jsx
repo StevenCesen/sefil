@@ -2,13 +2,12 @@ import { useState } from "react";
 import "./CardSendMail.css";
 import makebody from "../../helpers/makebody";
 import sendmail from "../../helpers/sendmail";
-import Push from "../Push/Push";
 
 export default function CardSendMail({clients,days_past_due,total_amount}){
     const [client,setClient]=useState('');
     const [mail,setMail]=useState('');
     const [message,setMessage]=useState('');
-    console.log(clients)
+    
     const formats=[
         {
             'id':1,
@@ -118,16 +117,13 @@ export default function CardSendMail({clients,days_past_due,total_amount}){
 
                     const send=await sendmail({data:body_mail});
 
-                    console.log(send);
-
-                    Push({
-                        title:'Éxito',
-                        message:`Generado.`,
-                        timeout:3000,
-                        type:200
+                    sendpush({
+                        title:'Éxito.',
+                        message:'Correo enviado correctamente.',
+                        type:'Push--sucessful',
+                        timeout:3000
                     });
                 }}
-
             >Enviar correo</button>
         </div>
     );

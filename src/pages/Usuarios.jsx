@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import CardUsuarios from "../components/CardUsuarios/CardUsuarios";
 import Loader from "../components/Loader/loader";
-import Push from "../components/Push/Push";
 
 export default function Usuarios(){
 
@@ -106,14 +105,12 @@ export default function Usuarios(){
                                     setNewChange(false);
 
                                 }else{
-
-                                    Push({
-                                        title:'Éxito',
-                                        message:`No se pudo actualizar permiso.`,
-                                        timeout:5000,
-                                        type:400
+                                    sendpush({
+                                        title:'Éxito.',
+                                        message:'No se pudo actualizar permiso.',
+                                        type:'Push--sucessful',
+                                        timeout:5000
                                     });
-                                    
                                 }
 
                             }}

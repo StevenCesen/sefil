@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "./CardCreateCampain.css"
-import Push from "../Push/Push";
 
 export default function CardCreateCampain({setData}){
 
@@ -244,8 +243,6 @@ export default function CardCreateCampain({setData}){
                             type_assign:campain.type_assign
                         };
 
-                        console.log(data)
-
                         if(campain.name!=='' & campain.fecha_init!='' & campain.fecha_finish!=''){
                             fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
                                 method:'POST',
@@ -272,21 +269,21 @@ export default function CardCreateCampain({setData}){
     
                                 });
 
-                            Push({
-                                title:'Éxito',
-                                message:`Campaña creada correctamente.`,
-                                timeout:3000,
-                                type:200
+                            sendpush({
+                                title:'Éxito.',
+                                message:'Campaña creada correctamente.',
+                                type:'Push--sucessful',
+                                timeout:3000
                             });
 
                         }else{
                             e.target.textContent='Guardar';
 
-                            Push({
-                                title:'ERR: Datos incompletos',
-                                message:`Por favor, llene todos los campos.`,
-                                timeout:3000,
-                                type:200
+                            sendpush({
+                                title:'ERR: Datos incompletos.',
+                                message:'Por favor, llene todos los campos.',
+                                type:'Push--danger',
+                                timeout:3000
                             });
                             
                         }
