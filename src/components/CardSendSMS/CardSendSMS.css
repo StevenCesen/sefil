@@ -1,6 +1,5 @@
 .CardSendMail{
-    width: 70%;
-    height: 400px;
+    width: 60%;
     border-radius: 10px;
     background-color: white;
     position: absolute;
@@ -12,36 +11,42 @@
     padding: 20px 20px;
     display: flex;
     flex-direction: column;
+    box-shadow: var(--box-shadow);
+}
+
+.CardSendMail>p{
+    margin-bottom: 20px;
+    font-weight: 100;
 }
 
 .CardSendMail>h2{
     margin-bottom: 20px;
 }
 
-.CardSendmail__head{
+.CardSendMail__head{
     width: 100%;
     display: flex;
     justify-content: flex-start;
-    align-items: center;
     gap: 10px;
 }
 
-.CardSendMail__label{
-    margin-bottom: 10px;
+.CardSendMail__head>label{
+    width: 100%;
 }
 
-.CardSendMail__label>input{
-    width: 300px;
+.CardSendMail__head>label>select{
+    width: 100%;
     height: 30px;
-    display: block;
     margin-top: 5px;
+    display: flex;
 }
 
-.CardSendMail__label>select{
-    width: 300px;
+.CardSendMail__head>label>input{
+    width: 30% !important;
     height: 30px;
-    display: block;
     margin-top: 5px;
+    display: flex;
+    padding-left: 10px;
 }
 
 .CardSendMail__body{
@@ -66,4 +71,27 @@
     width: 100px;
     margin-top: 10px;
     align-self: flex-end;
+}
+
+.CardSendSMS__item{
+    width: 60%;
+    padding: 10px;
+    border-radius: 10px;
+    display: grid;
+    box-sizing: border-box;
+    grid-template-columns: calc(60% - 10px) 40%;
+    align-items: center;
+    gap: 10px;
+    background-color: rgb(243, 243, 243);
+    margin-top: 10px;
+}
+
+.CardSendSMS__item>label>select,.CardSendSMS__item>label>input{
+    width: 100%;
+    height: 30px;
+    border-radius:0;
+    background-color: white;
+    margin-top: 5px;
+    border: 1px solid rgb(206, 206, 206);
+    padding-left: 10px;
 }

@@ -3,128 +3,90 @@ import "./CardSendMail.css";
 import makebody from "../../helpers/makebody";
 import sendmail from "../../helpers/sendmail";
 
-export default function CardSendMail({clients,days_past_due,total_amount}){
+export default function CardSendMail({clients,days_past_due,total_amount,setClose}){
     const [client,setClient]=useState('');
     const [mail,setMail]=useState('');
     const [message,setMessage]=useState('');
+    const [format,setFormat]=useState('');
     
     const formats=[
         {
             'id':1,
-            'name':'Contáctanos',
-            'text':'(x). Somos de Empresa de cobranzas SEFIL estamos gestionando el pago de su deuda en FACES su saldo a la fecha es $(x). Podemas llegar a un acuerdo de pago por favor contactarse al (x).'
+            'name':'Recordatorio de pago pendiente – FACES',
+            'text':''
         },
         {
             'id':2,
-            'name':'Recordatorio',
-            'text':'(x), en nombre de FACES le recordamos que la fecha de pago de su credito es el (x), valor $(x)'
+            'name':'URGENTE – Pagos pendiente en FACES requiere solución inmediata',
+            'text':''
         }
     ];
 
     return (
         <div className="CardSendMail">
             <h2>Enviar correo</h2>
-            <div className="CardSendmail__head">
-                <label className="CardSendMail__label">
-                    Cliente
-                    <select
-                        defaultValue={client}
-                        onChange={(e)=>{
-                            setClient(e.target.value);
-                        }}
-                    >
-                        <option>-- Seleccionar --</option>
-                        {
-                            clients.map(client=>(
-                                <option value={`${client.name}`}>{client.name}</option>
-                            ))
-                        }
-                    </select>
-                </label>
-                <label className="CardSendMail__label">
-                    Correo electrónico
-                    <input 
-                        type="text"
-                        value={mail}
-                        onChange={(e)=>{
-                            setMail(e.target.value);
-                        }}
-                    />
-                </label>
-                <label className="CardSendMail__label">
-                    Plantilla
-                    <select
-                        onChange={(e)=>{
-                            if(client!=''){
-                                const values=[
-                                    `Estimado(a) ${client}`,
-                                    days_past_due,
-                                    (e.target.value.split('/')[1]!=='Contáctanos') ? total_amount : '0999380019'
-                                ];
 
-                                setMessage(
-                                    makebody({
-                                        message:e.target.value.split('/')[0],
-                                        values
-                                    })
-                                );
+            <p>Selecciona una plantilla, y el correo de cada cliente. (Si no seleccionas un correo al cliente no se le enviará.)</p>
+
+            <div>
+                <div className="CardSendMail__head">
+                    <label>
+                        Plantilla
+                        <select
+                            defaultValue={format}
+                            onChange={(e)=>{
+                                setFormat(e.target.value);
+                            }}
+                        >
+                            <option value={''}>-- Seleccionar --</option>
+                            {
+                                formats.map(format=>(
+                                    <option value={format.id}>{`${format.name} - ${format.text}`}</option>
+                                ))
                             }
-                        }}
-                    >
-                        <option value={''}>-- Seleccionar --</option>
-                        {
-                            formats.map(format=>(
-                                <option value={`${format.text}/${format.name}`}>{`${format.name} - ${format.text}`}</option>
-                            ))
-                        }
-                    </select>
-                </label>
+                        </select>
+                    </label>
+                    <label>
+                        Contactar a
+                        <input type="text" placeholder="0XXXXXXXXXX"/>
+                    </label>
+                </div>
+
+                {
+                    clients.map(client=>(
+                        <div className="CardSendSMS__item">
+                            <label>
+                                <h4>{client.name} - {client.tipo}</h4>
+                            </label>
+                            <label>
+                                Correo electrónico
+                                <input type="email" placeholder="user@domain"/>
+                            </label>
+                        </div>
+                    ))
+                }              
             </div>
             
-            <div className="CardSendMail__body">
-                {
-                    (message!='') ? <p>Asunto - Recordatorio</p> : <></>
-                }
-                {message}
-                {
-                    (message!='')
-                    ?
-                        <>
-                            <span>Agradecemos su atención prestada.</span>
-                            <span>Saludos cordiales.</span>
-                        </>
-                    :   <></>
-                }
+            <div className="CardSendMail__buttons">
+                <button
+                    className="CardSendMail__send"
+                    onClick={()=>{
+                        setClose(false);
+                    }}
+                >Cancelar</button>
+                <button 
+                    className="CardSendMail__send"
+                    onClick={async (e)=>{
+                        // const send=await sendmail({data:body_mail});
+                        sendpush({
+                            title:'Éxito.',
+                            message:'Correo enviado correctamente.',
+                            type:'Push--sucessful',
+                            timeout:3000
+                        });
+                    }}
+                >Enviar correo</button>
             </div>
-            <button 
-                className="CardSendMail__send"
-                onClick={async (e)=>{
-                    const values=[
-                        `Estimado(a) ${client}`,
-                        days_past_due,
-                        (message.split('/')[1]!=='Contáctanos') ? total_amount : '0999380019'
-                    ];
-
-                    const body_message=makebody({
-                        message:message.split('/')[0],
-                        values
-                    });
-
-                    const body_mail={
-                        dstn:mail,
-                        body:body_message
-                    };
-
-                    const send=await sendmail({data:body_mail});
-
-                    sendpush({
-                        title:'Éxito.',
-                        message:'Correo enviado correctamente.',
-                        type:'Push--sucessful',
-                        timeout:3000
-                    });
-                }}
-            >Enviar correo</button>
         </div>
     );
 }

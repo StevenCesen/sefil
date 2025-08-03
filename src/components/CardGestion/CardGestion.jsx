@@ -61,6 +61,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
     const [convenio_data,setConvenioData]=useState();
     const [view_sendmail,setViewSendmail]=useState();
     const [view_sendsms,setViewSendsms]=useState();
+    const [contactos,setContactos]=useState();
 
     const close=()=>{
         setCall(false);
@@ -322,6 +323,15 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
 
         update_phones(phones_c);
 
+        const contact=currently.contactos;
+        contact.push({
+            name:currently.name,
+            tipo:'TITULAR',
+            phones:currently.phones
+        });
+
+        setContactos(contact);
+
         // Seleccionamos la plantilla
         let temp=[];
 
@@ -390,8 +400,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
             nro_notificacion:""
         });
 
-        console.log(currently);
-
         setTotalTray(total);
 
     },[currently]);
@@ -457,7 +465,8 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                     <div className="CardGestion__garantes">
                         {
                             contacts.map((contact,index)=>(
-                                (contact.name!=='') &&
+                                (contact.name!=='' & contact.tipo!=='TITULAR')
+                                ?
                                     <button 
                                         onClick={(e)=>{
                                             useClickToCopy(e.target.textContent);
@@ -485,8 +494,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                                     update_phones(phones_c);
                                                     setCredit(garante);
 
-                                                    console.log(currently)
-
                                                     setDataGestion({
                                                         ...data_gestion,
                                                         client_name:garante.name,
@@ -498,6 +505,7 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                                         }}
                                         key={index}
                                     >{contact.name} | GARANTE - {contact.ci}</button>
+                                :   <></>
                             ))
                         }
                     </div>
@@ -1434,9 +1442,10 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                 (view_sendmail)
                 ?   
                     <CardSendMail
-                        clients={currently.contactos}
+                        clients={contactos}
                         days_past_due={currently.dias_vencidos}
                         total_amount={currently.totalAmount}
+                        setClose={setViewSendmail}
                     />
                 :   <></>
             }
@@ -1445,9 +1454,10 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                 (view_sendsms)
                 ?   
                     <CardSendSMS
-                        clients={currently.contactos}
+                        clients={contactos}
                         days_past_due={currently.dias_vencidos}
                         total_amount={currently.totalAmount}
+                        setClose={setViewSendsms}
                     />
                 :   <></>
             }

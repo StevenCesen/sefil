@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./CardSendSMS.css";
 import makebody from "../../helpers/makebody";
 import useSendsms from "../../helpers/sendsms";
 import sendpush from "../../helpers/sendpush";
 
-export default function CardSendSMS({clients,days_past_due,total_amount}){
+export default function CardSendSMS({clients,days_past_due,total_amount,setClose}){
     const [client,setClient]=useState('');
     const [phone,setPhone]=useState('');
     const [format,setFormat]=useState('');
     const [message,setMessage]=useState('');
     
+    console.log(clients);
+
     const formats=[
         {
             'id':43334,
@@ -42,6 +44,7 @@ export default function CardSendSMS({clients,days_past_due,total_amount}){
 
     const handlerSendSMS=async ({data})=>{
         const send=await useSendsms({data});
+
         sendpush({
             title:'Envío completado.',
             message:'Se completo el envío del SMS correctamente.',
@@ -64,110 +67,77 @@ export default function CardSendSMS({clients,days_past_due,total_amount}){
     return (
         <div className="CardSendMail">
             <h2>Enviar SMS</h2>
-            <div className="CardSendmail__head">
-                <label className="CardSendMail__label">
-                    Cliente (s)
-                    <select
-                        defaultValue={client}
-                        onChange={(e)=>{
-                            setClient(e.target.value);
-                        }}
-                    >
-                        <option>-- Seleccionar --</option>
-                        <option value={"all"}>TITULAR Y GARANTE</option>
-                        {
-                            clients.map(client=>(
-                                <option value={`${client.name}`}>{client.name}</option>
-                            ))
-                        }
-                    </select>
-                </label>
-                <label className="CardSendMail__label">
-                    Números disponibles
-                    <input 
-                        type="text"
-                        value={phone}
-                        onChange={(e)=>{
-                            setPhone(e.target.value);
-                        }}
-                    />
-                </label>
-                <label className="CardSendMail__label">
-                    Plantilla
-                    <select
-                        defaultValue={format}
-                        onChange={(e)=>{
-                            if(client!==''){
+            <p>Selecciona una plantilla, y el número de teléfono de cada cliente. (Si no seleccionas un número al cliente no se le enviará SMS)</p>
+            <div>
+                <div className="CardSendMail__head">
+                    <label>
+                        Plantilla
+                        <select
+                            defaultValue={format}
+                            onChange={(e)=>{
                                 setFormat(e.target.value);
-                                let message_complete='';
-
-                                if(client==='all'){
-                                    
-                                    clients.map(cli=>{
-                                        const values=[
-                                            `Estimado(a) ${cli.name}`,
-                                            days_past_due,
-                                            (e.target.value!==43335) ? total_amount : '0999380019'
-                                        ];
-
-                                        let sms=genMessage({
-                                            id:e.target.value,
-                                            values
-                                        });
-
-                                        message_complete+=`${sms}@`;
-                                    });
-
-                                    setMessage(message_complete);
-
-                                }else{
-                                    const values=[
-                                        `Estimado(a) ${client}`,
-                                        days_past_due,
-                                        (e.target.value!==43335) ? total_amount : '0999380019'
-                                    ];
-
-                                    setMessage(
-                                        genMessage({
-                                            id:e.target.value,
-                                            values
-                                        })
-                                    );
-                                }
+                            }}
+                        >
+                            <option value={''}>-- Seleccionar --</option>
+                            {
+                                formats.map(format=>(
+                                    <option value={format.id}>{`${format.name} - ${format.text}`}</option>
+                                ))
                             }
-                        }}
-                    >
-                        <option value={''}>-- Seleccionar --</option>
-                        {
-                            formats.map(format=>(
-                                <option value={format.id}>{`${format.name} - ${format.text}`}</option>
-                            ))
-                        }
-                    </select>
-                </label>
-            </div>
-            
-            <div className="CardSendMail__body">
-                {
-                    message.split('@').map((line, index) => (
-                        <p key={index}>{line}</p>
-                    ))
-                }
-            </div>
-            <button 
-                className="CardSendMail__send"
-                onClick={(e)=>{
-                    const body_sms={
-                        "phone":phone,
-                        "cod_sms":format,
-                        "name":client,
-                        "dias_mora":days_past_due,
-                        "total_pendiente":total_amount
-                    };
+                        </select>
+                    </label>
+                    <label>
+                        Contactar a
+                        <input type="text" placeholder="0XXXXXXXXXX"/>
+                    </label>
+                </div>
 
-                    handlerSendSMS({data:body_sms});
-                }}
-            >Enviar correo</button>
+                {
+                    clients.map(client=>(
+                        <div className="CardSendSMS__item">
+                            <label>
+                                <h4>{client.name} - {client.tipo}</h4>
+                            </label>
+                            <label>
+                                Teléfonos
+                                <select>
+                                    <option>-- Selecciona un número --</option>
+                                    {
+                                        client.phones.map(tel=>(
+                                            <option value={tel.numero}>{tel.numero}</option>
+                                        ))
+                                    }
+                                </select>
+                            </label>
+                        </div>
+                    ))
+                }              
+            </div>
+
+            <div className="CardSendMail__buttons">
+                <button
+                    className="CardSendMail__send"
+                    onClick={()=>{
+                        setClose(false);
+                    }}
+                >Cancelar</button>
+                <button 
+                    className="CardSendMail__send"
+                    onClick={(e)=>{
+                        e.textContent="Procesando...";
+
+                        const body_sms={
+                            "cod_sms":format,
+                            "dias_mora":days_past_due,
+                            "total_pendiente":total_amount
+                        };
+
+                        console.log(body_sms);
+                        e.textContent="Enviar SMS";
+                        // handlerSendSMS({data:body_sms});
+                    }}
+                >Enviar SMS</button>
+            </div>
         </div>
     );
 }

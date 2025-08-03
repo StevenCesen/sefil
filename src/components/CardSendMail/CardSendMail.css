@@ -1,6 +1,5 @@
 .CardSendMail{
     width: 70%;
-    height: 400px;
     border-radius: 10px;
     background-color: white;
     position: absolute;
@@ -26,24 +25,6 @@
     gap: 10px;
 }
 
-.CardSendMail__label{
-    margin-bottom: 10px;
-}
-
-.CardSendMail__label>input{
-    width: 300px;
-    height: 30px;
-    display: block;
-    margin-top: 5px;
-}
-
-.CardSendMail__label>select{
-    width: 300px;
-    height: 30px;
-    display: block;
-    margin-top: 5px;
-}
-
 .CardSendMail__body{
     background-color: rgba(192, 238, 241, 0.322);
     width: 100%;
@@ -66,4 +47,11 @@
     width: 100px;
     margin-top: 10px;
     align-self: flex-end;
+}
+
+.CardSendMail__buttons{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
 }
