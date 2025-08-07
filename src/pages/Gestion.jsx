@@ -10,6 +10,7 @@ import useFilterState from "../hooks/useFilterState";
 import useFilteMinMax from "../hooks/useFilterMinMax";
 import Loader from "../components/Loader/loader";
 import sendpush from "../helpers/sendpush";
+import PanelManagement from "../components/Management/PanelManagement/PanelManagement";
 
 export default function Gestion(){
 
@@ -18,10 +19,10 @@ export default function Gestion(){
     const [id_campain,setIdCampain]=useState();
     const [alert,setAlert]=useState();
 
-    const [data,setData]=useState(); //Aquí tenemos todos los créditos
-    const [view_form,setForm]=useState(false); //Este es para ver el formulario de gestión
-    const [next_credit,setNext]=useState(); //Este es para setear el siguiente registro
-    const [index,setIndex]=useState(); //Este es para llevar el indice actual
+    const [data,setData]=useState();
+    const [view_form,setForm]=useState(false);
+    const [next_credit,setNext]=useState(); 
+    const [index,setIndex]=useState();
     const [credit_actual,setCurrenly]=useState();
     const [original_data,setOriginal]=useState();
     const [results_campo,setResults]=useState();
@@ -1205,7 +1206,11 @@ export default function Gestion(){
                             Volver
                         </button>
                         
-                        <CardGestion
+                        <PanelManagement
+                            
+                        />
+
+                        {/* <CardGestion
                             currently={credit_actual}
                             next={next_credit}
                             index={index}
@@ -1231,8 +1236,7 @@ export default function Gestion(){
                                                 data.processed.total
                                             :   ""
                             }
-                        /> 
-                        
+                        />  */}
                     </div>
 
                 :   <></>

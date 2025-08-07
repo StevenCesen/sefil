@@ -1385,13 +1385,6 @@ export default function CardGestion({currently,total,index,setNext,id_campain,se
                         <button className="CardCondonacion__close" onClick={()=>{setPDFcondonation(false)}}>Volver</button>
                         <PDFViewer width={'800px'} height={'600px'}>
                             <PDFcondonacion
-                                // ci={"1104266075"}
-                                // credito={"467"}
-                                // name={"BARROS GUTIERREZ JORGE LUIS"}
-                                // fecha={"2024/09/30 19:11:56"}
-                                // prevDates={'{"mora":"0","interes":"0","capital":"290.41","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
-                                // postDates={'{"capital":"145.2","interes":"0","mora":"0","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
-                                // user_auth={'María Bravo'}
                                 ci={value_condonacion.ci}
                                 credito={value_condonacion.credito}
                                 name={value_condonacion.name}
