@@ -1,0 +1,35 @@
+.Modal{
+    width: calc(100% - 40px);
+    height: calc(100vh - 40px - var(--height-header));
+    border-radius: 10px;
+    position: absolute;
+    top: calc(var(--height-header) + 20px);
+    z-index: 2000;
+    left: 20px;
+    background-color: rgb(250, 250, 250);
+    box-shadow: var(--box-shadow);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.Modal__head{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgb(228, 228, 228);
+    padding-bottom: 5px;
+}
+
+.Modal__head>label{
+    background-color: rgb(229, 229, 229);
+    border-radius: 5px;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Modal__head>label>svg{
+    cursor: pointer;
+}

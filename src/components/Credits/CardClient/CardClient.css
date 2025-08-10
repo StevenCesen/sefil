@@ -1,0 +1,58 @@
+.CardClient{
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: inherit;
+    border: none;
+    box-shadow: var(--box-shadow);
+    border-radius: 5px;
+    background-color: #101828;
+    color: var(--color-3);
+    cursor: pointer;
+    margin-bottom: 10px;
+    gap:10px;
+}
+
+.CardClient--select{
+    background-color: var(--bg-alert-error-reduce);
+}
+
+.CardClient>label{
+    background-color: #364153;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.CardClient>div{
+    width: 100%;
+    text-align: left;
+}
+
+.CardClient>div>h3{
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.CardClient>div>span{
+    font-size: 12px;
+}
+
+.CardClient--titular{
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #F0FDF4;
+    color: #145335;
+    border: 1px solid #c0f7d3;
+}
+
+.CardClient--garante{
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #FEFCE8;
+    color: #7F4123;
+    border: 1px solid #FEF3A1;
+}

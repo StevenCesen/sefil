@@ -1,0 +1,7 @@
+.PanelManagement{
+    width: 100%;
+    display: grid;
+    margin-top: 10px;
+    grid-template-columns: 20% 30% 50%;
+    gap: 10px;
+}
