@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import "./index.css";
 import Me from './pages/Me'
 import Push from './components/Push/Push'
+import CardSelectStateCall from './components/Management/CardSelectStateCall/CardSelectStateCall'
 
 function App() {
   
@@ -56,6 +57,8 @@ function App() {
       <>
       <Header/>
       <Push/>
+      <CardSelectStateCall/>
+
       {
         (!useSessions() & !session.state) 
         ?

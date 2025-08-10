@@ -5,7 +5,7 @@ export default function Modal({children,view,setView,title}){
     if(!view) return <></>
 
     return(
-        <div className="Modal">
+        <div className="Modal custom-scroll">
             <div className="Modal__head">
                 <h3>{title}</h3>
                 <label>

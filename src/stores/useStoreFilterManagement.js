@@ -42,7 +42,6 @@ export const useStoreFilterManagement = create((set,get) => ({
     },
     FilteredCredits: async (filters) => {
         const end_point=`${import.meta.env.VITE_URL_BASE}/campains/credits?${filters}`;
-        console.log(filters)
         try {
             const request=await fetch(end_point,{
                 headers: {
@@ -64,9 +63,7 @@ export const useStoreFilterManagement = create((set,get) => ({
     },
     numberTrays: async () => {
         const {business}=get();
-
         const end_point=`${import.meta.env.VITE_URL_BASE}/campains/NumberTrays?user_id=${localStorage.getItem('temp_uS')}&business=${business}`;
-
         try {
             const request=await fetch(end_point,{
                 headers: {

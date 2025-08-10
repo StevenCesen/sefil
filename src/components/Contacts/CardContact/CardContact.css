@@ -1,0 +1,72 @@
+.CardContact{
+    width: 100%;
+    display: grid;
+    grid-template-columns: calc(100% - 130px) 65px 45px;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.CardContact>p{
+    font-size: 12px;
+}
+
+.CardContact__metrics,.CardContact__actions{
+    display: flex;
+    justify-content:center;
+    align-items: center;
+}
+
+.CardContact__metrics{
+    width: 100%;
+    gap: 5px;
+}
+
+.CardContact__actions{
+    width: 100%;
+    gap: 5px;
+}
+
+.CardContact__item{
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.CardContact__item--normalcall{
+    background-color: rgb(121, 208, 243);
+    color: var(--color-3);
+}
+
+.CardContact__item--whatsappcall{
+    background-color: var(--bg-alert-successful);
+}
+
+.CardContact__item--hangup{
+    background-color: var(--bg-alert-error-error);
+    color: var(--color-3);
+}
+
+.CardContact__item--whatsappcall>svg{
+    fill: var(--color-3);
+}
+
+.CardContact__item--success,.CardContact__item--fails{
+    font-weight: bold;
+    font-size: 14px;
+    background-color:rgb(235, 235, 235);
+}
+
+.CardContact__item--success{
+    color: rgb(91, 193, 140);
+}
+
+.CardContact__item--fails{
+    color: rgb(244, 142, 142);
+}

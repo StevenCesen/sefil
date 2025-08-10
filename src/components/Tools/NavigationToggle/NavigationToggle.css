@@ -1,0 +1,19 @@
+.NavigationToggle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.NavigationToggle>button,.NavigationToggle>input{
+    width: 30px;
+    height: 30px;
+    background-color: inherit;
+    border: 1px solid rgb(204, 204, 204);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.NavigationToggle>button:hover,.NavigationToggle>input:hover{
+    background-color: rgb(241, 241, 241);
+}

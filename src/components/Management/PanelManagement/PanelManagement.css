@@ -5,3 +5,11 @@
     grid-template-columns: 20% 30% 50%;
     gap: 10px;
 }
+
+.PanelManagement__panelContact{
+    width: 100%;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: calc(60% - 10px) 40%;
+}
+

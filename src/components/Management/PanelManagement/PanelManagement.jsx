@@ -3,8 +3,11 @@ import CardClient from "../../Credits/CardClient/CardClient";
 import InfoCredit from "../../Credits/InfoCredit/InfoCredit";
 import InfoPending from "../../Credits/InfoPending/InfoPending";
 import InfoValues from "../../Credits/InfoValues/InfoValues";
+import MenuNav from "../../Tools/MenuNav/MenuNav";
 import Modal from "../../Tools/Modal/Modal";
+import CardDial from "../CardDial/CardDial";
 import FormManagement from "../FormManagement/FormManagement";
+import ListContacts from "../ListContacts/ListContacts";
 import "./PanelManagement.css";
 
 export default function PanelManagement({}){
@@ -55,13 +58,35 @@ export default function PanelManagement({}){
                                 credit_id={credit.id}
                             />
                         ))
-                    }    
+                    }
+                    <div className="PanelManagement__panelContact">
+                        <ListContacts/>
+                        <CardDial
+                            credit_id={credit.id}
+                            campain_id={store_management.campain_id}
+                            phone_number={'0978950498'}
+                            channel={'PBX'}
+                        />
+                    </div>
                 </div>
                 <div>
                     <FormManagement/>
-                    
+                    <MenuNav
+                        options={[
+                            {
+                                name:'🕑 Historial de gestiones',
+                                default_option:true,
+                                end_point:`${import.meta.env.VITE_URL_BASE}/managements/credits/${credit.id}`
+                            },
+                            {
+                                name:'💰 Historial de pagos',
+                                default_option:false,
+                                end_point:`${import.meta.env.VITE_URL_BASE}/payments/credits/${credit.id}`
+                            }
+                        ]}
+                    />
                 </div>
-            </div>  
+            </div>
         </Modal>
     );
 }

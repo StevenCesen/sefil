@@ -1,0 +1,60 @@
+.CardDial{
+    width: 100%;
+    background-color: var(--bg-2);
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+    padding: 10px;
+}
+
+.CardDial__dialer{
+    width: 100%;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.CardDial__dialer>input{
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    border: 1px solid rgb(185, 185, 185);
+    padding: 0 10px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.CardDial__phone{
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.CardDial__actions{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.CardDial__actions>label{
+    cursor: pointer;
+}
+
+.CardDial__count{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.CardDial__count>p{
+    font-size: 28px;
+    margin: 0 0 20px;
+}
+
+.CardDial--incall{
+    background-color: #F0FDF4;
+    color: #145335;
+    border: 1px solid #c0f7d3;
+}
