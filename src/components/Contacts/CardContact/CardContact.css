@@ -44,6 +44,11 @@
     color: var(--color-3);
 }
 
+.CardContact__item--sms{
+    background-color: var(--bg-alert-error);
+    color: var(--color-3);
+}
+
 .CardContact__item--whatsappcall{
     background-color: var(--bg-alert-successful);
 }

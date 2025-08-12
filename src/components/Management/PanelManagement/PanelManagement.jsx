@@ -15,7 +15,7 @@ export default function PanelManagement({}){
     const credit=store_management.credit;
 
     if(!store_management.view_panel) return <></>
-    
+
     return(
         <Modal
             title={'Gestión crédito'}
@@ -49,9 +49,9 @@ export default function PanelManagement({}){
                 </div>
                 <div className="PanelManagement__clients">
                     {
-                        credit.clients.map((client,n)=>(
+                        credit.clients.map((client)=>(
                             <CardClient
-                                key={n}
+                                key={client.ci}
                                 name={client.name}
                                 ci={client.ci}
                                 type={client.type}
@@ -64,8 +64,6 @@ export default function PanelManagement({}){
                         <CardDial
                             credit_id={credit.id}
                             campain_id={store_management.campain_id}
-                            phone_number={'0978950498'}
-                            channel={'PBX'}
                         />
                     </div>
                 </div>
@@ -76,12 +74,12 @@ export default function PanelManagement({}){
                             {
                                 name:'🕑 Historial de gestiones',
                                 default_option:true,
-                                end_point:`${import.meta.env.VITE_URL_BASE}/managements/credits/${credit.id}`
+                                end_point:`MANAGEMENTS`
                             },
                             {
                                 name:'💰 Historial de pagos',
                                 default_option:false,
-                                end_point:`${import.meta.env.VITE_URL_BASE}/payments/credits/${credit.id}`
+                                end_point:`PAYMENTS`
                             }
                         ]}
                     />

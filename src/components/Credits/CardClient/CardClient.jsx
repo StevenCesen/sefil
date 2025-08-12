@@ -1,4 +1,4 @@
-import { User } from "lucide-react";
+import { Mail, User } from "lucide-react";
 import sendpush from "../../../helpers/sendpush";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import "./CardClient.css";
@@ -15,6 +15,11 @@ export default function CardClient({credit_id,name,ci,type}){
                     client_ci:ci,
                     client_type:type,
                     credit_id
+                });
+
+                store_management.setPhones({
+                    credit_id:credit_id,
+                    identification:ci
                 });
                     
                 sendpush({
@@ -33,7 +38,12 @@ export default function CardClient({credit_id,name,ci,type}){
                 <h3>{name}</h3>
                 <span>Cédula: {ci}</span>
             </div>
-            <span className={`${(type==='TITULAR') ? 'CardClient--titular' : 'CardClient--garante'}`}>{type}</span>
+            <div>
+                <span className={`${(type==='TITULAR') ? 'CardClient--titular' : 'CardClient--garante'}`}>{type}</span>
+                <button>
+                    <Mail size={18}/>
+                </button>
+            </div>
         </button>
     );
 }

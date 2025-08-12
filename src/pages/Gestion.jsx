@@ -52,23 +52,15 @@ export default function Gestion(){
             
             <FilterManagement/>
 
-            {
-                (credits.credits!==null)
-                ?
-                    credits.credits.data.map((credit)=>(
-                        <CardCreditManagement
-                            key={credit.id}
-                            credit={credit}
-                        />
-                    ))
-                :   <></>
-            }
+            {credits.credits && credits.credits.data.map((credit,n) => (
+                <CardCreditManagement key={credit.id} index={n} credit={credit} />
+            ))}
 
-            {
-                (credits.credits!==null)
-                ?   <p className="Gestion__subtitle">Registros del {credits.credits.from} al {credits.credits.to} de un total de {credits.credits.total}</p>
-                :   <></>
-            }
+            {credits.credits && (
+                <p className="Gestion__subtitle">
+                    Registros del {credits.credits.from} al {credits.credits.to} de un total de {credits.credits.total}
+                </p>
+            )}
 
             {
                 <PanelManagement/>

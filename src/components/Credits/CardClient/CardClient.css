@@ -25,18 +25,41 @@
     border-radius: 5px;
 }
 
-.CardClient>div{
-    width: 100%;
+.CardClient>div:first-child{
+    width: 80%;
     text-align: left;
+}
+
+.CardClient>div:last-child{
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .CardClient>div>h3{
     font-size: 14px;
+    text-align: left;
     margin-bottom: 10px;
 }
 
 .CardClient>div>span{
+    text-align: left;
     font-size: 12px;
+}
+
+.CardClient>div>button{
+    background-color: #364153;
+    color: var(--color-3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .CardClient--titular{

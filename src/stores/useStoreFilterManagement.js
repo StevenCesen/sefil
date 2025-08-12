@@ -2,6 +2,7 @@ import { create } from 'zustand'
 
 export const useStoreFilterManagement = create((set,get) => ({
     credits:null,
+    current_index:0,
     tray:'PENDIENTE',
     name: '',
     business:'SEFIL_1',
@@ -24,6 +25,7 @@ export const useStoreFilterManagement = create((set,get) => ({
     setMaxDays:         (value)=>{set({days_past_due_max:value})},
     setManagementState: (value)=>{set({management_state:value})},
     setPromiseDate:     (value)=>{set({promise_date:value})},
+    setCurrent:     (value)=>{set({current_index:value})},
     setCredits:     (value)=>{set({credits:value})},
     getFilterString: () => {
         const {name,business,ci,days_past_due_max,days_past_due_min,agency,management_state,promise_date,tray} = get();
@@ -85,6 +87,13 @@ export const useStoreFilterManagement = create((set,get) => ({
 
         } catch (error) {
             console.error('Error al hacer fetchFilteredCredits:', error);
+        }
+    },
+    getNextCredit:()=>{
+        const {current_index,credits}=get();
+        if((current_index + 1) < credits.data.length){
+            set({current_index:current_index+1});
+            return credits.data[current_index+1];
         }
     }
 }));
