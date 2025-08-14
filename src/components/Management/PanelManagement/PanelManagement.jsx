@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import CardClient from "../../Credits/CardClient/CardClient";
 import InfoCredit from "../../Credits/InfoCredit/InfoCredit";

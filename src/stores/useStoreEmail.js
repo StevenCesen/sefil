@@ -30,7 +30,7 @@ export const useStoreEmail = create((set,get) => ({
     setView:(value)=>{set({view:value})},
     setTemplate:(value)=>{set({template:value})},
     setMessage:()=>{
-        const {template,client_name,client_type,total_amount,phone_contact,days_past_due,payment_date,user_name}=get();
+        const {template,client_name,client_type,client_email,total_amount,phone_contact,days_past_due,payment_date,user_name}=get();
 
         let values={};
 
@@ -40,7 +40,8 @@ export const useStoreEmail = create((set,get) => ({
                 total_amount,
                 days_past_due,
                 user_name,
-                phone_contact
+                phone_contact,
+                client_email
             };
         }else if(template==='Cobranza intensiva'){
             values={
@@ -49,7 +50,8 @@ export const useStoreEmail = create((set,get) => ({
                 days_past_due,
                 payment_date,
                 user_name,
-                phone_contact
+                phone_contact,
+                client_email
             };
         }else if(template==='Judicial'){
             values={
@@ -57,7 +59,8 @@ export const useStoreEmail = create((set,get) => ({
                 total_amount,
                 days_past_due,
                 user_name,
-                phone_contact
+                phone_contact,
+                client_email
             };
         }
 
@@ -71,8 +74,10 @@ export const useStoreEmail = create((set,get) => ({
     },
     sendEmail:async ()=>{
         const {email,setMessage}=get();
-
+        //SendEmailRemember
+        //SendEmailFull
         const data=setMessage();
+        
         return data;
     }
 }));

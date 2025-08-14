@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useStoreEmail } from "../../../stores/useStoreEmail";
 import "./CardSendMail.css";
+import sendpush from "../../../helpers/sendpush";
 
 export default function CardSendMail(){
     
@@ -11,23 +12,22 @@ export default function CardSendMail(){
 
         const send_email=await store_email.sendEmail();
 
-        console.log(send_email)
-
-        // if(Number(send_sms.cod_respuesta)===100){
-        //     sendpush({
-        //         title:'Envío completado.',
-        //         message:'Se completo el envío del SMS correctamente.',
-        //         type:'Push--sucessful',
-        //         timeout:3000
-        //     });
-        // }else{
-        //     sendpush({
-        //         title:'Error enviando SMS.',
-        //         message:'No se pudo enviar el mensaje en este momento, contáctate con supervisión.',
-        //         type:'Push--danger',
-        //         timeout:5000
-        //     });
-        // }
+        if(send_email.client_email!=='' || send_email.template!==''){
+            console.log(send_email);
+            sendpush({
+                title:'Envío completado.',
+                message:'Se envío el correo electrónico.',
+                type:'Push--sucessful',
+                timeout:3000
+            });
+        }else{
+            sendpush({
+                title:'Datos incompletos.',
+                message:'No se introdució un correo electrónico o una plantilla, por favor, ingrésalo.',
+                type:'Push--danger',
+                timeout:5000
+            });
+        }
 
         e.target.textContent=`Enviar correo`;
     }
@@ -56,14 +56,24 @@ export default function CardSendMail(){
                         <option value={''}>-- Seleccionar --</option>
                         {
                             store_email.templates.map(format=>(
-                                <option value={format}>{`${format}`}</option>
+                                <option key={format} value={format}>{`${format}`}</option>
                             ))
                         }
                     </select>
                 </label>
+                <label>
+                    Correo electrónico
+                    <input 
+                        type="email"
+                        placeholder="user@domain.com"
+                        onChange={(e)=>{
+                            store_email.setEmail(e.target.value);
+                        }}
+                    />
+                </label>
             </div>
             <div className="CardSendMail__body">
-                <h4>Vista previa del correo electrónico</h4>
+                <h4>Vista previa del correo electrónico a {store_email.client_name}</h4>
                 <p>{store_email.message}</p>
             </div>
             <button onClick={(e)=>{handleSendEmail({e})}}>Enviar correo</button>

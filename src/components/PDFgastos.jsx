@@ -7,6 +7,7 @@ import {
     View,
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
+import logo from '../assets/icons/logo.png';
 
   const styles = StyleSheet.create({
     page: {
@@ -52,7 +53,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
         <Page style={styles.page}>
         
           <View style={styles.sectionHeader}>
-            <Image style={styles.logo} src={"./icons/logo.png"}/>
+            <Image style={styles.logo} src={logo}/>
 
             {/* DATOS DE LA AUTORIZACIÓN DE FACTURA */}
             <View style={styles.sectionHeaderFac}>

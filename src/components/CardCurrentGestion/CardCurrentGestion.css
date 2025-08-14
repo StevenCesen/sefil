@@ -1,5 +1,7 @@
 .CardCurrentGestion{
     width: 70%;
+    height: 600px;
+    overflow-y: auto;
     background-color: var(--bg-1);
     border-radius: 5px;
 }
