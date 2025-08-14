@@ -8,33 +8,25 @@ import { useStoreFilterManagement } from "../stores/useStoreFilterManagement";
 import CardCreditManagement from "../components/Management/CardCreditManagement/CardCreditManagement";
 import TraysManagement from "../components/Management/TraysManagement/TraysManagement";
 import SelectNameCampain from "../components/Campains/SelectCampain/SelectNameCampain";
+import { useStoreTemplate } from "../stores/useStoreTemplates";
+import CardSendSMS from "../components/Contacts/CardSendSMS/CardSendSMS";
+import CardSendMail from "../components/Credits/CardSendMail/CardSendMail";
 
 export default function Gestion(){
     const [loading,setLoading]=useState();
     const credits=useStoreFilterManagement();
+    const store_templates=useStoreTemplate();
 
     useEffect(()=>{
-        // fetch(`${import.meta.env.VITE_URL_BASE}/templates`,{
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())  
-        //     .then((data) => {
-        //         const templates=[];
-        //         data.map((struc)=>{
-        //             if(struc.status==="EN USO"){
-        //                 templates.push(struc.structure);
-        //             }
-        //         });
-        //         setStructure(templates);
-        //     });
         credits.numberTrays();
+        store_templates.getTemplates();
     },[]);
-
+    
     return (
         <div className="pageConsulta">
+            
+            <CardSendSMS/>
+            <CardSendMail/>
 
             <div className="Gestion__header">
                 <NavLink
@@ -72,7 +64,6 @@ export default function Gestion(){
                     <Loader/>
                 :   <></>
             }
-
         </div>
     );
 }

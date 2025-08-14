@@ -2,13 +2,15 @@ import { Mail, User } from "lucide-react";
 import sendpush from "../../../helpers/sendpush";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import "./CardClient.css";
+import { useStoreEmail } from "../../../stores/useStoreEmail";
 
-export default function CardClient({credit_id,name,ci,type}){
+export default function CardClient({credit_id,name,ci,days_past_due,type,total_amount}){
 
     const store_management=useStoreManagement();
+    const store_email=useStoreEmail();
     
     return(
-        <button 
+        <div
             onClick={()=>{
                 store_management.setClient({
                     client_name:name,
@@ -40,10 +42,19 @@ export default function CardClient({credit_id,name,ci,type}){
             </div>
             <div>
                 <span className={`${(type==='TITULAR') ? 'CardClient--titular' : 'CardClient--garante'}`}>{type}</span>
-                <button>
+                <button onClick={()=>{
+                    store_email.setContact({
+                        name,
+                        type,
+                        view:true,
+                        days_past_due,
+                        total_amount
+                    });
+                    console.log(store_email);
+                }} title='Enviar correo electrónico a este cliente'>
                     <Mail size={18}/>
                 </button>
             </div>
-        </button>
+        </div>
     );
 }

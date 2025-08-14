@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import CardClient from "../../Credits/CardClient/CardClient";
 import InfoCredit from "../../Credits/InfoCredit/InfoCredit";
@@ -15,7 +16,7 @@ export default function PanelManagement({}){
     const credit=store_management.credit;
 
     if(!store_management.view_panel) return <></>
-
+    
     return(
         <Modal
             title={'Gestión crédito'}
@@ -56,6 +57,8 @@ export default function PanelManagement({}){
                                 ci={client.ci}
                                 type={client.type}
                                 credit_id={credit.id}
+                                days_past_due={credit.days_past_due}
+                                total_amount={credit.total_amount}
                             />
                         ))
                     }

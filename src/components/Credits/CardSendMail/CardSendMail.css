@@ -1,0 +1,104 @@
+.CardSendMail{
+    width: 50%;
+    border-radius: 10px;
+    background-color: white;
+    position: absolute;
+    top: 200px;
+    z-index: 3000;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid rgb(216, 216, 216);
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.CardSend__head{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.CardSend__head>label{
+    cursor: pointer;
+}
+
+.CardSendMail>p{
+    margin-bottom: 10px;
+    font-weight: 100;
+    font-size: 14px;
+}
+
+.CardSendMail>h2{
+    font-size: 18px;
+}
+
+.CardSendMail__head{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.CardSendMail__head>label{
+    width: 100%;
+    font-size: 14px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.CardSendMail__head>label>select{
+    width: 100%;
+    height: 30px;
+    margin-top: 5px;
+}
+
+.CardSendMail__body{
+    background-color: rgba(192, 238, 241, 0.322);
+    width: 100%;
+    height: 150px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.CardSendMail__body>p{
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.CardSendMail__body>h4{
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+
+.CardSendMail__body>span{
+    display: block;
+    margin-top: 20px;
+}
+
+.CardSendMail>button{
+    width: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    align-self: flex-end;
+    padding: 10px 0;
+    background-color: rgb(97, 167, 247);
+    border: none;
+    border-radius: 5px;
+    color: var(--color-3);
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+}

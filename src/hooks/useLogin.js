@@ -21,9 +21,10 @@ export default async function useLogin(data,tag,btn,setload){
             localStorage.setItem('rol',response.rol);
             localStorage.setItem('temp_uS',response.id);
             localStorage.setItem('extension',response.extension);
+            localStorage.setItem('phone_number',response.phone_number);
             localStorage.setItem('timestamp_cc',new Date().getTime());
             localStorage.setItem('estado','CONECTADO');
-
+            
             if(response.changePassword){
                 localStorage.setItem('change_ps',true);
                 location.href='#/dashboard/me';

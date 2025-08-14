@@ -44,7 +44,9 @@ export const useStoreManagement = create((set,get) => ({
         set({client_name:value.clients[0].name});
         set({client_ci:value.clients[0].ci});
         set({client_type:value.clients[0].type});
-
+        set({dias_vencidos:value.days_past_due});
+        set({monto:value.total_amount});
+        
         setPhones({
             identification:value.clients[0].ci,
             credit_id:value.id

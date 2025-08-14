@@ -2,13 +2,21 @@ import { Save } from "lucide-react";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import "./FormManagement.css";
 import { useStoreFilterManagement } from "../../../stores/useStoreFilterManagement";
+import { useEffect, useRef } from "react";
+import { useStoreTemplate } from "../../../stores/useStoreTemplates";
+import createManagement from "../../../helpers/Managements/createManagement";
+import sendpush from "../../../helpers/sendpush";
 
 export default function FormManagement(){
 
     const store_management=useStoreManagement();
     const store_credits=useStoreFilterManagement();
+    const store_templates=useStoreTemplate();
+    const button=useRef();
 
-    const handlerCreateManagement=async(e)=>{
+    const selectedOptions = store_templates.current_template.find(item => item.title === store_management.state_gestion)?.options || [];
+
+    const handleSaveManagement=async(e)=>{
         e.preventDefault();
         
         const data_management={
@@ -30,67 +38,132 @@ export default function FormManagement(){
             nro_notificacion:store_management.nro_notificacion
         }
 
-        console.log(data_management);
-        store_management.clean();
-        // Enviar la petición a base de datos para guardar la gestión
+        button.current.textContent='Guardando...';
+
+        const create_management=await createManagement({data_management});
         
+        if(create_management.status===200){
+
+            button.current.textContent='Guardando...';
+
+            sendpush({
+                title:'Estado de gestión.',
+                message:'Se ha guardado la gestión correctamente.',
+                type:'Push--sucessful',
+                timeout:3000
+            });
+
+            store_management.clean();
+            
+        }else{
+            button.current.textContent='Intentar de nuevo';
+        }
     }
 
-    const handlerNextCredit=(e)=>{
+    const handleNextCredit=async (e)=>{
         e.preventDefault();
-        const next_credit=store_credits.getNextCredit();
+        store_management.clean();
+
+        let next_credit=store_credits.getNextCredit();
+
         if(next_credit){        
             store_management.setCredit(next_credit);
+        }else if(store_credits.credits.next_page_url!==null){
+            const first_credit=await store_credits.getNextPage({next_page_url:store_credits.credits.next_page_url});
+            store_management.setCredit(first_credit);
+        }else if(store_credits.credits.first_page_url!==null){
+            const first_credit=await store_credits.getNextPage({next_page_url:store_credits.credits.first_page_url});
+            store_management.setCredit(first_credit);
         }else{
             store_management.setView(false);
         }
     }
 
+    useEffect(()=>{
+        store_templates.setTemplate({
+            role: localStorage.getItem('rol'),
+            days_past_due:store_management.dias_vencidos
+        });
+    },[store_management.credit_id]);
+
     return(
         <form 
             className="FormManagement"
             onSubmit={async (e)=>{
-                await handlerCreateManagement(e);
+                await handleSaveManagement(e);
             }}
         >
             <button
-                onClick={(e)=>{
-                    handlerNextCredit(e);
+                onClick={async (e)=>{
+                    await handleNextCredit(e);
                 }}
             >Seguir</button>
 
             <div className="FormManagement__states">
                 <label className="FormManagement__label">
                     Nombre del cliente
-                    <input type="text" required placeholder={store_management.client_name} disabled/>
+                    <input 
+                        type="text" 
+                        required 
+                        value={store_management.client_name} 
+                        readOnly
+                    />
                 </label>
                 <label className="FormManagement__label">
                     Estado de gestión
-                    <select value={store_management.state_gestion} onChange={(e)=>{store_management.setState(e.target.value)}} required>
-                        <option value={''}>-- Seleccionar --</option>
-                        <option value={'CONTACTADO EFECTIVO'}>CONTACTADO EFECTIVO</option>
-                        <option value={'CONTACTADO NO EFECTIVO'}>CONTACTADO NO EFECTIVO</option>
+                    <select
+                        value={store_management.state_gestion}
+                        onChange={(e) => {
+                            const newState = e.target.value;
+                            store_management.setState(newState);
+                            store_management.setSubstate(''); // Reset substate on change
+                        }}
+                        required
+                    >
+                        <option value="">-- Seleccionar --</option>
+                        {store_templates.current_template.map(item => (
+                            <option key={item.title} value={item.title}>{item.title}</option>
+                        ))}
                     </select>
                 </label>
-                 <label className="FormManagement__label">
+
+                <label className="FormManagement__label">
                     Subestado de gestión
-                    <select value={store_management.substate_gestion} onChange={(e)=>{store_management.setSubstate(e.target.value)}} required>
-                        <option value={''}>-- Seleccionar --</option>
-                        <option value={'OFERTA DE PAGO'}>OFERTA DE PAGO</option>
-                        <option value={'COMPROMISO DE PAGO'}>COMPROMISO DE PAGO</option>
+                    <select
+                        value={store_management.substate_gestion}
+                        onChange={(e) => store_management.setSubstate(e.target.value)}
+                        required
+                    >
+                        <option value="">-- Seleccionar --</option>
+                        {
+                            selectedOptions.map(option => (
+                                <option key={option} value={option}>{option}</option>
+                            ))
+                        }
                     </select>
                 </label>
             </div>
             <div className="FormManagement__states">
                 <label className="FormManagement__label">
                     Fecha de oferta/compromiso/regestión
-                    <input value={store_management.promise_date} onChange={(e)=>{store_management.setPromiseDate(e.target.value)}} type="date" required/>
+                    <input 
+                        value={store_management.promise_date} 
+                        onChange={(e)=>{store_management.setPromiseDate(e.target.value)}} 
+                        type="date" 
+                        required
+                    />
                 </label>
                 <div className="FormManagement__label">
                     <label>Monto a pagar</label>
                     <div>
                         <label>
-                            <input value={store_management.promise_amount} onChange={(e)=>{store_management.setPromiseAmount(e.target.value)}} type="number" min={0.00} step={0.01}/>
+                            <input 
+                                value={store_management.promise_amount} 
+                                onChange={(e)=>{store_management.setPromiseAmount(e.target.value)}} 
+                                type="number" 
+                                min={0.00} 
+                                step={0.01}
+                            />
                         </label>
                         <label>
                             <input type="checkbox"/>
@@ -101,9 +174,13 @@ export default function FormManagement(){
             </div>
             <label>
                 Observaciones
-                <textarea value={store_management.observation} onChange={(e)=>{store_management.setObservation(e.target.value)}} placeholder="Escribe una observación"></textarea>
+                <textarea 
+                    value={store_management.observation} 
+                    onChange={(e)=>{store_management.setObservation(e.target.value)}} 
+                    placeholder="Escribe una observación"
+                ></textarea>
             </label>
-            <button type="submit">
+            <button ref={button} type="submit">
                 <Save size={16}/>
                 Guardar gestión
             </button>

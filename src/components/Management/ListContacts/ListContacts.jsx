@@ -19,6 +19,10 @@ export default function ListContacts(){
                             phone_number={phone.numero}
                             nro_fails={'0'}
                             nro_sucessful={phone.nro_efectivo}
+                            name={store_management.client_name}
+                            type={store_management.client_type}
+                            total_amount={store_management.monto}
+                            days_past_due={store_management.dias_vencidos}
                         />
                     ))
                 }
