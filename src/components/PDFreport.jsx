@@ -7,7 +7,7 @@ import {
     View,
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
-import logo from '../assets/icons/logo.png';
+import logo3 from '../assets/icons/logo.png';
 
   const styles = StyleSheet.create({
     page: {
@@ -53,7 +53,7 @@ import logo from '../assets/icons/logo.png';
         <Page style={styles.page}>
         
           <View style={styles.sectionHeader}>
-            <Image style={styles.logo} src={logo}/>
+            <Image style={styles.logo} src={logo3}/>
 
             {/* DATOS DE LA EMPRESA */}
             <View style={styles.sectionHeaderRuc}>

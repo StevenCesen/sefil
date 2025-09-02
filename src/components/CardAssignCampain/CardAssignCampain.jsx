@@ -629,7 +629,6 @@ export default function CardAssignCampain({data,updateCredits}){
                             <option value={"INUBICABLE"}>INUBICABLE</option>
                             <option value={"NO VIVE EN LA MISMA DIRECCIÓN"}>NO VIVE EN LA MISMA DIRECCIÓN</option>
                             <option value={"Recopilación de Información"}>Recopilación de Información</option>
-                            <option value={"Documentación para demanda"}>Documentación para demanda</option>
                             <option value={"Presentación demanda"}>Presentación demanda</option>
                             <option value={"Citación judicial"}>Citación judicial</option>
                             <option value={"Ejecución"}>Ejecución</option>
@@ -637,6 +636,9 @@ export default function CardAssignCampain({data,updateCredits}){
                             <option value={"Embargo"}>Embargo</option>
                             <option value={"Sentencia"}>Sentencia</option>
                             <option value={"Archivo demanda"}>Archivo demanda</option>
+                            <option value={"NOTIFICADO EXTRAJUDICIAL"}>NOTIFICADO EXTRAJUDICIAL</option>
+                            <option value={"Envío notificación"}>Envío notificacion</option>
+                            <option value={"Continuar con gestión extrajudicial"}>Continuar con gestión extrajudicial</option>
                         </select>
                     </label>
 

@@ -1,4 +1,5 @@
 import { useStoreManagement } from "../../../stores/useStoreManagement";
+import AddContact from "../../Contacts/AddContact/AddContact";
 import CardContact from "../../Contacts/CardContact/CardContact";
 import "./ListContacts.css";
 
@@ -11,6 +12,7 @@ export default function ListContacts(){
     return(
         <div className="ListContacts custom-scroll">
             <h4>Contactos</h4>
+            <AddContact/>
             <div className="ListContacts__list">
                 {
                     store_management.phones.map((phone)=>(

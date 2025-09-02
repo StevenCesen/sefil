@@ -41,7 +41,7 @@ export default function PanelManagement({}){
                         interest={credit.interes}
                         mora={credit.mora}
                         seguro={credit.seguro_desgravamen}
-                        gasto_cobranza_sefil={0}
+                        gasto_cobranza_sefil={credit.gasto_cobranza_sefil}
                         gasto_cobranza={credit.gastos_cobranza}
                         gastos_judiciales={credit.gastos_judiciales}
                         otros_valores={credit.otros_valores}
@@ -55,6 +55,7 @@ export default function PanelManagement({}){
                                 name={client.name}
                                 ci={client.ci}
                                 type={client.type}
+                                sector_economico={client.sector_economico}
                                 credit_id={credit.id}
                                 days_past_due={credit.days_past_due}
                                 total_amount={credit.total_amount}

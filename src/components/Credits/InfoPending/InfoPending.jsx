@@ -1,3 +1,4 @@
+import useFormatterNumber from "../../../hooks/useFormatterNumber";
 import "./InfoPending.css";
 
 export default function InfoPending({days_past_due,total_amount,payment_date}){
@@ -8,7 +9,7 @@ export default function InfoPending({days_past_due,total_amount,payment_date}){
                 <p>Días de mora</p>
             </div>
             <div>
-                <h3>{total_amount}</h3>
+                <h3>{useFormatterNumber({value:total_amount,currency:'USD'})}</h3>
                 <p>Total pendiente</p>
             </div>
             <div>

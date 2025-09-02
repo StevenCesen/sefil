@@ -8,9 +8,9 @@ export default async function createCall({e,data_call}){
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             },
-            body:new URLSearchParams(data_call)
+            body:data_call
         });
-
+        
         const response=await request.json();
 
         if(response.state===200){

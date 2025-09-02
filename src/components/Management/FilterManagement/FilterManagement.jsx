@@ -105,6 +105,24 @@ export default function FilterManagement(){
                 </div>
             </div>
 
+            <label className="FilterManagement__label">
+                Sector Econ.
+                <select
+                    onChange={(e)=>{
+                        filter_management.setSector(e.target.value);
+                        filter_management.FilteredCredits(filter_management.getFilterString());
+                    }}
+                >
+                    <option value={""}>-- Seleccionar --</option>
+                    <option value={"AGRÍCOLA"}>AGRÍCOLA</option>
+                    <option value={"COMERCIO"}>COMERCIO</option>
+                    <option value={"PECUARIA"}>PECUARIA</option>
+                    <option value={"PESCA"}>PESCA</option>
+                    <option value={"SERVICIOS"}>SERVICIOS</option>
+                    <option value={"TRANSFORMACION"}>TRANSFORMACION</option>
+                </select>
+            </label>
+
             <label className="FilterManagement__label">Monto</label>
 
             <label className="FilterManagement__label">Cuotas</label>

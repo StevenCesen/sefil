@@ -5,6 +5,7 @@ import PDF from "../PDF";
 import usePrelacion from "../../hooks/usePrelacion";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useUpdateCredit from "../../hooks/useUpdateCredit";
+import logo4 from "../../assets/icons/logo.png";
 
 export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCredit,estado,data_convenio}){
 
@@ -140,7 +141,7 @@ export default function CardPay({setPay,data,id,cartera,setGastos,setPDF,setCred
 
                 <div className="CardPay__head">
                     <h3 ref={title}>PAGO</h3>
-                    <img src="./icons/logo.png"/>
+                    <img src={logo4}/>
                 </div>
 
                 <div className="CardPay__detailPay">

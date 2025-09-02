@@ -38,6 +38,8 @@ export default function FormManagement(){
             nro_notificacion:store_management.nro_notificacion
         }
 
+        console.log(data_management)
+
         button.current.textContent='Guardando...';
 
         const create_management=await createManagement({data_management});
@@ -52,7 +54,7 @@ export default function FormManagement(){
                 type:'Push--sucessful',
                 timeout:3000
             });
-
+            
             store_management.clean();
             
         }else{
@@ -78,7 +80,7 @@ export default function FormManagement(){
             store_management.setView(false);
         }
     }
-
+    
     useEffect(()=>{
         store_templates.setTemplate({
             role: localStorage.getItem('rol'),

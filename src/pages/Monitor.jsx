@@ -1,75 +1,14 @@
 import { NavLink } from "react-router-dom";
 import "./pages.css";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CardUserState from "../components/CardUserState/CardUserState.jsx";
 import Loader from "../components/Loader/loader.jsx";
-import { GestionContext } from "../contexts/GestionContext.jsx";
-import useReceiveState from "../hooks/useReceiveState.js";
+import { useStoreMonitor } from "../stores/useStoreMonitor.js";
 
 export default function Monitor(){
-
-    const [agents,setAgents]=useState();
-    const [campains,setCampains]=useState();
-    const [campain,setCampain]=useState();
-    const [interval_agents,setIntervalAgent]=useState();
     const [loading,setLoading]=useState();
-    const datacontext=useContext(GestionContext);
-    const [current_agents,setCurrentAgents]=useState();
-    const connection = useRef(null);
+    const store_monitor=useStoreMonitor();
     
-    const updateState=()=>{
-        setIntervalAgent(
-            setInterval(() => {
-
-                (location.hash==="#/dashboard/monitor") 
-                ?
-                    fetch(`${import.meta.env.VITE_URL_BASE}/users?campain=26&cartera=syncs`,{
-                        headers: {
-                            Accept: 'application/json',
-                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                        }
-                    })
-                        .then((response) => response.json())  
-                        .then((data) => {
-                            const data_prev=data;
-                            let agents_new=[];
-                            
-                            data_prev.map(agent=> {
-                                agent.status='DESCONECTADO';
-
-                                if(agent.name!=='Vanesa Rodriguez' & agent.name!=='Alexis Ortega' & agent.name!=='Patricio Paéz'){
-                                    if(localStorage.getItem('filter_campain')!==null & localStorage.getItem('filter_campain')!==""){
-                                        
-                                        if(agent.gestion.length>0){
-                                            let new_agents=[];
-
-                                            agent.gestion.map((camp)=>{
-                                                if(camp.campain===localStorage.getItem('filter_campain')){
-                                                    new_agents.push(camp);
-                                                }
-                                            });
-
-                                            agent.gestion=new_agents;
-                                            if(agent.gestion.length>0){
-                                                agents_new.push(agent);
-                                            }
-                                        }
-
-                                    }else{
-                                        agents_new.push(agent);
-                                    }
-                                }
-
-                            });
-
-                            setAgents(agents_new);
-                        })
-                :   clearInterval(interval_agents)
-                
-            }, 5000)
-        );
-    }
-
     const updateData=(data)=>{
         let agentes=datacontext.agents;
         let new_agents=[];
@@ -108,77 +47,24 @@ export default function Monitor(){
             }
         
         });
-
-        datacontext.setAgents(new_agents);
         setAgents(new_agents);
     }
 
-    useEffect(()=>{
+    // document.addEventListener("visibilitychange", function(e) {   
+    // });
 
-        if(location.hash==='#/dashboard/monitor'){
-            
-            const conn = new WebSocket('wss://check.sefil.com.ec/ws');
+    // useEffect(()=>{
+    //     if(location.hash==='#/dashboard/monitor'){
+    //         connection.current = conn;
+    //         if (connection.current) {
+    //             return () => {
+    //                 connection.current.close();
+    //             };
+    //         }
+    //     }
+    // },[]);
 
-            conn.onopen = function(e) {
-                console.log("WSS: Connection established!");
-            };
-            
-            conn.onmessage = function(e) {
-                const data=JSON.parse(e.data);
-                updateData(data.data);
-            };
-
-            setCurrentAgents(datacontext.agents);
-            setAgents(datacontext.agents);
-            setCampains(datacontext.campains);
-            setCampain(datacontext.campain.name);
-
-            let ids=[];
-
-            datacontext.agents.map((ag=>{
-                ids.push(ag.id);
-            }));
-
-            localStorage.setItem('agents_ids',JSON.stringify(ids));
-
-            document.addEventListener("visibilitychange", function(e) {
-                if(e.target.visibilityState==='visible'){
-                    fetch(`${import.meta.env.VITE_URL_BASE}/users/monitor?campain=${localStorage.getItem('campain_id')}&cartera=syncs`,{
-                        headers: {
-                            Accept: 'application/json',
-                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                        }
-                    })
-                        .then((response) => response.json())  
-                        .then((data) => {
-                            console.log(data);
-                            datacontext.setAgents(data);
-                            setAgents(data);
-
-                            let ids=[];
-
-                            data.map((ag=>{
-                                ids.push(ag.id);
-                            }));
-
-                            localStorage.setItem('agents_ids',JSON.stringify(ids));
-                        });
-                }
-            });
-
-            connection.current = conn;
-
-            if (connection.current) {
-                return () => {
-                    connection.current.close();  // Cerrar la conexión de WebSocket
-                };
-            }
-        }
-
-    },[]);
-
-    if(!agents) return <Loader/>
-    if(!campains) return <Loader/>
+    store_monitor.connectWS();
 
     return (
         <div className="pageConsulta">
@@ -197,43 +83,12 @@ export default function Monitor(){
                 <label>
                     Campaña
                     <select
-                        value={campain}
                         onChange={(e)=>{
-                            setCampain(e.target.value);
-                            setLoading(true);
-
-                            console.log(`${import.meta.env.VITE_URL_BASE}/users/monitor?campain=${e.target.value.split('/')[1]}&cartera=${e.target.value.split('/')[0]}`)
-
-                            fetch(`${import.meta.env.VITE_URL_BASE}/users/monitor?campain=${e.target.value.split('/')[1]}&cartera=${e.target.value.split('/')[0]}`,{
-                                headers: {
-                                    Accept: 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                }
-                            })
-                                .then((response) => response.json())  
-                                .then((data) => {
-                                    
-                                    datacontext.setAgents(data);
-                                    setAgents(data);
-
-                                    let ids=[];
-
-                                    data.map((ag=>{
-                                        ids.push(ag.id);
-                                    }));
-
-                                    localStorage.setItem('agents_ids',JSON.stringify(ids));
-
-                                    setLoading(false);
-                                });
+                            
                         }}
                     >
                         <option value={""}>-- Todas --</option>
-                        {
-                            campains.map(campain=>(
-                                <option value={`${campain.cartera}/${campain.id}/${campain.name}`}>{campain.name}</option>
-                            ))
-                        }
+                        
                     </select>
                 </label>
             </div>
@@ -271,32 +126,30 @@ export default function Monitor(){
                         </div>
                     </label>
                 </div>
-
                 {
-                    agents.map((campain,index)=>(
-                        <CardUserState
-                            key={index}
-                            name={campain.agente}
-                            state={campain.state}
-                            time={campain.tiempo}
-                            name_campain={campain.campain}
-                            mode={"complete"}
-                            data={{
-                                nro_credits:campain.total_credits,
-                                nro_gestions:campain.total_credits_ges,
-                                nro_gestions_dia:campain.total_credits_ges_dia,
-                                nro_gestions_efec:campain.total_credits_ges_efec,
-                                nro_gestions_efec_dia:campain.total_credits_ges_efec_dia,
-                                nro_pendientes:campain.nro_pendientes,
-                                nro_proceso:campain.nro_proceso,
-                                nro_proceso_dia:campain.nro_proceso_dia,
-                                nro_calls:campain.nro_llamadas,
-                                nro_calls_acum:campain.nro_llamadas_acum,
-                            }}
-                        />
-                    ))
+                    // agents.map((campain,index)=>(
+                    //     <CardUserState
+                    //         key={index}
+                    //         name={campain.agente}
+                    //         state={campain.state}
+                    //         time={campain.tiempo}
+                    //         name_campain={campain.campain}
+                    //         mode={"complete"}
+                    //         data={{
+                    //             nro_credits:campain.total_credits,
+                    //             nro_gestions:campain.total_credits_ges,
+                    //             nro_gestions_dia:campain.total_credits_ges_dia,
+                    //             nro_gestions_efec:campain.total_credits_ges_efec,
+                    //             nro_gestions_efec_dia:campain.total_credits_ges_efec_dia,
+                    //             nro_pendientes:campain.nro_pendientes,
+                    //             nro_proceso:campain.nro_proceso,
+                    //             nro_proceso_dia:campain.nro_proceso_dia,
+                    //             nro_calls:campain.nro_llamadas,
+                    //             nro_calls_acum:campain.nro_llamadas_acum,
+                    //         }}
+                    //     />
+                    // ))
                 }
-
             </div>
             {
                 (loading)

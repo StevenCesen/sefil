@@ -4,12 +4,12 @@ import "./Header.css";
 import MenuUser from "../MenuUser/MenuUser.jsx";
 import MenuNotifier from "../MenuNotifier/MenuNotifier.jsx";
 import CardSelectState from "../CardSelectState/CardSelectState.jsx";
-import logo from "../../assets/icons/logo.png";
+import logo6 from "../../assets/icons/logo.png";
 
 export default function Header(){
     return(
         <header className="header">
-            <img src={logo}/>
+            <img src={logo6}/>
             {
                 (useSessions()) && 
                     <>

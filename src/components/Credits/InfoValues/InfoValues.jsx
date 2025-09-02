@@ -1,3 +1,4 @@
+import useFormatterNumber from "../../../hooks/useFormatterNumber";
 import "./InfoValues.css";
 
 export default function InfoValues({capital,interest,mora,seguro,gasto_cobranza_sefil,gasto_cobranza,gastos_judiciales,otros_valores}){
@@ -6,35 +7,35 @@ export default function InfoValues({capital,interest,mora,seguro,gasto_cobranza_
             <h4>📟 Desgloce</h4>
             <div>
                 <h4>Saldo capital:</h4>
-                <p>{capital}</p>
+                <p>{useFormatterNumber({value:capital,currency:'USD'})}</p>
             </div>
             <div>
                 <h4>Interés:</h4>
-                <p>{interest}</p>
+                <p>{useFormatterNumber({value:interest,currency:'USD'})}</p>
             </div>
             <div>
                 <h4>Mora:</h4>
-                <p>{mora}</p>
+                <p>{useFormatterNumber({value:mora,currency:'USD'})}</p>
             </div>
             <div>
                 <h4>Seguro desgravamen:</h4>
-                <p>{seguro}</p>
+                <p>{useFormatterNumber({value:seguro,currency:'USD'})}</p>
             </div>
             <div>
                 <h4>Gasto de cobranza SEFIL:</h4>
-                <p>{gasto_cobranza_sefil}</p>
+                <p>{useFormatterNumber({value:gasto_cobranza_sefil,currency:'USD'})}</p>
             </div>
             <div>
                 <h4>Gasto de cobranza:</h4>
-                <p>{gasto_cobranza}</p>
+                <p>{useFormatterNumber({value:gasto_cobranza,currency:'USD'})}</p>
             </div>
             <div>
                 <h4>Gastos judiciales:</h4>
-                <p>{gastos_judiciales}</p>
+                <p>{useFormatterNumber({value:gastos_judiciales,currency:'USD'})}</p>
             </div>
             <div>
                 <h4>Otros valores:</h4>
-                <p>{otros_valores}</p>
+                <p>{useFormatterNumber({value:otros_valores,currency:'USD'})}</p>
             </div>
         </div>
     );

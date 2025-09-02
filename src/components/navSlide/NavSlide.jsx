@@ -28,7 +28,6 @@ export default function NavSlide({actions,permission}){
 
     useEffect(()=>{
         const permission=localStorage.getItem('permission').split(',');
-        console.log(permission)
         setOptions(permission);
     },[]);
 

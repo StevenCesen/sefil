@@ -1,3 +1,4 @@
+import useFormatterNumber from "../../../hooks/useFormatterNumber";
 import "./SectionPayments.css";
 
 export default function SectionPayments({payments}){
@@ -11,7 +12,14 @@ export default function SectionPayments({payments}){
             </div>
             
             {
-                console.log(payments)
+                payments.map((payment,n)=>(
+                    <div key={n} className="SectionPayments__item">
+                        <label>{payment.fecha}</label>
+                        <label>{payment.forma_pago}</label>
+                        <label>{useFormatterNumber({value:payment.valor_recibido,currency:'USD'})}</label>
+                        <label>{(payment.status==='guardado') ? 'Guardado' : 'Revertido'}</label>
+                    </div>
+                ))
             }
 
         </div>

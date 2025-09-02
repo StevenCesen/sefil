@@ -26,7 +26,7 @@ export const useStoreTemplate = create((set,get) => ({
         if (role === 'legal') {
             // Se usa la plantilla de Judicial
             set({current_template:getTemplate({id:3})});
-        } else if (role === 'campo' && days_past_due > 31) {
+        } else if ((role === 'campo' || role === 'administrador') && days_past_due > 31) {
             // Se usa la plantilla de Campo
             set({current_template:getTemplate({id:2})});
         } else if (role === 'call' || role === 'campo' || role === 'administrador') {

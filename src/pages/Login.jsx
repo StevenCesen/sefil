@@ -1,7 +1,6 @@
 import "./pages.css";
 import { useRef, useState } from "react";
 import useLogin from "../hooks/useLogin";
-import { NavLink, redirect } from "react-router-dom";
 import Eye from "../components/Eye/Eye";
 import useSessions from "../hooks/useSessions";
 import Loader from "../components/Loader/loader";

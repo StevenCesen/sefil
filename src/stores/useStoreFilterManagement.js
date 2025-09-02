@@ -6,6 +6,7 @@ export const useStoreFilterManagement = create((set,get) => ({
     tray:'PENDIENTE',
     name: '',
     business:'SEFIL_1',
+    sector:'',
     ci:'',
     agency:'',
     days_past_due_min:'',
@@ -25,10 +26,11 @@ export const useStoreFilterManagement = create((set,get) => ({
     setMaxDays:         (value)=>{set({days_past_due_max:value})},
     setManagementState: (value)=>{set({management_state:value})},
     setPromiseDate:     (value)=>{set({promise_date:value})},
+    setSector:          (value)=>{set({sector:value})},
     setCurrent:     (value)=>{set({current_index:value})},
     setCredits:     (value)=>{set({credits:value})},
     getFilterString: () => {
-        const {name,business,ci,days_past_due_max,days_past_due_min,agency,management_state,promise_date,tray} = get();
+        const {name,business,ci,days_past_due_max,days_past_due_min,agency,sector,management_state,promise_date,tray} = get();
         const parts = [];
         if (name.trim() !== '') parts.push(`name=${name.trim()}`);
         if (business.trim() !== '') parts.push(`business=${business.trim()}`);
@@ -38,6 +40,7 @@ export const useStoreFilterManagement = create((set,get) => ({
         if (days_past_due_min.trim() !== '') parts.push(`min_days=${days_past_due_min.trim()}`);
         if (management_state.trim() !== '') parts.push(`status_management=${management_state.trim()}`);
         if (promise_date.trim() !== '') parts.push(`promise=${promise_date.trim()}`);
+        if (sector.trim() !== '') parts.push(`sector=${sector.trim()}`);
         if (tray.trim() !== '') parts.push(`tray=${tray.trim()}`);
         parts.push(`user_id=${localStorage.getItem('temp_uS')}`);
         return parts.join('&');

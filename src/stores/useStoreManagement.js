@@ -36,7 +36,7 @@ export const useStoreManagement = create((set,get) => ({
     },
     setView:     (value)=>{set({view_panel:value})},
     setCredit:     (value)=>{
-
+        
         const {setPhones,setManagements,setPayments}=get();
 
         set({credit:value}),
@@ -62,6 +62,11 @@ export const useStoreManagement = create((set,get) => ({
     setCampainID:     (value)=>{set({campain_id:value})},
     setObservation:     (value)=>{set({observation:value})},
     setSection:     (value)=>{set({section:value})},
+    setNewPhone:     (value)=>{
+        const {phones}=get();
+        phones.push(value);
+        set({phones:phones});
+    },
     setIDCampain: (cartera) => {
         set({cartera:cartera});
         if(cartera=='SEFIL_1'){

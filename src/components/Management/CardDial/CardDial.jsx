@@ -4,6 +4,7 @@ import { useStoreProgressCall } from "../../../stores/useStoreProgessCall";
 import { PhoneForwarded, PhoneOff } from "lucide-react";
 import sendpush from "../../../helpers/sendpush";
 import useBlobToBase64 from "../../../hooks/useBlobToBase64";
+import { HandleBlobToFile } from "../../../helpers/Calls/HandleBlobToFile";
 
 let recorder,streamer;
 
@@ -39,6 +40,25 @@ export default function CardDial({credit_id,campain_id}){
         const message=`En llamada ${(channel==='PBX') ? 'normal con' : 'por whatsapp con:'}`;
         store_call.setMessage(message);
 
+        /**
+        fetch(`${import.meta.env.VITE_URL_BASE}/incall`,{
+                                        headers: {
+                                            Accept: 'application/json',
+                                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    })
+                                        .then((response) => response.json())  
+                                        .then((data) => {
+                                            
+                                        });
+         */
+        // try {
+        //     const request=await fetch(`originate.php?exten=${(number_in==="") ? phone.nro : number_in}&id=9&channel=${localStorage.getItem('extension')}`);
+        //     const response=await request.json();
+        // } catch (error) {
+            
+        // }
+
         sendpush({
             title:'En llamada',
             message:'Iniciaste una llamada',
@@ -64,10 +84,16 @@ export default function CardDial({credit_id,campain_id}){
         clearInterval(intervalRef.current);
         intervalRef.current = null;
         setCounter(0);
+        
+        // if(!whats_call){
+        //     const request=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
+        //     const response=await request.json();
+        // }
 
         recorder.stop();
         recorder.addEventListener('dataavailable',async e => {
-            const base=await useBlobToBase64(e.data);
+            const base=HandleBlobToFile(e.data,'collecta','webm');
+        
             store_call.setRecordAudio({
                 record:base,
                 duration:counter

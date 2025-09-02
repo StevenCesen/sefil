@@ -1,10 +1,10 @@
-import { Mail, User } from "lucide-react";
+import { Mail, PiggyBank, User } from "lucide-react";
 import sendpush from "../../../helpers/sendpush";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import "./CardClient.css";
 import { useStoreEmail } from "../../../stores/useStoreEmail";
 
-export default function CardClient({credit_id,name,ci,days_past_due,type,total_amount}){
+export default function CardClient({credit_id,name,ci,sector_economico,days_past_due,type,total_amount}){
 
     const store_management=useStoreManagement();
     const store_email=useStoreEmail();
@@ -38,7 +38,7 @@ export default function CardClient({credit_id,name,ci,days_past_due,type,total_a
             </label>
             <div>
                 <h3>{name}</h3>
-                <span>Cédula: {ci}</span>
+                <span>Cédula: {ci} | Sector económico: {sector_economico}</span>
             </div>
             <div>
                 <span className={`${(type==='TITULAR') ? 'CardClient--titular' : 'CardClient--garante'}`}>{type}</span>

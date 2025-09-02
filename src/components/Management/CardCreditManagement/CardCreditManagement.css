@@ -3,7 +3,8 @@
     display: grid;
     justify-content: flex-start;
     align-items: center;
-    grid-template-columns: 40px calc(15% - 40px) calc(15% - 80px) 10% 15% 10% 10% 15% 10%;
+    text-align: center;
+    grid-template-columns: 40px calc(15% - 40px) calc(18% - 160px) 10% 12% 100px 10% 10% 12.5% 12.5%;
     gap: 10px;
     padding: 10px 10px;
 }

@@ -16,3 +16,15 @@
     border-top-right-radius: 10px;
     padding: 10px 0;
 }
+
+.SectionPayments__item{
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 25% 25% 25% 25%;
+    align-items: center;
+    font-size: 14px;
+    text-align: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px 0;
+}

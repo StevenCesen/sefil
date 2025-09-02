@@ -6,7 +6,6 @@ import {HashRouter, Route, Routes } from 'react-router-dom'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import { NotifierContextProvider } from './contexts/notifierContext.jsx'
-import { GestionContextProvider } from './contexts/GestionContext.jsx'
 import { SessionContextProvider } from './contexts/SessionContext.jsx'
 
 (function () {
@@ -61,7 +60,6 @@ import { SessionContextProvider } from './contexts/SessionContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <SessionContextProvider>
-    <GestionContextProvider>
       <NotifierContextProvider>
         <HashRouter>
           <Routes>
@@ -81,6 +79,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </Routes>
         </HashRouter>
       </NotifierContextProvider>
-    </GestionContextProvider>
   </SessionContextProvider>
 )
