@@ -1,6 +1,6 @@
 .ListContacts{
     width: 100%;
-    height: 400px;
+    height: calc(100vh - 480px);
     overflow-y: auto;
     background-color: var(--bg-2);
     box-shadow: var(--box-shadow);

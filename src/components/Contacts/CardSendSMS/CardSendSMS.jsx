@@ -2,23 +2,77 @@ import "./CardSendSMS.css";
 import sendpush from "../../../helpers/sendpush";
 import { useStoreSMS } from "../../../stores/useStoreSMS";
 import { Send, X } from "lucide-react";
+import createManagement from "../../../helpers/Managements/createManagement";
+import { useStoreManagement } from "../../../stores/useStoreManagement";
 
 export default function CardSendSMS(){
     const store_sms=useStoreSMS();
+    const store_management=useStoreManagement();
 
     const handlerSendSMS=async ({e})=>{
 
         e.target.textContent=`Enviando...`;
 
+        if(store_sms.promise_date===''){
+            sendpush({
+                title:'Fecha de regestión.',
+                message:'Ingresa una fecha para regestión.',
+                type:'Push--danger',
+                timeout:5000
+            });
+
+            e.target.textContent=`Enviar SMS`;
+
+            return;
+        }
+
         const send_sms=await store_sms.sendSMS();
 
         if(Number(send_sms.cod_respuesta)===100){
-            sendpush({
-                title:'Envío completado.',
-                message:'Se completo el envío del SMS correctamente.',
-                type:'Push--sucessful',
-                timeout:3000
-            });
+
+            // Registramos la gestión
+            const data_management={
+                id_campain:store_sms.campain_id,
+                id_call:0,
+                id_calls_extras:"[]",
+                id_credit:store_sms.credit_id,
+                state_gestion:'CONTACTADO EFECTIVO',
+                substate_gestion:'MENSAJE DE TEXTO',
+                date_promise:store_sms.promise_date,
+                observation:store_sms.message,
+                client_name:store_sms.name,
+                client_ci:store_sms.ci,
+                type:store_sms.type,
+                dias_vencidos:store_sms.days_past_due,
+                cartera:'',
+                monto:store_sms.total_amount,
+                monto_pagar:store_sms.total_amount,
+                nro_notificacion:''
+            }
+
+            console.log(data_management);
+
+            const create_management=await createManagement({data_management});
+            
+            if(create_management.status===200){
+                console.log(create_management);
+                store_management.addManagement(create_management.management);
+                sendpush({
+                    title:'Envío completado.',
+                    message:'Se completo el envío del SMS correctamente y se ha registrado una gestión.',
+                    type:'Push--sucessful',
+                    timeout:5000
+                });
+            }else{
+                sendpush({
+                    title:'Envío completado.',
+                    message:'Se completo el envío del SMS correctamente, pero no se guardo la gestión.',
+                    type:'Push--danger',
+                    timeout:5000
+                });
+            }
+
+            store_sms.setView(false);
         }else{
             sendpush({
                 title:'Error enviando SMS.',
@@ -58,6 +112,15 @@ export default function CardSendSMS(){
                             ))
                         }
                     </select>
+                </label>
+                <label>
+                    Fecha regestión
+                    <input 
+                        onChange={(e)=>{
+                            store_sms.setPromiseDate(e.target.value);
+                        }} 
+                        type="date"
+                    />
                 </label>
             </div>
             <div className="CardSendMail__body">

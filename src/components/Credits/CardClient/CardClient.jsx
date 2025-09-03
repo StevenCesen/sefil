@@ -38,9 +38,10 @@ export default function CardClient({credit_id,name,ci,sector_economico,days_past
             </label>
             <div>
                 <h3>{name}</h3>
-                <span>Cédula: {ci} | Sector económico: {sector_economico}</span>
+                <span>Cédula: {ci}</span>
             </div>
             <div>
+                <span className="CardClient__sector">Sector económico: {sector_economico}</span>
                 <span className={`${(type==='TITULAR') ? 'CardClient--titular' : 'CardClient--garante'}`}>{type}</span>
                 <button onClick={()=>{
                     store_email.setContact({

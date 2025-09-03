@@ -5,12 +5,16 @@ import useSendsms from '../helpers/sendsms';
 export const useStoreSMS = create((set,get) => ({
     view: false,
     name:'',
+    ci:'',
     type:'',
     phone_number:'',
     payment_date:'',
     cod_sms:'',
+    promise_date:'',
     total_amount:'',
     days_past_due:'',
+    campain_id:'',
+    credit_id:'',
     phone_contact:'',
     templates:[
         {
@@ -29,7 +33,7 @@ export const useStoreSMS = create((set,get) => ({
             'text':'(x). Somos de Empresa de cobranzas SEFIL estamos gestionando el pago de su deuda en FACES su saldo a la fecha es $(x). Podemas llegar a un acuerdo de pago por favor contactarse al (x).'
         }
     ],  
-    setContact:({phone_number,name,type,view,days_past_due,total_amount})=>{
+    setContact:({phone_number,name,type,view,days_past_due,total_amount,ci,campain_id,credit_id})=>{
         set({phone_number:phone_number})
         set({name:name})
         set({type:type})
@@ -37,8 +41,12 @@ export const useStoreSMS = create((set,get) => ({
         set({days_past_due:days_past_due})
         set({total_amount:total_amount})
         set({phone_contact:localStorage.getItem('phone_number')})
+        set({campain_id:campain_id})
+        set({credit_id:credit_id})
+        set({ci:ci})
     },
     setView:(value)=>{set({view:value})},
+    setPromiseDate:(value)=>{set({promise_date:value})},
     setMessage:(id)=>{
         const {templates,name,type,total_amount,phone_contact,days_past_due,payment_date}=get();
 
@@ -78,7 +86,7 @@ export const useStoreSMS = create((set,get) => ({
         });
     },
     sendSMS:async ()=>{
-        const {name,type,total_amount,phone_contact,days_past_due,payment_date,cod_sms}=get();
+        const {name,type,total_amount,phone_contact,days_past_due,payment_date,cod_sms,campain_id,credit_id}=get();
 
         let data={}
 
@@ -107,8 +115,6 @@ export const useStoreSMS = create((set,get) => ({
                 "phone_contact":phone_contact
             }
         }
-
-        console.log(data);
 
         const send=await useSendsms({data});
         return send.respuesta;

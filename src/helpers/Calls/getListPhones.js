@@ -1,5 +1,4 @@
 export default async function getListPhones({credit_id,identification}){
-    console.log(credit_id,identification);
     const end_point=`${import.meta.env.VITE_URL_BASE}/contacts?credit_id=${credit_id}&ci=${identification}`;
     try {
         const request=await fetch(end_point,{

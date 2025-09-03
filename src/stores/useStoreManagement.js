@@ -91,6 +91,13 @@ export const useStoreManagement = create((set,get) => ({
         const managements=await getListManagements({credit_id,cartera});
         set({managements:managements});
     },
+    addManagement: async (data) => {
+        const {managements}=get();
+        
+        const temp=managements.data;
+        temp.unshift(data);
+        set({managements:{...managements,data:temp}});
+    },
     setPayments: async () => {
         const {cartera,credit_id}=get();
         const payments=await getListPayments({credit_id,cartera});

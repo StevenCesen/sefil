@@ -5,7 +5,7 @@ import { useStoreSMS } from "../../../stores/useStoreSMS";
 import { useEffect } from "react";
 import sendpush from "../../../helpers/sendpush";
 
-export default function CardContact({phone_number,nro_sucessful,nro_fails,name,type,total_amount,days_past_due}){
+export default function CardContact({phone_number,nro_sucessful,nro_fails,name,ci,type,total_amount,days_past_due}){
     const store_call=useStoreProgressCall();
     const store_sms=useStoreSMS();
     
@@ -44,10 +44,13 @@ export default function CardContact({phone_number,nro_sucessful,nro_fails,name,t
                             store_sms.setContact({
                                 phone_number,
                                 name,
+                                ci,
                                 type,
                                 view:true,
                                 total_amount,
-                                days_past_due
+                                days_past_due,
+                                campain_id:store_call.campain_id,
+                                credit_id:store_call.credit_id
                             });
                         }else{
                             sendpush({

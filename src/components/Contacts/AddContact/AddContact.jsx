@@ -15,53 +15,66 @@ export default function AddContact(){
     const handleSaveContact=async (e)=>{
         e.target.textContent='Guardando...';
 
-        const data_phone={
-            credito:store_management.credit_id,
-            tipo:contact.phone_number,
-            nombre:store_management.client_name,
-            parentesco:store_management.client_type,
-            numero:contact.phone_number,
-            nro_efectivo:1,
-            cartera:store_management.cartera,
-            ci:store_management.client_ci,
-            byUserCreate:localStorage.getItem('temp_uS'),
-            byUserDelete:'N/D',
-            byUserUpdate:'N/D',
-            estado:'ACTIVE'
-        };
+        if(contact.phone_number==='' || contact.type===''){
+            sendpush({
+                title:'Datos imcompletos.',
+                message:'Ingrese todos los datos del número a guardar.',
+                timeout:2000,
+                type:'Push--danger'
+            });
+        }else{
+            const data_phone={
+                credito:store_management.credit_id,
+                tipo:contact.type,
+                nombre:store_management.client_name,
+                parentesco:store_management.client_type,
+                numero:contact.phone_number,
+                nro_efectivo:1,
+                cartera:store_management.cartera,
+                ci:store_management.client_ci,
+                byUserCreate:localStorage.getItem('temp_uS'),
+                byUserDelete:'N/D',
+                byUserUpdate:'N/D',
+                estado:'ACTIVE'
+            };
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/contacts`,{
-            method:'POST',
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            },
-            body:new URLSearchParams(data_phone)
-        })
-            .then((response) => response.json())  
-            .then((data) => {
-                if(data.status===200){
-                    
+            fetch(`${import.meta.env.VITE_URL_BASE}/contacts`,{
+                method:'POST',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+                body:new URLSearchParams(data_phone)
+            })
+                .then((response) => response.json())  
+                .then((data) => {
                     setContact({
                         type:'',
                         phone_number:''
                     });
 
-                    store_management.setNewPhone(data_phone);
-                    
-                    sendpush({
-                        title:'Contacto guardado.',
-                        message:'Se guardado correctamente el número.',
-                        timeout:2000,
-                        type:'Push--sucessful'
-                    });
+                    if(data.status===200){                        
+                        sendpush({
+                            title:'Contacto guardado.',
+                            message:data.message,
+                            timeout:2000,
+                            type:'Push--sucessful'
+                        });
+                        store_management.setNewPhone(data_phone);
+                    }else{
+                        sendpush({
+                            title:'Contacto ya existe.',
+                            message:data.message,
+                            timeout:2000,
+                            type:'Push--warning'
+                        });
+                    }
 
-                    e.target.textContent='Guardar';
+                    e.target.textContent='Guardar contacto';
+                });
+        }
 
-                }else{
-                    e.target.textContent='Error';
-                }
-            });
+        e.target.textContent='Guardar contacto';
     }
 
     return (

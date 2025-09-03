@@ -8,63 +8,37 @@ import { useStoreMonitor } from "../stores/useStoreMonitor.js";
 export default function Monitor(){
     const [loading,setLoading]=useState();
     const store_monitor=useStoreMonitor();
-    
-    const updateData=(data)=>{
-        let agentes=datacontext.agents;
-        let new_agents=[];
-    
-
-        const ids=localStorage.getItem('agents_ids');
-    
-        agentes.map(agente=>{
-            if(agente.id==data.user_id){
-                if('all' in data){
-                    agente.id=data.user_id;
-                    agente.agente=data.agente;
-                    agente.state=data.state;
-                    agente.tiempo=data.tiempo;
-                    agente.campain=data.campain;
-                    agente.total_credits=data.total_credits;
-                    agente.total_credits_ges=data.total_credits_ges;
-                    agente.total_credits_ges_dia=data.total_credits_ges_dia;
-                    agente.total_credits_ges_efec=data.total_credits_ges_efec;
-                    agente.total_credits_ges_efec_dia=data.total_credits_ges_efec_dia;
-                    agente.nro_pendientes=data.nro_pendientes;
-                    agente.nro_proceso_dia=data.nro_proceso_dia;
-                    agente.nro_proceso=data.nro_proceso;
-                    agente.nro_llamadas=data.nro_llamadas;
-                    agente.nro_llamadas_acum=data.nro_llamadas_acum;
-                    agente.nro_llamadas_efec=data.nro_llamadas_efec;
-                    agente.nro_llamadas_no_efec=data.nro_llamadas_no_efec;
-                }else{
-                    agente.state=data.state;
-                    agente.tiempo=data.tiempo;
-                }
-            }
-
-            if(JSON.parse(ids).includes(agente.id)){
-                new_agents.push(agente);
-            }
-        
-        });
-        setAgents(new_agents);
-    }
+    const connection=useRef();
 
     // document.addEventListener("visibilitychange", function(e) {   
     // });
 
-    // useEffect(()=>{
-    //     if(location.hash==='#/dashboard/monitor'){
-    //         connection.current = conn;
-    //         if (connection.current) {
-    //             return () => {
-    //                 connection.current.close();
-    //             };
-    //         }
-    //     }
-    // },[]);
+    useEffect(()=>{
 
-    store_monitor.connectWS();
+        setLoading(true);
+        const conn = new WebSocket('wss://check.sefil.com.ec/ws');
+        
+        conn.onopen = function(e) {
+            console.log("WSS: Connection established!");
+            store_monitor.setAgents();
+            setLoading(false);
+        };
+
+        conn.onmessage = async function(e) {
+            const data=JSON.parse(e.data);
+            await store_monitor.updateAgent({data});
+        };
+
+        connection.current = conn;
+
+        if (connection.current) {
+            return () => {
+                connection.current.close();
+            };
+        }
+    },[]);
+
+
 
     return (
         <div className="pageConsulta">
@@ -83,12 +57,17 @@ export default function Monitor(){
                 <label>
                     Campaña
                     <select
-                        onChange={(e)=>{
-                            
+                        onChange={async (e)=>{
+                            setLoading(true);
+                            store_monitor.setIDCampain(e.target.value);
+                            await store_monitor.setAgents();
+                            setLoading(false);
                         }}
                     >
                         <option value={""}>-- Todas --</option>
-                        
+                        <option value={"SEFIL_1"}>SEFIL 1</option>
+                        <option value={"SEFIL_2"}>SEFIL 2</option>
+                        <option value={"syncs"}>FACES</option>
                     </select>
                 </label>
             </div>
@@ -127,28 +106,28 @@ export default function Monitor(){
                     </label>
                 </div>
                 {
-                    // agents.map((campain,index)=>(
-                    //     <CardUserState
-                    //         key={index}
-                    //         name={campain.agente}
-                    //         state={campain.state}
-                    //         time={campain.tiempo}
-                    //         name_campain={campain.campain}
-                    //         mode={"complete"}
-                    //         data={{
-                    //             nro_credits:campain.total_credits,
-                    //             nro_gestions:campain.total_credits_ges,
-                    //             nro_gestions_dia:campain.total_credits_ges_dia,
-                    //             nro_gestions_efec:campain.total_credits_ges_efec,
-                    //             nro_gestions_efec_dia:campain.total_credits_ges_efec_dia,
-                    //             nro_pendientes:campain.nro_pendientes,
-                    //             nro_proceso:campain.nro_proceso,
-                    //             nro_proceso_dia:campain.nro_proceso_dia,
-                    //             nro_calls:campain.nro_llamadas,
-                    //             nro_calls_acum:campain.nro_llamadas_acum,
-                    //         }}
-                    //     />
-                    // ))
+                    store_monitor.agents.map((campain,index)=>(
+                        <CardUserState
+                            key={index}
+                            name={campain.agente}
+                            state={campain.state}
+                            time={campain.tiempo}
+                            name_campain={campain.campain}
+                            mode={"complete"}
+                            data={{
+                                nro_credits:campain.total_credits,
+                                nro_gestions:campain.total_credits_ges,
+                                nro_gestions_dia:campain.total_credits_ges_dia,
+                                nro_gestions_efec:campain.total_credits_ges_efec,
+                                nro_gestions_efec_dia:campain.total_credits_ges_efec_dia,
+                                nro_pendientes:campain.nro_pendientes,
+                                nro_proceso:campain.nro_proceso,
+                                nro_proceso_dia:campain.nro_proceso_dia,
+                                nro_calls:campain.nro_llamadas,
+                                nro_calls_acum:campain.nro_llamadas_acum,
+                            }}
+                        />
+                    ))
                 }
             </div>
             {

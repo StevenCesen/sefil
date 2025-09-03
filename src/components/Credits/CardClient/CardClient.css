@@ -15,6 +15,11 @@
     gap:10px;
 }
 
+.CardClient__sector{
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
 .CardClient--select{
     background-color: var(--bg-alert-error-reduce);
 }

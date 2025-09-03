@@ -3,8 +3,9 @@ import "./CardDial.css"
 import { useStoreProgressCall } from "../../../stores/useStoreProgessCall";
 import { PhoneForwarded, PhoneOff } from "lucide-react";
 import sendpush from "../../../helpers/sendpush";
-import useBlobToBase64 from "../../../hooks/useBlobToBase64";
 import { HandleBlobToFile } from "../../../helpers/Calls/HandleBlobToFile";
+import originateCall from "../../../helpers/Calls/originateCall";
+import hangupCall from "../../../helpers/Calls/hangupCall";
 
 let recorder,streamer;
 
@@ -14,18 +15,6 @@ export default function CardDial({credit_id,campain_id}){
     const [counter,setCounter]=useState(0);
     const intervalRef = useRef(null);
 
-    // const request=await fetch(`status_channel.php?channel=${channel}&exten=${(number_in==="") ? phone.nro : number_in}`);
-    // const response=await request.json(); 
-    // if('destino' in response){
-    //     if(response.destino==='Up'){
-    //         localStorage.setItem('progreso','(En conversación)');
-    //     }else{
-    //         localStorage.setItem('progreso','(Llamando)');
-    //     }
-    // }
-    // if(response.estado=='Busy'){           
-    // }
-
     const formatTime = (totalSeconds) => {
         const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
         const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
@@ -33,51 +22,53 @@ export default function CardDial({credit_id,campain_id}){
         return `${mins}:${secs}`;
     };
 
+    /**
+     * Originar la llamada
+     * @param {*} channel 
+     */
     const handlerDial=async (channel)=>{
-        store_call.setInCall(true);
-        store_call.setChannel(channel);
 
-        const message=`En llamada ${(channel==='PBX') ? 'normal con' : 'por whatsapp con:'}`;
-        store_call.setMessage(message);
+        if(store_call.phone_number===''){
+            sendpush({
+                title:'Sin número',
+                message:'Selecciona o ingresa un número de teléfono',
+                type:'Push--warning',
+                timeout:3000
+            });
+        }else{
+            store_call.setInCall(true);
+            store_call.setChannel(channel);
 
-        /**
-        fetch(`${import.meta.env.VITE_URL_BASE}/incall`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            
-                                        });
-         */
-        // try {
-        //     const request=await fetch(`originate.php?exten=${(number_in==="") ? phone.nro : number_in}&id=9&channel=${localStorage.getItem('extension')}`);
-        //     const response=await request.json();
-        // } catch (error) {
-            
-        // }
+            const message=`En llamada ${(channel==='PBX') ? 'normal con' : 'por whatsapp con:'}`;
+            store_call.setMessage(message);
 
-        sendpush({
-            title:'En llamada',
-            message:'Iniciaste una llamada',
-            type:'Push--sucessful',
-            timeout:3000
-        });
+            if(channel==='PBX'){
+                const in_call=await originateCall({phone_number:store_call.phone_number});
+            }
 
-        if (!intervalRef.current) {
-            intervalRef.current = setInterval(() => {
-                setCounter((prev) => prev + 1);
-            }, 1000);
+            sendpush({
+                title:'En llamada',
+                message:'Iniciaste una llamada',
+                type:'Push--sucessful',
+                timeout:3000
+            });
+
+            if (!intervalRef.current) {
+                intervalRef.current = setInterval(() => {
+                    setCounter((prev) => prev + 1);
+                }, 1000);
+            }
+
+            streamer=await navigator.mediaDevices.getUserMedia({ audio: true, video:false});
+            recorder = new MediaRecorder(streamer);
+            recorder.start();
         }
-
-        streamer=await navigator.mediaDevices.getUserMedia({ audio: true, video:false});
-        recorder = new MediaRecorder(streamer);
-        recorder.start();
     }
-
-    const handlerHangup=()=>{
+    
+    /**
+     * Cortar llamada
+     */
+    const handlerHangup=async ()=>{
         store_call.setInCall(false);
         store_call.setMessage('Recién marcado:');
         store_call.setViewSelect(true);
@@ -85,10 +76,9 @@ export default function CardDial({credit_id,campain_id}){
         intervalRef.current = null;
         setCounter(0);
         
-        // if(!whats_call){
-        //     const request=await fetch(`hangup.php?exten=${(number_in==="") ? phone.nro : number_in}&channel=${channel}`);
-        //     const response=await request.json();
-        // }
+        if(store_call.channel==='PBX'){
+            const hangup=await hangupCall({phone_number:store_call.phone_number});
+        }
 
         recorder.stop();
         recorder.addEventListener('dataavailable',async e => {
@@ -118,7 +108,13 @@ export default function CardDial({credit_id,campain_id}){
                 ?
                     <label className="CardDial__dialer">
                         Marcador
-                        <input type="text" placeholder="09XXXXXXXX"/>
+                        <input 
+                            type="text" 
+                            placeholder="09XXXXXXXX"
+                            onChange={(e)=>{
+                                store_call.setInfoPhone({phone_number:e.target.value});
+                            }}
+                        />
                     </label>
                 :   <></>
             }
@@ -148,8 +144,8 @@ export default function CardDial({credit_id,campain_id}){
                             <div className="CardDial__count">
                                 <p>{formatTime(counter)}</p>
                                 <label
-                                    onClick={()=>{
-                                        handlerHangup();
+                                    onClick={async ()=>{
+                                        await handlerHangup();
                                     }}
                                 >
                                     <PhoneOff className="CardContact__item CardContact__item--hangup"/>
