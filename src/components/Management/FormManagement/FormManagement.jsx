@@ -38,16 +38,14 @@ export default function FormManagement(){
             nro_notificacion:store_management.nro_notificacion
         }
 
-        console.log(data_management)
-
         button.current.textContent='Guardando...';
 
         const create_management=await createManagement({data_management});
         
         if(create_management.status===200){
 
-            button.current.textContent='Guardando...';
-
+            button.current.textContent='Guardar gestión';
+            
             sendpush({
                 title:'Estado de gestión.',
                 message:'Se ha guardado la gestión correctamente.',

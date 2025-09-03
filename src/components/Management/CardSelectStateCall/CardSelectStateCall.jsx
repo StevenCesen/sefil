@@ -48,16 +48,16 @@ export default function CardSelectStateCall() {
             });
         }else{
             e.target.textContent='Guardando...';
-            button.current.setAttribute('disabled','');
-            e.target.setAttribute('disabled','');
+            // button.current.setAttribute('disabled','');
+            // e.target.setAttribute('disabled','');
             
             const id_call=await createCall({e,data_call});
 
             store_management.setIdCall(id_call);
             
             store_call.clean();
-            button.current.removeAttribute('disabled');
-            e.target.removeAttribute('disabled');
+            // button.current.removeAttribute('disabled');
+            // e.target.removeAttribute('disabled');
             setSelectedState('');
         }
     };
@@ -93,7 +93,7 @@ export default function CardSelectStateCall() {
                     ))}
                 </div>
                 <div className="CardSelectStateCall__actions">
-                    <button ref={button} onClick={handlerAbort}>No guardar</button>
+                    {/* <button ref={button} onClick={handlerAbort}>No guardar</button> */}
                     <button onClick={(e)=>{handlerSave(e)}}>
                         <Save size={16} /> Guardar llamada
                     </button>

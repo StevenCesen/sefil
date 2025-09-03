@@ -1,3 +1,4 @@
+import { useStoreFilterManagement } from "../../../stores/useStoreFilterManagement";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import CardClient from "../../Credits/CardClient/CardClient";
 import InfoCredit from "../../Credits/InfoCredit/InfoCredit";
@@ -12,6 +13,7 @@ import "./PanelManagement.css";
 
 export default function PanelManagement({}){
     const store_management=useStoreManagement();
+    const credits=useStoreFilterManagement();
     const credit=store_management.credit;
 
     if(!store_management.view_panel) return <></>
@@ -20,7 +22,10 @@ export default function PanelManagement({}){
         <Modal
             title={'Gestión crédito'}
             view={store_management.view_panel}
-            setView={()=>{store_management.setView(false)}}
+            setView={()=>{
+                credits.numberTrays();
+                store_management.setView(false);
+            }}
         >
             <div className="PanelManagement">
                 <div className="PanelManagement__credit">

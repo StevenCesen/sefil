@@ -37,6 +37,7 @@ export default function Gestion(){
                     }}
                 >Regresar</NavLink>
                 <div className="Gestion__nav">
+                    <h4 className="Gestion__navtray">Bandeja actual - {credits.tray}</h4>
                     <TraysManagement/>
                     <SelectNameCampain/>
                 </div>

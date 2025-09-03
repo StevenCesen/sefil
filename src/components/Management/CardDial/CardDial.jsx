@@ -97,8 +97,9 @@ export default function CardDial({credit_id,campain_id}){
             campain_id
         });
 
+        store_call.setInfoPhone({phone_number:''})
         store_call.setMessage('Llamar a:');
-    },[store_call.phone_number]);
+    },[credit_id]);
 
     return (
         <div className={`CardDial ${(store_call.in_call) ? 'CardDial--incall' : ''}`}>
@@ -108,8 +109,8 @@ export default function CardDial({credit_id,campain_id}){
                 ?
                     <label className="CardDial__dialer">
                         Marcador
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder="09XXXXXXXX"
                             onChange={(e)=>{
                                 store_call.setInfoPhone({phone_number:e.target.value});
