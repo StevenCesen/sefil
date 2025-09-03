@@ -1,7 +1,7 @@
-import addNotification from "react-push-notification";
+import sendpush from "../helpers/sendpush";
 
 export default async function useUpdatePermiss(data,id){
-    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/edit/${id}`,{
+    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/users/edit/${id}`,{
         method:'PUT',
         body:new URLSearchParams(data),
         headers: {
@@ -12,31 +12,19 @@ export default async function useUpdatePermiss(data,id){
 
     const response=await request.json();
     
-    if(response.status===200){
-        addNotification({
-            title: 'Éxito',
-            subtitle: 'Permiso actualizado correctamente',
-            message: 'Inicia sesión nuevamente',
-            native: false,
-            backgroundTop: '#009793',
-            backgroundBottom: '#459d9a',
-            colorTop: 'white',
-            colorBottom: 'white',
-            closeButton: 'Cerrar',
-            duration:3000,
+    if(response.status===200){ 
+        sendpush({
+            title:'Éxito.',
+            message:'Permiso actualizado correctamente.',
+            type:'Push--sucessful',
+            timeout:3000
         });
     }else{
-        addNotification({
-            title: 'Error',
-            subtitle: 'No se pudo actualizar permiso',
-            message: 'Inténtalo otra vez',
-            native: false,
-            backgroundTop: '#FF9619',
-            backgroundBottom: '#fdb864',
-            colorTop: 'white',
-            colorBottom: 'white',
-            closeButton: 'Cerrar',
-            duration:3000,
+        sendpush({
+            title:'ERR',
+            message:'No se pudo actualizar permiso.',
+            type:'Push--danger',
+            timeout:3000
         });
     }
 }

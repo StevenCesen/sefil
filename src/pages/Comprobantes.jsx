@@ -1,17 +1,15 @@
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
-import CardCredit from "../components/CardCredit/CardCredit";
 import { useEffect, useRef, useState } from "react";
 import useSearch from "../hooks/useSearch.js";
-import useMenu from "../hooks/useMenu.js";
 import "../components/CardUsuarios/CardUsuarios.css"
 import PDF from "../components/PDF.jsx";
 import { PDFViewer } from "@react-pdf/renderer";
 import useSearchVouchers from "../hooks/useSearchVouchers.js";
-import addNotification from "react-push-notification";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
 import useRol from "../hooks/useRol.js";
 import CardReverse from "../components/CardReverse/CardReverse.jsx";
+import sendpush from "../helpers/sendpush.js";
 
 export default function Comprobantes(){
     const param = useParams();
@@ -82,7 +80,7 @@ export default function Comprobantes(){
             setVal(param.id);
         }
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -209,18 +207,14 @@ export default function Comprobantes(){
                                             <button
                                                 onClick={(e)=>{
                                                     if(useRol()!=='administrador'){
-                                                        addNotification({
-                                                            title: 'No autorizado',
-                                                            subtitle: 'No puedes acceder a esta opción',
-                                                            message: '',
-                                                            native: false,
-                                                            backgroundTop: '#FF9619',
-                                                            backgroundBottom: '#fdb864',
-                                                            colorTop: 'white',
-                                                            colorBottom: 'white',
-                                                            closeButton: 'Cerrar',
-                                                            duration: 3000,
+                                                        
+                                                        sendpush({
+                                                            title:'ERR: No autorizado.',
+                                                            message:'No puedes acceder a esta opción.',
+                                                            type:'Push--danger',
+                                                            timeout:5000
                                                         });
+
                                                     }else{
                                                         setReverse(true);
                                                         setComprobante({
@@ -248,7 +242,7 @@ export default function Comprobantes(){
                                         {
                                             (comprobante.id!=='FACES') &&
                                                 <button onClick={(e)=>{
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/${comprobante.id}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/${comprobante.id}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -257,17 +251,12 @@ export default function Comprobantes(){
                                                         .then((response) => response.json())  
                                                         .then((data) => {
                                                             if('status' in data){
-                                                                addNotification({
-                                                                    title: 'No autorizado',
-                                                                    subtitle: 'No se pudo recibir información de este comprobante',
-                                                                    message: 'Cantidad excedida, se ha notificado al administrador',
-                                                                    native: false,
-                                                                    backgroundTop: '#FF9619',
-                                                                    backgroundBottom: '#fdb864',
-                                                                    colorTop: 'white',
-                                                                    colorBottom: 'white',
-                                                                    closeButton: 'Cerrar',
-                                                                    duration: 5000,
+
+                                                                sendpush({
+                                                                    title:'ERR: No autorizado.',
+                                                                    message:'Cantidad excedida, se ha notificado al administrador.',
+                                                                    type:'Push--danger',
+                                                                    timeout:5000
                                                                 });
                                                             
                                                             }else{
@@ -302,34 +291,12 @@ export default function Comprobantes(){
                         }
                     </div>
 
-
                 </div>
-
-                {
-                    // (comprobantes.total>10) &&
-                    //     <div className="DetailCredit__access">
-                    //         <p>Registros del {comprobantes.from}-{comprobantes.to} de {comprobantes.total}</p>
-                    //         <div>
-                    //         {
-                    //             comprobantes.links.map((button,index)=>(
-                    //                 (index===0)?
-                    //                     <NavLink key={index} onClick={()=>{updateData(button.url)}}>Anterior</NavLink>
-                    //                 : 
-                    //                     (index===(comprobantes.links.length-1)) ?
-                    //                         <NavLink key={index} onClick={()=>{updateData(button.url)}}>Siguiente</NavLink>
-                    //                     :
-                    //                         <></>
-                    //             ))
-                    //         }
-                    //         </div>
-                    //     </div>
-                }
 
             </div>
             
             {
                 (view) &&
-                
                     <div className="CardPay">
                         <button onClick={()=>{setView(!view)}}>Volver</button>
             

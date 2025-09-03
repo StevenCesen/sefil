@@ -1,9 +1,7 @@
 import { NavLink } from "react-router-dom";
 import "./CardUpdatePay.css";
 import { useEffect, useRef, useState } from "react";
-import addNotification from "react-push-notification";
 import CardManualPay from "../CardManualPay/CardManualPay";
-
 
 export default function CardUpdatePay({name,fecha_carga,state}){
     
@@ -33,7 +31,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
             state:state
         });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/pays/denied?cartera=${name}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/pays/denied?cartera=${name}`,{
             headers: {
                 Accept: 'application/json',
             }
@@ -41,7 +39,6 @@ export default function CardUpdatePay({name,fecha_carga,state}){
             .then((response) => response.json())  
             .then((data) => {
                 setPays(data);
-                console.log(data);
             });
             
     },[]);
@@ -77,7 +74,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                                 </button>
                                 <button 
                                     onClick={(e)=>{
-                                        location.href=`${import.meta.env.VITE_URL_BASE}/public/api/pays/denegados?cartera=SEFIL_2`;
+                                        location.href=`${import.meta.env.VITE_URL_BASE}/pays/denegados?cartera=SEFIL_2`;
                                     }}
                                     style={{marginLeft:5,padding:5,color:'var(--color-2)',backgroundColor:"inherit",border:'1px solid'}}
                                 >
@@ -89,7 +86,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                     }
                 </p>
                 
-                <NavLink to={`${import.meta.env.VITE_URL_BASE}/public/api/nopays?cartera=${name}`}>Descargar</NavLink>
+                <NavLink to={`${import.meta.env.VITE_URL_BASE}/nopays?cartera=${name}`}>Descargar</NavLink>
 
                 <button
                     onClick={(e)=>{
@@ -97,17 +94,11 @@ export default function CardUpdatePay({name,fecha_carga,state}){
 
                         if(file.files[0]===undefined){
 
-                            addNotification({
-                                title: 'Error archivo',
-                                subtitle: 'Se debe cargar un archivo',
-                                message: 'Por favor, elige un archivo en formato EXCEL e intenta de nuevo',
-                                native: false,
-                                backgroundTop: '#FF9619',
-                                backgroundBottom: '#fdb864',
-                                colorTop: 'white',
-                                colorBottom: 'white',
-                                closeButton: 'Cerrar',
-                                duration: 4000,
+                            sendpush({
+                                title:'ERR: formato de archivo inválido.',
+                                message:'Por favor, elige un archivo en formato EXCEL e intenta de nuevo.',
+                                type:'Push--danger',
+                                timeout:3000
                             });
 
                         }else{
@@ -116,7 +107,7 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                             data_import.append('file',file.files[0]);
                             e.target.textContent='Verificando pagos, espere...';
 
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/cartera/pagosUpdate`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/cartera/pagosUpdate`,{
                                 method:'POST',
                                 body:data_import,
                                 headers: {
@@ -129,49 +120,34 @@ export default function CardUpdatePay({name,fecha_carga,state}){
                                     if(!('fallas' in data)){
                                         if(data.pagos_erroneos.data.length>0){
                                             setPays(data.pagos_erroneos);
-                                            addNotification({
-                                                title: 'Pagos subidos',
-                                                subtitle: 'Carga completa, con pendientes',
-                                                message: 'Se han encontrado pagos con diferencias',
-                                                native: false,
-                                                backgroundTop: '#FF9619',
-                                                backgroundBottom: '#fdb864',
-                                                colorTop: 'white',
-                                                colorBottom: 'white',
-                                                closeButton: 'Cerrar',
-                                                duration: 4000,
+
+                                            sendpush({
+                                                title:'Éxito.',
+                                                message:'Pagos subidos correctamente con pendientes.',
+                                                type:'Push--warning',
+                                                timeout:3000
                                             });
 
                                             e.target.textContent='Subido con pagos erróneos';
 
                                         }else{
-                                            addNotification({
-                                                title: 'Pagos subidos',
-                                                subtitle: 'Carga completa sin pendientes',
-                                                message: '',
-                                                native: false,
-                                                backgroundTop: '#009793',
-                                                backgroundBottom: '#459d9a',
-                                                colorTop: 'white',
-                                                colorBottom: 'white',
-                                                closeButton: 'Cerrar',
-                                                duration: 4000,
+                                    
+                                            sendpush({
+                                                title:'Éxito.',
+                                                message:'Pagos subidos correctamente sin pendientes.',
+                                                type:'Push--warning',
+                                                timeout:3000
                                             });
 
                                             e.target.textContent='Importación correcta';
                                         }
                                     }else{
-                                        addNotification({
-                                            title: 'Error',
-                                            subtitle: 'Formato incorrecto',
-                                            message: 'El archivo cargado no cumple con el formato',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3000,
+
+                                        Push({
+                                            title:'ERR: Formato incorrecto',
+                                            message:`El archivo cargado no cumple con el formato.`,
+                                            timeout:3000,
+                                            type:400
                                         });
 
                                         e.target.textContent='Intentar de nuevo';

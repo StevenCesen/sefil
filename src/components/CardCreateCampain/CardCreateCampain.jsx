@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "./CardCreateCampain.css"
-import addNotification from "react-push-notification";
 
 export default function CardCreateCampain({setData}){
 
@@ -29,7 +28,7 @@ export default function CardCreateCampain({setData}){
         setNew(false);
         
         //Bajamos los agentes
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/agents`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/users/agents`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -48,7 +47,7 @@ export default function CardCreateCampain({setData}){
             });
         
         //Bajamos las carteras
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -244,10 +243,8 @@ export default function CardCreateCampain({setData}){
                             type_assign:campain.type_assign
                         };
 
-                        console.log(data)
-
                         if(campain.name!=='' & campain.fecha_init!='' & campain.fecha_finish!=''){
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
                                 method:'POST',
                                 headers: {
                                     Accept: 'application/json',
@@ -272,33 +269,21 @@ export default function CardCreateCampain({setData}){
     
                                 });
 
-                            addNotification({
-                                title: 'Éxito',
-                                subtitle: 'Campaña creada correctamente',
-                                message: '',
-                                native: false,
-                                backgroundTop: '#009793',
-                                backgroundBottom: '#459d9a',
-                                colorTop: 'white',
-                                colorBottom: 'white',
-                                closeButton: 'Cerrar',
-                                duration:3000,
+                            sendpush({
+                                title:'Éxito.',
+                                message:'Campaña creada correctamente.',
+                                type:'Push--sucessful',
+                                timeout:3000
                             });
 
                         }else{
                             e.target.textContent='Guardar';
 
-                            addNotification({
-                                title: 'Datos imcompletos',
-                                subtitle: 'Por favor, llene todos los datos de la nueva campaña',
-                                message: '',
-                                native: false,
-                                backgroundTop: '#FF9619',
-                                backgroundBottom: '#fdb864',
-                                colorTop: 'white',
-                                colorBottom: 'white',
-                                closeButton: 'Cerrar',
-                                duration: 3000,
+                            sendpush({
+                                title:'ERR: Datos incompletos.',
+                                message:'Por favor, llene todos los campos.',
+                                type:'Push--danger',
+                                timeout:3000
                             });
                             
                         }

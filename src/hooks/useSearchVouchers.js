@@ -1,5 +1,5 @@
 export default function useSearchVouchers(string,cartera,setData){
-    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/group/${string}?cartera=${cartera}`,{
+    fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/group/${string}?cartera=${cartera}`,{
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -12,6 +12,5 @@ export default function useSearchVouchers(string,cartera,setData){
             }else{
                 setData([]);
             }
-            
         });
 }

@@ -2,12 +2,9 @@ import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { useEffect, useRef, useState } from "react";
 import Eye from "../components/Eye/Eye";
-import addNotification from "react-push-notification";
+import sendpush from "../helpers/sendpush";
 
 export default function Me(){
-    const param = useParams();
-    const cartera=new URLSearchParams(useLocation().search);
-
     const [password,setPassword]=useState('');
     const pass=useRef();
 
@@ -32,19 +29,16 @@ export default function Me(){
     useEffect(()=>{
         setAccept(false);
         setCode('');
-        addNotification({
-            title: 'Actualización de contraseña',
-            subtitle: 'Por tu seguridad, deberás actualizar la contraseña cada mes',
-            message: '',
-            native: false,
-            backgroundTop: '#009793',
-            backgroundBottom: '#459d9a',
-            colorTop: 'white',
-            colorBottom: 'white',
-            closeButton: 'Cerrar',
-            duration:4000,
+
+        sendpush({
+            title:'Actualización de contraseña.',
+            message:'Por tu seguridad, deberás actualizar la contraseña cada mes.',
+            type:'Push--info',
+            timeout:5000
         });
+
         setPassword('');
+
     },[]);
 
     return (
@@ -79,7 +73,7 @@ export default function Me(){
                                 onClick={(e)=>{
                                     e.target.textContent="Enviando...";
 
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/sendcode?id=${localStorage.getItem('temp_uS')}&code=${generateUUID()}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/sendcode?id=${localStorage.getItem('temp_uS')}&code=${generateUUID()}`,{
                                         headers: {
                                             Accept: 'application/json',
                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -160,7 +154,7 @@ export default function Me(){
                                 e.target.textContent='Actualizando...';
                                 
                                 if(accept & code!==""){
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/password/${localStorage.getItem('temp_uS')}`,{
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/users/password/${localStorage.getItem('temp_uS')}`,{
                                         method:'PUT',
                                         headers: {
                                             Accept: 'application/json',
@@ -172,50 +166,39 @@ export default function Me(){
                                         .then((data) => {
                                             if(data.state===200){
                                                 e.target.textContent='Actualizada';
+                                                localStorage.setItem('change_ps',false);
                                             }else{
                                                 e.target.textContent='Actualizar';
-                                                addNotification({
-                                                    title: 'Error',
-                                                    subtitle: data.message,
-                                                    message: 'Ingresa una nueva contraseña',
-                                                    native: false,
-                                                    backgroundTop: '#FF9619',
-                                                    backgroundBottom: '#fdb864',
-                                                    colorTop: 'white',
-                                                    colorBottom: 'white',
-                                                    closeButton: 'Cerrar',
-                                                    duration: 3000,
+
+                                                sendpush({
+                                                    title:'ERR: Contraseña.',
+                                                    message:'Ingresa una nueva contraseña.',
+                                                    type:'Push--danger',
+                                                    timeout:5000
                                                 });
+
                                             }
                                         });
                                 }else if(code===""){
                                     e.target.textContent='Actualizar';
-                                    addNotification({
-                                        title: 'Error',
-                                        subtitle: "Se requiere código de seguridad",
-                                        message: 'Revise su correo electrónico e introduzca el código, o comuníquese con administración',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration: 4000,
+
+                                    sendpush({
+                                        title:'ERR: Contraseña.',
+                                        message:'Revise su correo electrónico e introduzca el código, o comuníquese con administración.',
+                                        type:'Push--danger',
+                                        timeout:5000
                                     });
+                                
                                 }else{
                                     e.target.textContent='Actualizar';
-                                    addNotification({
-                                        title: 'Error',
-                                        subtitle: "Por favor, revisa que la contraseña cumpla con el formato",
-                                        message: 'Completa tu contraseña',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration: 3000,
+
+                                    sendpush({
+                                        title:'ERR: Contraseña.',
+                                        message:'Por favor, revisa que la contraseña cumpla con el formato.',
+                                        type:'Push--danger',
+                                        timeout:5000
                                     });
+
                                 }
                                 
                             }}

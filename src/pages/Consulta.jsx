@@ -4,6 +4,7 @@ import CardCredit from "../components/CardCredit/CardCredit";
 import { useEffect, useState } from "react";
 import useSearch from "../hooks/useSearch.js";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
+import Loader from "../components/Loader/loader.jsx";
 
 export default function Consulta(){
     const param = useParams();
@@ -15,6 +16,8 @@ export default function Consulta(){
     const [parroquia,setParroquia]=useState('all');
     const [agents,setAgents]=useState();
     const [agent,setAgent]=useState();
+    const [loading,setLoading]=useState();
+    const [filter,setFilter]=useState();
 
     const [credits,setCredits]=useState({
         current_page:1,
@@ -37,6 +40,7 @@ export default function Consulta(){
     const [aux_busines,setAux]=useState("");
 
     const updateData=(url)=>{
+        console.log(url)
         fetch(url,{
             headers: {
                 Accept: 'application/json',
@@ -45,6 +49,41 @@ export default function Consulta(){
         })
             .then((response) => response.json())  
 	        .then((data) => setCredits(data));
+    }
+
+    const updateFilter=({canton,status,campain,agente,estado_credito})=>{
+        let filter="";
+
+
+        if(canton!==""){
+            filter+=`&canton=${canton}`;
+        }
+
+        if(status!==""){
+            filter+=`&status=${status}`;
+        }
+
+        if(agente!==""){
+            filter+=`&user_id=${agente}`;
+        }
+
+        if(estado_credito!==""){
+            filter+=`&estado=${estado_credito}`;
+        }
+        
+        filter=filter.substring(1)
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${campain}?${filter}`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setCredits(data);
+                setLoading(false);
+            });
     }
 
     const updateCredits=(data)=>{
@@ -61,8 +100,16 @@ export default function Consulta(){
         setCanton('all');
         setParroquia('all');
         setAgent("all");
+        setLoading(false);
+        setFilter({
+            campain:"SEFIL_1",
+            canton:"",
+            status:"",
+            user_id:"",
+            collection_state:""
+        });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -84,7 +131,7 @@ export default function Consulta(){
 
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null){
             setAux(localStorage.getItem('cartera'));
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${localStorage.getItem('cartera')}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -95,7 +142,7 @@ export default function Consulta(){
                     setCredits(data);
                 });
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -109,9 +156,10 @@ export default function Consulta(){
 
     },[]);
 
-    if(!business) return <></>  
-    if(!agents) return <></>  
-    if(!agent) return <></>
+    if(!business) return <Loader/>  
+    if(!agents) return <Loader/>
+    if(!agent) return <Loader/>
+    if(!filter) return <Loader/>
 
     return (
         <div className="pageConsulta">
@@ -127,32 +175,6 @@ export default function Consulta(){
                     }} placeholder="Ingrese cédula o nombre"/>
                 </label>
 
-                <label>
-                    Empresa
-                    <select value={aux_busines} onChange={(e)=>{
-                        if(e.target.value!=='default'){
-                            setAux(e.target.value);
-                            localStorage.setItem('cartera',e.target.value);
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
-                                headers: {
-                                    Accept: 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                }
-                            })
-                                .then((response) => response.json())  
-                                .then((data) => {
-                                    setCredits(data);
-                                });
-                        }
-                    }}>
-                            <option value={"default"}>--Seleccionar--</option>
-                        {
-                            business.map((bus,index)=>(
-                                <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
-                            ))
-                        }
-                    </select>
-                </label>
             </div>
 
             <div className="pageConsulta__results">
@@ -165,9 +187,10 @@ export default function Consulta(){
                             <select
                                 value={type_client}
                                 onChange={(e)=>{
+                                    setLoading(true);
                                     setClient(e.target.value);
                                     if(e.target.value==='GARANTE'){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filterGarante`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/credit/filterGarante`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -175,10 +198,11 @@ export default function Consulta(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                updateCredits(data.data)
+                                                updateCredits(data.data);
+                                                setLoading(false);
                                             });
                                     }else{
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit?cartera=SEFIL_1`,{
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/credit?cartera=SEFIL_1`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -186,7 +210,8 @@ export default function Consulta(){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                updateCredits(data.data)
+                                                updateCredits(data.data);
+                                                setLoading(false);
                                             });
                                     }
 
@@ -204,23 +229,26 @@ export default function Consulta(){
                         <label>
                             Compañia
                             <select
-                                value={aux_busines}
+                                value={filter.campain}
                                 onChange={(e)=>{
                                     if(e.target.value!=='default'){
-                                        setAux(e.target.value);
+                                        setLoading(true);
                                         localStorage.setItem('cartera',e.target.value);
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${e.target.value}`,{
-                                            headers: {
-                                                Accept: 'application/json',
-                                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                                            }
-                                        })
-                                            .then((response) => response.json())  
-                                            .then((data) => {
-                                                setCredits(data);
-                                            });
 
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
+                                        setFilter({
+                                            ...filter,
+                                            campain:e.target.value
+                                        });
+
+                                        updateFilter({
+                                            canton:filter.canton,
+                                            campain:e.target.value,
+                                            agente:filter.user_id,
+                                            status:filter.status,
+                                            estado_credito:filter.collection_state
+                                        });
+
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
                                             headers: {
                                                 Accept: 'application/json',
                                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -229,6 +257,7 @@ export default function Consulta(){
                                             .then((response) => response.json())  
                                             .then((data) => {
                                                 setAgents(data);
+                                                setLoading(false);
                                             });
                                     }
                                 }}
@@ -241,60 +270,78 @@ export default function Consulta(){
                             </select>
                         </label>
 
-                        <p>Provincia</p>
                         <label>
                             Cantón
                             <input
-                                value={canton_input}
+                                value={filter.canton}
                                 type="text" 
                                 placeholder="Cantón"
                                 onChange={(e)=>{
                                     setInput(e.target.value);
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?canton=${canton_input}`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            updateCredits(data.data)
-                                        });
+                                    setLoading(true);
+
+                                    setFilter({
+                                        ...filter,
+                                        canton:e.target.value
+                                    });
+
+                                    updateFilter({
+                                        canton:e.target.value,
+                                        campain:filter.campain,
+                                        agente:filter.user_id,
+                                        status:filter.status,
+                                        estado_credito:filter.collection_state
+                                    });
                                 }}
                             />
                     
+                        </label>
+                        
+                        <label>
+                            Estado campaña
+                            <select
+                                value={filter.status}
+                                onChange={(e)=>{
+
+                                    setLoading(true);
+                                    setFilter({
+                                        ...filter,
+                                        status:e.target.value
+                                    });
+
+                                    updateFilter({
+                                        canton:filter.canton,
+                                        campain:filter.campain,
+                                        agente:filter.user_id,
+                                        status:e.target.value,
+                                        estado_credito:filter.collection_state
+                                    });
+                                }}
+                            >
+                                <option value={""}>--  Seleccionar --</option>
+                                <option value={"ACTIVE"}>ACTIVO</option>
+                                <option value={"INACTIVE"}>INACTIVO</option>
+                            </select>
                         </label>
 
                         <label>
                             Agente
                             <select
-                                value={agent}
+                                value={filter.user_id}
                                 onChange={(e)=>{
+                                    setLoading(true);
+                                    setFilter({
+                                        ...filter,
+                                        user_id:e.target.value
+                                    });
 
-                                    setAgent(e.target.value);
-
-                                    if(e.target.value!=='all'){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/distribution?cartera=${localStorage.getItem('cartera')}&id=${e.target.value}`,{
-                                            headers: {
-                                                Accept: 'application/json',
-                                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                                            }
-                                        })
-                                            .then((response) => response.json())  
-                                            .then((data) => {
-                                                const creds=JSON.parse(data[0].distributions);
-
-                                                creds.map((items)=>{
-                                                    if(items.agent_id===Number(e.target.value)){
-                                                        setCredits({
-                                                            ...credits,
-                                                            data:items.distribution
-                                                        });
-                                                    }
-                                                });
-                                            });
-                                    }
-
+                                    updateFilter({
+                                        canton:filter.canton,
+                                        campain:filter.campain,
+                                        agente:e.target.value,
+                                        status:filter.status,
+                                        estado_credito:filter.collection_state
+                                    });
                                 }}
                             >
                                 <option value={"all"}>-- Seleccionar agente --</option>
@@ -309,37 +356,25 @@ export default function Consulta(){
                         <label>
                             Estado
                             <select
-                                value={parroquia}
+                                value={filter.collection_state}
                                 onChange={(e)=>{
-                                    setParroquia(e.target.value);
-                                    console.log(e.target.value)
+                                    setLoading(true);
+                                    setFilter({
+                                        ...filter,
+                                        collection_state:e.target.value
+                                    });
 
-                                    if(e.target.value==='vigente'){
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estadoNot=Cancelado`,{
-                                            headers: {
-                                                Accept: 'application/json',
-                                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                                            }
-                                        })
-                                            .then((response) => response.json())  
-                                            .then((data) => {
-                                                updateCredits(data.data)
-                                            });
-                                    }else{
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
-                                            headers: {
-                                                Accept: 'application/json',
-                                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                                            }
-                                        })
-                                            .then((response) => response.json())  
-                                            .then((data) => {
-                                                updateCredits(data.data)
-                                            });
-                                    }
+                                    updateFilter({
+                                        canton:filter.canton,
+                                        campain:filter.campain,
+                                        agente:filter.user_id,
+                                        status:filter.status,
+                                        estado_credito:e.target.value
+                                    });
                                 }}
                             >
-                                <option value={"vigente"}>Vigente</option>
+                                <option value={""}>-- Seleccionar --</option>
+                                <option value={"Vencido"}>Vencido</option>
                                 <option value={"Cancelado"}>Cancelado</option>
                                 <option value={"CONVENIO DE PAGO"}>Convenio</option>
                             </select>
@@ -356,8 +391,8 @@ export default function Consulta(){
                                 <p>{useFormatterNumber({value:credit.totalAmount,currency:'USD'})}</p>
                                 <p>{credit.ci}</p>
                                 <p>{credit.company}</p>
-                                <p>{credit.provincia}</p>
                                 <p>{credit.canton}</p>
+                                <p>{credit.status}</p>
                                 <p>{(credit.agent==="") ? "N/D" : credit.agent}</p>
                                 <p>{credit.collectionState}</p>
                             </div> 
@@ -368,7 +403,8 @@ export default function Consulta(){
                 </div>
 
                 {
-                    (agent==="all")
+                    //TENER EN CUENTA
+                    (1===1)
                     ?
                         <div className="DetailCredit__access">
                             <p>Registros del {credits.from}-{credits.to} de {credits.total}</p>
@@ -390,6 +426,12 @@ export default function Consulta(){
                 }
 
             </div>
+            {
+                (loading)
+                ?
+                    <Loader/>
+                :   <></>
+            }
         </div>
     );
 }

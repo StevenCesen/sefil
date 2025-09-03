@@ -1,0 +1,12 @@
+.SelectCampain{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    font-weight: bold;
+}
+
+.SelectCampain>select{
+    height: 30px;
+    margin-top: 5px;
+}

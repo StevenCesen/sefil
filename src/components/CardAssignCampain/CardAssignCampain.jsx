@@ -5,10 +5,9 @@ import FilterRange from "../FilterRange/FilterRange";
 import useAssignSearch from "../../hooks/useAssignSearch";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import CardItemCharge from "../CardItemCharge/CardItemCharge";
-import useVerifyUnique from "../../hooks/useVerifyUnique";
-import addNotification from "react-push-notification";
 import useSearchCreditInDistribution from "../../hooks/useSearchCreditInDistribution";
 import CardItemErrorCharge from "../CardItemErrorCharge/CardItemErrorCharge";
+import sendpush from "../../helpers/sendpush";
 
 const agencias=[
     "-- Todas --",
@@ -40,25 +39,39 @@ const agencias=[
 ];
 
 export default function CardAssignCampain({data,updateCredits}){
-
     const [transfer,setTransfer]=useState(false);
     const [mode,setMode]=useState('manual');
     const [view_agencies,setView]=useState(false);
     const [business,setBusiness]=useState();
     const [charge,setCharge]=useState();
+
     const [agent,setAgents]=useState();
+    const [agents_origin,setOrigns]=useState();
+
     const [agent_dtsn,setDtsn]=useState();
+    const [agents_dtsn,setDtsns]=useState();
+
+    const [creditos,setCreditos]=useState();
+
     const [distributions,setDistributions]=useState();
     const [item_filter,setItems]=useState();
     const [coincidence,setCoincidence]=useState();
     const [view_agents,setViewAgents]=useState();
+    const [view_dtns,setViewDtns]=useState();
     const [prev_agencies,setPrevAgencies]=useState();
     const [errors,setErrors]=useState();
     const [total_assign,setTotalAssign]=useState();
-    const [count,setCount]=useState();
+    const [view_details,setDetails]=useState();
+
+    const ref_origin=useRef();
+    const ref_destino=useRef();
 
     const update=(data)=>{
         setCharge(data);
+    }
+
+    const addMore=(data)=>{
+
     }
 
     const setInit=()=>{
@@ -83,23 +96,30 @@ export default function CardAssignCampain({data,updateCredits}){
         return count;
     }
 
-    // Para setear los rangos en filtros
     const updateRange=(key,value)=>{
         let copy=item_filter;
 
         copy[key]=value;
         setItems(item_filter);
 
-        console.log(data.cartera);
-
-        // Usamos el seleccionar de créditos
-        // 1) Primero debemos saber cual es modo
-        // 2) Enviamos la data del filtro correspondiente: Si es asociaación de cartera entonces es filt, si es transferencia, es user_filt
-        useAssignSearch(charge,'',update,true,coincidence,copy.mora,copy.cuota,copy.monto,copy.estado,copy.agencia,copy.estado_gestion,agent.id,data.cartera);
+        useAssignSearch(
+            charge,
+            '',
+            update,
+            true,
+            coincidence,
+            copy.mora,
+            copy.cuota,
+            copy.monto,
+            copy.estado,
+            prev_agencies,
+            copy.estado_gestion,
+            (agents_origin.length>0) ? agents_origin : agent.id,
+            data.cartera);
     }
 
     function chunckArrayInGroups(arr, size) {
-        let nro_arry=Math.round(arr.length/size); //Aquí tengo la cantidad de créditos por array
+        let nro_arry=Math.round(arr.length/size);
         let arrays=[];
         let ult=0;
 
@@ -112,7 +132,6 @@ export default function CardAssignCampain({data,updateCredits}){
             }
         }
 
-        // arrays.push(arr.slice(Math.round(nro_arry)*(size-1)+1)) //OJOOOOOOOOOOOOOOOOOOOOO
         return arrays.slice(0,size);
     }
 
@@ -121,12 +140,21 @@ export default function CardAssignCampain({data,updateCredits}){
         setTransfer(false);
         setView(false);
         setViewAgents(false);
+        setViewDtns(false);
         setPrevAgencies([]);
         setDtsn('');
+        setDetails(false);
         setErrors([]);
         setTotalAssign(0);
+        setOrigns([]);
+        setDtsns([]);
 
         setAgents({
+            id:'',
+            name:'-- Seleccionar --'
+        });
+
+        setDtsn({
             id:'',
             name:'-- Seleccionar --'
         });
@@ -144,8 +172,9 @@ export default function CardAssignCampain({data,updateCredits}){
             estado_gestion:'',
             agencia:[]
         });
+        setCreditos([]);
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -158,23 +187,11 @@ export default function CardAssignCampain({data,updateCredits}){
         
         // Compruebo si esta campaña no es de tipo SINCRONIZACIÓN API
         if(data.type_assign==='api'){
-            // fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs`,{
-            //     headers: {
-            //         Accept: 'application/json',
-            //         Authorization: `Bearer ${localStorage.getItem('token')}`
-            //     }
-            // })
-            //     .then((response) => response.json())  
-            //     .then((data) => {
-            //         console.log(data);
-            //         localStorage.setItem('filt',JSON.stringify(data));
-            //         setCharge(data);
-            //     });
-
+            
             setCharge([]);
 
         }else{
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/all?cartera=${data.cartera}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/credit/all?cartera=${data.cartera}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -187,9 +204,6 @@ export default function CardAssignCampain({data,updateCredits}){
                     localStorage.setItem('filt',JSON.stringify(data));
                 });
         }
-
-        console.log(data)
-
     },[]);
 
     if(!business) return <></>
@@ -198,7 +212,7 @@ export default function CardAssignCampain({data,updateCredits}){
 
     return (
         <div className="CardAssignCampain">
-            <p className="CardAssignCampain__head">Asignación de campaña | {data.name}</p>
+            <p className="CardAssignCampain__head">Asignación de campaña | {data.name} ({data.totals} CRÉDITOS)</p>
 
             <label className="CardAssignCampain__searchCredit">
                 <strong style={{fontWeight:'bold'}}> Buscar crédito</strong>
@@ -216,8 +230,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                     setAgent:setAgents,
                                     setCredit:update
                                 });
-                            } 
-
+                            }
                         }
                         
                     }}
@@ -231,7 +244,7 @@ export default function CardAssignCampain({data,updateCredits}){
 
             <div className="CardAssignCampain__agents">
                 <label>
-                    <strong style={{fontWeight:'bold'}}> Agente</strong>
+                    <strong style={{fontWeight:'bold'}}> Agente origen</strong>
                     <div className="CardAssignCampain__agentsSelect">
                         <div 
                             onClick={(e)=>{
@@ -239,28 +252,15 @@ export default function CardAssignCampain({data,updateCredits}){
                             }}
                             className="CardAssignCampain__agentsResult"
                         >
-                            <label>{agent.name}</label>
+                            <label ref={ref_origin}>{agent.name}</label>
                         </div>
                         {
                             (view_agents)
                             ?
                                 <div className="CardAssignCampain__agentsOptions">
-                                        <div>
-                                            <label
-                                                style={{height:"30px",display:"flex",justifyContent:"center",alignItems:"center",cursor:"pointer"}}
-                                                onClick={(e)=>{
-                                                    setAgents({
-                                                        id:'',
-                                                        name:'-- Todos --'
-                                                    });
-                                                    setCharge(JSON.parse(localStorage.getItem('filt')));
-                                                    setViewAgents(false);
-                                                }}
-                                            >-- Todos --</label>
-                                        </div>
                                     {
                                         JSON.parse(data.agents).map((agent,index)=>(
-                                            <div>
+                                            <div className={(agents_origin.includes(agent.id)) ? "CardAssign--agentchoose" : ""}>
                                                 <label>{agent.name.split(" ")[0].substring(0,1)}. {agent.name.split(" ")[1]}</label>
                                                 <button
                                                     onClick={(e)=>{
@@ -272,24 +272,24 @@ export default function CardAssignCampain({data,updateCredits}){
                                                         setViewAgents(false);
                                                     
                                                         data.distributions.map((agente)=>{
-                                                            console.log(agente)
                                                             if(Number(agente.agent_id)===Number(agent.id)){
-                                                                setCharge(agente.distribution)
+                                                                //setCharge(agente.distribution)
+                                                                useAssignSearch(
+                                                                    charge,
+                                                                    '',
+                                                                    update,
+                                                                    true,
+                                                                    coincidence,
+                                                                    item_filter.mora,
+                                                                    item_filter.cuota,
+                                                                    item_filter.monto,
+                                                                    item_filter.estado,
+                                                                    prev_agencies,
+                                                                    item_filter.estado_gestion,
+                                                                    (agents_origin.length>0) ? agents_origin : agent.id,
+                                                                    data.cartera);
                                                             }
                                                         });
-
-                                                        // Obtenemos la distribución actual del agente
-                                                        // fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/distribution?id_campain=${data.id}&id=${agent.id}&cartera=${data.cartera}`,{
-                                                        //     headers: {
-                                                        //         Accept: 'application/json',
-                                                        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                        //     }
-                                                        // })
-                                                        //     .then((response) => response.json())  
-                                                        //     .then((data) => {
-                                                        //         setCharge(data);
-                                                        //         setViewAgents(false);
-                                                        //     });
 
                                                     }}
                                                     title="Ver carga actual"
@@ -297,14 +297,60 @@ export default function CardAssignCampain({data,updateCredits}){
                                                     <img src="/icons/view.png"/>
                                                 </button>
 
-                                                {/* <button
-                                                    onClick={()=>{
-
-                                                    }}
+                                                <button
                                                     title="Agrupar"
                                                 >
-                                                    <img src="/icons/grou.png"/>
-                                                </button> */}
+                                                    <img 
+                                                        src="/icons/grou.png"
+                                                        onClick={(e)=>{
+                                                            let copy=agents_origin;
+                                                            let new_copy=[];
+
+                                                            if(e.target.parentElement.parentElement.matches('.CardAssign--agentchoose')){
+                                                                console.log("YA LA TENGO")
+                                                                e.target.parentElement.parentElement.classList.remove('CardAssign--agentchoose');
+                                                                
+                                                                copy.map(id=>{
+                                                                    
+                                                                    if(Number(id)!==Number(agent.id)){
+                                                                        new_copy.push(id)
+                                                                    }else{
+                                                                        let texto=ref_origin.current.textContent;
+                                                                            texto=texto.replace(agent.name,'');
+                                                                        ref_origin.current.textContent=texto;
+                                                                    }
+                                                                });
+                                                            
+                                                                setOrigns(new_copy);
+
+                                                            }else{
+                                                                e.target.parentElement.parentElement.classList.add('CardAssign--agentchoose');
+                                                                copy.push(agent.id);
+                                                                new_copy=copy;
+                                                                setOrigns(copy);
+                                                                let texto=ref_origin.current.textContent;
+                                                                    texto+=`,${agent.name}`;
+                                                                    texto=texto.replace('-- Seleccionar --,','');
+                                                                ref_origin.current.textContent=texto;
+                                                            }
+
+                                                            useAssignSearch(
+                                                                charge,
+                                                                '',
+                                                                update,
+                                                                true,
+                                                                coincidence,
+                                                                item_filter.mora,
+                                                                item_filter.cuota,
+                                                                item_filter.monto,
+                                                                item_filter.estado,
+                                                                prev_agencies,
+                                                                item_filter.estado_gestion,
+                                                                (new_copy.length>0) ? new_copy : agent.id,
+                                                                data.cartera);
+                                                            }}
+                                                    />
+                                                </button>
                                             </div>
                                         ))
                                     }
@@ -312,32 +358,75 @@ export default function CardAssignCampain({data,updateCredits}){
                             :   <></>
                         }
                     </div>
-
                 </label>
                 {
                     (transfer & mode!=='assoc')
                     ?   
                         <>
                             <p>a</p>
-                            
                             <label>
-                                Agente
-                                <select
-                                    value={agent_dtsn}
-                                    onChange={(e)=>{
-                                        setDtsn(e.target.value);
-                                    }}
-                                >
-                                    <option value={""}>-- Seleccionar --</option>
+                                <strong style={{fontWeight:'bold'}}> Agente destino</strong>
+                                <div className="CardAssignCampain__agentsSelect">
+                                    <div 
+                                        onClick={(e)=>{
+                                            setViewDtns(!view_dtns);
+                                        }}
+                                        className="CardAssignCampain__agentsResult"
+                                    >
+                                        <label ref={ref_destino}>-- Seleccionar--</label>
+                                    </div>
                                     {
-                                        JSON.parse(data.agents).map((agent_a,index)=>(
-                                            (agent.id!==agent_a.id)
-                                            ?
-                                                <option value={agent_a.id}>{agent_a.name}</option>
-                                            :   <></>
-                                        ))
+                                        (view_dtns)
+                                        ?
+                                            <div className="CardAssignCampain__agentsOptions">
+                                                {
+                                                    JSON.parse(data.agents).map((agent,index)=>(
+                                                        <div className={(agents_dtsn.includes(agent.id)) ? "CardAssign--agentchoose" : ""}>
+                                                            <label>{agent.name.split(" ")[0].substring(0,1)}. {agent.name.split(" ")[1]}</label>
+                                                            <button
+                                                                title="Agrupar"
+                                                            >
+                                                                <img 
+                                                                    src="/icons/grou.png"
+                                                                    onClick={(e)=>{
+                                                                        let copy=agents_dtsn;
+                                                                        let new_copy=[];
+
+                                                                        if(e.target.parentElement.parentElement.matches('.CardAssign--agentchoose')){
+                                                                            e.target.parentElement.parentElement.classList.remove('CardAssign--agentchoose');
+                                                                            copy.map(id=>{
+                                                                                
+                                                                                if(Number(id)!==Number(agent.id)){
+                                                                                    new_copy.push(id);
+                                                                                }else{
+                                                                                    let texto=ref_destino.current.textContent;
+                                                                                        texto=texto.replace(agent.name,'');
+                                                                                    ref_destino.current.textContent=texto;
+                                                                                }
+                                                                            });
+
+                                                                            setDtsns(new_copy);
+
+                                                                        }else{
+                                                                            e.target.parentElement.parentElement.classList.add('CardAssign--agentchoose');
+                                                                            copy.push(agent.id);
+                                                                            new_copy=copy;
+                                                                            setDtsns(copy);
+                                                                            let texto=ref_destino.current.textContent;
+                                                                                    texto+=`,${agent.name}`;
+                                                                                texto=texto.replace('-- Seleccionar--,','');
+                                                                            ref_destino.current.textContent=texto;
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </button>
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                        :   <></>
                                     }
-                                </select>
+                                </div>
                             </label>
                         </>
                     :   (mode==='assoc') 
@@ -350,57 +439,6 @@ export default function CardAssignCampain({data,updateCredits}){
             <span><strong style={{fontWeight:'bold'}}> Forma de asignación</strong></span>
             
             <div className="CardAssignCampain__radius">
-                {
-                    (data.type_assign!=='api')
-                    ?
-                        <></>
-                        // <label>
-                        //     <input 
-                        //         type="radio"
-                        //         name="mode"
-                        //         value={"assoc"}
-                        //         onChange={(e)=>{
-                        //             if(e.target.checked){
-                        //                 setMode(e.target.value);
-                        //                 setTransfer(false);
-                        //             }
-                        //         }}
-                        //     />
-                        //     Asociar cartera
-                        //     {
-                        //         (mode==='assoc')
-                        //         ?
-                        //             <select
-                        //                 onChange={(e)=>{
-                        //                     if(e.target.value!==""){
-                        //                         fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/all?cartera=${e.target.value}`,{
-                        //                             headers: {
-                        //                                 Accept: 'application/json',
-                        //                                 Authorization: `Bearer ${localStorage.getItem('token')}`
-                        //                             }
-                        //                         })
-                        //                             .then((response) => response.json())  
-                        //                             .then((data) => {
-                        //                                 setCharge(data)
-                        //                                 // Cacheo los créditos de cartera por si se necesitan para filtrado
-                        //                                 localStorage.setItem('filt',JSON.stringify(data));
-                        //                             });
-                        //                     }
-                        //                 }}
-                        //             >
-                        //                 <option value={""}>--Seleccionar--</option>
-                        //                 {
-                        //                     business.map((cartera,index)=>(
-                        //                         <option key={index} value={cartera.name}>{cartera.name}</option>
-                        //                     ))
-                        //                 }
-                        //             </select>
-                        //         :   <></>
-                        //     }
-                        // </label>
-                    :   <></>
-                }
-
                 <label>
                     <input 
                         type="checkbox"
@@ -422,11 +460,8 @@ export default function CardAssignCampain({data,updateCredits}){
             
             <label
                 className="CardAssignCampain__file">
-                Cargar datos (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
-                {/* <input id="campain" type="file"/> */}
+                Cargar datos (<strong style={{fontWeight:"bold"}}>{charge.total}</strong>)
                 {
-                    // (charge.length>0)
-                    // ?
                         <>
                             <input 
                                 ref={busc}
@@ -435,7 +470,6 @@ export default function CardAssignCampain({data,updateCredits}){
                                         charge, // Esta es la data que le pasamos para que filtro
                                         e.target.value, //Este es el texto {nombre del cliente o cédula}
                                         update, //Método para actualizar la carga
-                                        //================> Listado de filtros
                                         item_filter.filter,
                                         item_filter.mode,
                                         item_filter.mora,
@@ -444,82 +478,27 @@ export default function CardAssignCampain({data,updateCredits}){
                                         item_filter.estado,
                                         item_filter.agencia,
                                         item_filter.estado_gestion,
-                                        agent.id,
-                                        data.cartera
+                                        (agents_origin.length>0) ? agents_origin : agent.id,
+                                        data.cartera,
+                                        setCreditos
                                     );
                                 }}
                                 type="text" 
                                 placeholder="Ingrese nombre o creditos"
                             />
 
-                            <button 
-                                title="Todos los créditos volverán a la carga principal y loa agentes no tendrán créditos"
+                            <button
                                 onClick={(e)=>{
-                                    e.target.textContent="Reiniciando";
-
-                                    const dtsn=15;
-
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/reset/${data.id}`,{
-                                        method:'PUT',
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        },
-                                        body:new URLSearchParams({
-                                            distributions:""
-                                        })
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            e.target.textContent="Reiniciado";
-                                        });
+                                    setDetails(true);
                                 }}
-                            >Reiniciar campaña</button>
+                            >Ver detalle cred.</button>
                         </>
-                    // :   <></>
                 }
                 <div style={{display:'none'}}>
                     {
                         (charge.length>0)
                         ?   
                             <>
-                                <div className="CardAssignCampain__headCharge">
-                                    <input 
-                                        type="checkbox"
-                                        onChange={(e)=>{
-                                            const prev_charge=charge;
-                                            let results=[];
-
-                                            if(e.target.checked){
-                                                prev_charge.map((credit)=>{
-                                                    credit.select=true;
-                                                    results.push(credit);
-                                                });
-                                            }else{
-                                                prev_charge.map((credit)=>{
-                                                    credit.select=false;
-                                                    results.push(credit);
-                                                });
-                                            }
-                                            
-                                            setCharge(results);
-                                        }}
-                                    />
-                                    <label>Nombre</label>
-                                    <label>Cédula</label>
-                                    <label>Crédito</label>
-                                    <label>Monto</label>
-                                    <label>Cuotas pendientes</label>
-                                    <label>Días mora</label>
-                                    <label>Estado</label>
-                                </div>
-                                {
-                                    charge.map((credit,index)=>(
-                                        <CardItemCharge
-                                            item={credit}
-                                        />
-                                    ))
-                                }
                             </>
                         :   <></> 
                     }
@@ -538,28 +517,24 @@ export default function CardAssignCampain({data,updateCredits}){
                             if(e.target.checked){
                                 setInit();
                                 setCoincidence(e.target.value);
-                                useAssignSearch(charge,'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia,item_filter.estado_gestion);
+                                useAssignSearch(
+                                    charge,
+                                    '',
+                                    update,
+                                    true,
+                                    e.target.value,
+                                    item_filter.mora,
+                                    item_filter.cuota,
+                                    item_filter.monto,
+                                    item_filter.estado,
+                                    item_filter.agencia,
+                                    item_filter.estado_gestion
+                                );
                             }
                         }}
                         defaultChecked
                     />
                     Coincidir
-                </label>
-
-                <label>
-                    <input 
-                        type="radio"
-                        name="coincidence"
-                        value={2}
-                        onChange={(e)=>{
-                            if(e.target.checked){
-                                setInit();
-                                setCoincidence(e.target.value);
-                                useAssignSearch(charge,'',update,true,e.target.value,item_filter.mora,item_filter.cuota,item_filter.monto,item_filter.estado,item_filter.agencia,item_filter.estado_gestion);
-                            }
-                        }}
-                    />
-                    No coincidir
                 </label>
             </div>
 
@@ -631,32 +606,39 @@ export default function CardAssignCampain({data,updateCredits}){
                             <option value={"PENDIENTE"}>PENDIENTE</option>
                             <option value={"EN PROCESO"}>EN PROCESO</option>
                             <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
-                            <option value={"Judicial"}>MENSAJE A TERCEROS</option>
+                            <option value={"OFERTA DE PAGO"}>OFERTA DE PAGO</option>
+                            <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>
                             <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
                             <option value={"YA PAGÓ"}>YA PAGÓ</option>
                             <option value={"MENSAJE DE TEXTO"}>MENSAJE DE TEXTO</option>
                             <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>
                             <option value={"CLIENTE SE NIEGA A PAGAR"}>CLIENTE SE NIEGA A PAGAR</option>
-                            <option value="CLIENTE INDICA QUE NO ES SU DEUDA">CLIENTE INDICA QUE NO ES SU DEUDA</option>
-                            <option value="PASAR A TRAMITE LEGAL">PASAR A TRAMITE LEGAL</option>
-                            <option value="VOLVER A LLAMAR">VOLVER A LLAMAR</option>
-                            <option value="CONVENIO DE PAGO">CONVENIO DE PAGO</option>
-                            <option value="CONTACTO INDICA QUE ESTA EQUIVOCADO">CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
-                            <option value="CLIENTE ESCUCHA Y NO HABLA">CLIENTE ESCUCHA Y NO HABLA</option>
-                            <option value="CLIENTE ESTA OCUPADO">CLIENTE ESTA OCUPADO</option>
-                            <option value="CONTESTA MENOR DE EDAD">CONTESTA MENOR DE EDAD</option>
-                            <option value="CORTA LA LLAMADA">CORTA LA LLAMADA</option>
-                            <option value="INUBICABLE">INUBICABLE</option>
-                            <option value="NO VIVE EN LA MISMA DIRECCIÓN">NO VIVE EN LA MISMA DIRECCIÓN</option>
-                            <option value="Recopilación de Información">Recopilación de Información</option>
-                            <option value="Documentación para demanda">Documentación para demanda</option>
-                            <option value="Presentación demanda">Presentación demanda</option>
-                            <option value="Citación judicial">Citación judicial</option>
-                            <option value="Ejecución">Ejecución</option>
-                            <option value="Peritaje">Peritaje</option>
-                            <option value="Embargo">Embargo</option>
-                            <option value="Sentencia">Sentencia</option>
-                            <option value="Archivo demanda">Archivo demanda</option>
+                            <option value={"SUSPENDIDO POR FALTA DE PAGO"}>SUSPENDIDO POR FALTA DE PAGO</option>
+                            <option value={"FUERA DEL AREA DE COBERTURA"}>FUERA DEL AREA DE COBERTURA</option>
+                            <option value={"CLIENTE INDICA QUE NO ES SU DEUDA"}>CLIENTE INDICA QUE NO ES SU DEUDA</option>
+                            <option value={"NUMERO INCORRECTO"}>NUMERO INCORRECTO</option>
+                            <option value={"PASAR A TRAMITE LEGAL"}>PASAR A TRAMITE LEGAL</option>
+                            <option value={"VOLVER A LLAMAR"}>VOLVER A LLAMAR</option>
+                            <option value={"NO CONTESTA"}>NO CONTESTA</option>
+                            <option value={"CONVENIO DE PAGO"}>CONVENIO DE PAGO</option>
+                            <option value={"CONTACTO INDICA QUE ESTA EQUIVOCADO"}>CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
+                            <option value={"CLIENTE ESCUCHA Y NO HABLA"}>CLIENTE ESCUCHA Y NO HABLA</option>
+                            <option value={"CLIENTE ESTA OCUPADO"}>CLIENTE ESTA OCUPADO</option>
+                            <option value={"CONTESTA MENOR DE EDAD"}>CONTESTA MENOR DE EDAD</option>
+                            <option value={"CORTA LA LLAMADA"}>CORTA LA LLAMADA</option>
+                            <option value={"INUBICABLE"}>INUBICABLE</option>
+                            <option value={"NO VIVE EN LA MISMA DIRECCIÓN"}>NO VIVE EN LA MISMA DIRECCIÓN</option>
+                            <option value={"Recopilación de Información"}>Recopilación de Información</option>
+                            <option value={"Presentación demanda"}>Presentación demanda</option>
+                            <option value={"Citación judicial"}>Citación judicial</option>
+                            <option value={"Ejecución"}>Ejecución</option>
+                            <option value={"Peritaje"}>Peritaje</option>
+                            <option value={"Embargo"}>Embargo</option>
+                            <option value={"Sentencia"}>Sentencia</option>
+                            <option value={"Archivo demanda"}>Archivo demanda</option>
+                            <option value={"NOTIFICADO EXTRAJUDICIAL"}>NOTIFICADO EXTRAJUDICIAL</option>
+                            <option value={"Envío notificación"}>Envío notificacion</option>
+                            <option value={"Continuar con gestión extrajudicial"}>Continuar con gestión extrajudicial</option>
                         </select>
                     </label>
 
@@ -666,8 +648,6 @@ export default function CardAssignCampain({data,updateCredits}){
                             <button
                                 onClick={(e)=>{
                                     setView(!view_agencies); 
-                                    console.log(prev_agencies);
-
                                 }}
                             >--Seleccionar</button>
                             {
@@ -761,12 +741,12 @@ export default function CardAssignCampain({data,updateCredits}){
                     ?
                         <div>
                             <label>
-                                Total (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
+                                Total (<strong style={{fontWeight:"bold"}}>{charge.total}</strong>)
                                 <input 
                                     type="number"
                                     value={total_assign}
                                     onChange={(e)=>{
-                                        if(e.target.value!==0 & e.target.value<=charge.length){
+                                        if(e.target.value!==0 & e.target.value<=charge.total){
                                             setTotalAssign(e.target.value);
                                         }
                                     }}
@@ -779,7 +759,7 @@ export default function CardAssignCampain({data,updateCredits}){
                                     const agent_origin=agent.id;
                                     const dtsn=agent_dtsn;
 
-                                    let carga=charge;
+                                    let carga=charge.data;
 
                                     // Si hay un total a asignar corto la carga
                                     if(total_assign>0){
@@ -788,23 +768,77 @@ export default function CardAssignCampain({data,updateCredits}){
 
                                     let carga_enviar=[];
 
-                                    if(agent_origin!=="" & dtsn!==""){
+                                    if(agents_dtsn.length>0){
                                         setErrors([]);
-                                        
-                                        carga.map(carga=>{
-                                            carga_enviar.push(carga.id);
-                                        });
 
                                         e.target.textContent="Transfiriendo...";
-                                        
-                                        console.log({
-                                            agent_origin:agent_origin,
-                                            agent_destino:dtsn,
-                                            carga:JSON.stringify(carga_enviar),
-                                            cartera:data.cartera
-                                        })
 
-                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
+                                        let filters="";
+
+                                        if(item_filter.mora!==""){
+                                            if(item_filter.mora.min!=="" & Number(item_filter.mora.min)!==0){
+                                                filters+=`&mora_min=${item_filter.mora.min}`;
+                                            }
+                                            if(item_filter.mora.max!=="" & Number(item_filter.mora.max)!==0){
+                                                filters+=`&mora_max=${item_filter.mora.max}`;
+                                            }
+                                        }
+
+                                        if(item_filter.monto!==""){
+                                            if(item_filter.monto.min!=="" & Number(item_filter.monto.min)!==0){
+                                                filters+=`&monto_min=${item_filter.monto.min}`;
+                                            }
+                            
+                                            if(item_filter.monto.max!=="" & Number(item_filter.monto.max)!==0){
+                                                filters+=`&monto_max=${item_filter.monto.max}`;
+                                            }
+                                        }
+
+                                        if(item_filter.cuota!==""){
+                                            if(item_filter.cuota.min!=="" & Number(item_filter.cuota.min)!==0){
+                                                filters+=`&cuotas_min=${item_filter.cuota.min}`;
+                                            }
+                            
+                                            if(item_filter.cuota.max!=="" & Number(item_filter.cuota.max)!==0){
+                                                filters+=`&cuotas_max=${item_filter.cuota.max}`;
+                                            }
+                                        }
+
+                                        if(item_filter.estado_gestion!==""){
+                                            filters+=`&management=${item_filter.estado_gestion}`;
+                                        }
+
+                                        if(item_filter.estado!==""){
+                                            filters+=`&state=${item_filter.estado}`;
+                                        }
+
+                                        if(prev_agencies.length>0){
+                                            filters+=`&agencias=${JSON.stringify(prev_agencies)}`;
+                                        }
+
+                                        if(agents_origin.length>0){
+                                            filters+=`&users=${JSON.stringify(agents_origin)}`;
+                                        }else{
+                                            filters+=`&user=${agent.id}`;
+                                        }
+
+                                        if(agents_dtsn.length>1){
+                                            filters+=`&destinos=${JSON.stringify(agents_dtsn)}`;
+                                        }else{
+                                            filters+=`&destino=${agents_dtsn[0]}`;
+                                        }
+
+                                        if(total_assign>0){
+                                            filters+=`&limite=${total_assign}`;
+                                        }
+
+                                        if(creditos.length>0){
+                                            filters+=`&creditos=${JSON.stringify(creditos)}`;
+                                        }
+
+                                        filters=filters.substring(1);
+
+                                        fetch(`${import.meta.env.VITE_URL_BASE}/campains/${data.id}?${filters}`,{
                                             method:'PUT',
                                             headers: {
                                                 Accept: 'application/json',
@@ -819,63 +853,32 @@ export default function CardAssignCampain({data,updateCredits}){
                                         })
                                             .then((response) => response.json())  
                                             .then((data) => {
-                                                console.log(data);
-                                            
                                                 if(data.errors.length>0){
-                                                    addNotification({
-                                                        title: 'ERR: Cruce',
-                                                        subtitle: `${data.errors.length} créditos ya están asignados a otro usuario.`,
-                                                        message: ``,
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'black',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 8000,
+                                                    sendpush({
+                                                        title:'ERR: Cruce.',
+                                                        message:'Existen créditos ya asignados a otro agente.',
+                                                        type:'Push--danger',
+                                                        timeout:5000
                                                     });
+
                                                 }else{
-                                                    addNotification({
-                                                        title: 'Éxito',
-                                                        subtitle: 'Carga transferida',
-                                                        message: '',
-                                                        native: false,
-                                                        backgroundTop: '#009793',
-                                                        backgroundBottom: '#459d9a',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration:3000,
+                                                    sendpush({
+                                                        title:'Éxito.',
+                                                        message:'Carga transferida.',
+                                                        type:'Push--sucessful',
+                                                        timeout:3000
                                                     });
+
+                                                    updateCredits(data);
                                                 }
                                                 e.target.textContent="Transferir carga";
                                             });
-
-                                    }else if(agent_origin===""){
-                                        addNotification({
-                                            title: 'ERR: Sin agente origen',
-                                            subtitle: `No hay un agente origen para transferir la carga.`,
-                                            message: `Elija un agente`,
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'black',
-                                            closeButton: 'Cerrar',
-                                            duration: 8000,
-                                        });
                                     }else{
-                                        addNotification({
-                                            title: 'ERR: Sin agente destino',
-                                            subtitle: `No hay un agente de destino para transferir la carga.`,
-                                            message: `Elija un agente`,
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'black',
-                                            closeButton: 'Cerrar',
-                                            duration: 8000,
+                                        sendpush({
+                                            title:'ERR: Sin agente destino.',
+                                            message:'No hay un agente de destino para transferir la carga.',
+                                            type:'Push--danger',
+                                            timeout:5000
                                         });
                                     }
                                 }}
@@ -885,346 +888,38 @@ export default function CardAssignCampain({data,updateCredits}){
                         </div>
                     :
                         <label>
-                            Total (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
+                            Total (<strong style={{fontWeight:"bold"}}>{charge.total}</strong>)
                         </label>
-                        // <div>
-                        //     <label>
-                        //         Total (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
-                        //         <input 
-                        //             type="number"
-                        //             value={total_assign}
-                        //             onChange={(e)=>{
-                        //                 if(e.target.value!==0 & e.target.value<=charge.length){
-                        //                     setTotalAssign(e.target.value);
-                        //                 }
-                        //             }}
-                        //         />
-                        //     </label>
-
-                        //     <button
-                        //         onClick={(e)=>{
-                                    
-                        //             e.target.textContent="Asignando...";
-
-                        //             //De toda la carga solo elijo los créditos que tienen el campo SEARCH: TRUE
-                        //             let results=charge; //O toda la carga disponible
-
-                        //             let data_agent=[];
-
-                        //             /*
-                        //             ================================================================================
-                        //             1. ASIGNACIÓN EN PARTES IGUALES A TODOS LOS AGENTES
-                        //             -   Si no hay agente asignado, reparto toda la carga en partes iguales para 
-                        //                 todos los agentes que estén en la campaña
-                        //             ================================================================================
-                        //             */
-                        //             if(agent.id===''){
-                        //                 let agents=JSON.parse(data.agents);
-
-                        //                 const data_per_agent=chunckArrayInGroups(results,agents.length);
-                                        
-                        //                 data_per_agent.map((datap,n)=>{
-                        //                     const distribution=distributions;
-
-                        //                     // Créditos que no están asignados aún
-                        //                     const no_self=[];
-
-                        //                     // Créditos que ya se encuentran asignados
-                        //                     const self=[];
-
-                        //                     distribution.map((dis)=>{
-                        //                         if(Number(dis.agent_id)===Number(agents[n].id)){
-                        //                             datap.map((result)=>{
-                        //                                 const [state,message]=useVerifyUnique({id_credit:result.id,agent_id:Number(agents[n].id),data_self:dis.distribution,mode:1});
-                                                        
-                        //                                 if(state){
-                        //                                     no_self.push(result);
-                        //                                 }else{
-                        //                                     self.push(result);
-                        //                                 }
-                        //                             })
-                        //                         }
-                        //                     });
-
-                        //                     // Ahora comprobamos que de los créditos no asignados a el agente mismo, no se encuentren asignados en otro agente
-                        //                     // Créditos asignados a otros agentes
-                        //                     const other_agent=[];
-
-                        //                     // Créditos que se pueden asignar al agente actual
-                        //                     const unique=[];
-                        //                     const other_datas=[];
-
-                        //                     distribution.map((dis)=>{
-                        //                         if(Number(dis.agent_id)!==Number(agents[n].id)){
-                        //                             other_datas.push(dis.distribution);
-                        //                         }
-                        //                     });
-
-                        //                     no_self.map(result=>{
-                        //                         const [state,message]=useVerifyUnique({id_credit:result.id,agent_id:Number(agents[n].id),data_self:other_datas,mode:2});
-                                                        
-                        //                         if(state){
-                        //                             unique.push(result);
-                        //                         }else{
-                        //                             other_agent.push(result);
-                        //                         }
-                        //                     });
-
-                        //                     console.log(other_agent);
-
-                        //                     if(self.length>0){
-                        //                         if(other_agent.length>0){
-                        //                             addNotification({
-                        //                                 title: 'Créditos duplicados',
-                        //                                 subtitle: `Se encontraron ${self.length} créditos ya asignados al agente y ${other_agent.length} créditos asignados a otros agentes.`,
-                        //                                 message: `Se asignaron ${unique.length} créditos`,
-                        //                                 native: false,
-                        //                                 backgroundTop: '#FF9619',
-                        //                                 backgroundBottom: '#fdb864',
-                        //                                 colorTop: 'white',
-                        //                                 colorBottom: 'black',
-                        //                                 closeButton: 'Cerrar',
-                        //                                 duration: 8000,
-                        //                             });
-                                                    
-                        //                         }else{
-                        //                             addNotification({
-                        //                                 title: 'Créditos duplicados',
-                        //                                 subtitle: `Se encontraron ${self.length} créditos ya asignados al agente.`,
-                        //                                 message: `Se asignaron ${unique.length} créditos`,
-                        //                                 native: false,
-                        //                                 backgroundTop: '#FF9619',
-                        //                                 backgroundBottom: '#fdb864',
-                        //                                 colorTop: 'white',
-                        //                                 colorBottom: 'black',
-                        //                                 closeButton: 'Cerrar',
-                        //                                 duration: 8000,
-                        //                             });
-                        //                         }
-                        //                     }else if(other_agent.length>0){
-                        //                         addNotification({
-                        //                             title: 'Créditos duplicados',
-                        //                             subtitle: `Se encontraron ${other_agent.length} créditos asignados a otros agentes.`,
-                        //                             message: `Se asignaron ${unique.length} créditos`,
-                        //                             native: false,
-                        //                             backgroundTop: '#FF9619',
-                        //                             backgroundBottom: '#fdb864',
-                        //                             colorTop: 'white',
-                        //                             colorBottom: 'black',
-                        //                             closeButton: 'Cerrar',
-                        //                             duration: 8000,
-                        //                         });
-                        //                     }
-
-                        //                     distribution.map((dis)=>{
-                        //                         if(Number(dis.agent_id)===Number(agents[n].id)){
-                        //                             unique.map(result=>{
-                        //                                 dis.distribution.push({
-                        //                                     id:result.id,
-                        //                                     cartera:result.cartera
-                        //                                 });
-            
-                        //                                 dis.pending.push({
-                        //                                     id:result.id,
-                        //                                     cartera:result.cartera
-                        //                                 });
-                        //                             });
-                        //                         }
-                        //                     });
-                                            
-                        //                     data_agent=distribution;
-                        //                 });
-
-                        //             }else{
-
-                        //                 const distribution=distributions;
-                        //                 // Créditos que no están asignados aún
-                        //                 const no_self=[];
-
-                        //                 // Créditos que ya se encuentran asignados
-                        //                 const self=[];
-
-                        //                 distribution.map((dis,n)=>{
-                        //                     dis.distribution.map(cred=>{
-                        //                         cred.agent_id=dis.agent_id;
-                        //                     });
-
-                        //                     if(Number(dis.agent_id)===Number(agent.id)){
-                        //                         results.map((result)=>{
-                        //                             const [state,message,agent_id]=useVerifyUnique({id_credit:result.id,agent_id:Number(agent.id),data_self:dis.distribution,mode:1});
-                                                    
-                        //                             result.agent_id=agent_id;
-
-                        //                             if(state){
-                        //                                 no_self.push(result);
-                        //                             }else{
-                        //                                 self.push(result);
-                        //                             }
-                        //                         })
-                        //                     }
-                        //                 });
-
-                        //                 // Ahora comprobamos que de los créditos no asignados a el agente mismo, no se encuentren asignados en otro agente
-                        //                 // Créditos asignados a otros agentes
-                        //                 const other_agent=[];
-
-                        //                 // Créditos que se pueden asignar al agente actual
-                        //                 const unique=[];
-                        //                 const other_datas=[];
-
-                        //                 distribution.map((dis,n)=>{
-                        //                     dis.distribution.map(cred=>{
-                        //                         cred.agent_id=dis.agent_id;
-                        //                     })
-
-                        //                     if(Number(dis.agent_id)!==Number(agent.id)){
-                        //                         other_datas.push(dis.distribution);
-                        //                     }
-                        //                 });
-
-                        //                 no_self.map(result=>{
-                        //                     const [state,message,agent_id]=useVerifyUnique({id_credit:result.id,agent_id:Number(agent.id),data_self:other_datas,mode:2});
-                                            
-                        //                     result.agent_id=agent_id;
-
-                        //                     if(state){
-                        //                         unique.push(result);
-                        //                     }else{
-                        //                         other_agent.push(result);
-                        //                     }
-                        //                 });
-
-                        //                 const names_agents=JSON.parse(data.agents);
-                        //                 let erros=[];
-                                        
-                        //                 other_agent.map((credito)=>{
-                        //                     names_agents.map((agt=>{
-                        //                         if(credito.agent_id===agt.id){
-                        //                             credito.agent_id=agt.name;
-                        //                             erros.push(credito);
-                        //                         }
-                        //                     }))
-                        //                 });
-
-                        //                 setErrors(erros);
-
-                        //                 if(self.length>0){
-                        //                     if(other_agent.length>0){
-                        //                         addNotification({
-                        //                             title: 'Créditos duplicados',
-                        //                             subtitle: `Se encontraron ${self.length} créditos ya asignados al agente y ${other_agent.length} créditos asignados a otros agentes.`,
-                        //                             message: `Se asignaron ${unique.length} créditos`,
-                        //                             native: false,
-                        //                             backgroundTop: '#FF9619',
-                        //                             backgroundBottom: '#fdb864',
-                        //                             colorTop: 'white',
-                        //                             colorBottom: 'black',
-                        //                             closeButton: 'Cerrar',
-                        //                             duration: 8000,
-                        //                         });
-                                                
-                        //                     }else{
-                        //                         addNotification({
-                        //                             title: 'Créditos duplicados',
-                        //                             subtitle: `Se encontraron ${self.length} créditos ya asignados al agente.`,
-                        //                             message: `Se asignaron ${unique.length} créditos`,
-                        //                             native: false,
-                        //                             backgroundTop: '#FF9619',
-                        //                             backgroundBottom: '#fdb864',
-                        //                             colorTop: 'white',
-                        //                             colorBottom: 'black',
-                        //                             closeButton: 'Cerrar',
-                        //                             duration: 8000,
-                        //                         });
-                        //                     }
-                        //                 }else if(other_agent.length>0){
-                        //                     addNotification({
-                        //                         title: 'Créditos duplicados',
-                        //                         subtitle: `Se encontraron ${other_agent.length} créditos asignados a otros agentes.`,
-                        //                         message: `Se asignaron ${unique.length} créditos`,
-                        //                         native: false,
-                        //                         backgroundTop: '#FF9619',
-                        //                         backgroundBottom: '#fdb864',
-                        //                         colorTop: 'white',
-                        //                         colorBottom: 'black',
-                        //                         closeButton: 'Cerrar',
-                        //                         duration: 8000,
-                        //                     });
-                        //                 }
-
-                        //                 // if(total_assign>0){
-                        //                 //     carga=carga.slice(0,total_assign)
-                        //                 // }
-    
-                        //                 // console.log(carga);
-
-                        //                 distribution.map((dis)=>{
-                        //                     if(Number(dis.agent_id)===Number(agent.id)){
-                        //                         unique.map(result=>{
-                        //                             dis.distribution.push({
-                        //                                 id:result.id,
-                        //                                 cartera:result.cartera
-                        //                             });
-        
-                        //                             dis.pending.push({
-                        //                                 id:result.id,
-                        //                                 cartera:result.cartera
-                        //                             });
-                        //                         });
-                        //                     }
-                        //                 });
-                                        
-                        //                 data_agent=distribution;
-                        //             }
-
-                        //             // Aquí debo comprobar que no se este asignando créditos que ya están asignados a otros agentes
-                        //             // fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/${data.id}`,{
-                        //             //     method:'PUT',
-                        //             //     headers: {
-                        //             //         Accept: 'application/json',
-                        //             //         Authorization: `Bearer ${localStorage.getItem('token')}`
-                        //             //     },
-                        //             //     body:new URLSearchParams({
-                        //             //         distributions:JSON.stringify(data_agent),
-                        //             //         charge_inicial:JSON.stringify([])
-                        //             //     })
-                        //             // })
-                        //             //     .then((response) => response.json())  
-                        //             //     .then((data) => {
-                        //             //         addNotification({
-                        //             //             title: 'Éxito',
-                        //             //             subtitle: 'Asignación correcta',
-                        //             //             message: '',
-                        //             //             native: false,
-                        //             //             backgroundTop: '#009793',
-                        //             //             backgroundBottom: '#459d9a',
-                        //             //             colorTop: 'white',
-                        //             //             colorBottom: 'white',
-                        //             //             closeButton: 'Cerrar',
-                        //             //             duration:3000,
-                        //             //         });
-                        //             //         setDistributions(data_agent);
-                        //             //         updateCredits(data.data);
-                        //             //         e.target.textContent="Asignar";
-                        //             //     });
-
-                        //         }}
-                        //     >Asignar</button>
-                        // </div>
-                        
                 }
             </div>
+            {
+                (view_details)
+                ?   
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setDetails(false)}}>Ocultar</button>
+                        <div style={{width:"100%",padding:"0 10px",height:"500px",overflowY:'auto'}}>
+                            <div className="CardAssignCampain__headCharge">
+                                <label></label>
+                                <label>Nombre</label>
+                                <label>Cédula</label>
+                                <label>Crédito</label>
+                                <label>Monto</label>
+                                <label>Cuotas pendientes</label>
+                                <label>Días mora</label>
+                                <label>Estado</label>
+                            </div>
+                            {
+                                charge.data.map((credit,index)=>(
+                                    <CardItemCharge
+                                        item={credit}
+                                    />
+                                ))
+                            }
+                        </div>
+                    </div>
+                :   <></>
+            }
+
         </div>
     );
 }
-
-/**
- * 
- *  Cargar datos ({
-        (data.type_assign==='api') 
-        ?   (charge.length===0)
-            ?   'Cargando...' 
-            :   (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
-        :   (<strong style={{fontWeight:"bold"}}>{charge.length}</strong>)
-    })
- */

@@ -7,7 +7,7 @@ import {
     View,
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
-
+import logo from '/icons/logo.png';
 
   const styles = StyleSheet.create({
     page: {
@@ -107,8 +107,6 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
       marginRight:0
     }
     //Para 1/4 de hoja
-
-
   });
   
   function PDF({nro_voucher,type_print,tipo_transaccion,credito,forma_pago,insitucion_financiera,codigo_deposito,name,ci,mora,interes,seguro_desgravamen,gastos_judiciales,saldo_capital,gastos_cobranza,otros_valores,total,valor_recibido,valor_devuelto,fecha,agente}) {
@@ -124,7 +122,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
               <Text style={styles.title}>
                 COMPROBANTE DE PAGO
               </Text>
-              <Image style={styles.image} src={"./icons/logo.png"}/>
+              <Image style={styles.image} src={logo}/>
             </View>
 
               <View style={styles.voucherNumber}>
@@ -352,7 +350,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
               <Text style={styles.title}>
                 COMPROBANTE DE PAGO
               </Text>
-              <Image style={styles.image} src={"./icons/logo.png"}/>
+              <Image style={styles.image} src={logo}/>
             </View>
 
               <View style={styles.voucherNumber}>

@@ -4,17 +4,18 @@ import Login from './pages/Login'
 import Header from './components/Header/Header'
 import NavSlide from './components/navSlide/NavSlide'
 import { useEffect, useState } from 'react'
-import { Notifications } from 'react-push-notification';
 import "./index.css";
+import Me from './pages/Me'
+import Push from './components/Push/Push'
+import CardSelectStateCall from './components/Management/CardSelectStateCall/CardSelectStateCall'
 
 function App() {
   
   const [session,setSession]=useState({});
 
   useEffect(()=>{
-    console.log("HOLA")
     if(localStorage.getItem('temp_uS')!=null){
-      fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/${localStorage.getItem('temp_uS')}`,{
+      fetch(`${import.meta.env.VITE_URL_BASE}/users/${localStorage.getItem('temp_uS')}`,{
         headers: {
             Accept: 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -30,6 +31,7 @@ function App() {
             localStorage.removeItem('permission');
             localStorage.removeItem('name');
             localStorage.removeItem('extension');
+            
             setSession({
               state:true
             });
@@ -53,21 +55,32 @@ function App() {
 
   return (
       <>
-      <Notifications className="push" position={'top-right'}/>
       <Header/>
-      
+      <Push/>
+      <CardSelectStateCall/>
+
       {
         (!useSessions() & !session.state) 
         ?
           <Login/>
         :
-          <div className="Dashboard">
-            <NavSlide
-              actions={''}
-              permission={''}
-            />
-            <Outlet/>
-          </div>
+          (localStorage.getItem('change_ps')==="true")
+          ?
+            <div className="Dashboard">
+              <NavSlide
+                actions={''}
+                permission={''}
+              />
+              <Me/>
+            </div>
+          :
+            <div className="Dashboard">
+              <NavSlide
+                actions={''}
+                permission={''}
+              />
+              <Outlet/>
+            </div>
       }
       </>
   )

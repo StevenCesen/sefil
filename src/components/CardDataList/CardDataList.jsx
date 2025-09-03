@@ -1,4 +1,3 @@
-import { NavLink } from "react-router-dom";
 import "./CardDataList.css";
 import useTotalCondonation from "../../hooks/useTotalCondonation";
 
@@ -52,7 +51,6 @@ export default function CardDataList({title,subtitle,data,link}){
                 }
                 
             </div>
-            {/* <NavLink to={link.link}>{link.text}</NavLink> */}
         </div>
     );
 }

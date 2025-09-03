@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import CardUsuarios from "../components/CardUsuarios/CardUsuarios";
-import addNotification from "react-push-notification";
+import Loader from "../components/Loader/loader";
 
 export default function Usuarios(){
 
-    const [users,setUsers]=useState([]);
+    const [users,setUsers]=useState();
     const content_users=useRef();
     const [new_user,setNew]=useState(true);
     const [new_change,setNewChange]=useState();
@@ -18,7 +18,7 @@ export default function Usuarios(){
     });
 
     useEffect(()=>{
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/users`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -31,6 +31,8 @@ export default function Usuarios(){
         setNew(false);
         setNewChange(false);
     },[]);
+
+    if(!users) return <Loader/>
 
     return (
         <div className="pageUsuarios" ref={content_users}>
@@ -67,9 +69,12 @@ export default function Usuarios(){
                                             new_permiss.push(permiso.children[0].value);
                                         }
                                     });
-                                    
-                                    // Actualizamos en el servidor
-                                    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/edit2/${id}`,{
+
+                                    if(id==2){
+                                        new_permiss.push("User:minimize");
+                                    }
+                                
+                                    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/users/edit2/${id}`,{
                                         method:'PUT',
                                         body:new URLSearchParams({
                                             permission:JSON.stringify([{
@@ -89,33 +94,22 @@ export default function Usuarios(){
                                 });
 
                                 if(count===0){
-                                    addNotification({
-                                        title: 'Éxito',
-                                        subtitle: 'Permiso actualizado correctamente',
-                                        message: '',
-                                        native: false,
-                                        backgroundTop: '#009793',
-                                        backgroundBottom: '#459d9a',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration:3000,
+
+                                    Push({
+                                        title:'Éxito',
+                                        message:`Permiso actualizado correctamente.`,
+                                        timeout:5000,
+                                        type:200
                                     });
 
                                     setNewChange(false);
 
                                 }else{
-                                    addNotification({
-                                        title: 'Error',
-                                        subtitle: 'No se pudo actualizar permiso',
-                                        message: 'Inténtalo otra vez',
-                                        native: false,
-                                        backgroundTop: '#FF9619',
-                                        backgroundBottom: '#fdb864',
-                                        colorTop: 'white',
-                                        colorBottom: 'white',
-                                        closeButton: 'Cerrar',
-                                        duration:3000,
+                                    sendpush({
+                                        title:'Éxito.',
+                                        message:'No se pudo actualizar permiso.',
+                                        type:'Push--sucessful',
+                                        timeout:5000
                                     });
                                 }
 
@@ -160,19 +154,20 @@ export default function Usuarios(){
                                         
                                     }else if(e.target.value==='gestor'){
                                         permiss[0].permission=[];
-                                        permiss[0].permission.push('Consulta:all');
                                         permiss[0].permission.push('Gestion:all');
                                     
                                     }else if(e.target.value==='campo'){
                                         permiss[0].permission=[];
-                                        permiss[0].permission.push('Consulta:all');
                                         permiss[0].permission.push('Gestion:all');
+                                        permiss[0].permission.push('condonar:set');
+                                        permiss[0].permission.push('convenio:set');
 
                                     }else if(e.target.value==='administrador'){
                                         permiss[0].permission=[];
                                         permiss[0].permission.push('Consulta:all');
                                         permiss[0].permission.push('Cobranza:all');
                                         permiss[0].permission.push('Gestion:all');
+                                        permiss[0].permission.push('Monitor:all');
                                         permiss[0].permission.push('Comprobantes:all');
                                         permiss[0].permission.push('Reportes:all');
                                         permiss[0].permission.push('User:minimize');
@@ -199,9 +194,8 @@ export default function Usuarios(){
                                 }
                                 <option value="administrador">Administrador</option>
                                 <option value="call">Gestor | Call Center</option>
-                                <option value="campo">Gestor | Campo</option>
+                                <option value="call">Gestor | Campo</option>
                                 <option value="campo">Gestor | Judicial</option>
-                                <option value="cobranza">Cobranza</option>
                                 <option value="consulta">Consulta</option>
                             </select>
                         </span>
@@ -215,7 +209,7 @@ export default function Usuarios(){
 
                             e.target.textContent='Guardando...';
 
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/register`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/register`,{
                                 method:'POST',
                                 body:new_data,
                                 headers: {

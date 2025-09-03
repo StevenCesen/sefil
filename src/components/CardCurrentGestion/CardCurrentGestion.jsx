@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ReactAudioPlayer from 'react-audio-player';
+// import ReactAudioPlayer from 'react-audio-player';
 import "./CardCurrentGestion.css";
 
 export default function CardCurrentGestion({data}){
@@ -8,7 +8,6 @@ export default function CardCurrentGestion({data}){
 
     const updateCall=(call)=>{
         let copy=(calls.length>0) ? calls : [];
-        console.log(copy)
         copy.push(call);
         setCalls(copy);
     }
@@ -22,7 +21,7 @@ export default function CardCurrentGestion({data}){
         }
 
         ids.map(async (id)=>{
-            await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/calls/${id}`,{
+            await fetch(`${import.meta.env.VITE_URL_BASE}/calls/${id}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -70,15 +69,15 @@ export default function CardCurrentGestion({data}){
                         <label>{data.client_name}</label>
                         <label>{call.phone}</label>
                         <label>{call.state_call}</label>
-                        <ReactAudioPlayer
+                        {/* <ReactAudioPlayer
                             style={{width:"100%"}}
                             src={`https://core.sefil.com.ec/api/public/files/audios/${call.id_record}`}
                             controls
-                        />
+                        /> */}
+                        <audio controls style={{width:"100%"}} src={`https://core.sefil.com.ec/api/public/files/audios/${call.id_record}`}></audio>
                     </div>
                 ))
             }
-
         </div>
     );
 }

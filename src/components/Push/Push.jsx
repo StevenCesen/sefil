@@ -1,22 +1,18 @@
-import addNotification from 'react-push-notification';
+import { useStorePush } from "../../stores/useStorePush";
+import "./Push.css";
 
-const Page = () => {
+export default function Push() {
+  const viewPush=useStorePush();
 
-    const buttonClick = () => {
-        addNotification({
-            title: 'Warning',
-            subtitle: 'This is a subtitle',
-            message: 'This is a very long message',
-            theme: 'darkblue',
-            native: true
-        });
-    };
-
-    return (
-      <div className="page">
-          <button onClick={buttonClick} className="button">
-           Hello world.
-          </button>
-      </div>
-    );
+  return (
+    (viewPush.isViewOn)
+      ?
+        <div 
+          className={`${viewPush.type} Push`}
+        >
+          <strong>{viewPush.title}</strong>
+          <p>{viewPush.message}</p>
+        </div>
+      : <></>
+  );
 }

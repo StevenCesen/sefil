@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export default function MyMapComponent({center,zoom}) {
+export default function MyMapComponent({center,zoom,height}) {
     const ref = useRef();
 
     useEffect(() => {
@@ -15,5 +15,5 @@ export default function MyMapComponent({center,zoom}) {
         });
     },[]);
 
-    return <div style={{width:'100%',height:'300px',marginTop:10}} ref={ref} id="map" />;
+    return <div style={{width:'100%',height:height,marginTop:10}} ref={ref} id="map" />;
 }

@@ -1,4 +1,4 @@
-export default function useAssignSearch(data,value,update,filter,mode,mora,cuota,monto,estado,agencia,estado_gestion,agente,cartera){
+export default function useAssignSearch(data,value,update,filter,mode,mora,cuota,monto,estado,agencia,estado_gestion,agente,cartera,setCreditos){
 
     if(filter){
         /** 
@@ -7,7 +7,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
      * =========================================================================================
     */
         let results=[];
-
+        
         if(Number(mode)===1){ //Modo coincidir
             if(
                 mora==='' & 
@@ -24,7 +24,6 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 let filters="";
 
                 if(mora!==""){
-                    console.log(mora)
                     if(mora.min!=="" & Number(mora.min)!==0){
                         filters+=`&mora_min=${mora.min}`;
                     }
@@ -65,13 +64,13 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                     filters+=`&agencias=${JSON.stringify(agencia)}`;
                 }
 
-                if(agente){
+                if(!Array.isArray(agente)){
                     filters+=`&user=${agente}`;
+                }else{
+                    filters+=`&users=${JSON.stringify(agente)}`
                 }
 
-                console.log(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`)
-
-                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`,{
+                fetch(`${import.meta.env.VITE_URL_BASE}/campains/filter?cartera=${cartera}&status_c=ACTIVE${filters}`,{
                     headers: {
                         Accept: 'application/json',
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -79,6 +78,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 })
                     .then((response) => response.json())  
                     .then((data) => {
+                        console.log(data)
                         update(data);
                     });
             }
@@ -117,12 +117,8 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
 
     }else if(value.length>3){
         if(/^[A-Za-z ]+/.test(value) & !/[0-9]+/.test(value)){
-            console.log("Entre a busqueda por nombre y número de crédito");
-
-
+            
         }else if(/^[0-9-_A-Za-z ]+/.test(value)){  //Búsqueda masiva de créditos
-            console.log("Entre a busqueda masiva")
-
             let values=value.split(' ');
             let syncs_id=[];
 
@@ -130,10 +126,9 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 syncs_id.push(value.split('-')[1]);
             });
 
-            console.log(cartera)
-            console.log(syncs_id)
+            setCreditos(syncs_id);
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/filter?cartera=${cartera}&status_c=ACTIVE&creditos=${JSON.stringify(syncs_id)}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/campains/filter?cartera=${cartera}&status_c=ACTIVE&creditos=${JSON.stringify(syncs_id)}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`

@@ -118,12 +118,8 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
                 
             }
         });
-        
-        // Al final de tener todo el results filtro por agencia: REVISAAAAAAR
-        console.log(results)
 
         if(agencia.length>0){
-            console.log(agencia)
             let new_result=[];
 
             results.map((credit)=>{

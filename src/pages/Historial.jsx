@@ -1,13 +1,10 @@
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import {useEffect, useState } from "react";
-import CardGestion from "../components/CardGestion/CardGestion";
-import addNotification from "react-push-notification";
-import useWindows from "../hooks/useWindows";
-import useFormatterNumber from "../hooks/useFormatterNumber";
 import CardCurrentGestion from "../components/CardCurrentGestion/CardCurrentGestion";
 import useFilterGestions from "../hooks/useFilterGestions";
 import useReturnFilter from "../hooks/useReturnFilter";
+import Loader from "../components/Loader/loader";
 
 export default function GHistorial(){
 
@@ -16,6 +13,7 @@ export default function GHistorial(){
     const [current,setCurrent]=useState();
     const [agents,setAgents]=useState();
     const [filters,setFilters]=useState();
+    const [loading,setLoading]=useState();
 
     const params=new URLSearchParams(useLocation().search);
     const param=useParams();
@@ -23,7 +21,7 @@ export default function GHistorial(){
     const [data,setData]=useState(); //Aquí tenemos todos los créditos
     
     const updateData=(url)=>{
-
+        setLoading(true);
         fetch(url,{
             headers: {
                 Accept: 'application/json',
@@ -54,11 +52,11 @@ export default function GHistorial(){
                         type:filters.type,
                         state_gestion:filters.state_gestion,
                         date_promise:filters.date_promise,
-                        agente:filters.agente
+                        credito:filters.credito,
+                        agente:filters.agente,
+                        gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                     });
-                    console.log(filters)
-                    console.log(filter);
-
+                    
                     if(data.next_page_url!==null){
                         data.next_page_url+=`&${filter}`;
                     }
@@ -69,6 +67,7 @@ export default function GHistorial(){
                 }
                 
                 setData(data);
+                setLoading(false);
             });
     }
 
@@ -82,10 +81,14 @@ export default function GHistorial(){
             type:"",
             state_gestion:"",
             date_promise:"",
-            agente:""
+            agente:"",
+            credito:"",
+            gestion_channel_whatsapp:""
         });
+
+        setLoading(false);
         
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/agents`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/users/agents`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -96,7 +99,7 @@ export default function GHistorial(){
                 setAgents(data);
             });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -107,7 +110,7 @@ export default function GHistorial(){
                 setCampains(data.data);
 
                 if(param.ci!==undefined){
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall?credit=${param.ci}&cartera=${params.get('cartera')}`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/managmentall?credit=${param.ci}&cartera=${params.get('cartera')}`,{
                         headers: {
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -131,7 +134,7 @@ export default function GHistorial(){
                         });
                 }else{
 
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/managmentall`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/managmentall`,{
                         headers: {
 
                             Accept: 'application/json',
@@ -148,10 +151,10 @@ export default function GHistorial(){
 
     },[]);
 
-    if(!campains) return <></>
-    if(!data) return <></>
-    if(!current) return <></>
-    if(!agents) return <></>
+    if(!campains) return <Loader/>
+    if(!data) return <Loader/>
+    if(!current) return <Loader/>
+    if(!agents) return <Loader/>
 
     return (
         <div className="pageConsulta">
@@ -176,6 +179,7 @@ export default function GHistorial(){
                             value={filters.fecha_gestion}
                             type="date"
                             onChange={(e)=>{
+
                                 setFilters({
                                     ...filters,
                                     fecha_gestion:e.target.value
@@ -190,8 +194,12 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading,
+                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                                 });
+
                             }}
                         />
                     </label>
@@ -214,7 +222,10 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading,
+                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                                 });
                             }}
                         >
@@ -246,7 +257,10 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading,
+                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                                 });
                             }}
                         />
@@ -256,6 +270,7 @@ export default function GHistorial(){
                         <input 
                             value={filters.ci}
                             type="value"
+                            placeholder="Cédula"
                             onChange={(e)=>{
                                 setFilters({
                                     ...filters,
@@ -271,7 +286,10 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading,
+                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                                 });
                             }}
                         />
@@ -296,7 +314,10 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading,
+                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                                 });
                             }}
                         >
@@ -305,7 +326,38 @@ export default function GHistorial(){
                             <option value={"GARANTE"}>GARANTE</option>
                         </select>
                     </label>
-                    <label>ID crédito</label>
+                    <label>
+                        Crédito
+                        <input 
+                            value={filters.credito}
+                            type="value"
+                            onChange={(e)=>{
+
+                                setFilters({
+                                    ...filters,
+                                    credito:e.target.value
+                                });
+
+                                if(e.target.value.length>8){
+                                    useFilterGestions({
+                                        fecha_gestion:filters.fecha_gestion,
+                                        campain:filters.campain,
+                                        name:filters.name,
+                                        ci:filters.ci,
+                                        type:filters.type,
+                                        state_gestion:filters.state_gestion,
+                                        date_promise:filters.date_promise,
+                                        agente:filters.agente,
+                                        credito:e.target.value,
+                                        setData:setData,
+                                        loader:setLoading,
+                                        gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                                    });
+                                }
+                            }}
+                        />
+                    </label>
+
                     <label>
                         Estado gestión
                         <select
@@ -325,7 +377,9 @@ export default function GHistorial(){
                                     state_gestion:e.target.value,
                                     date_promise:filters.date_promise,
                                     agente:filters.agente,
-                                    setData:setData
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading
                                 });
                             }}
                         >
@@ -376,7 +430,10 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:e.target.value,
                                     agente:filters.agente,
-                                    setData:setData
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading,
+                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                                 });
                             }}
                         />
@@ -401,7 +458,10 @@ export default function GHistorial(){
                                     state_gestion:filters.state_gestion,
                                     date_promise:filters.date_promise,
                                     agente:e.target.value,
-                                    setData:setData
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading,
+                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                                 });
                             }}
                         >
@@ -414,7 +474,36 @@ export default function GHistorial(){
                             
                         </select>
                     </label>
-                    <label>Observación</label>
+                    <label>
+                        Observación
+                        <select
+                            value={filters.gestion_channel_whatsapp}
+                            onChange={(e)=>{
+                                setFilters({
+                                    ...filters,
+                                    gestion_channel_whatsapp:e.target.value
+                                });
+
+                                useFilterGestions({
+                                    fecha_gestion:filters.fecha_gestion,
+                                    campain:filters.campain,
+                                    name:filters.name,
+                                    ci:filters.ci,
+                                    type:filters.type,
+                                    state_gestion:filters.state_gestion,
+                                    date_promise:filters.date_promise,
+                                    agente:filters.agente,
+                                    credito:filters.credito,
+                                    setData:setData,
+                                    loader:setLoading,
+                                    gestion_channel_whatsapp:e.target.value
+                                });
+                            }}
+                        >
+                            <option value="">-- Seleccionar --</option>
+                            <option value="whatsapp">Gestión whatsapp</option>
+                        </select>
+                    </label>
                 </div>
 
                 {
@@ -476,6 +565,13 @@ export default function GHistorial(){
                             data={current}
                         />
                     </div>
+                :   <></>
+            }
+
+            {
+                (loading)
+                ?
+                    <Loader/>
                 :   <></>
             }
 

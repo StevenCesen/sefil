@@ -81,3 +81,15 @@
 .NavSlide__option--down>div>a:last-child{
     margin-bottom: 0;
 }
+
+
+@media screen and (min-width:300px) and (max-width:540px) {
+
+}
+
+@media screen and (min-width:541px) and (max-width:1000px) {
+    .CloseNav{
+        grid-template-columns: 10% 90%;
+        transition: all 0.3s ease-in;
+    }
+}

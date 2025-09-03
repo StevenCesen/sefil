@@ -1,0 +1,23 @@
+.InfoCredit{
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+    background-color: var(--bg-2);
+}
+.InfoCredit>h4{
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.InfoCredit>div{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom:5px;
+}
+
+.InfoCredit>div{
+    font-size: 12px;
+}

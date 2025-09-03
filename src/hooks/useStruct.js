@@ -1,5 +1,5 @@
 export default async function useStruct(data,btn,id){
-    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/estructurar/${id}`,{
+    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/credit/estructurar/${id}`,{
         method:'POST',
         body:new URLSearchParams(data),
         headers: {

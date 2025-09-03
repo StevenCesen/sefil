@@ -6,7 +6,7 @@ export default function CardExportPays(){
         <div className="CardExportPays">
             <h4>Historial de pagos</h4>
             <p>Historial completo de pagos.</p>
-            <NavLink to={`${import.meta.env.VITE_URL_BASE}/public/api/pays`}>Exportar EXCEL</NavLink>
+            <NavLink to={`${import.meta.env.VITE_URL_BASE}/pays`}>Exportar EXCEL</NavLink>
         </div>
     );
 }

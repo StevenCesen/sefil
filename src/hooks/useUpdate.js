@@ -8,7 +8,6 @@ export default async function useUpdate(url,data,btn,resp){
     btn.target.textContent='Guardar distribución';
     btn.target.removeAttribute('disabled');
     if(response.status===200){
-        console.log("Guardado")
         resp.current.textContent='Horario guardado correctamente';
     }
 }

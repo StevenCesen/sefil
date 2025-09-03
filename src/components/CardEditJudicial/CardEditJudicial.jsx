@@ -21,7 +21,7 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
             fecha:''
         });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/judicial?cartera=${cartera}&credito=${id}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/judicial?cartera=${cartera}&credito=${id}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -148,7 +148,7 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
                                 fecha:gastos.fecha
                             };
                         
-                            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/judicial`,{
+                            fetch(`${import.meta.env.VITE_URL_BASE}/judicial`,{
                                 method:'POST',
                                 headers: {
                                     Accept: 'application/json',

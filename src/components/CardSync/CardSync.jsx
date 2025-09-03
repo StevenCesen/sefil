@@ -14,7 +14,7 @@ export default function CardSync(){
         setBucle(
             (porcentual<100) &&
                 setInterval(() => {
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/sync/status`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/sync/status`,{
                         headers: {
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`

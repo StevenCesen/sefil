@@ -147,3 +147,21 @@
     cursor: pointer;
     background-color: var(--bg-alert-error) !important;
 }
+
+
+@media screen and (min-width:300px) and (max-width:540px) {
+
+}
+
+@media screen and (min-width:541px) and (max-width:1000px) {
+    .CardPay{
+        align-items: flex-start;
+    }
+    
+    .CardPay__head{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}

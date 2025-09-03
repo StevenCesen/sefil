@@ -1,0 +1,31 @@
+.InfoValues{
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow);
+    background-color: var(--bg-2);
+}
+.InfoValues>h4{
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.InfoValues>div{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgb(195, 195, 195);
+    margin-bottom:5px;
+    padding-bottom: 5px;
+    font-size: 12px;
+}
+
+.InfoValues>div:last-child{
+    border: none;
+}
+
+.InfoValues>div>h4{
+    font-weight: normal;
+    color: rgb(72, 72, 72);
+}

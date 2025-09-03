@@ -3,13 +3,11 @@ import "./CardStructure.css";
 import useFadeArray from "../../hooks/useFadeArray";
 import useStruct from "../../hooks/useStruct";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
-import addNotification from "react-push-notification";
 
-export default function CardStructure({original_dates,total,id,set,cartera,cobranza}){
+export default function CardStructure({original_dates,total,id,set,cartera,cobranza,status_cobranza}){
 
     const [tipo_desgloce,setDesgloce]=useState();
     const [nro_cuotas,setNumber]=useState();
-    const [date,setDate]=useState();
     const [totalAmount,setTotalAmount]=useState();
     const [totalSum,setTotalSum]=useState();
     const [monto_cuota,setMonto]=useState();
@@ -18,7 +16,7 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
     useEffect(()=>{
         setDesgloce('automatico');
         setNumber(1);
-        setTotalAmount(total);
+        setTotalAmount(Number(total)+Number((status_cobranza!=='pay' | status_cobranza==true) ? cobranza : 0));
         setTotalSum(0);
         setMonto(0);
         setValueCuotas([]);
@@ -80,15 +78,18 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                     }} min={1} step={1}/>
                     <button
                         onClick={(e)=>{
-                            const nro_by_monto=totalAmount/monto_cuota;
-
+                            const nro_by_monto=(totalAmount)/monto_cuota;
                             const cuotas_prev=[];
 
                             useFadeArray(Math.round(nro_by_monto)).map((cuota,index)=>{
-                                if(index===(Math.round(nro_by_monto)-1)){
+                                if(index===(Math.round(nro_by_monto)-1)){ // última cuota
                                     const last_quote=totalAmount-monto_cuota*(index);
                                     cuotas_prev.push(last_quote);
                                 }else{
+                                // }else if(index==0){
+                                //     const include_gasto=monto_cuota-cobranza;
+                                //     cuotas_prev.push(include_gasto);
+                                // }else{
                                     cuotas_prev.push(monto_cuota);
                                 }
                             });
@@ -98,18 +99,13 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                     >Calcular</button>
                 </div>
 
-                {/* <div className="CardCondonacion__select">
-                    <label>Fecha de pago:</label>
-                    <input type="date" onChange={(e)=>{setDate(e.target.value)}}/>
-                </div> */}
-                
                 {
                     (tipo_desgloce==='automatico') ?
                         <div className="CardCondonacion__quotes">
 
                             <div>
                                 <label>1</label>
-                                <label>{useFormatterNumber({value:cobranza,currency:'USD'})}</label>
+                                <label>{useFormatterNumber({value:(status_cobranza!=='pay' ? cobranza : 0),currency:'USD'})}</label>
                                 <label>Gastos de cobranza</label>
                             </div>
 
@@ -137,7 +133,7 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                         <div className="CardCondonacion__quotes">
                             <div>
                                 <label>1</label>
-                                <label>{useFormatterNumber({value:cobranza,currency:'USD'})}</label>
+                                <label>{useFormatterNumber({value:(status_cobranza!=='pay' ? cobranza : 0),currency:'USD'})}</label>
                                 <label>Gastos de cobranza</label>
                             </div>
 
@@ -161,24 +157,19 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                                                     val_prev+=Number(input.value);
                                                 });
 
-                                                if(val_prev>totalAmount){
+                                                if(val_prev>(totalAmount)){
 
-                                                    e.target.value=diferencia.toFixed(2);
+                                                    e.target.value=(diferencia-Number((status_cobranza!=='pay' ? cobranza : 0))).toFixed(2);
                                                     
                                                     setTotalSum(totalAmount);
 
-                                                    addNotification({
-                                                        title: 'ERROR SUMATORIA',
-                                                        subtitle: 'Se sobrepaso el valor total del desgloce',
-                                                        message: 'Por favor, revise los valores',
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 3500
+                                                    sendpush({
+                                                        title:'ERR: sumatoria incorrecta.',
+                                                        message:'Se sobrepaso el valor total del desgloce.',
+                                                        type:'Push--danger',
+                                                        timeout:3000
                                                     });
+
                                                 }else{
                                                     setTotalSum(val_prev);
                                                 }
@@ -215,11 +206,11 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
 
                     detalle.push({
                         cuota:1,
-                        valor:cobranza,
-                        estado:'PENDIENTE',
+                        valor:(status_cobranza!=='pay' ? cobranza : 0),
+                        estado:(status_cobranza!=='pay' ? 'PENDIENTE' : 'PAGADO'),
                         fecha_pago:inputs[0].nextElementSibling.value
                     });
-
+                    
                     inputs.map((input,index)=>{
                         if(index===0){
                             valor_cuota=input.value;
@@ -249,39 +240,29 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                         original_dates:JSON.stringify(original_dates),
                         totalAmount:totalAmount
                     }
-
                     
                     if(errors>0){
                         e.target.textContent="Guardar cambios";
 
-                        addNotification({
-                            title: 'ERROR FECHAS',
-                            subtitle: 'Existen cuotas que no tienen fecha',
-                            message: 'Por favor, revise las fechas',
-                            native: false,
-                            backgroundTop: '#FF9619',
-                            backgroundBottom: '#fdb864',
-                            colorTop: 'white',
-                            colorBottom: 'white',
-                            closeButton: 'Cerrar',
-                            duration: 3500
+                        sendpush({
+                            title:'ERR: no hay fecha.',
+                            message:'Existen cuotas que no tienen fecha.',
+                            type:'Push--danger',
+                            timeout:3000
                         });
-                    }else if(tipo_desgloce==='automatico' | (totalSum===total & tipo_desgloce==='manual')){
+                        
+                    }else if(tipo_desgloce==='automatico' | tipo_desgloce==='manual'){
+                        
                         useStruct(data,e.target,id);
+
                     }else{
                         e.target.textContent="Guardar cambios";
 
-                        addNotification({
-                            title: 'ERROR SUMATORIA',
-                            subtitle: 'El desgloce de cuotas no suman el monto total adeudado',
-                            message: 'Por favor, revise los valores',
-                            native: false,
-                            backgroundTop: '#FF9619',
-                            backgroundBottom: '#fdb864',
-                            colorTop: 'white',
-                            colorBottom: 'white',
-                            closeButton: 'Cerrar',
-                            duration: 3500
+                        sendpush({
+                            title:'ERR: sumatoria incorrecta.',
+                            message:'Se sobrepaso el valor total del desgloce.',
+                            type:'Push--danger',
+                            timeout:3000
                         });
                     }
 

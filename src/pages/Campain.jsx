@@ -48,7 +48,7 @@ export default function Campain(){
         setTransfer(false);
         setData({});
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -57,7 +57,6 @@ export default function Campain(){
             .then((response) => response.json())  
             .then((data) => {
                 setCampains(data);
-                console.log(data)
             });
     },[]);
 
@@ -84,7 +83,7 @@ export default function Campain(){
                         <CardSync/>
                     </div>
                 </div>
-
+                    
                 <div className="Campain__list">
                     <div className="Campain__access">
                         <h4 className="Campain__subtitle">Campañas</h4>
@@ -107,48 +106,51 @@ export default function Campain(){
 
                         {
                             campains.data.map((campain,index)=>(
-                                <div 
-                                    key={index}
-                                    className="Campain__item"
-                                >
-                                    <label>{campain.name}</label>
-                                    <label>{campain.state}</label>
-                                    <label>{campain.fecha_init}</label>
-                                    <label>{campain.fecha_finish}</label>
-                                    {
-                                        (campain.state!=='FINALIZADA')
-                                        ?
-                                            <div>
-                                                <button
-                                                    onClick={()=>{
-                                                        setData(campain);
-                                                        setEdit(true);
-                                                    }}
-                                                >
-                                                    <img title="Editar campaña" src="./icons/edit.png"/>
-                                                </button>
+                                (campain.state==="ACTIVA")
+                                ?
+                                    <div 
+                                        key={index}
+                                        className="Campain__item"
+                                    >
+                                        <label>{campain.name}</label>
+                                        <label>{campain.state}</label>
+                                        <label>{campain.fecha_init}</label>
+                                        <label>{campain.fecha_finish}</label>
+                                        {
+                                            (campain.state!=='FINALIZADA')
+                                            ?
+                                                <div>
+                                                    <button
+                                                        onClick={()=>{
+                                                            setData(campain);
+                                                            setEdit(true);
+                                                        }}
+                                                    >
+                                                        <img title="Editar campaña" src="./icons/edit.png"/>
+                                                    </button>
 
-                                                <button
-                                                    onClick={()=>{
-                                                        setData(campain);
-                                                        setTransfer(true);
-                                                    }}
-                                                >
-                                                    <img title="Asignar campaña" src="./icons/transfer.png"/>
-                                                </button>
+                                                    <button
+                                                        onClick={()=>{
+                                                            setData(campain);
+                                                            setTransfer(true);
+                                                        }}
+                                                    >
+                                                        <img title="Asignar campaña" src="./icons/transfer.png"/>
+                                                    </button>
 
-                                                <button
-                                                    onClick={()=>{
-                                                        console.log("Exportación de datos")
-                                                    }}
-                                                >
-                                                    <img title="Exportar campaña" src="./icons/expor.png"/>
-                                                </button>
-                                                
-                                            </div>
-                                        :   <></>
-                                    }
-                                </div>
+                                                    <button
+                                                        onClick={()=>{
+                                                        
+                                                        }}
+                                                    >
+                                                        <img title="Exportar campaña" src="./icons/expor.png"/>
+                                                    </button>
+                                                    
+                                                </div>
+                                            :   <></>
+                                        }
+                                    </div>
+                                :   <></>
                             ))
                         }
 

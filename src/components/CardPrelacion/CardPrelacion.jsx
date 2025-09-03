@@ -131,10 +131,11 @@ export default function CardPrelacion({cartera}){
                                             e.target.removeChild(document.getElementById('message-drop'));
                                         }
 
-                                        let elements=document.getElementsByClassName('CardSelectsTo__label');
+                                        let elements=document.querySelectorAll('.CardSelectsTo__label');
                                         elements=[].slice.call(elements);
 
                                         const data = e.dataTransfer.getData("Text");
+                                    
                                         let count=0;
 
                                         elements.map((element)=>{
@@ -199,7 +200,7 @@ export default function CardPrelacion({cartera}){
                             }
                         });
 
-                        const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines`,{
+                        const request= await fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
                             method:'POST',
                             body:new URLSearchParams({
                                 cartera:cartera.name,

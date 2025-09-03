@@ -1,4 +1,4 @@
-import addNotification from "react-push-notification";
+import sendpush from "../../helpers/sendpush";
 import "./CardReverse.css";
 
 export default function CardReverse({id,name,fecha,update}){
@@ -13,7 +13,7 @@ export default function CardReverse({id,name,fecha,update}){
             <button
                 onClick={(e)=>{
                     e.target.textContent="Procesando...";
-                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/reverse/${id}`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/reverse/${id}`,{
                         headers: {
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -26,36 +26,23 @@ export default function CardReverse({id,name,fecha,update}){
                                 e.target.textContent="Revertido";
 
                                 update();
-
-                                addNotification({
-                                    title: 'Éxito',
-                                    subtitle: 'Comprobante revertido correctamente',
-                                    message: '',
-                                    native: false,
-                                    backgroundTop: '#009793',
-                                    backgroundBottom: '#459d9a',
-                                    colorTop: 'white',
-                                    colorBottom: 'white',
-                                    closeButton: 'Cerrar',
-                                    duration:3000,
+                                
+                                sendpush({
+                                    title:'Éxito.',
+                                    message:'Comprobante revertido.',
+                                    type:'Push--sucessful',
+                                    timeout:3000
                                 });
 
                             }else{
 
                                 e.target.textContent="Revertir";
                                 update();
-
-                                addNotification({
-                                    title: 'Tiempo expirado',
-                                    subtitle: 'No se puede revertir este comprobante',
-                                    message: 'Se ha sobrepasado el período de un día después de la emisión',
-                                    native: false,
-                                    backgroundTop: '#FF9619',
-                                    backgroundBottom: '#fdb864',
-                                    colorTop: 'white',
-                                    colorBottom: 'white',
-                                    closeButton: 'Cerrar',
-                                    duration: 5000,
+                                sendpush({
+                                    title:'ERR: Tiempo expirado',
+                                    message:'Se ha sobrepasado el período de un día después de la emisión.',
+                                    type:'Push--danger',
+                                    timeout:3000
                                 });
                             }
                         });

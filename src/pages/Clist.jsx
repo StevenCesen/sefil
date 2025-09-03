@@ -15,6 +15,7 @@ export default function Clist(){
     const [parroquia,setParroquia]=useState('all');
     const [agents,setAgents]=useState();
     const [agent,setAgent]=useState();
+    const [view_phones,setPhones]=useState();
 
     const [message,setMessage]=useState("");
 
@@ -36,17 +37,59 @@ export default function Clist(){
     });
 
     const [aux_busines,setAux]=useState("");
+    const [filter,setFilter]=useState();
 
-    const updateData=(url)=>{
-        fetch(url,{
+    const genFilter=({mora_min,mora_max,user_id,state,sync_status})=>{
+        let filter="";
+
+        if(mora_max!==""){
+            filter+=`&mora_max=${mora_max}`;
+        }
+
+        if(mora_min!==""){
+            filter+=`&mora_min=${mora_min}`;
+        }
+
+        if(user_id!=""){
+            filter+=`&user_id=${user_id}`
+        }
+
+        if(state!=""){
+            filter+=`&collection_state=${state}`
+        }
+
+        if(sync_status!=""){
+            filter+=`&sync_status=${sync_status}`
+        }
+
+        return filter;
+    }
+
+    const updateData=({mora_min,mora_max,user_id,state,sync_status})=>{
+        let filter=genFilter({mora_min,mora_max,user_id,state,sync_status});
+        
+        fetch(`${import.meta.env.VITE_URL_BASE}/cclist?${filter}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
             .then((response) => response.json())  
-	        .then((data) => setCredits(data));
+            .then((data) => {
+                setCredits(data);
+            });
     }
+
+    // const updateData=(url)=>{
+    //     fetch(url,{
+    //         headers: {
+    //             Accept: 'application/json',
+    //             Authorization: `Bearer ${localStorage.getItem('token')}`
+    //         }
+    //     })
+    //         .then((response) => response.json())  
+	//         .then((data) => setCredits(data));
+    // }
 
     const updateCredits=(data)=>{
         setCredits({
@@ -65,13 +108,21 @@ export default function Clist(){
             links:[]
         });
         setMessage("");
+        setPhones(false);
+        setFilter({
+            mora_min:'',
+            mora_max:'',
+            user_id:'',
+            state:'',
+            sync_status:''
+        });
 
         localStorage.setItem('cartera','syncs');
         setAux(localStorage.getItem('cartera'));
 
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null & param.ci==undefined){
             setAux(localStorage.getItem('cartera'));
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${localStorage.getItem('cartera')}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -82,7 +133,7 @@ export default function Clist(){
                     setCredits(data);
                 });
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/listAgents?cartera=syncs`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=syncs`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -99,7 +150,7 @@ export default function Clist(){
             setAgents([]);
             setAgent([]);
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs/${param.ci}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/syncs/${param.ci}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -107,11 +158,9 @@ export default function Clist(){
             })
                 .then((response) => response.json())  
                 .then((data) => {
-                    console.log(data);
                     setCredit(data);
                 });
         }
-
     },[]);
 
     if(!agents) return <></>  
@@ -138,36 +187,88 @@ export default function Clist(){
 
                             <div className="DetailCredit__datesCredit">
                                 <div>
-                                    <label>Cliente:</label>
-                                    <label>{data_credit.name}</label>
+                                    <div>
+                                        <label>Cliente:</label>
+                                        <label>{data_credit.name}</label>
+                                    </div>
+                                    <div>
+                                        <label>Contrato:</label>
+                                        <label>syncs-{data_credit.sync_id}</label>
+                                    </div>
+                                    <div>
+                                        <label>Estado Sincronización:</label>
+                                        <label>{data_credit.status}</label>
+                                    </div>
+                                    <div>
+                                        <label>Estado Crédito:</label>
+                                        <label>{data_credit.collection_state}</label>
+                                    </div>
+                                    <div>
+                                        <label>Agencia:</label>
+                                        <label>{data_credit.Agencia}</label>
+                                    </div>
+                                    <div>
+                                        <label>Frecuencia:</label>
+                                        <label>{data_credit.frequency}</label>
+                                    </div>
+                                    <div>
+                                        <label>Fecha terminación:</label>
+                                        <label>{data_credit.due_date}</label>
+                                    </div>
+                                    <div>
+                                        <label>Días en mora:</label>
+                                        <label>{data_credit.days_past_due}</label>
+                                    </div>
+                                    <div>
+                                        <label>Cuotas:</label>
+                                        <label>{data_credit.total_fees}</label>
+                                    </div>
+                                    <div>
+                                        <label>Cuotas pagadas:</label>
+                                        <label>{data_credit.paid_fees}</label>
+                                    </div>
+                                    <div>
+                                        <label>Valor cuota:</label>
+                                        <label>{useFormatterNumber({value:data_credit.monthly_fee_amount,currency:'USD'})}</label>
+                                    </div>
                                 </div>
                                 <div>
-                                    <label>Contrato:</label>
-                                    <label>syncs-{data_credit.sync_id}</label>
-                                </div>
-                                <div>
-                                    <label>Estado Sincronización:</label>
-                                    <label>{data_credit.status}</label>
-                                </div>
-                                <div>
-                                    <label>Agencia:</label>
-                                    <label>{data_credit.Agencia}</label>
-                                </div>
-                                <div>
-                                    <label>Frecuencia:</label>
-                                    <label>{data_credit.frequency}</label>
-                                </div>
-                                <div>
-                                    <label>Total pendiente:</label>
-                                    <label>{data_credit.total_amount}</label>
-                                </div>
-                                <div>
-                                    <label>Cuotas:</label>
-                                    <label>{data_credit.total_fees}</label>
-                                </div>
-                                <div>
-                                    <label>Cuotas pagadas:</label>
-                                    <label>{data_credit.paid_fees}</label>
+                                    <div>
+                                        <label>Capital:</label>
+                                        <label>{useFormatterNumber({value:data_credit.saldo_capital,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Interés:</label>
+                                        <label>{useFormatterNumber({value:data_credit.interes,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Mora:</label>
+                                        <label>{useFormatterNumber({value:data_credit.mora,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Seguro desgravamen:</label>
+                                        <label>{useFormatterNumber({value:data_credit.seguro_desgravamen,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Gastos judiciales:</label>
+                                        <label>{useFormatterNumber({value:data_credit.gastos_judiciales,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Gastos de cobranza:</label>
+                                        <label>{useFormatterNumber({value:data_credit.gastos_cobranza,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Otros valores:</label>
+                                        <label>{useFormatterNumber({value:data_credit.otros_valores,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Valor cuota:</label>
+                                        <label>{useFormatterNumber({value:data_credit.monthly_fee_amount,currency:'USD'})}</label>
+                                    </div>
+                                    <div>
+                                        <label>Total pendiente:</label>
+                                        <label>{useFormatterNumber({value:data_credit.total_amount,currency:'USD'})}</label>
+                                    </div>
                                 </div>
                             </div>
 
@@ -177,6 +278,7 @@ export default function Clist(){
                                     <label>Nombre</label>
                                     <label>Tipo</label>
                                     <label>CI</label>
+                                    <label></label>
                                 </div>
 
                                 {
@@ -185,6 +287,34 @@ export default function Clist(){
                                             <label>{contacto.fullName}</label>
                                             <label>{contacto.type}</label>
                                             <label>{contacto.documento}</label>
+                                            <label>
+                                                <img 
+                                                    src="./icons/arrowDown.png"
+                                                    onClick={(e)=>{
+                                                        if(e.target.parentElement.nextElementSibling.style.display==="block"){
+                                                            e.target.parentElement.nextElementSibling.style.display="none";
+                                                        }else{
+                                                            e.target.parentElement.nextElementSibling.style.display="block";
+                                                        }
+                                                    }}
+                                                />
+                                            </label>
+
+                                            {
+                                            
+                                                <div>
+                                                    {
+                                                        (contacto.mobile_phones!=="")
+                                                        ?
+                                                            contacto.mobile_phones.split(',').map(phone=>(
+                                                                <p><strong>MÓVIL:</strong> {phone}</p>
+                                                            ))
+                                                        : ""
+                                                    }
+                                                </div>
+                                            
+                                            }
+
                                         </div>
                                     ))
                                 }
@@ -195,20 +325,20 @@ export default function Clist(){
                                 <h3>Gestiones</h3>
                                 <div className="DetailCredit__gestionesHead">
                                     <label>Fecha</label>
-                                    <label>Cliente</label>
-                                    <label>Campaña</label>
+                                    <label>Cédula</label>
                                     <label>Estado Gest.</label>
-                                    <label>Fecha Comp.</label>
+                                    <label>Compromiso</label>
+                                    <label>Observ.</label>
                                 </div>
 
                                 {
                                     data_credit.gestiones.map((gestion,index)=>(
                                         <div key={index} className="DetailCredit__gestionesItem">
                                             <label>{gestion.fecha}</label>
-                                            <label>{gestion.client_name}</label>
-                                            <label>{gestion.campain_name}</label>
-                                            <label>{gestion.state_gestion}</label>
+                                            <label>{gestion.client_ci}</label>
+                                            <label>{gestion.substate_gestion}</label>
                                             <label>{gestion.date_promise}</label>
+                                            <label><strong>{gestion.byUser.toUpperCase()}: </strong><br/>{gestion.observation}</label>
                                         </div>
                                     ))
                                 }
@@ -282,60 +412,97 @@ export default function Clist(){
                                         <div class="DetailCredit__pays--filter">
                                             <div>
                                                 <label>Min</label>
-                                                <input type="number"/>
+                                                <input 
+                                                    type="number"
+                                                    defaultValue={filter.mora_min}
+                                                    onKeyDown={(e)=>{
+                                                        setFilter({
+                                                            ...filter,
+                                                            mora_min:e.target.value
+                                                        });
+
+                                                        if(e.key==='Enter'){
+                                                            updateData({
+                                                                mora_max:filter.mora_max,
+                                                                user_id:filter.user_id,
+                                                                state:filter.state,
+                                                                mora_min:e.target.value,
+                                                                sync_status:filter.sync_status
+                                                            });
+                                                        }
+                                                    }}
+                                                />
                                             </div>
                                             <div>
                                                 <label>Max</label>
-                                                <input type="number"/>
+                                                <input 
+                                                    type="number"
+                                                    defaultValue={filter.mora_max}
+                                                    onKeyDown={(e)=>{
+                                                        setFilter({
+                                                            ...filter,
+                                                            mora_max:e.target.value
+                                                        });
+
+                                                        if(e.key==='Enter'){
+                                                            updateData({
+                                                                mora_min:filter.mora_max,
+                                                                user_id:filter.user_id,
+                                                                state:filter.state,
+                                                                mora_max:e.target.value,
+                                                                sync_status:filter.sync_status
+                                                            });
+                                                        }
+                                                    }}
+                                                />
                                             </div>
                                         </div>
                                     </label>
                                     
-                                    <p>Estado Sinc.</p>
+                                    <label>
+                                        Estado Sinc.
+                                        <select
+                                            value={filter.sync_status}
+                                            onChange={(e)=>{
+                                                setFilter({
+                                                    ...filter,
+                                                    sync_status:e.target.value
+                                                });
+
+                                                updateData({
+                                                    mora_max:filter.mora_max,
+                                                    user_id:filter.user_id,
+                                                    state:filter.state,
+                                                    mora_min:filter.mora_min,
+                                                    sync_status:e.target.value
+                                                });
+                                            }}
+                                        >
+                                            <option value={""}>-- Seleccionar --</option>
+                                            <option value={"ACTIVE"}>ACTIVO</option>
+                                            <option value={"INACTIVE"}>INACTIVO</option>
+                                        </select>
+                                    </label>
 
                                     <label>
                                         Agente
                                         <select
-                                            value={agent}
+                                            value={filter.user_id}
                                             onChange={(e)=>{
 
-                                                setAgent(e.target.value);
-                                                
-                                                if(e.target.value!=='all'){
-                                                    setCredits({
-                                                        ...credits,
-                                                        data:[]
-                                                    });
 
-                                                    setMessage('Cargando...');
+                                                setFilter({
+                                                    ...filter,
+                                                    user_id:e.target.value
+                                                });
 
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains/distribution?cartera=syncs&id=${e.target.value}`,{
-                                                        headers: {
-                                                            Accept: 'application/json',
-                                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                        }
-                                                    })
-                                                        .then((response) => response.json())  
-                                                        .then((data) => {
-                                                            setMessage(`Total ${data.length}`);
-                                                            setCredits({
-                                                                ...credits,
-                                                                data:data
-                                                            });
-                                                        });
-                                                }else{
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs/${param.ci}`,{
-                                                        headers: {
-                                                            Accept: 'application/json',
-                                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                        }
-                                                    })
-                                                        .then((response) => response.json())  
-                                                        .then((data) => {
-                                                            setCredit(data);
-                                                        });
-                                                }
-
+                                                updateData({
+                                                    mora_max:filter.mora_max,
+                                                    user_id:e.target.value,
+                                                    state:filter.state,
+                                                    mora_min:filter.mora_min,
+                                                    sync_status:filter.sync_status
+                                                });
                                             }}
                                         >
                                             <option value={"all"}>-- Seleccionar agente --</option>
@@ -350,39 +517,28 @@ export default function Clist(){
                                     <label>
                                         Estado
                                         <select
-                                            value={parroquia}
+                                            value={filter.state}
                                             onChange={(e)=>{
-                                                setParroquia(e.target.value);
-                                                console.log(e.target.value)
+                                                setFilter({
+                                                    ...filter,
+                                                    state:e.target.value
+                                                });
 
-                                                if(e.target.value==='vigente'){
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estadoNot=Cancelado`,{
-                                                        headers: {
-                                                            Accept: 'application/json',
-                                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                        }
-                                                    })
-                                                        .then((response) => response.json())  
-                                                        .then((data) => {
-                                                            updateCredits(data.data)
-                                                        });
-                                                }else{
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/filter?estado=${e.target.value}&canton=${canton_input}&empresa=${aux_busines}`,{
-                                                        headers: {
-                                                            Accept: 'application/json',
-                                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                        }
-                                                    })
-                                                        .then((response) => response.json())  
-                                                        .then((data) => {
-                                                            updateCredits(data.data)
-                                                        });
-                                                }
+                                                updateData({
+                                                    mora_max:filter.mora_max,
+                                                    user_id:filter.user_id,
+                                                    state:e.target.value,
+                                                    mora_min:filter.mora_min,
+                                                    sync_status:filter.sync_status
+                                                });
+
                                             }}
                                         >
+                                            <option value={""}>-- Seleccionar --</option>
                                             <option value={"vigente"}>Vigente</option>
+                                            <option value={"vencido"}>Vencido</option>
+                                            <option value={"Castigado"}>Castigado</option>
                                             <option value={"Cancelado"}>Cancelado</option>
-                                            <option value={"CONVENIO DE PAGO"}>Convenio</option>
                                         </select>
                                     </label>
                                 </div>
@@ -395,7 +551,7 @@ export default function Clist(){
                                             <NavLink to={`/dashboard/clist/${credit.id}`} onClick={(e)=>{
                                                 e.preventDefault();
                                                 
-                                                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs/${credit.id}`,{
+                                                fetch(`${import.meta.env.VITE_URL_BASE}/syncs/${credit.id}`,{
                                                     headers: {
                                                         Accept: 'application/json',
                                                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -435,10 +591,51 @@ export default function Clist(){
                                         {
                                             credits.links.map((button,index)=>(
                                                 (index===0)?
-                                                    <NavLink key={index} onClick={()=>{updateData(button.url)}}>Anterior</NavLink>
-                                                : 
+                                                    <NavLink key={index} onClick={()=>{
+                                                        console.log(button)
+                                                        if(button.url!==null){
+                                                            fetch(`${button.url}${genFilter({
+                                                            mora_min:filter.mora_min,
+                                                            mora_max:filter.mora_max,
+                                                            user_id:filter.user_id,
+                                                            state:filter.state,
+                                                            sync_status:filter.sync_status
+                                                        })}`,{
+                                                            headers: {
+                                                                Accept: 'application/json',
+                                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                            }
+                                                        })
+                                                            .then((response) => response.json())  
+                                                            .then((data) => {
+                                                                setCredits(data);
+                                                            });
+                                                        }
+                                                    }}>Anterior</NavLink>
+                                                :   
                                                     (index===(credits.links.length-1)) ?
-                                                        <NavLink key={index} onClick={()=>{updateData(button.url)}}>Siguiente</NavLink>
+                                                        <NavLink key={index} onClick={()=>{
+
+                                                            if(button.url!==null){
+                                                            fetch(`${button.url}${genFilter({
+                                                            mora_min:filter.mora_min,
+                                                            mora_max:filter.mora_max,
+                                                            user_id:filter.user_id,
+                                                            state:filter.state,
+                                                            sync_status:filter.sync_status
+                                                        })}`,{
+                                                            headers: {
+                                                                Accept: 'application/json',
+                                                                Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                            }
+                                                        })
+                                                            .then((response) => response.json())  
+                                                            .then((data) => {
+                                                                setCredits(data);
+                                                            });
+                                                        }
+
+                                                        }}>Siguiente</NavLink>
                                                     :
                                                         <></>
                                             ))

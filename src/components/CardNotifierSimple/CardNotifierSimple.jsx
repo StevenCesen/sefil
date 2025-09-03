@@ -21,7 +21,7 @@ export default function CardNotifierSimple({message,cartera,credito,byUser,id}){
                     className="CardNotifierSimple__button CardNotifierModify__button--success"
                     onClick={(e)=>{
                         e.target.textContent='Autorizando...';
-                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/vouchers/reprint/${id}`,{
+                        fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/reprint/${id}`,{
                             headers: {
                                 Accept: 'application/json',
                                 Authorization: `Bearer ${localStorage.getItem('token')}`

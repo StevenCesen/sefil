@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./CardSelectState.css";
+import sendpush from "../../helpers/sendpush";
 
 export default function CardSelectState({mode,current_option}){
     
@@ -8,17 +9,14 @@ export default function CardSelectState({mode,current_option}){
 
     const options=[
         'CONECTADO',
-        // 'FUERA DE LÍNEA',
         'EN RECESO',
         'EN ALMUERZO',
         'EN REUNIÓN'
     ];
-
+    
     useEffect(()=>{
-        console.log(mode)
         setView(false);
         setCurrent(current_option);
-
     },[current_option]);
 
     return (
@@ -41,9 +39,11 @@ export default function CardSelectState({mode,current_option}){
                                             <label 
                                                 key={index}
                                                 onClick={(e)=>{
-                                                    setView(!view)
+                                                    localStorage.setItem('estado',option);
+
+                                                    setView(!view);
                                                     setCurrent(option);
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/users/broadcast/${localStorage.getItem('temp_uS')}?state=${option}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/users/broadcast/${localStorage.getItem('temp_uS')}?state=${option}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -51,7 +51,12 @@ export default function CardSelectState({mode,current_option}){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then((data) => {
-                                                        
+                                                            sendpush({
+                                                                title:'Estado',
+                                                                message:'Tu estado ha cambiado',
+                                                                type:'Push--sucessful',
+                                                                timeout:3000
+                                                            });
                                                         });
                                                 }}
                                             >{option}</label>

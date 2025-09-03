@@ -1,8 +1,10 @@
 export default async function useLogout(e){
     
-    e.target.textContent='Cerrando';
+    if(e!==null){
+        e.target.textContent='Cerrando';
+    }
 
-    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/public/api/logout/${localStorage.getItem('temp_uS')}`,{
+    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/logout/${localStorage.getItem('temp_uS')}`,{
         method:'GET'
     });
 
@@ -16,6 +18,9 @@ export default async function useLogout(e){
             localStorage.removeItem('permission');
             localStorage.removeItem('name');
             localStorage.removeItem('extension');
+            localStorage.removeItem('extension');
+            localStorage.removeItem('timestamp_cc');
+            localStorage.removeItem('estado');
             location.href='./'
         }
     }

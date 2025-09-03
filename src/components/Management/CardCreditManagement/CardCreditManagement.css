@@ -1,0 +1,27 @@
+.CardCreditManagement{
+    width: 100%;
+    display: grid;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    grid-template-columns: 40px calc(15% - 40px) calc(18% - 160px) 10% 12% 100px 10% 10% 12.5% 12.5%;
+    gap: 10px;
+    padding: 10px 10px;
+}
+
+.CardCreditManagement:nth-child(2n+1){
+    background-color: var(--bg-2);
+}
+
+.CardCreditManagement>svg{
+    width: 100%;
+    background-color: rgb(114, 191, 241);
+    border-radius: 5px;
+    padding: 5px;
+    justify-self: flex-end;
+    cursor: pointer;
+}
+
+.CardCreditManagement>label{
+    text-align: center;
+}

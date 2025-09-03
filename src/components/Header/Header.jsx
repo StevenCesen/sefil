@@ -8,12 +8,12 @@ import CardSelectState from "../CardSelectState/CardSelectState.jsx";
 export default function Header(){
     return(
         <header className="header">
-            <img src="./icons/logo.png"/>
+            <img src={'./icons/logo.png'}/>
             {
                 (useSessions()) && 
                     <>
                         {
-                            (localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='legal' | localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='call' | localStorage.getItem('rol')==='campo') 
+                            (localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='legal' | localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='call' | localStorage.getItem('rol')==='campo') 
                             ?
                                 <CardSelectState
                                     mode={"select"}

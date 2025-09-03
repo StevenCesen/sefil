@@ -16,6 +16,22 @@ import Campain from "./Campain";
 import Template from "./Template";
 import GHistorial from "./Historial";
 import Clist from "./Clist";
+import Directions from "./Directions";
+import Loader from "../components/Loader/loader";
+import Stadistics from "./StadisticsSync";
+import Graficos from "./Graficos";
+import Greports from "./Greports";
+import Gconvenios from "./Gconvenios";
+import Gcontactabilidad from "./Gcontactabilidad";
+import ReportCondonations from "./ReportCondonations";
+import ReportJudicial from "./ReportJudicial";
+import ReportCobranza from "./ReportCobranza";
+import ReportEvolutionPays from "./ReportEvolutionPays";
+import ReportPays from "./ReportPays";
+import PagosEfectivo from "./PagosEfectivo";
+import ReportRevert from "./ReportRevert";
+import ReportFaces from "./ReportFaces";
+import ReportAssignCampain from "./ReportAssignCampain";
 
 const data=[
     {
@@ -93,21 +109,25 @@ export default function Dashboard({rol}){
     
     const [permission,setPermission]=useState([]);
     const [actions,setActions]=useState([]);
+    const [loading,setLoading]=useState(true);
 
     const page=useParams();
 
     useEffect(()=>{
         //Consulta a API, para setear permisos
-        console.log(rol)
+        window.addEventListener("load",setLoading(false));
+
         data.map((user)=>{
             if(rol===user.rol){
                 setPermission(user.permission);
                 setActions(user.actions);
             }
         });
+    
+        return () => window.removeEventListener("load",setLoading(false));
 
     },[]);
-
+    
     return (
         <div className="Dashboard__currentPage">
             {
@@ -135,55 +155,115 @@ export default function Dashboard({rol}){
                                     ?
                                         <Monitor/>
                                     :
-                                        (page.action==='reportes')
+                                        (page.action==='cobros')
+                                        ?
+                                            <ReportPays/>
+                                        :
+                                        (page.action==='pagosefectivos')
+                                        ?
+                                            <PagosEfectivo/>
+                                        :
+                                        (page.action==='pagosrevertidos')
+                                        ?
+                                            <ReportRevert/>
+                                        :
+                                        (page.action==='gastoscobranza')
+                                        ?
+                                            <ReportCobranza/>
+                                        :
+                                        (page.action==='gastosjudicial')
+                                        ?
+                                            <ReportJudicial/>
+                                        :
+                                        (page.action==='evolucionpagos')
+                                        ?
+                                            <ReportEvolutionPays/>
+                                        :
+                                        (page.action==='condonaciones')
+                                        ?
+                                            <ReportCondonations/>
+                                        :
+                                        (page.action==='estado')
                                         ?
                                             <Reports/>
                                         :
-                                            (page.action==='glist')
+                                        (page.action==='cierrefaces')
+                                        ?
+                                            <ReportFaces/>
+                                        :
+                                        (page.action==='asignacion')
+                                        ?
+                                            <ReportAssignCampain/>
+                                        :
+                                            (page.action==='greports')
                                             ?
-                                                <GHistorial/>
+                                                <Greports/>
                                             :
-                                                (page.action==='clist')
+                                                (page.action==='gconvenios')
                                                 ?
-                                                    <Clist/>
+                                                    <Gconvenios/>
                                                 :
-                                                    (page.action==='call')
+                                                (page.action==='gcontactabilidad')
+                                                ?
+                                                    <Gcontactabilidad/>
+                                                :
+                                                (page.action==='glist')
+                                                ?
+                                                    <GHistorial/>
+                                                :
+                                                    (page.action==='clist')
                                                     ?
-                                                        <Gestion/>
+                                                        <Clist/>
                                                     :
-                                                        (page.action==='ccall')
+                                                        (page.action==='stadistics')
                                                         ?
-                                                            <GGestion/>
+                                                            <Stadistics/>
                                                         :
-                                                            (page.action==='templates')
+                                                            (page.action==='call')
                                                             ?
-                                                                <Template/>
+                                                                <Gestion/>
                                                             :
-                                                                (page.action==='campain')
+                                                                (page.action==='graficos')
                                                                 ?
-                                                                    <Campain/>
+                                                                    <Graficos/>
                                                                 :
-                                                                    (page.action==='usuarios')
+                                                                    (page.action==='ccall')
                                                                     ?
-                                                                        <Usuarios/>
+                                                                        <GGestion/>
                                                                     :
-                                                                        (page.action==='configuracion')
+                                                                        (page.action==='templates')
                                                                         ?
-                                                                            <Setting/>
-                                                                        :   
-                                                                            (localStorage.getItem('rol')==='administrador') ?
-                                                                                <Home/>
+                                                                            <Template/>
+                                                                        :
+                                                                            (page.action==='campain')
+                                                                            ?
+                                                                                <Campain/>
                                                                             :
-                                                                                (localStorage.getItem('rol')!=='super')
-                                                                                ? 
-
-                                                                                    (localStorage.getItem('rol')==='cobranza' | localStorage.getItem('rol')==='consulta')
+                                                                                (page.action==='usuarios')
+                                                                                ?
+                                                                                    <Usuarios/>
+                                                                                :
+                                                                                    (page.action==='configuracion')
                                                                                     ?
-                                                                                        <Consulta/>
-                                                                                    : 
-                                                                                        <Gestion/>
+                                                                                        <Setting/>
+                                                                                    :   
+                                                                                        (page.action==='direcciones')
+                                                                                        ?
+                                                                                            <Directions/>
+                                                                                        :
+                                                                                            (localStorage.getItem('rol')==='administrador') ?
+                                                                                                <Home/>
+                                                                                            :
+                                                                                                (localStorage.getItem('rol')!=='super')
+                                                                                                ? 
 
-                                                                                :   <Setting/>
+                                                                                                    (localStorage.getItem('rol')==='cobranza' | localStorage.getItem('rol')==='consulta')
+                                                                                                    ?
+                                                                                                        <Consulta/>
+                                                                                                    : 
+                                                                                                        <Gestion/>
+
+                                                                                                :   <Setting/>
             }
         </div>
     );

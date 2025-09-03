@@ -14,7 +14,9 @@ import PDFgastos from "../components/PDFgastos";
 import PDFcondonacion from "../components/PDFcondonacion";
 import CardConfirm from "../components/CardConfirm/CardConfirm";
 import CardEditJudicial from "../components/CardEditJudicial/CardEditJudicial";
-import addNotification from "react-push-notification";
+import CardEditConvenio from "../components/CardEditConvenio/CardEditConvenio";
+import Loader from "../components/Loader/loader";
+import sendpush from "../helpers/sendpush";
 
 const render = (status) => {
     return <h1>{status}</h1>;
@@ -33,6 +35,8 @@ export default function DetailCredit(){
     const [value_condonacion,setData]=useState([]);
 
     const [view_reestructurar,setReestructurar]=useState(true);
+
+    const [view_edit_reestruct,setEditReestruct]=useState();
 
     const [viewPush,setPush]=useState();
 
@@ -53,6 +57,7 @@ export default function DetailCredit(){
     const [edit_judicial,setEditJudicial]=useState();
 
     const [pre_edit,setEdit]=useState(false);
+    const [loading,setLoading]=useState();
 
     const param=new URLSearchParams(useLocation().search);
     const cartera=useParams();
@@ -77,7 +82,6 @@ export default function DetailCredit(){
             text:''
         })
     },3000);
-
 
     const updateCredit=({capital,interes,mora,seguro_desgravamen,gastos_judiciales,gastos_cobranza,otros_valores,totalAmount})=>{
         setCredit({
@@ -104,7 +108,6 @@ export default function DetailCredit(){
             clave_acceso:clave_acceso
         });
     }
-
 
     const updateFac=({status,valor_gasto,email,fecha,clave_acceso})=>{
         setGastos({
@@ -153,8 +156,10 @@ export default function DetailCredit(){
         setPDF(false);
         setEdit(false);
         setEditJudicial(false);
-
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
+        setEditReestruct(false);
+        setLoading(false);
+        
+        fetch(`${import.meta.env.VITE_URL_BASE}/credit/view?cartera=${cartera.id}&credit=${param.get('id')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -164,17 +169,9 @@ export default function DetailCredit(){
             .then((data) => {
                 setCredit(data);
             });
-        
-
-        // Para verificar si existe registrado un gasto de cobranza y estado pendiente
-        /*
-            true: hay un gasto en estado pendiente
-            false: no hay un gasto en estado pendiente
-            pay: hay gastos ya cobrados
-        */
 
         try {
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/gastos?credito=${param.get('id')}&cartera=${cartera.id}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/gastos?credito=${param.get('id')}&cartera=${cartera.id}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -182,12 +179,25 @@ export default function DetailCredit(){
             })
                 .then((response) => response.json())  
                 .then((data) => {
-    
+
                     if(data.id===false){
                         setGastos({
                             ...viewGastos,
                             status:false
                         });
+
+                        // Calculamos el valor de gasto actualizado
+                        fetch(`${import.meta.env.VITE_URL_BASE}/genGastos?cartera=${cartera.id}&credito=${param.get('id')}`,{
+                            method:'GET',
+                            headers: {
+                                Accept: 'application/json'
+                            }
+                        })
+                            .then((response) => response.json())  
+                            .then((data) => {
+                                setPrev(data.gastos);
+                            });
+
                     }else if(data.id==="pay"){
                         setGastos({
                             ...viewGastos,
@@ -205,26 +215,14 @@ export default function DetailCredit(){
                             clave_acceso:'',
                             valor:''
                         });
+
+                        setPrev(JSON.parse(data.id.postDates).value);
                     }
                 });
         } catch (error) {
-            console.log(error)
+           
         }
         
-        // Calculamos el valor de gasto actualizado
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/genGastos?cartera=${cartera.id}&credito=${param.get('id')}`,{
-            method:'GET',
-            headers: {
-                Accept: 'application/json'
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
-                console.log(data)
-                setPrev(data.gastos);
-            });
-        
-
         setPush({
             view:false,
             text:''
@@ -256,7 +254,7 @@ export default function DetailCredit(){
                 <div>
                     <p>Créditos asociados</p>
                     <select onChange={(e)=>{
-                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/view?cartera=${cartera.id}&credit=${e.target.value}`,{
+                        fetch(`${import.meta.env.VITE_URL_BASE}/credit/view?cartera=${cartera.id}&credit=${e.target.value}`,{
                             headers: {
                                 Accept: 'application/json',
                                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -339,7 +337,6 @@ export default function DetailCredit(){
                                     setEditJudicial(true);
                                 }}
                             >
-
                             </div>
                         </div>
                         <div>
@@ -380,6 +377,7 @@ export default function DetailCredit(){
                             <MyMapComponent
                                 center={{lat:parseFloat(credit.latitud),lng:parseFloat(credit.longitud)}}
                                 zoom={15}
+                                height={"300px"}
                             />
                         </Wrapper>
                     </div>
@@ -409,102 +407,118 @@ export default function DetailCredit(){
                         credit.restructs.map((restruct,index)=>(
                             <div className="DetailCredit__activity" key={index}>
                                 <p key={index}>Convenio solicitado por: {restruct.byUser}</p>
-                                <p key={index}> {(restruct.status==='autorizado') ? "Autorizado por M. Bravo" : "Pendiente de autorizar"}</p>
-                                <span>{restruct.fecha}</span>
+                                <p key={index}> {(restruct.status==='autorizado') ? "Autorizado por M. Bravo" : (restruct.status==='rechazado' | restruct.status==='anulado') ? `CONVENIO ${restruct.status.toUpperCase()}` : "Pendiente de autorizar"}</p>
+                                <span>Creado: {restruct.fecha}</span>
+                                <span style={{marginTop:"10px"}}>Actualizado: {restruct.fecha_update}</span>
+                                <span style={{marginTop:"10px"}}>Valor total del convenio: {restruct.total}</span>
                                 {/* <p style={{margin:"10px 0",fontSize:"14px"}}>Fecha de convenio: {restruct.fecha_pago}</p> */}
-                                <div style={{marginTop:"10px",borderTop:"1px solid grey",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
-                                    <div style={{display:"grid",textAlign:"center",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"30px",borderBottom:"1px solid grey"}}>
-                                        <p style={{fontSize:"14px",fontWeight:"bold"}}>Nro.</p>
-                                        <p style={{fontSize:"14px",fontWeight:"bold"}}>Valor</p>
-                                        <p style={{fontSize:"14px",fontWeight:"bold"}}>Fecha pago</p>
-                                        <p style={{fontSize:"14px",fontWeight:"bold"}}>Estado</p>
-                                    </div>
-                                    {
-                                        JSON.parse(restruct.detail).map((cuota,n)=>(
-                                            <div style={{display:"grid",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"40px",textAlign:"center",borderBottom:"1px solid grey"}}>
-                                                <p>{cuota.cuota}</p>
-                                                <p>{useFormatterNumber({value:cuota.valor,currency:'USD'})}</p>
-                                                <p>{('fecha_pago' in cuota) ? cuota.fecha_pago : ""}</p>
-                                                {
-                                                    (cuota.estado==='PENDIENTE')
-                                                    ?
-
-                                                        (n==0)
+                                {
+                                    ((restruct.status==='autorizado'))
+                                    ?
+                                    <div style={{marginTop:"10px",borderTop:"1px solid grey",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
+                                        <div style={{display:"grid",textAlign:"center",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"30px",borderBottom:"1px solid grey"}}>
+                                            <p style={{fontSize:"14px",fontWeight:"bold"}}>Nro.</p>
+                                            <p style={{fontSize:"14px",fontWeight:"bold"}}>Valor</p>
+                                            <p style={{fontSize:"14px",fontWeight:"bold"}}>Fecha pago</p>
+                                            <p style={{fontSize:"14px",fontWeight:"bold"}}>Estado</p>
+                                        </div>
+                                        {
+                                            JSON.parse(restruct.detail).map((cuota,n)=>(
+                                                <div key={n} style={{display:"grid",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"40px",textAlign:"center",borderBottom:"1px solid grey"}}>
+                                                    <p>{cuota.cuota}</p>
+                                                    <p>{useFormatterNumber({value:cuota.valor,currency:'USD'})}</p>
+                                                    <p>{('fecha_pago' in cuota) ? cuota.fecha_pago : ""}</p>
+                                                    {
+                                                        (cuota.estado==='PENDIENTE')
                                                         ?
-                                                            <button 
-                                                                style={{width:"90%",margin:"0 auto",fontSize:"12px",height:"30px",color:"white",backgroundColor:"var(--bg-alert-successful)",border:"none"}}
-                                                                onClick={(e)=>{
-                                                                    e.target.textContent='Facturando...';
-                                                                    //Aquí actualizamos el estado para que desaparezca el botón
-                                                                    // setPDF(true);
-                                                                    if(viewGastos.status===false){
-                                                                        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
-                                                                            headers: {
-                                                                                Accept: 'application/json',
-                                                                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                                            }
-                                                                        })
-                                                                            .then((response) => response.json())  
-                                                                            .then((data) => {
-                                                                                // setEdit(true);
-                                                                                console.log(data)
-                                                                                // setCredit(data);
-                                                                                setGastos({
-                                                                                    ...viewGastos,
-                                                                                    status:true,
-                                                                                    credito:data.gasto.id.credito,
-                                                                                    id:data.gasto.id,
-                                                                                    valor_gasto:data.gasto.postDates,
-                                                                                    sync:"",
-                                                                                    fecha:'',
-                                                                                    clave_acceso:'',
-                                                                                    valor:''
+                                                            (n==0)
+                                                            ?
+                                                                <button 
+                                                                    style={{width:"90%",margin:"0 auto",fontSize:"12px",height:"30px",color:"white",backgroundColor:"var(--bg-alert-successful)",border:"none"}}
+                                                                    onClick={(e)=>{
+                                                                        e.target.textContent='Facturando...';
+                                                                        //Aquí actualizamos el estado para que desaparezca el botón
+                                                                        // setPDF(true);
+                                                                        if(viewGastos.status===false){
+                                                                            fetch(`${import.meta.env.VITE_URL_BASE}/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
+                                                                                headers: {
+                                                                                    Accept: 'application/json',
+                                                                                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                                                                                }
+                                                                            })
+                                                                                .then((response) => response.json())  
+                                                                                .then((data) => {
+                                                                                    // setEdit(true);
+                                                                                    // setCredit(data);
+                                                                                    setGastos({
+                                                                                        ...viewGastos,
+                                                                                        status:true,
+                                                                                        credito:data.gasto.id.credito,
+                                                                                        id:data.gasto.id,
+                                                                                        valor_gasto:cuota.valor,
+                                                                                        sync:"",
+                                                                                        fecha:'',
+                                                                                        clave_acceso:'',
+                                                                                        valor:''
+                                                                                    });
+
+                                                                                    setEdit(true);
+
                                                                                 });
-
-                                                                                setEdit(true);
-
+                                                                        }else{
+                                                                            const prev=JSON.parse(viewGastos.valor_gasto);
+                                                                            prev.value=cuota.valor;
+                                                                            setGastos({
+                                                                                ...viewGastos,
+                                                                                valor_gasto:JSON.stringify(prev)
                                                                             });
-                                                                    }else{
-                                                                        setEdit(true);
-                                                                    }
-                                                                }}
 
-                                                            >Gasto de cobranza</button>
+                                                                            setEdit(true);
+                                                                        }
+                                                                    }}
 
-                                                        :   
-                                                            <button 
-                                                                style={{width:"90%",margin:"0 auto",fontSize:"12px",height:"30px",color:"white",backgroundColor:"var(--bg-alert-successful)",border:"none"}}
-                                                                onClick={()=>{
+                                                                >Gasto de cobranza</button>
+                                                            :   
+                                                                <button 
+                                                                    style={{width:"90%",margin:"0 auto",fontSize:"12px",height:"30px",color:"white",backgroundColor:"var(--bg-alert-successful)",border:"none"}}
+                                                                    onClick={()=>{
 
-                                                                    const date=new Date().toLocaleString().split(',')[0];
-                                                                    const date_comparative=date.split('/')[2]+"-"+date.split('/')[1]+"-"+date.split('/')[0];
+                                                                        const date=new Date().toLocaleString().split(',')[0];
+                                                                        const date_comparative=date.split('/')[2]+"-"+date.split('/')[1]+"-"+date.split('/')[0];
 
-                                                                    if(date_comparative===cuota.fecha_pago || JSON.parse(restruct.detail)[n-1].estado==='PAGADO'){
-                                                                        setPay(!pay);
-                                                                    }else{
-                                                                        addNotification({
-                                                                            title: 'ERROR PAGO',
-                                                                            subtitle: `No se puede realizar pago`,
-                                                                            message: `Existe una cuota anterior sin pago o aún no es la fecha de pago.`,
-                                                                            native: false,
-                                                                            backgroundTop: '#FF9619',
-                                                                            backgroundBottom: '#fdb864',
-                                                                            colorTop: 'white',
-                                                                            colorBottom: 'black',
-                                                                            closeButton: 'Cerrar',
-                                                                            duration: 5000,
-                                                                        });
-                                                                    }
-                                                                    
-                                                                }}
-                                                            >Pago</button>
+                                                                        if(date_comparative===cuota.fecha_pago || JSON.parse(restruct.detail)[n-1].estado==='PAGADO'){
+                                                                            setPay(!pay);
+                                                                        }else{
+                                                                            sendpush({
+                                                                                title:'ERR: Pago.',
+                                                                                message:'Existe una cuota anterior sin pago o aún no es la fecha de pago.',
+                                                                                type:'Push--danger',
+                                                                                timeout:5000
+                                                                            });
+                                                                        }
+                                                                    }}
+                                                                >Pago</button>
 
-                                                    :   <p style={{fontSize:"14px"}}>{cuota.estado}</p>
-                                                }
-                                            </div>
-                                        ))
-                                    }
-                                </div>
+                                                        :   <p style={{fontSize:"14px"}}>{cuota.estado}</p>
+                                                    }
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                    :   <></>
+                                }
+                                {
+                                    ((localStorage.getItem('permission').split(',').includes("User:all") | localStorage.getItem('permission').split(',').includes("User:minimize")) & restruct.status==='autorizado')
+                                    ?
+                                        <button 
+                                            className="Detailcredit__button--anular"
+                                            title=""
+                                            onClick={(e)=>{
+                                                setEditReestruct(true);
+                                            }}
+                                        >Anular convenio</button>
+                                    :   <></>
+                                }
                             </div>
                         ))
                     }
@@ -517,7 +531,6 @@ export default function DetailCredit(){
                 
                 <div className="DetailCredit__actions">
                     <h3>Acciones</h3>
-    
                     {
                         (localStorage.getItem('hash')!=='#/dashboard/consulta') 
                         ?
@@ -528,7 +541,7 @@ export default function DetailCredit(){
                                     <>
                                         <p
                                             style={{marginBottom:10,fontSize:14}}
-                                        >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                                        >Gastos: {useFormatterNumber({value:(viewGastos.valor_gasto!=="") ? JSON.parse(viewGastos.valor_gasto).value : prev_gasto,currency:'USD'})}</p>
                                         
                                         <button 
                                             onClick={(e)=>{
@@ -536,7 +549,7 @@ export default function DetailCredit(){
                                                 //Aquí actualizamos el estado para que desaparezca el botón
                                                 // setPDF(true);
                                                 if(viewGastos.status===false){
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/public/api/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/savegasto?cartera=${cartera.id}&credito=${param.get('id')}`,{
                                                         headers: {
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -544,8 +557,6 @@ export default function DetailCredit(){
                                                     })
                                                         .then((response) => response.json())  
                                                         .then((data) => {
-                                                            // setEdit(true);
-                                                            console.log(data)
                                                             // setCredit(data);
                                                             setGastos({
                                                                 ...viewGastos,
@@ -570,18 +581,18 @@ export default function DetailCredit(){
                                     </>
                                 :   <></>
 
-                            :   (Number(credit.totalAmount)>0.00 & credit.status!=='Convenio de pago' & viewGastos.status!=='pay') 
+                            :   ((Number(credit.totalAmount)>0.00) & credit.status!=='Convenio de pago' & viewGastos.status!=='pay') 
                                 ?
                                     <p
                                         style={{marginBottom:10,fontSize:14}}
-                                    >Gastos: {useFormatterNumber({value:prev_gasto,currency:'USD'})}</p>
+                                    >
+                                        Gastos: {useFormatterNumber({value:0,currency:'USD'})}</p>
                                 :   <></>
                         :   <></>
                     }
                     {
                         (Number(credit.totalAmount)>0.00 & localStorage.getItem('hash')!=='#/dashboard/consulta') ?
                             <>
-                                
                                 {
                                     (credit.status!=='Convenio de pago')
                                     ?
@@ -592,19 +603,15 @@ export default function DetailCredit(){
             
                                             <button onClick={async e=>{
                                                 if(await useVerifyStruct(param.get('id'))){
+
                                                     setReestructurar(!view_reestructurar);
+                                                    
                                                 }else{
-                                                    addNotification({
-                                                        title: 'ERROR',
-                                                        subtitle: 'Crédito con convenio',
-                                                        message: 'No se puede, hay un convenio ya creado',
-                                                        native: false,
-                                                        backgroundTop: '#FF9619',
-                                                        backgroundBottom: '#fdb864',
-                                                        colorTop: 'white',
-                                                        colorBottom: 'white',
-                                                        closeButton: 'Cerrar',
-                                                        duration: 3500
+                                                    sendpush({
+                                                        title:'ERR: Convenio existente.',
+                                                        message:'No se puede, hay un convenio ya creado.',
+                                                        type:'Push--danger',
+                                                        timeout:5000
                                                     });
                                                 }
                                             }}>Convenio de pago</button>
@@ -616,17 +623,11 @@ export default function DetailCredit(){
                                     if(await useVerifyCondonation(param.get('id'))){
                                         setViewCondonation(!view_condonation);
                                     }else{
-                                        addNotification({
-                                            title: 'ERROR',
-                                            subtitle: 'Crédito con condonación',
-                                            message: 'No se puede, ya se ha registrado una condonación',
-                                            native: false,
-                                            backgroundTop: '#FF9619',
-                                            backgroundBottom: '#fdb864',
-                                            colorTop: 'white',
-                                            colorBottom: 'white',
-                                            closeButton: 'Cerrar',
-                                            duration: 3500
+                                        sendpush({
+                                            title:'ERR: Condonación existente.',
+                                            message:'No se puede, ya se ha registrado una condonación.',
+                                            type:'Push--danger',
+                                            timeout:5000
                                         });
                                         clean;
                                     }
@@ -667,7 +668,22 @@ export default function DetailCredit(){
                         id={param.get('id')}
                         cartera={cartera.id}
                         cobranza={prev_gasto}
+                        status_cobranza={viewGastos.status}
                     />
+            }
+
+            {
+                (view_edit_reestruct) &&
+                    <div className="CardPay">
+                        <button className="CardCondonacion__close" onClick={()=>{setEditReestruct(false)}}>Volver</button>
+                        <CardEditConvenio
+                            restruct={credit.restructs}
+                            update={setLoading}
+                            ci={credit.ci}
+                            credito={`${cartera.id}-${credit.credito}`}
+                            close={setEditReestruct}
+                        />
+                    </div>
             }
 
             {
@@ -758,13 +774,13 @@ export default function DetailCredit(){
                         <button className="CardCondonacion__close" onClick={()=>{setPDFcondonation(false)}}>Volver</button>
                         <PDFViewer width={'800px'} height={'600px'}>
                             <PDFcondonacion
-                                // ci={"1104266075"}
-                                // credito={"467"}
-                                // name={"BARROS GUTIERREZ JORGE LUIS"}
-                                // fecha={"2024/09/30 19:11:56"}
-                                // prevDates={'{"mora":"0","interes":"0","capital":"290.41","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
-                                // postDates={'{"capital":"145.2","interes":"0","mora":"0","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
-                                // user_auth={'María Bravo'}
+                                //  ci={"1003934617"}
+                                //  credito={"313"}
+                                //  name={"GUERRA SANCHEZ ELVIA VALERIA"}
+                                //  fecha={"2025/02/19 09:36:25"}
+                                //  prevDates={'{"capital":"593.9","interes":"22.75","mora":"104.78","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"30.48"}'}
+                                //  postDates={'{"capital":"593.9","interes":"22.75","mora":"55.14","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
+                                //  user_auth={'María Bravo'}
                                 ci={value_condonacion.ci}
                                 credito={value_condonacion.credito}
                                 name={value_condonacion.name}
@@ -792,6 +808,13 @@ export default function DetailCredit(){
                         />
                     
                     </div>
+            }
+
+            {
+                (loading)
+                ?
+                    <Loader/>
+                :   <></>
             }
         </div>
     );

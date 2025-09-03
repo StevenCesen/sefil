@@ -1,61 +1,44 @@
 import { NavLink } from "react-router-dom";
 import "./pages.css";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CardUserState from "../components/CardUserState/CardUserState.jsx";
-import { GestionContext } from "../contexts/GestionContext.jsx";
+import Loader from "../components/Loader/loader.jsx";
+import { useStoreMonitor } from "../stores/useStoreMonitor.js";
 
 export default function Monitor(){
+    const [loading,setLoading]=useState();
+    const store_monitor=useStoreMonitor();
+    const connection=useRef();
 
-    const [agents,setAgents]=useState();
-    const [campains,setCampains]=useState();
-    const [campain,setCampain]=useState();
-
-    const data=useContext(GestionContext);
+    // document.addEventListener("visibilitychange", function(e) {   
+    // });
 
     useEffect(()=>{
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/campains`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
-                let camps=[];
-                data.data.map(campa=>{
-                    if(campa.state==='ACTIVA'){
-                        camps.push(campa);
-                    }
-                });
-                setCampains(camps);
-            });
-
-        if(campain!==""){
-            let copy=data.agents;
-            let agents=[];
-
-            copy.map((agent)=>{
-                let new_agents=[];
-                if(agent.gestion.length>0){
-                    agent.gestion.map((camp)=>{
-                        if(camp.campain===campain){
-                            new_agents.push(camp);
-                        }
-                    });
-                    agent.gestion=new_agents;
-                    agents.push(agent);
-                }
-            });
-            setAgents(agents);
-        }else{
-            setAgents(data.agents);
-        }
+        setLoading(true);
+        const conn = new WebSocket('wss://check.sefil.com.ec/ws');
         
-    },[data.agents]);
+        conn.onopen = function(e) {
+            console.log("WSS: Connection established!");
+            store_monitor.setAgents();
+            setLoading(false);
+        };
 
-    if(!agents) return <></>
-    if(!campains) return <></>
+        conn.onmessage = async function(e) {
+            const data=JSON.parse(e.data);
+            await store_monitor.updateAgent({data});
+        };
+
+        connection.current = conn;
+
+        if (connection.current) {
+            return () => {
+                connection.current.close();
+            };
+        }
+    },[]);
+
+
 
     return (
         <div className="pageConsulta">
@@ -71,100 +54,88 @@ export default function Monitor(){
 
             <div className="pageConsulta__search">
                 <h4 className="Reports__title">Monitoreo</h4>
+                <label>
+                    Campaña
+                    <select
+                        onChange={async (e)=>{
+                            setLoading(true);
+                            store_monitor.setIDCampain(e.target.value);
+                            await store_monitor.setAgents();
+                            setLoading(false);
+                        }}
+                    >
+                        <option value={""}>-- Todas --</option>
+                        <option value={"SEFIL_1"}>SEFIL 1</option>
+                        <option value={"SEFIL_2"}>SEFIL 2</option>
+                        <option value={"syncs"}>FACES</option>
+                    </select>
+                </label>
             </div>
 
             <div className="pageConsulta__monitor">
-                <div className="pageConsulta__monitorHead">
+                <div className="pageConsulta__monitorHead" style={{top:"-20px"}}>
                     <label>Usuario</label>
                     <label>Estado</label>
                     <label>Tiempo</label>
-                    <label>
-                        Campaña
-                        <select
-                            onChange={(e)=>{
-                                setCampain(e.target.value);
-
-                                if(e.target.value!==""){
-                                    let copy=data.agents;
-                                    let agents=[];
-                        
-                                    copy.map((agent)=>{
-                                        let new_agents=[];
-                                        if(agent.gestion.length>0){
-                                            agent.gestion.map((camp)=>{
-                                                if(camp.campain===e.target.value){
-                                                    new_agents.push(camp);
-                                                }
-                                            });
-                                            agent.gestion=new_agents;
-                                            agents.push(agent);
-                                        }
-                                    });
-                        
-                                    setAgents(agents);
-                                }
-                               
-                            }}
-                        >
-                            <option value={""}>-- Todas --</option>
-                            {
-                                campains.map(campain=>(
-                                    <option value={campain.name}>{campain.name}</option>
-                                ))
-                            }
-                        </select>
-                    </label>
+                    
                     <label>Nro. créditos asignados</label>
-                    <label>Nro. créditos gestionados</label>
-                    <label>Nro. créditos gestion efec.</label>
+                    <label>
+                        Nro. créditos gestionados
+                        <div>
+                            <label>Acum.</label>
+                            <label>Día.</label>
+                        </div>
+                    </label>
+                    <label>
+                        Nro. créditos gestion efec.
+                        <div>
+                            <label>Acum.</label>
+                            <label>Día.</label>
+                        </div>
+                    </label>
                     <label>Nro. créditos pendientes</label>
-                    <label>Nro. créditos en proceso</label>
-                    <label>Nro. llamadas</label>
+                    <label>
+                        Nro. créditos en proceso
+                    </label>
+                    <label>
+                        Nro. llamadas
+                        <div>
+                            <label>Acum.</label>
+                            <label>Día.</label>
+                        </div>
+                    </label>
                 </div>
-
                 {
-                    agents.map((agent,index)=>(
-                        (agent.gestion.length>0)
-                        ?
-                            agent.gestion.map((campain,index)=>(
-                                <CardUserState
-                                    key={index}
-                                    name={agent.name}
-                                    state={agent.state}
-                                    time={agent.tiempo}
-                                    name_campain={campain.campain}
-                                    mode={"complete"}
-                                    data={{
-                                        nro_credits:campain.total_credits,
-                                        nro_gestions:campain.total_credits_ges,
-                                        nro_gestions_efec:campain.total_credits_ges_efec,
-                                        nro_pendientes:campain.nro_pendientes,
-                                        nro_proceso:campain.nro_proceso,
-                                        nro_calls:campain.nro_llamadas,
-                                    }}
-                                />
-                            ))
-                        :
-                            <CardUserState
-                                key={index}
-                                name={agent.name}
-                                state={agent.state}
-                                time={agent.tiempo}
-                                name_campain={"-"}
-                                mode={"complete"}
-                                data={{
-                                    nro_credits:"-",
-                                    nro_gestions:"-",
-                                    nro_gestions_efec:"-",
-                                    nro_pendientes:"-",
-                                    nro_proceso:"-",
-                                    nro_calls:"-",
-                                }}
-                            />
+                    store_monitor.agents.map((campain,index)=>(
+                        <CardUserState
+                            key={index}
+                            name={campain.agente}
+                            state={campain.state}
+                            time={campain.tiempo}
+                            name_campain={campain.campain}
+                            mode={"complete"}
+                            data={{
+                                nro_credits:campain.total_credits,
+                                nro_gestions:campain.total_credits_ges,
+                                nro_gestions_dia:campain.total_credits_ges_dia,
+                                nro_gestions_efec:campain.total_credits_ges_efec,
+                                nro_gestions_efec_dia:campain.total_credits_ges_efec_dia,
+                                nro_pendientes:campain.nro_pendientes,
+                                nro_proceso:campain.nro_proceso,
+                                nro_proceso_dia:campain.nro_proceso_dia,
+                                nro_calls:campain.nro_llamadas,
+                                nro_calls_acum:campain.nro_llamadas_acum,
+                            }}
+                        />
                     ))
                 }
-
             </div>
+            {
+                (loading)
+                ?
+                    <Loader/>
+                :   <></>
+            }
         </div>
     );
 }

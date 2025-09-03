@@ -15,11 +15,25 @@
   --bg-alert-successful:#009793;
   --bg-alert-error:#FF9619;
   --bg-alert-error-reduce:#f5be7a;
+  --bg-alert-error-error:#f16666;
+  --bg-choosed:#d3d3d3;
   --bg-button-call:#009FE3;
   --bg-alert-error-pr:var(--color-4);
   --color:#459d9a;
   --bg-transparent:rgba(0, 0, 0, 0);
   --box-shadow: 0 2px 5px rgba(119, 119, 119, 0.319);
+
+  --bg-tried-1:rgb(196, 245, 214);
+  --bg-tried-2:rgb(245, 243, 155);
+  --bg-tried-3:rgb(247, 214, 154);
+  --bg-tried-4:rgb(248, 199, 199);
+
+  --scrollbar-bg: rgba(0,0,0,0.06);   /* track */
+  --scrollbar-thumb: rgba(0,0,0,0.38);/* thumb */
+  --scrollbar-thumb-hover: rgba(0,0,0,0.6);
+  --scrollbar-size: 12px;
+  --scrollbar-radius: 8px;
+  --scrollbar-transparent-gap: 2px;
 }
 
 *{
@@ -57,5 +71,70 @@ body{
 
 .rpn-notification-card-top>span{
   font-size: 14px;
+}
 
+.Gestion__header{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.Gestion__nav{
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+}
+
+.Gestion__subtitle{
+  margin-top: 20px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.Gestion__navtray{
+  
+}
+
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
+  -webkit-overflow-scrolling: touch;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+  border-radius: var(--scrollbar-radius);
+  margin: var(--scrollbar-transparent-gap);
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: var(--scrollbar-radius);
+  border: calc(var(--scrollbar-transparent-gap)) solid transparent; /* crea separación */
+  background-clip: padding-box;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover,
+.custom-scroll::-webkit-scrollbar-thumb:active {
+  background-color: var(--scrollbar-thumb-hover);
+  transform: scale(1.02);
+}
+
+.custom-scroll:focus-visible::-webkit-scrollbar-thumb {
+  outline: 2px solid rgba(0,0,0,0.12);
+}
+
+.custom-scroll.hide-scrollbar {
+  scrollbar-width: none; /* firefox */
+}
+.custom-scroll.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* webkit */
 }

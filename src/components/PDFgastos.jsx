@@ -7,6 +7,7 @@ import {
     View,
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
+import logo2 from '../assets/icons/logo.png';
 
   const styles = StyleSheet.create({
     page: {
@@ -52,7 +53,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
         <Page style={styles.page}>
         
           <View style={styles.sectionHeader}>
-            <Image style={styles.logo} src={"./icons/logo.png"}/>
+            <Image style={styles.logo} src={logo2}/>
 
             {/* DATOS DE LA AUTORIZACIÓN DE FACTURA */}
             <View style={styles.sectionHeaderFac}>
@@ -70,7 +71,7 @@ import useFormatterNumber from "../hooks/useFormatterNumber";
 
             {/* DATOS DE LA EMPRESA */}
             <View style={styles.sectionHeaderRuc}>
-              <Text style={[{fontSize:15,textAlign:"right"}]}>FACTURA ELECTRÓNICA</Text>
+              <Text style={[{fontSize:15,textAlign:"right"}]}>FACTURA ELECTRÓNICA {clave_acceso.substring(24,27)}-{clave_acceso.substring(28,30)}-{clave_acceso.substring(31,39)}</Text>
               <View style={[{backgroundColor:'#CBE8EC',padding:5}]}>
                 <Text style={[{fontSize:9,marginBottom:10,color:'#178DAB',fontWeight:"bold"}]}>SERVICIOS DE ADMINISTRACIÓN INTEGRAL SEFIL S.A.</Text>
                 <View>

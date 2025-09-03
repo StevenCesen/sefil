@@ -11,11 +11,11 @@ export default function CardItemCharge({item,updateCheck}){
             id:item.id,
             name:item.name,
             ci:item.ci,
-            credito:item.credito,
-            totalAmount:item.totalAmount,
-            pendingFees:item.pendingFees,
-            dias_vencidos:item.dias_vencidos,
-            collectionState:item.collectionState
+            credito:('credito' in item) ? item.credito : item.sync_id,
+            totalAmount:('totalAmount' in item) ? item.totalAmount : item.total_amount,
+            pendingFees:('pendingFees' in item) ? item.pendingFees : item.pending_fees,
+            dias_vencidos:('dias_vencidos' in item) ? item.dias_vencidos : item.days_past_due,
+            collectionState:('collectionState' in item) ? item.collectionState : item.collection_state
         });
     },[item]);
 
@@ -23,14 +23,7 @@ export default function CardItemCharge({item,updateCheck}){
 
     return (
         <div className="CardAssignCampain__itemCharge">
-            <input 
-                type="checkbox"
-                value={item_data.id}
-                defaultChecked={false}
-                onChange={(e)=>{
-
-                }}
-            />
+            <label></label>
             <label>{item_data.name}</label>
             <label>{item_data.ci}</label>
             <label
@@ -38,7 +31,7 @@ export default function CardItemCharge({item,updateCheck}){
                     useClickToCopy(e.target.textContent)
                 }}
             >{item_data.credito}</label>
-            <label>{useFormatterNumber({value:item_data.totalAmount,currency:'USD'})}</label>
+            <label>{useFormatterNumber({value: item_data.totalAmount,currency:'USD'})}</label>
             <label>{item_data.pendingFees}</label>
             <label>{item_data.dias_vencidos}</label>
             <label>{item_data.collectionState}</label>

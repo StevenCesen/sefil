@@ -2,7 +2,7 @@ export default function useSearchSyncs(string,cartera,setData,setTotal){
     if(string.length>4){
         if(/^[A-Za-z ]+/.test(string)){
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs/index?nombre=${string}`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/syncs/index?nombre=${string}`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -16,7 +16,7 @@ export default function useSearchSyncs(string,cartera,setData,setTotal){
         }else{  //Búscamos por número de cédula
             
             if(string.length>5){
-                fetch(`${import.meta.env.VITE_URL_BASE}/public/api/syncs/index?cedula=${string}`,{
+                fetch(`${import.meta.env.VITE_URL_BASE}/syncs/index?cedula=${string}`,{
                     headers: {
                         Accept: 'application/json',
                         Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -30,7 +30,7 @@ export default function useSearchSyncs(string,cartera,setData,setTotal){
             
         }
     }else if(string===''){
-        fetch(`${import.meta.env.VITE_URL_BASE}/public/api/bussines/${localStorage.getItem('cartera')}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${localStorage.getItem('cartera')}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
