@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import createCall from "../../../helpers/Calls/createCall";
 import sendpush from "../../../helpers/sendpush";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
+import uploadFile from "../../../helpers/Calls/uploadFile";
 
 export default function CardSelectStateCall() {
     const store_call = useStoreProgressCall();
@@ -35,7 +36,18 @@ export default function CardSelectStateCall() {
         data_call.append('phone',store_call.phone_number);
         data_call.append('id_credit',store_call.credit_id);
         data_call.append('id_campain',store_call.campain_id);
-        data_call.append('record',store_call.record_audio);
+
+        if(store_call.state_call==='CONTACTADO'){
+            //  Subir la llamada localmente
+            const data_upload=new FormData();
+            data_upload.append('user_id',localStorage.getItem('temp_uS'));
+            data_upload.append('phone_number',store_call.phone_number);
+            data_upload.append('credit_id',store_call.credit_id);
+            data_upload.append('record',store_call.record_audio);
+            data_upload.append('ci',store_management.client_ci);
+            const upload=await uploadFile({data:data_upload});
+            data_call.append('path',upload.path);
+        }
 
         console.log(data_call);
 

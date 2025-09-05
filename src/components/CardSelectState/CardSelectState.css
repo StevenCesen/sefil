@@ -30,7 +30,7 @@
     align-items: flex-start;
     flex-direction: column;
     box-shadow: var(--box-shadow);
-    z-index: 200;
+    z-index: 2000;
 }
 
 .CardSelectState__select>label{

@@ -3,11 +3,17 @@ import sendpush from "../../../helpers/sendpush";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import "./CardClient.css";
 import { useStoreEmail } from "../../../stores/useStoreEmail";
+import ClickToCopy from "../../../helpers/ClickToCopy";
+import { useState } from "react";
 
-export default function CardClient({credit_id,name,ci,sector_economico,days_past_due,type,total_amount}){
+export default function CardClient({credit_id,name,ci,sector_economico,days_past_due,type,total_amount,is_active,setActive}){
 
     const store_management=useStoreManagement();
     const store_email=useStoreEmail();
+    
+    const handleCopy=({text})=>{
+        const copy=ClickToCopy({text});
+    }
     
     return(
         <div
@@ -31,18 +37,18 @@ export default function CardClient({credit_id,name,ci,sector_economico,days_past
                     timeout:1000
                 });
             }}
-            className="CardClient"
+            className={`CardClient ${(store_management.client_ci==ci) ? "CardClient--active" : ""}`}
         >
             <label>
                 <User/>
             </label>
             <div>
-                <h3>{name}</h3>
-                <span>Cédula: {ci}</span>
+                <h3 onClick={()=>{handleCopy({text:name})}}>{name}</h3>
+                <span onClick={()=>{handleCopy({text:ci})}}>Cédula: {ci}</span>
             </div>
             <div>
                 <span className="CardClient__sector">Sector económico: {sector_economico}</span>
-                <span className={`${(type==='TITULAR') ? 'CardClient--titular' : 'CardClient--garante'}`}>{type}</span>
+                <span className={`${(type==='TITULAR') ? 'CardClient--titular' : 'CardClient--garante'}`} onClick={()=>{handleCopy({text:`${name} | ${type} ${ci}`})}}>{type}</span>
                 <button onClick={()=>{
                     store_email.setContact({
                         name,

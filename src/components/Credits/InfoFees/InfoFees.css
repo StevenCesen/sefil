@@ -1,4 +1,4 @@
-.InfoPending{
+.InfoFees{
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -6,13 +6,13 @@
     gap:10px;
     margin: 10px 0;
     box-shadow: var(--box-shadow);
-    background-color: rgb(243, 127, 127);
+    background-color: rgb(245, 208, 128);
     border-radius: 10px;
 }
 
-.InfoPending>div{
+.InfoFees>div{
     width: 100%;
-    border-right: 1px solid rgb(247, 36, 36);
+    border-right: 1px solid rgb(247, 229, 208);
     padding: 10px;
     display: flex;
     justify-content: center;
@@ -20,18 +20,13 @@
     flex-direction: column;
 }
 
-.InfoPending>div:last-child{
-    border-right: none;
-}
-
-
-.InfoPending>div>p{
+.InfoFees>div>p{
     font-size: 12px;
     margin-top: 10px;
     text-align: center;
 }
 
-.InfoPending>div>h3{
+.InfoFees>div>h3{
     font-size: 16px;
     text-align: center;
     margin-top: 10px;

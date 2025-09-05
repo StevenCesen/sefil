@@ -74,7 +74,7 @@ export default function CardCurrentGestion({data}){
                             src={`https://core.sefil.com.ec/api/public/files/audios/${call.id_record}`}
                             controls
                         /> */}
-                        <audio controls style={{width:"100%"}} src={`https://core.sefil.com.ec/api/public/files/audios/${call.id_record}`}></audio>
+                        <audio controls style={{width:"100%"}} src={`./public/files/audios/${call.id_record}`}></audio>
                     </div>
                 ))
             }

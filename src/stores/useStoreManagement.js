@@ -22,6 +22,7 @@ export const useStoreManagement = create((set,get) => ({
     cartera:'',
     monto:0,
     nro_notificacion:'',
+    message:'No gestionado',
 
     phones:null,
     managements:null,
@@ -67,6 +68,7 @@ export const useStoreManagement = create((set,get) => ({
         phones.push(value);
         set({phones:phones});
     },
+    setMessage:     (value)=>{set({message:value})},
     setIDCampain: (cartera) => {
         set({cartera:cartera});
         if(cartera=='SEFIL_1'){
@@ -120,6 +122,7 @@ export const useStoreManagement = create((set,get) => ({
         set({id_call:''}),
         set({id_calls_extras:[]}),
         set({observation:''}),
-        set({nro_notificacion:''})
+        set({nro_notificacion:''}),
+        set({message:'No gestionado'})
     }
 }));

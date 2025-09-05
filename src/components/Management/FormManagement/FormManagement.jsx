@@ -43,7 +43,6 @@ export default function FormManagement(){
         const create_management=await createManagement({data_management});
         
         if(create_management.status===200){
-
             button.current.textContent='Guardar gestión';
             
             sendpush({
@@ -54,6 +53,8 @@ export default function FormManagement(){
             });
             
             store_management.clean();
+            store_management.addManagement(create_management.management);
+            store_management.setMessage('Gestionado recién');
             
         }else{
             button.current.textContent='Intentar de nuevo';

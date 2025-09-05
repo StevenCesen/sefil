@@ -46,6 +46,7 @@ export const useStoreFilterManagement = create((set,get) => ({
         return parts.join('&');
     },
     FilteredCredits: async (filters) => {
+        console.log(`${import.meta.env.VITE_URL_BASE}/campains/credits?${filters}`);
         const end_point=`${import.meta.env.VITE_URL_BASE}/campains/credits?${filters}`;
         try {
             const request=await fetch(end_point,{

@@ -92,7 +92,7 @@ export const useStoreSMS = create((set,get) => ({
 
         if(Number(cod_sms)===43334){
             data={
-                "phone":"593978950498",
+                "phone":phone_contact,
                 "cod_sms":cod_sms,
                 "name":`Sr(a) ${name} ${type}`,
                 "payment_date":payment_date,
@@ -100,7 +100,7 @@ export const useStoreSMS = create((set,get) => ({
             }
         }else if(Number(cod_sms)===43335){
             data={
-                "phone":"593978950498",
+                "phone":phone_contact,
                 "cod_sms":cod_sms,
                 "name":`Sr(a) ${name} ${type}`,
                 "days_past_due":days_past_due,
@@ -108,7 +108,7 @@ export const useStoreSMS = create((set,get) => ({
             }
         }else if(Number(cod_sms)===48392){
             data={
-                "phone":"593978950498",
+                "phone":phone_contact,
                 "cod_sms":cod_sms,
                 "name":`Sr(a) ${name} ${type}`,
                 "total_amount":total_amount,

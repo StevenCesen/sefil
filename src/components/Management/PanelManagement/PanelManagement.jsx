@@ -2,6 +2,7 @@ import { useStoreFilterManagement } from "../../../stores/useStoreFilterManageme
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import CardClient from "../../Credits/CardClient/CardClient";
 import InfoCredit from "../../Credits/InfoCredit/InfoCredit";
+import InfoFees from "../../Credits/InfoFees/InfoFees";
 import InfoPending from "../../Credits/InfoPending/InfoPending";
 import InfoValues from "../../Credits/InfoValues/InfoValues";
 import MenuNav from "../../Tools/MenuNav/MenuNav";
@@ -20,7 +21,7 @@ export default function PanelManagement({}){
     
     return(
         <Modal
-            title={'Gestión crédito'}
+            title={`Gestión crédito | ${store_management.message}`}
             view={store_management.view_panel}
             setView={()=>{
                 credits.numberTrays();
@@ -38,7 +39,7 @@ export default function PanelManagement({}){
                     />
                     <InfoPending
                         days_past_due={credit.days_past_due}
-                        total_amount={credit.total_amount}
+                        total_amount={(credit.collection_state=='Vigente') ? credit.monthly_fee_amount : credit.total_amount}
                         payment_date={credit.payment_date}
                     />
                     <InfoValues
@@ -50,6 +51,11 @@ export default function PanelManagement({}){
                         gasto_cobranza={credit.gastos_cobranza}
                         gastos_judiciales={credit.gastos_judiciales}
                         otros_valores={credit.otros_valores}
+                    />
+                    <InfoFees
+                        paid_fees={credit.paid_fees}
+                        pending_fees={credit.pending_fees}
+                        total_fees={credit.total_fees}
                     />
                 </div>
                 <div className="PanelManagement__clients">

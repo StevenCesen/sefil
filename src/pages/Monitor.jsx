@@ -10,9 +10,6 @@ export default function Monitor(){
     const store_monitor=useStoreMonitor();
     const connection=useRef();
 
-    // document.addEventListener("visibilitychange", function(e) {   
-    // });
-
     useEffect(()=>{
 
         setLoading(true);
@@ -31,14 +28,16 @@ export default function Monitor(){
 
         connection.current = conn;
 
+        document.addEventListener("visibilitychange", async function(e) {   
+            await store_monitor.setAgents();
+        });
+
         if (connection.current) {
             return () => {
                 connection.current.close();
             };
         }
     },[]);
-
-
 
     return (
         <div className="pageConsulta">

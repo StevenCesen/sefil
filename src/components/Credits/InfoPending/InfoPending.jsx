@@ -13,7 +13,7 @@ export default function InfoPending({days_past_due,total_amount,payment_date}){
                 <p>Total pendiente</p>
             </div>
             <div>
-                <h3>{payment_date}</h3>
+                <h3>{payment_date.split(' ')[0]}</h3>
                 <p>Fecha de pago</p>
             </div>
         </div>
