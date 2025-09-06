@@ -19,6 +19,7 @@ export default function Stadistics(){
     const [loading,setLoading]=useState();
     const [total,setTotal]=useState(0);
     const [total_general,setTotalGeneral]=useState(0);
+    const [total_campain,setTotalCampain]=useState(0);
 
     const [message,setMessage]=useState("");
 
@@ -133,8 +134,6 @@ export default function Stadistics(){
             filter_apply+=`&con_gestion=SI`
         }
 
-        console.log(filter_apply);
-
         // console.log(`${import.meta.env.VITE_URL_BASE}/campains/stadistics?campain=28&cartera=syncs${filter_apply}`);
         fetch(`${import.meta.env.VITE_URL_BASE}/campains/stadistics?campain=29&cartera=syncs${filter_apply}`,{
             headers: {
@@ -155,6 +154,7 @@ export default function Stadistics(){
 
                 setTotal(total);
                 setTotalGeneral(data.total.total_general)
+                setTotalCampain(data.total.total_campain)
                 setCredits(data.info);
                 setLoading(false);
             });
@@ -201,15 +201,9 @@ export default function Stadistics(){
                 .then((data) => {
                     let total=data.total.total;
                     console.log(data);
-
-                    // data.info.data.map((item)=>{
-                    //     if(item.dias_mora>=61){
-                    //         total+=Number(item.payment_value);
-                    //     }
-                    // });
-
                     setTotal(total);
                     setTotalGeneral(data.total.total_general)
+                    setTotalCampain(data.total.total_campain)
                     setCredits(data.info);
                 });
 
@@ -335,8 +329,9 @@ export default function Stadistics(){
                             <h4 className="Reports__title">Pagos con gestión</h4>
                         </div>
 
-                        <div className="pageConsulta__search">
+                        <div className="pageConsulta__search" style={{flexDirection:'column',alignItems:'flex-start'}}>
                             <h4 className="Reports__title" style={{color:"black"}}>Total general con gestión: {useFormatterNumber({value:total_general,currency:'USD'})}</h4>
+                            <h4 className="Reports__title" style={{color:"black"}}>Total con gestión en campaña: {useFormatterNumber({value:total_campain,currency:'USD'})}</h4>
                         </div>
 
                         <div className="pageConsulta__results">
