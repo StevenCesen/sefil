@@ -74,6 +74,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path='dashboard/:action/:id' element={<Dashboard/>}></Route>
               <Route path='dashboard/:action/:id' element={<Dashboard/>}></Route>
               <Route path='dashboard/:action/:type' element={<Dashboard/>}></Route>
+              <Route path='dashboard/:action/:type' element={<Dashboard/>}></Route>
             </Route>
             
           </Routes>
