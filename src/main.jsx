@@ -7,6 +7,7 @@ import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import { NotifierContextProvider } from './contexts/notifierContext.jsx'
 import { SessionContextProvider } from './contexts/SessionContext.jsx'
+import Credit from './pages/Credit/Credit.jsx'
 
 (function () {
   const TAB_LIST_KEY = 'system-tab-ids';
@@ -75,6 +76,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path='dashboard/:action/:id' element={<Dashboard/>}></Route>
               <Route path='dashboard/:action/:type' element={<Dashboard/>}></Route>
               <Route path='dashboard/:action/:type' element={<Dashboard/>}></Route>
+              <Route path='credits/:id' element={<Credit/>}></Route>
             </Route>
             
           </Routes>

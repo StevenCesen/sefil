@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import CardCredit from "../components/CardCredit/CardCredit";
-import CardActions from "../components/CardActions/CardActions";
 import MenuNav from "../../components/Tools/MenuNav/MenuNav";
+import CardActions from "../../components/Credits/CardActions/CardActions";
+import "./Credit.css";
 
 export default function Credit(){
     const params=useParams();
@@ -58,9 +58,7 @@ export default function Credit(){
 
             <div className="Credit__sections">
                 <div className="Credit__sectionInfo">
-                    <CardCredit
-                        credit={credit}
-                    />
+                    
                 </div>
                 
                 <CardActions/>
