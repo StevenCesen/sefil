@@ -7,7 +7,7 @@ import {
     View,
   } from "@react-pdf/renderer";
 import useFormatterNumber from "../hooks/useFormatterNumber";
-import logo from '/icons/logo.png';
+import logo from '../assets/icons/logo.png';
 
   const styles = StyleSheet.create({
     page: {

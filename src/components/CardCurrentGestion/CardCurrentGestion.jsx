@@ -41,9 +41,7 @@ export default function CardCurrentGestion({data}){
                 });
 
             setCalls(JSON.parse(localStorage.getItem('calls')).sort(function(a,b){return a.id-b.id}));
-
         });
-
     },[]);
 
     if(!calls) return <></>

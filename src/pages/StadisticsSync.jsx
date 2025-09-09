@@ -76,14 +76,7 @@ export default function Stadistics(){
                 setLoading(false);
         });
     }
-
-    const updateCredits=(data)=>{
-        setCredits({
-            ...credits,
-            data:data
-        })
-    }
-
+    
     const getFilters=({mora,estado,agente,con_gestion})=>{
         let filter_apply="";
 
