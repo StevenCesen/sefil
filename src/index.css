@@ -138,3 +138,14 @@ body{
 .custom-scroll.hide-scrollbar::-webkit-scrollbar {
   display: none; /* webkit */
 }
+
+@media screen and (min-width:300px) and (max-width:540px) {
+  .Gestion__nav{
+    width: 100%;
+    gap: 5px;
+  }
+}
+
+@media screen and (min-width:541px) and (max-width:1000px) {
+
+}

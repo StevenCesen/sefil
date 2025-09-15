@@ -12,46 +12,67 @@ import Credit from './pages/Credit/Credit.jsx'
 (function () {
   const TAB_LIST_KEY = 'system-tab-ids';
   const INSTANCE_ID = Date.now().toString() + '-' + Math.random().toString(36).substr(2, 6);
+  const HEARTBEAT_INTERVAL = 5000; // 5 segundos
+  const TIMEOUT = 10000; // si no hay heartbeat en 10 segundos, se considera muerta
 
-  // Recupera la lista actual de pestañas activas
   function getTabList() {
     const raw = localStorage.getItem(TAB_LIST_KEY);
     try {
-      return raw ? JSON.parse(raw) : [];
+      return raw ? JSON.parse(raw) : {};
     } catch {
-      return [];
+      return {};
     }
   }
 
-  // Guarda una lista actualizada de pestañas activas
   function setTabList(list) {
     localStorage.setItem(TAB_LIST_KEY, JSON.stringify(list));
   }
 
-  // Agrega esta pestaña a la lista si hay cupo
-  let tabList = getTabList();
+  // Limpia pestañas "muertas"
+  function cleanDeadTabs(tabList) {
+    const now = Date.now();
+    const aliveTabs = {};
+    for (const [id, timestamp] of Object.entries(tabList)) {
+      if (now - timestamp < TIMEOUT) {
+        aliveTabs[id] = timestamp;
+      }
+    }
+    return aliveTabs;
+  }
 
-  if (tabList.length >= 2) {
-    alert('Ya hay 2 pestañas abiertas del sistema. Esta se cerrará.');
+  let tabList = getTabList();
+  tabList = cleanDeadTabs(tabList);
+
+  if (Object.keys(tabList).length >= 2) {
+    alert('Ya hay 2 pestañas activas. Esta se cerrará.');
     window.close();
     return;
   } else {
-    tabList.push(INSTANCE_ID);
+    tabList[INSTANCE_ID] = Date.now();
     setTabList(tabList);
   }
 
-  // Al cerrar la pestaña, eliminarla del registro
+  // Heartbeat: actualiza el timestamp periódicamente
+  const heartbeat = setInterval(() => {
+    const list = getTabList();
+    list[INSTANCE_ID] = Date.now();
+    setTabList(list);
+  }, HEARTBEAT_INTERVAL);
+
+  // Eliminar del registro al cerrar la pestaña
   window.addEventListener('beforeunload', () => {
-    const updatedList = getTabList().filter(id => id !== INSTANCE_ID);
-    setTabList(updatedList);
+    clearInterval(heartbeat);
+    const list = getTabList();
+    delete list[INSTANCE_ID];
+    setTabList(list);
   });
 
-  // También escucha cambios desde otras pestañas (opcional para sincronización)
+  // Escucha cambios desde otras pestañas
   window.addEventListener('storage', (event) => {
     if (event.key === TAB_LIST_KEY) {
-      const currentList = getTabList();
-      if (!currentList.includes(INSTANCE_ID) && currentList.length >= 2) {
-        // Nuestra pestaña fue desregistrada o hay demasiadas pestañas
+      let list = getTabList();
+      list = cleanDeadTabs(list);
+      if (!list.hasOwnProperty(INSTANCE_ID) && Object.keys(list).length >= 2) {
         alert('Se superó el límite de 2 pestañas. Esta se cerrará.');
         window.close();
       }

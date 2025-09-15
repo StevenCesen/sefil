@@ -18,7 +18,7 @@ export default function TraysManagement(){
                 filter_management.FilteredCredits(filter_management.getFilterString());
             }}>Gestionados ({filter_management.nro_managements})</button>
             <button onClick={()=>{
-                filter_management.setTray('INACTIVO');
+                filter_management.setTray('INACTIVE');
                 filter_management.FilteredCredits(filter_management.getFilterString());
             }}>Inactivos ({filter_management.nro_inactive})</button>
         </div>

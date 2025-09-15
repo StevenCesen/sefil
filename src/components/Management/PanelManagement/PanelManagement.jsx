@@ -78,6 +78,7 @@ export default function PanelManagement({}){
                         <CardDial
                             credit_id={credit.id}
                             campain_id={store_management.campain_id}
+                            credit_status={credit.status}
                         />
                     </div>
                 </div>

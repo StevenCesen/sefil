@@ -21,7 +21,14 @@
     padding-bottom: 5px;
 }
 
-.Modal__head>label{
+.Modal__head>div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.Modal__head>div>label{
     background-color: rgb(229, 229, 229);
     border-radius: 5px;
     padding: 5px;
@@ -30,6 +37,6 @@
     align-items: center;
 }
 
-.Modal__head>label>svg{
+.Modal__head>div>label>svg{
     cursor: pointer;
 }

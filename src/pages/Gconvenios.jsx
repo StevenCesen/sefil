@@ -8,7 +8,7 @@ export default function Gconvenios(){
     const [loading,setLoading]=useState();
     const [filters,setFilters]=useState();
     
-    const getFilter=({agente,ult_date,pend_date,nro_cuotas,cartera})=>{
+    const getFilter=({agente,ult_date,pend_date,nro_cuotas,cartera,state})=>{
         let filter="";
 
         if(agente!==""){
@@ -30,13 +30,17 @@ export default function Gconvenios(){
 
         if(cartera!==""){
             filter+=`&cartera=${cartera}`;
+        }
+
+        if(state!==""){
+            filter+=`&state=${state}`;
         }
         
         filter=filter.substring(1);
         return filter;
     }
 
-    const updateFilter=({agente,ult_date,pend_date,nro_cuotas,cartera})=>{
+    const updateFilter=({agente,ult_date,pend_date,nro_cuotas,cartera,state})=>{
         let filter="";
 
         if(agente!==""){
@@ -58,6 +62,10 @@ export default function Gconvenios(){
 
         if(cartera!==""){
             filter+=`&cartera=${cartera}`;
+        }
+
+        if(state!==""){
+            filter+=`&state=${state}`;
         }
         
         filter=filter.substring(1);
@@ -75,7 +83,6 @@ export default function Gconvenios(){
                 setConvenios(data);
                 setLoading(false);
             });
-
     }
 
     useEffect(()=>{
@@ -86,7 +93,8 @@ export default function Gconvenios(){
             ult_date:"",
             pend_date:"",
             nro_cuotas:"",
-            cartera:""
+            cartera:"",
+            state:''
         });
 
         fetch(`${import.meta.env.VITE_URL_BASE}/pruebaconvenios`,{
@@ -123,7 +131,8 @@ export default function Gconvenios(){
                                         ult_date:filters.ult_date,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:filters.nro_cuotas,
-                                        cartera:filters.cartera})}`} target="_blank" className="Convenio__button">Descargar</a>
+                                        cartera:filters.cartera,
+                                        state:filters.state})}`} target="_blank" className="Convenio__button">Descargar</a>
                 </div>
                 <div className="Convenios__items">
                     
@@ -146,7 +155,8 @@ export default function Gconvenios(){
                                         ult_date:filters.ult_date,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:filters.nro_cuotas,
-                                        cartera:filters.cartera
+                                        cartera:filters.cartera,
+                                        state:filters.state
                                     });
                                 }}
                             >
@@ -174,7 +184,8 @@ export default function Gconvenios(){
                                         ult_date:e.target.value,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:filters.nro_cuotas,
-                                        cartera:filters.cartera
+                                        cartera:filters.cartera,
+                                        state:filters.state
                                     });
                                 }}
                             />
@@ -199,7 +210,8 @@ export default function Gconvenios(){
                                         ult_date:filters.ult_date,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:e.target.value,
-                                        cartera:filters.cartera
+                                        cartera:filters.cartera,
+                                        state:filters.state
                                     });
                                 }}
                             />
@@ -220,7 +232,8 @@ export default function Gconvenios(){
                                         ult_date:filters.ult_date,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:filters.nro_cuotas,
-                                        cartera:e.target.value
+                                        cartera:e.target.value,
+                                        state:filters.state
                                     });
                                 }}
                             >
@@ -229,11 +242,38 @@ export default function Gconvenios(){
                                 <option value={"SEFIL_2"}>SEFIL 2</option>
                             </select>
                         </label>
+                        <label>
+                            Estado convenio
+                            <select
+                                value={filters.state}
+                                onChange={(e)=>{
+                                    setFilters({
+                                        ...filters,
+                                        state:e.target.value
+                                    });
+
+                                    updateFilter({
+                                        agente:filters.agente,
+                                        ult_date:filters.ult_date,
+                                        pend_date:filters.pend_date,
+                                        nro_cuotas:filters.nro_cuotas,
+                                        cartera:filters.cartera,
+                                        state:e.target.value
+                                    });
+                                }}
+                            >
+                                <option value="">-- Seleccionar --</option>
+                                <option value="Autorizado">Autorizado</option>
+                                <option value="Cancelado">Cancelado</option>
+                                <option value="Anulado">Anulado</option>
+                                <option value="Rechazado">Rechazado</option>
+                            </select>
+                        </label>
                     </div>
 
                     {
-                        convenios.map(convenio=>(
-                            <div className="Convenios__item">
+                        convenios.map((convenio,index)=>(
+                            <div className="Convenios__item" key={index}>
                                 <NavLink to={`/dashboard/recaudacion/view/${convenio.cartera}?id=${convenio.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{convenio.cartera}-{convenio.credito}</NavLink>
                                 <label>{convenio.titular}</label>
                                 <label>{convenio.cedula}</label>
@@ -243,6 +283,7 @@ export default function Gconvenios(){
                                 <label>{convenio.nro_cuotas}</label>
                                 <label>{convenio.cuota_vencida}</label>
                                 <label>{convenio.cartera}</label>
+                                <label>{convenio.status}</label>
                             </div>
                         ))
                     }

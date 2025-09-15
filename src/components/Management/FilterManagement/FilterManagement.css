@@ -76,3 +76,27 @@
     outline: none;
 }
 
+@media screen and (min-width:300px) and (max-width:540px) {
+    .FilterManagement{
+        width: 100%;
+        padding: 5px;
+        grid-template-columns: 40px 20% 20% 10% 10% 10% 20% 10%;
+        gap: 5px;
+    }
+     .FilterManagement>:nth-child(5),.FilterManagement>:nth-child(6),.FilterManagement>:nth-child(8){
+        display: none;
+    }
+}
+
+@media screen and (min-width:541px) and (max-width:1000px) {
+    .FilterManagement{
+        width: 100%;
+        padding: 5px;
+        grid-template-columns: 40px 20% 20% 10% 10% 10% 20% 10%;
+        gap: 5px;
+    }
+
+    .FilterManagement>:nth-child(5),.FilterManagement>:nth-child(6),.FilterManagement>:nth-child(8){
+        display: none;
+    }
+}

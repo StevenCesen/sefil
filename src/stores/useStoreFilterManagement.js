@@ -112,7 +112,7 @@ export const useStoreFilterManagement = create((set,get) => ({
             set({nro_pending:data.pendiente});
             set({nro_processed:data.proceso});
             set({nro_managements:data.gestionado});
-            set({nro_inactive:data.inactivo});
+            set({nro_inactive:data.inactivos});
             
         } catch (error) {
             console.error('Error al hacer fetchFilteredCredits:', error);

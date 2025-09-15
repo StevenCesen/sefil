@@ -13,3 +13,15 @@
     grid-template-columns: calc(60% - 10px) 40%;
 }
 
+
+@media screen and (min-width:300px) and (max-width:540px) {
+    .PanelManagement{
+        grid-template-columns: 60% 40%;
+    }
+}
+
+@media screen and (min-width:541px) and (max-width:1000px) {
+    .PanelManagement{
+        grid-template-columns: 60% 40%;
+    }
+}

@@ -10,7 +10,7 @@ export default function FilterManagement(){
         <div className="FilterManagement">
             <div>
             </div>
-
+            
             <label className="FilterManagement__label">
                 Nombre
                 <input
@@ -104,7 +104,7 @@ export default function FilterManagement(){
                     </label>
                 </div>
             </div>
-
+            
             <label className="FilterManagement__label">
                 Sector Econ.
                 <select

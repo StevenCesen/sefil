@@ -40,3 +40,14 @@
     height: calc(100vh - 550px);
     overflow-y: auto;
 }
+
+@media screen and (min-width:300px) and (max-width:540px) {
+    
+}
+
+@media screen and (min-width:541px) and (max-width:1000px) {
+    .MenuNav__list{
+        height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+}

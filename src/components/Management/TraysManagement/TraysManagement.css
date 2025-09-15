@@ -15,3 +15,17 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+@media screen and (min-width:300px) and (max-width:540px) {
+    .TraysManagement{
+        width: 100%;
+        gap: 5px;
+    }
+}
+
+@media screen and (min-width:541px) and (max-width:1000px) {
+    .TraysManagement{
+        width: 100%;
+        gap: 5px;
+    }
+}

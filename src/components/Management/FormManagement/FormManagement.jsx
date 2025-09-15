@@ -181,10 +181,15 @@ export default function FormManagement(){
                     placeholder="Escribe una observación"
                 ></textarea>
             </label>
-            <button ref={button} type="submit">
-                <Save size={16}/>
-                Guardar gestión
-            </button>
+            {
+                (store_management.credit.status==='ACTIVE')
+                ?   
+                    <button ref={button} type="submit">
+                        <Save size={16}/>
+                        Guardar gestión
+                    </button>
+                :   <></>
+            }
         </form>
     );
 }

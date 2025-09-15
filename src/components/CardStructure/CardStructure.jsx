@@ -12,7 +12,7 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
     const [totalSum,setTotalSum]=useState();
     const [monto_cuota,setMonto]=useState();
     const [value_cuotas,setValueCuotas]=useState();
-
+    
     useEffect(()=>{
         setDesgloce('automatico');
         setNumber(1);
@@ -82,14 +82,10 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
                             const cuotas_prev=[];
 
                             useFadeArray(Math.round(nro_by_monto)).map((cuota,index)=>{
-                                if(index===(Math.round(nro_by_monto)-1)){ // última cuota
+                                if(index===(Math.round(nro_by_monto)-1)){
                                     const last_quote=totalAmount-monto_cuota*(index);
                                     cuotas_prev.push(last_quote);
                                 }else{
-                                // }else if(index==0){
-                                //     const include_gasto=monto_cuota-cobranza;
-                                //     cuotas_prev.push(include_gasto);
-                                // }else{
                                     cuotas_prev.push(monto_cuota);
                                 }
                             });
@@ -196,7 +192,6 @@ export default function CardStructure({original_dates,total,id,set,cartera,cobra
 
                     e.target.textContent="Guardando...";
 
-                    // 1) Creamos el detalle
                     const detalle=[];
 
                     let inputs=document.getElementsByClassName('desgloce_inputs');

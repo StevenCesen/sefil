@@ -2843,7 +2843,7 @@
 .Convenios__head{
     width: 100%;
     display: grid;
-    grid-template-columns: 10% 21% 10% 10% 10% 10% 10% 8% 10%;
+    grid-template-columns: 10% 11% 10% 10% 10% 10% 10% 8% 10% 10%;
     justify-content: center;
     align-items: center;
     background-color: var(--bg-alert-error);
@@ -2871,7 +2871,7 @@
 .Convenios__item{
     width: 100%;
     display: grid;
-    grid-template-columns: 10% 21% 10% 10% 10% 10% 10% 8% 10%;
+    grid-template-columns: 10% 11% 10% 10% 10% 10% 10% 8% 10% 10%;
     justify-content: center;
     align-items: center;
     padding-top: 5px;
