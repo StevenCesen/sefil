@@ -385,7 +385,9 @@ export default function GHistorial(){
                         >
                             <option>-- Seleccionar --</option>
                             <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
-                            <option value={"Judicial"}>MENSAJE A TERCEROS</option>
+                            <option value={"OFERTA DE PAGO"}>OFERTA DE PAGO</option>
+                            <option value={"VOLVER A LLAMAR"}>VOLVER A LLAMAR</option>
+                            <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>
                             <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
                             <option value={"YA PAGÓ"}>YA PAGÓ</option>
                             <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>

@@ -190,33 +190,10 @@ export default function Gconvenios(){
                                 }}
                             />
                         </label>
-                        <label>
-                            Fecha pago pendiente
-                        </label>
-                        <label>
-                            Nro. cuotas
-                            <input 
-                                type="number" 
-                                step={1}
-                                value={filters.nro_cuotas}
-                                onChange={(e)=>{
-                                    setFilters({
-                                        ...filters,
-                                        nro_cuotas:e.target.value
-                                    });
-
-                                    updateFilter({
-                                        agente:filters.agente,
-                                        ult_date:filters.ult_date,
-                                        pend_date:filters.pend_date,
-                                        nro_cuotas:e.target.value,
-                                        cartera:filters.cartera,
-                                        state:filters.state
-                                    });
-                                }}
-                            />
-                        </label>
-                        <label>Cuota pendiente</label>
+                        
+                        <label>Total cuotas</label>
+                        <label>Cuota pagadas</label>
+                        <label>Cuotas pendientes</label>
                         <label>
                             Cartera
                             <select
@@ -263,7 +240,7 @@ export default function Gconvenios(){
                                 }}
                             >
                                 <option value="">-- Seleccionar --</option>
-                                <option value="Autorizado">Autorizado</option>
+                                <option value="Autorizado">Convenio vigente</option>
                                 <option value="Cancelado">Cancelado</option>
                                 <option value="Anulado">Anulado</option>
                                 <option value="Rechazado">Rechazado</option>
@@ -279,9 +256,9 @@ export default function Gconvenios(){
                                 <label>{convenio.cedula}</label>
                                 <label>{convenio.agente}</label>
                                 <label>{convenio.fecha}</label>
-                                <label>{convenio.fecha_pago_vencido}</label>
-                                <label>{convenio.nro_cuotas}</label>
-                                <label>{convenio.cuota_vencida}</label>
+                                <label>{convenio.cuotas_totales}</label>
+                                <label>{convenio.cuotas_pagadas}</label>
+                                <label>{convenio.cuotas_pendientes}</label>
                                 <label>{convenio.cartera}</label>
                                 <label>{convenio.status}</label>
                             </div>

@@ -1,64 +1,68 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import MenuNav from "../../components/Tools/MenuNav/MenuNav";
 import CardActions from "../../components/Credits/CardActions/CardActions";
 import "./Credit.css";
+import getCredit from "../../helpers/Credits/getCredit";
+import { useStoreManagement } from "../../stores/useStoreManagement";
+import InfoCredit from "../../components/Credits/InfoCredit/InfoCredit";
+import InfoValues from "../../components/Credits/InfoValues/InfoValues";
+import InfoPending from "../../components/Credits/InfoPending/InfoPending";
+import InfoFees from "../../components/Credits/InfoFees/InfoFees";
 
 export default function Credit(){
     const params=useParams();
+    const credit=useStoreManagement();
     
-    const [credit,setCredit]=useState({
-        id:1,
-        sync_id:'202487173',
-        business_name:'SEFIL_1',
-        total_amount:1759.20,
-        days_past_due:20,
-        business_name:'FACES',
-        province:'LOJA',
-        canton:'LOJA',
-        parroquia:'SUCRE',
-        sync_status:'ACTIVO',
-        collection_state:'Vencido',
-        total_fees:10,
-        paid_fees:7,
-        frequency:'Mensual (30 DIAS)',
-        agency:'PASAJE',
-        monthly_fee_amount:0.00,
-        capital:1000.20,
-        interest:36.38,
-        mora:50.00,
-        life_insurance:0.00,
-        me_collection_expenses:0.00,
-        other_collection_expenses:0.00,
-        legal_expenses:0.00,
-        other_values:0.00,
-        clients:[
-            {
-                id:1,
-                name:'JUAN RIOFRIO',
-                type:'TITULAR',
-                ci:'1103381982'
-            },
-            {
-                id:2,
-                name:'JUAN RIOFRIO 2',
-                type:'GARANTE',
-                ci:'1103382819'
-            }
-        ]
-    });
+    const attributes=new URLSearchParams(useLocation().search);
+
+    const helperCredit=async ({credit_id,cartera})=>{
+        credit.setIDCampain(cartera);
+        const data_credit=await getCredit({credit_id,cartera});
+        credit.setCredit(data_credit);
+    }
 
     useEffect(()=>{
-
+        helperCredit({credit_id:params.id,cartera:attributes.get('cartera')});
     },[]);
 
     return (
         <div className="Credit">
-            <h2>Información de crédito</h2>
+            <h2>Consulta de crédito</h2>
 
             <div className="Credit__sections">
                 <div className="Credit__sectionInfo">
-                    
+                    <InfoCredit
+                        sync_id={credit.credit.credito}
+                        agency={credit.credit.agency}
+                        frequency={credit.credit.frequency}
+                        due_date={credit.credit.due_date}
+                        collection_state={credit.credit.collection_state}
+                    />
+                    <div className="Credit__sectionPending">
+                        <InfoValues
+                            capital={credit.credit.saldo_capital}
+                            interest={credit.credit.interes}
+                            mora={credit.credit.mora}
+                            seguro={credit.credit.seguro_desgravamen}
+                            gasto_cobranza_sefil={credit.credit.gasto_cobranza}
+                            gasto_cobranza={credit.credit.gasto_cobranza}
+                            gastos_judiciales={credit.credit.gastos_judiciales}
+                            otros_valores={credit.credit.otros_valores}
+                        />
+                        <div>
+                            <InfoPending
+                                days_past_due={credit.credit.days_past_due}
+                                total_amount={credit.credit.total_amount}
+                                payment_date={credit.credit.paymentDate}
+                            />
+                            <InfoFees
+                                pending_fees={credit.credit.pending_fees}
+                                paid_fees={credit.credit.paid_fees}
+                                total_fees={credit.credit.total_fees}
+                            />
+                        </div>
+                    </div>
                 </div>
                 
                 <CardActions/>
