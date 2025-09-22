@@ -582,7 +582,10 @@ export default function CardAssignCampain({data,updateCredits}){
                             {
                                 (data.type_assign==='api')
                                 ?
-                                    <option value={"Castigado"}>Castigado</option>
+                                    <>
+                                        <option value={"Vencido en tramite judicial"}>Vencido en trámite judicial</option>
+                                        <option value={"Castigado"}>Castigado</option>
+                                    </>
                                 :   <></>
                             }
                             <option value={"Judicial"}>Judicial</option>

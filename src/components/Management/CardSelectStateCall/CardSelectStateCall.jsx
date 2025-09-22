@@ -21,15 +21,6 @@ export default function CardSelectStateCall() {
     };
 
     const handlerSave = async (e) => {
-        // const data_call={
-        //     state_call:store_call.state_call,
-        //     duration_call:Number(store_call.duration),	
-        //     phone:store_call.phone_number,
-        //     id_credit:store_call.credit_id,
-        //     id_campain:store_call.campain_id,
-        //     id_record:store_call.record_audio
-        // };
-
         const data_call=new FormData();
         data_call.append('state_call',store_call.state_call);
         data_call.append('duration_call',Number(store_call.duration));
@@ -60,16 +51,9 @@ export default function CardSelectStateCall() {
             });
         }else{
             e.target.textContent='Guardando...';
-            // button.current.setAttribute('disabled','');
-            // e.target.setAttribute('disabled','');
-            
             const id_call=await createCall({e,data_call});
-
             store_management.setIdCall(id_call);
-            
             store_call.clean();
-            // button.current.removeAttribute('disabled');
-            // e.target.removeAttribute('disabled');
             setSelectedState('');
         }
     };

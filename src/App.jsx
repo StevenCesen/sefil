@@ -8,6 +8,7 @@ import "./index.css";
 import Me from './pages/Me'
 import Push from './components/Push/Push'
 import CardSelectStateCall from './components/Management/CardSelectStateCall/CardSelectStateCall'
+import CardStructure from './components/CardStructure/CardStructure'
 
 function App() {
   
@@ -58,6 +59,7 @@ function App() {
       <Header/>
       <Push/>
       <CardSelectStateCall/>
+      <CardStructure/>
 
       {
         (!useSessions() & !session.state) 

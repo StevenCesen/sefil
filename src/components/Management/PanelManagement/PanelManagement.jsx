@@ -95,6 +95,11 @@ export default function PanelManagement({}){
                                 name:'💰 Historial de pagos',
                                 default_option:false,
                                 end_point:`PAYMENTS`
+                            },
+                            {
+                                name:'📜 Notas',
+                                default_option:false,
+                                end_point:`NOTES`
                             }
                         ]}
                     />
