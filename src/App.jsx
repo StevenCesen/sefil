@@ -9,6 +9,7 @@ import Me from './pages/Me'
 import Push from './components/Push/Push'
 import CardSelectStateCall from './components/Management/CardSelectStateCall/CardSelectStateCall'
 import CardStructure from './components/CardStructure/CardStructure'
+import CardCondonacion from './components/CardCondonacion/CardCondonacion'
 
 function App() {
   
@@ -60,6 +61,7 @@ function App() {
       <Push/>
       <CardSelectStateCall/>
       <CardStructure/>
+      <CardCondonacion/>
 
       {
         (!useSessions() & !session.state) 

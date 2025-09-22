@@ -2,23 +2,26 @@ import { useState } from "react";
 import "./CardStructure.css";
 import useStruct from "../../hooks/useStruct";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
-import useGenerateQuotes from "../../hooks/useGenerateQuotes";
+import useGenerateQuotes from "../../helpers/Credits/useGenerateQuotes";
+import { useStoreStructure } from "../../stores/useStoreStructure";
 
 export default function CardStructure(){
     
+    const store_structure=useStoreStructure();
+
     const [by_number_quote,setNumberQuote]=useState(0);
     const [by_amount_quote,setAmountQuote]=useState(0);
     const [agreement,setAgreement]=useState({
-        valor_cuota:0.00,
+        valor_cuota:store_structure.amount_fee,
         cuotas_pendientes:0,
         cuota:0,
         fecha:null,
-        credito:id,
-        cartera:cartera,
+        credito:store_structure.credit_id,
+        cartera:store_structure.cartera,
+        cobranza:store_structure.gasto_cobranza,
         status:'',
         detail:'',
-        original_dates:JSON.stringify(original_dates),
-        totalAmount:Number(total)+Number((status_cobranza!=='pay' | status_cobranza==true) ? cobranza : 0)
+        totalAmount:store_structure.total_amount
     });
 
     const handlerCleanAgreement=({value,parameter_name})=>{
@@ -34,10 +37,11 @@ export default function CardStructure(){
     };
 
     const [quote_detail,setQuoteDetail]=useState([]);
+    if(!store_structure.isViewOn) return <></>
 
     return (
         <div className="CardPay">
-            <button className="CardCondonacion__close" onClick={()=>{set()}}>Volver</button>
+            <button className="CardCondonacion__close" onClick={()=>{store_structure.viewOn(false)}}>Volver</button>
             <div className="CardStructure">
 
                 <p>Convenio de pago</p>
@@ -117,8 +121,7 @@ export default function CardStructure(){
                                 if(by_number_quote>0){
                                     await useGenerateQuotes({
                                         amount:agreement.totalAmount,
-                                        cobranza:cobranza,
-                                        status_cobranza:status_cobranza,
+                                        cobranza:agreement.cobranza,
                                         parameter_name:'number_quotes',
                                         parameter_value:by_number_quote,
                                         start_date:agreement.fecha,
@@ -127,8 +130,7 @@ export default function CardStructure(){
                                 }else{
                                     await useGenerateQuotes({
                                         amount:agreement.totalAmount,
-                                        cobranza:cobranza,
-                                        status_cobranza:status_cobranza,
+                                        cobranza:agreement.cobranza,
                                         parameter_name:'amount_quotes',
                                         parameter_value:by_amount_quote,
                                         start_date:agreement.fecha,
@@ -184,8 +186,7 @@ export default function CardStructure(){
                             valor_cuota:quote_detail[0].valor
                         }
                         
-                        const create_agreement=await useStruct(data,e.target,id);
-
+                        const create_agreement=await useStruct(data,e.target,store_structure.credit_id);
                     }}
                 >Guardar cambios</button> 
 

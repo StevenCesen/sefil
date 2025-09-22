@@ -8,7 +8,7 @@ export default function Gconvenios(){
     const [loading,setLoading]=useState();
     const [filters,setFilters]=useState();
     
-    const getFilter=({agente,ult_date,pend_date,nro_cuotas,cartera,state})=>{
+    const getFilter=({agente,ult_date,pend_date,nro_cuotas,cartera,state,name,ci})=>{
         let filter="";
 
         if(agente!==""){
@@ -34,6 +34,14 @@ export default function Gconvenios(){
 
         if(state!==""){
             filter+=`&state=${state}`;
+        }
+
+        if(name!==""){
+            name+=`&name=${name}`;
+        }
+
+        if(ci!==""){
+            ci+=`&ci=${ci}`;
         }
         
         filter=filter.substring(1);
@@ -94,7 +102,10 @@ export default function Gconvenios(){
             pend_date:"",
             nro_cuotas:"",
             cartera:"",
-            state:''
+            state:'',
+            sync_id:'',
+            name:'',
+            ci:''
         });
 
         fetch(`${import.meta.env.VITE_URL_BASE}/pruebaconvenios`,{
@@ -138,8 +149,12 @@ export default function Gconvenios(){
                     
                     <div className="Convenios__head">
                         <label>Crédito</label>
-                        <label>Titular</label>
-                        <label>Cédula</label>
+                        <label>Titular
+                            <input type="text" placeholder="Nombre"/>
+                        </label>
+                        <label>Cédula
+                            <input type="text" placeholder="Cédula"/>
+                        </label>
                         <label>
                             Agente convenio
                             <select

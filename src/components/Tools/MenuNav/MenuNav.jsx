@@ -3,6 +3,7 @@ import NavigationToggle from "../NavigationToggle/NavigationToggle";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import SectionManagement from "../../Management/SectionManagement/SectionManagement";
 import SectionPayments from "../../Management/SectionPayments/SectionPayments";
+import SectionNotes from "../../Management/SectionNotes/SectionNotes";
 
 export default function MenuNav({options}){
 
@@ -42,10 +43,14 @@ export default function MenuNav({options}){
                         <SectionManagement
                             managements={store_management.managements}
                         />
-                    :   
-                        <SectionPayments
-                            payments={store_management.payments}
-                        />
+                    :   (store_management.section==='PAYMENTS')
+                        ?
+                            <SectionPayments
+                                payments={store_management.payments}
+                            />
+                        :   <SectionNotes
+                                notes={store_management.notes}
+                            />  
                 }
             </div>
         </div>

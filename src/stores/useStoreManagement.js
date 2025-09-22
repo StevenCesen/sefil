@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import getListPhones from '../helpers/Calls/getListPhones';
 import getListManagements from '../helpers/Managements/getListManagements';
 import getListPayments from '../helpers/Payments/getListPayments';
+import getListNotes from '../helpers/Managements/getListNotes';
 
 export const useStoreManagement = create((set,get) => ({
     credit:null,
@@ -27,6 +28,7 @@ export const useStoreManagement = create((set,get) => ({
     phones:null,
     managements:null,
     payments:null,
+    notes:null,
     section:'MANAGEMENTS',
 
     setClient:({client_name,client_ci,client_type,credit_id})=>{
@@ -38,7 +40,7 @@ export const useStoreManagement = create((set,get) => ({
     setView:     (value)=>{set({view_panel:value})},
     setCredit:     (value)=>{
         
-        const {setPhones,setManagements,setPayments}=get();
+        const { setPhones,setManagements,setPayments,setNotes }=get();
 
         set({credit:value}),
         set({credit_id:value.id})
@@ -55,6 +57,8 @@ export const useStoreManagement = create((set,get) => ({
 
         setManagements();
         setPayments();
+        setNotes();
+    
     },
     setState:     (value)=>{set({state_gestion:value})},
     setSubstate:     (value)=>{set({substate_gestion:value})},
@@ -104,6 +108,11 @@ export const useStoreManagement = create((set,get) => ({
         const {cartera,credit_id}=get();
         const payments=await getListPayments({credit_id,cartera});
         set({payments:payments});
+    },
+    setNotes: async () =>{
+        const {cartera,credit_id}=get();
+        const notes=await getListNotes({credit_id,cartera});
+        set({notes:notes});
     },
     setIdCall:(call)=>{
         const {id_calls_extras}=get();

@@ -1,0 +1,22 @@
+.NavMetrics{
+    width: 300px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    border: 1px solid rgb(247, 200, 70);
+    background-color: rgb(254, 255, 175);
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.NavMetrics>p{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    color: rgba(204, 152, 8, 1);
+}

@@ -1,29 +1,29 @@
 import { useEffect, useState } from "react";
 import "./CardCondonacion.css";
 import useCondonation from "../../hooks/useCondonation";
+import { useStoreCondonation } from "../../stores/useStoreCondonation";
 
-export default function CardCondonacion({total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,otros_valores,set,id,cartera,setData,view,update}){
-
+export default function CardCondonacion(){
     const [credit,setValues]=useState();
-    const [totalCondonado,setTotal]=useState(0);
+    const store_condonation=useStoreCondonation();
     
     useEffect(()=>{
         setValues({
-            capital:capital,
-            mora:(mora>0) ? mora : 0,
-            interes:(interes>0) ? interes : 0,
-            seguro_desgravamen:(seguro_desgravamen>0) ? seguro_desgravamen : 0,
-            gastos_judiciales:(gastos_judiciales>0) ? gastos_judiciales : 0,
-            gastos_cobranza:(gastos_cobranza>0) ? gastos_cobranza : 0,
-            otros_valores:(otros_valores>0) ? otros_valores : 0
+            capital:store_condonation.capital,
+            mora:(store_condonation.mora>0) ? store_condonation.mora : 0,
+            interes:(store_condonation.interes>0) ? store_condonation.interes : 0,
+            seguro_desgravamen:(store_condonation.seguro_desgravamen>0) ? store_condonation.seguro_desgravamen : 0,
+            gastos_judiciales:(store_condonation.gastos_judiciales>0) ? store_condonation.gastos_judiciales : 0,
+            gastos_cobranza:(store_condonation.gastos_cobranza>0) ? store_condonation.gastos_cobranza : 0,
+            otros_valores:(store_condonation.otros_valores>0) ? store_condonation.otros_valores : 0
         });
     },[]);
 
-    if(!credit) return <></>
-
+    if(!store_condonation.isViewOn) return <></>
+    
     return (
         <div className="CardPay">
-            <button className="CardCondonacion__close" onClick={()=>{set()}}>Volver</button>
+            <button className="CardCondonacion__close" onClick={()=>{ store_condonation.viewOn(false) }}>Volver</button>
             <div className="CardCondonacion">
                 <p>Condonación</p>
                 <div className="CardCondonacion__content">
@@ -33,67 +33,67 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                         <p>Valor condonado</p> 
                         <p>Valor a cancelar</p>
                     </div>
-
+                    
                     <div>
                         <p>Capital</p>
-                        <p>$ {capital} USD</p>
+                        <p>$ {store_condonation.capital} USD</p>
                         <input type="number" onChange={(e)=>{setValues({
                             ...credit,
-                            capital:(Number(capital)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                            capital:(Number(store_condonation.capital)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.capital} USD</p>
                     </div>
                     <div>
                         <p>Interés</p>
-                        <p>$ {interes} USD</p>
+                        <p>$ {store_condonation.interes} USD</p>
                         <input type="number" onChange={(e)=>{setValues({
                             ...credit,
-                            interes:(Number(interes)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                            interes:(Number(store_condonation.interes)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.interes} USD</p>
                     </div>
                     <div>
                         <p>Mora</p>
-                        <p>$ {mora} USD</p>
+                        <p>$ {store_condonation.mora} USD</p>
                         <input type="number" onChange={(e)=>{setValues({
                             ...credit,
-                            mora:(Number(mora)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                            mora:(Number(store_condonation.mora)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.mora} USD</p>
                     </div>
                     <div>
                         <p>Seguro desgravamen</p>
-                        <p>$ {seguro_desgravamen} USD</p>
+                        <p>$ {store_condonation.seguro_desgravamen} USD</p>
                         <input type="number" onChange={(e)=>{setValues({
                             ...credit,
-                            seguro_desgravamen:(Number(seguro_desgravamen)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                            seguro_desgravamen:(Number(store_condonation.seguro_desgravamen)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.seguro_desgravamen} USD</p>
                     </div>
                     <div>
                         <p>Gastos judiciales</p>
-                        <p>$ {gastos_judiciales} USD</p>
+                        <p>$ {store_condonation.gastos_judiciales} USD</p>
                         <input type="number" onChange={(e)=>{setValues({
                             ...credit,
-                            gastos_judiciales:(Number(gastos_judiciales)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                            gastos_judiciales:(Number(store_condonation.gastos_judiciales)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.gastos_judiciales} USD</p>
                     </div>
                     <div>
                         <p>Gastos de cobranza</p>
-                        <p>$ {gastos_cobranza} USD</p>
+                        <p>$ {store_condonation.gastos_cobranza} USD</p>
                         <input type="number" onChange={(e)=>{setValues({
                             ...credit,
-                            gastos_cobranza:(Number(gastos_cobranza)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                            gastos_cobranza:(Number(store_condonation.gastos_cobranza)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.gastos_cobranza} USD</p>
                     </div>
                     <div>
                         <p>Otros valores</p>
-                        <p>$ {otros_valores} USD</p>
+                        <p>$ {store_condonation.otros_valores} USD</p>
                         <input type="number" onChange={(e)=>{setValues({
                             ...credit,
-                            otros_valores:(Number(otros_valores)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
+                            otros_valores:(Number(store_condonation.otros_valores)-Number(e.target.value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
                         })}} placeholder="0.00" min={0} step={0.1}/>
                         <p>$ {credit.otros_valores} USD</p>
                     </div>
@@ -101,9 +101,9 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
 
                 <div className="CardCondonacion__result">
                     <p>Total condonado:</p>
-                    <p>$ {(total-(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
+                    <p>$ {(Number(store_condonation.total)-(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
                 </div>
-
+                
                 <div className="CardCondonacion__result">
                     <p>Total a cancelar:</p>
                     <p>$ {(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}</p>
@@ -116,13 +116,13 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
 
                         const data={
                             prevDates:JSON.stringify({
-                                mora:(mora>0) ? mora : 0,
-                                interes:(interes>0) ? interes : 0,
-                                capital:capital,
-                                seguro_desgravamen:(seguro_desgravamen>0) ? seguro_desgravamen : 0,
-                                gastos_cobranza:(gastos_cobranza>0) ? gastos_cobranza : 0,
-                                gastos_judiciales:(gastos_judiciales>0) ? gastos_judiciales : 0,
-                                otros_valores:(otros_valores>0) ? otros_valores : 0
+                                mora:(store_condonation.mora>0) ? store_condonation.mora : 0,
+                                interes:(store_condonation.interes>0) ? store_condonation.interes : 0,
+                                capital:store_condonation.capital,
+                                seguro_desgravamen:(store_condonation.seguro_desgravamen>0) ? store_condonation.seguro_desgravamen : 0,
+                                gastos_cobranza:(store_condonation.gastos_cobranza>0) ? store_condonation.gastos_cobranza : 0,
+                                gastos_judiciales:(store_condonation.gastos_judiciales>0) ? store_condonation.gastos_judiciales : 0,
+                                otros_valores:(store_condonation.otros_valores>0) ? store_condonation.otros_valores : 0
                             }),
                             postDates:JSON.stringify(credit),
                             totalAmount:String(Number(credit.capital)+Number(credit.mora)+Number(credit.interes)+Number(credit.seguro_desgravamen)+Number(credit.gastos_cobranza)+Number(credit.gastos_judiciales)+Number(credit.otros_valores)),
@@ -133,16 +133,16 @@ export default function CardCondonacion({total,capital,mora,interes,seguro_desgr
                             gastos_cobranza:credit.gastos_cobranza,
                             gastos_judiciales:credit.gastos_judiciales,
                             otros_valores:(credit.otros_valores>0) ? credit.otros_valores : 0,
-                            credito:Number(id),
-                            cartera:cartera
+                            credito:Number(store_condonation.id),
+                            cartera:store_condonation.cartera
                         }
                         /*
                         ================================ AUTORIZACIÓN ==================================
                         => Si lo hace un usuario administrador, la condonación se aplica directamente
                         => Si lo hace un agente de cobranza o gestión, la condonación se aplica cuando un usuario administrador la autorice
                         */
-                        useCondonation(data,e.target,id,setData,view,set,update);
-                        
+                       console.log(data);
+                        //useCondonation(data,e.target,store_condonation.id);
                     }}
                 >Guardar condonación</button>
             </div>
