@@ -4,7 +4,7 @@
     display: grid;
     grid-template-columns: 10% 10% 10% 10% 10% 10% 40%;
     align-items: center;
-    font-size: 12px;
+    font-size: 14px;
     text-align: center;
 }
 

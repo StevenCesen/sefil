@@ -17,7 +17,7 @@ export default function CardCondonacion(){
             gastos_cobranza:(store_condonation.gastos_cobranza>0) ? store_condonation.gastos_cobranza : 0,
             otros_valores:(store_condonation.otros_valores>0) ? store_condonation.otros_valores : 0
         });
-    },[]);
+    },[store_condonation]);
 
     if(!store_condonation.isViewOn) return <></>
     

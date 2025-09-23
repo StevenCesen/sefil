@@ -8,7 +8,7 @@ export const useStoreStructure = create((set) => ({
     credit_id:0,
     cartera:'',
     type:'automatico',
-    total_fees:1,
+    total_fees:0,
     amount_fee:0,
     fees:[],
     viewOn:(value)=>{set({isViewOn:value})},

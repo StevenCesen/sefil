@@ -8,16 +8,21 @@ export default function Gconvenios(){
     const [loading,setLoading]=useState();
     const [filters,setFilters]=useState();
     
-    const getFilter=({agente,ult_date,pend_date,nro_cuotas,cartera,state,name,ci})=>{
+    const getFilter=({agente,start_date,end_date,pend_date,nro_cuotas,cartera,state,name,ci})=>{
         let filter="";
 
         if(agente!==""){
             filter+=`&agente=${agente}`;
         }
 
-        if(ult_date!==""){
-            ult_date=ult_date.replaceAll('-','/');
-            filter+=`&ult_date=${ult_date}`;
+        if(start_date!==""){
+            start_date=start_date.replaceAll('-','/');
+            filter+=`&start_date=${start_date}`;
+        }
+
+        if(end_date!==""){
+            end_date=end_date.replaceAll('-','/');
+            filter+=`&end_date=${end_date}`;
         }
 
         if(pend_date!==""){
@@ -37,27 +42,32 @@ export default function Gconvenios(){
         }
 
         if(name!==""){
-            name+=`&name=${name}`;
+            filter+=`&name=${name}`;
         }
 
         if(ci!==""){
-            ci+=`&ci=${ci}`;
+            filter+=`&ci=${ci}`;
         }
         
         filter=filter.substring(1);
         return filter;
     }
 
-    const updateFilter=({agente,ult_date,pend_date,nro_cuotas,cartera,state})=>{
+    const updateFilter=({agente,start_date,end_date,pend_date,nro_cuotas,cartera,state,name,ci})=>{
         let filter="";
 
         if(agente!==""){
             filter+=`&agente=${agente}`;
         }
 
-        if(ult_date!==""){
-            ult_date=ult_date.replaceAll('-','/');
-            filter+=`&ult_date=${ult_date}`;
+        if(start_date!==""){
+            start_date=start_date.replaceAll('-','/');
+            filter+=`&start_date=${start_date}`;
+        }
+        
+        if(end_date!==""){
+            end_date=end_date.replaceAll('-','/');
+            filter+=`&end_date=${end_date}`;
         }
 
         if(pend_date!==""){
@@ -75,9 +85,19 @@ export default function Gconvenios(){
         if(state!==""){
             filter+=`&state=${state}`;
         }
+
+        if(name!==""){
+            filter+=`&name=${name}`;
+        }
+
+        if(ci!==""){
+            filter+=`&ci=${ci}`;
+        }
         
         filter=filter.substring(1);
         
+        console.log(filter)
+
         setLoading(true);
 
         fetch(`${import.meta.env.VITE_URL_BASE}/pruebaconvenios?${filter}`,{
@@ -98,7 +118,8 @@ export default function Gconvenios(){
         setLoading(true);
         setFilters({
             agente:"",
-            ult_date:"",
+            start_date:"",
+            end_date:"",
             pend_date:"",
             nro_cuotas:"",
             cartera:"",
@@ -139,7 +160,8 @@ export default function Gconvenios(){
                 <div className="Templates__init">
                     <h4 className="Reports__title">Estado de convenios</h4>
                     <a href={`${import.meta.env.VITE_URL_BASE}/GenConvenios?${getFilter({agente:filters.agente,
-                                        ult_date:filters.ult_date,
+                                        start_date:filters.start_date,
+                                        end_date:filters.end_date,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:filters.nro_cuotas,
                                         cartera:filters.cartera,
@@ -150,10 +172,50 @@ export default function Gconvenios(){
                     <div className="Convenios__head">
                         <label>Crédito</label>
                         <label>Titular
-                            <input type="text" placeholder="Nombre"/>
+                            <input type="text" placeholder="Nombre"
+                                value={filters.name}
+                                onChange={(e)=>{
+                                    setFilters({
+                                        ...filters,
+                                        name:e.target.value
+                                    });
+
+                                    updateFilter({
+                                        agente:filters.agente,
+                                        end_date:filters.end_date,
+                                        start_date:filters.start_date,
+                                        pend_date:filters.pend_date,
+                                        nro_cuotas:filters.nro_cuotas,
+                                        cartera:filters.cartera,
+                                        state:filters.state,
+                                        name:e.target.value,
+                                        ci:filters.ci
+                                    });
+                                }}
+                            />
                         </label>
                         <label>Cédula
-                            <input type="text" placeholder="Cédula"/>
+                            <input type="text" placeholder="Cédula"
+                                value={filters.ci}
+                                onChange={(e)=>{
+                                    setFilters({
+                                        ...filters,
+                                        ci:e.target.value
+                                    });
+
+                                    updateFilter({
+                                        agente:filters.agente,
+                                        end_date:filters.end_date,
+                                        start_date:filters.start_date,
+                                        pend_date:filters.pend_date,
+                                        nro_cuotas:filters.nro_cuotas,
+                                        cartera:filters.cartera,
+                                        state:filters.state,
+                                        ci:e.target.value,
+                                        name:filters.name
+                                    });
+                                }}
+                            />
                         </label>
                         <label>
                             Agente convenio
@@ -167,11 +229,14 @@ export default function Gconvenios(){
 
                                     updateFilter({
                                         agente:e.target.value,
-                                        ult_date:filters.ult_date,
+                                        end_date:filters.end_date,
+                                        start_date:filters.start_date,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:filters.nro_cuotas,
                                         cartera:filters.cartera,
-                                        state:filters.state
+                                        state:filters.state,
+                                        ci:filters.ci,
+                                        name:filters.name
                                     });
                                 }}
                             >
@@ -184,26 +249,53 @@ export default function Gconvenios(){
                             </select>
                         </label>
                         <label>
-                            Fecha creación
-                            <input 
-                                type="date"
-                                value={filters.ult_date}
-                                onChange={(e)=>{
-                                    setFilters({
-                                        ...filters,
-                                        ult_date:e.target.value
-                                    });
+                            Período
+                            <div>
+                                <input 
+                                    type="date"
+                                    value={filters.start_date}
+                                    onChange={(e)=>{
+                                        setFilters({
+                                            ...filters,
+                                            start_date:e.target.value
+                                        });
 
-                                    updateFilter({
-                                        agente:filters.agente,
-                                        ult_date:e.target.value,
-                                        pend_date:filters.pend_date,
-                                        nro_cuotas:filters.nro_cuotas,
-                                        cartera:filters.cartera,
-                                        state:filters.state
-                                    });
-                                }}
-                            />
+                                        updateFilter({
+                                            agente:filters.agente,
+                                            start_date:e.target.value,
+                                            end_date:filters.end_date,
+                                            pend_date:filters.pend_date,
+                                            nro_cuotas:filters.nro_cuotas,
+                                            cartera:filters.cartera,
+                                            state:filters.state,
+                                            ci:filters.ci,
+                                            name:filters.name
+                                        });
+                                    }}
+                                />
+                                <input 
+                                    type="date"
+                                    value={filters.end_date}
+                                    onChange={(e)=>{
+                                        setFilters({
+                                            ...filters,
+                                            end_date:e.target.value
+                                        });
+
+                                        updateFilter({
+                                            agente:filters.agente,
+                                            end_date:e.target.value,
+                                            start_date:filters.start_date,
+                                            pend_date:filters.pend_date,
+                                            nro_cuotas:filters.nro_cuotas,
+                                            cartera:filters.cartera,
+                                            state:filters.state,
+                                            ci:filters.ci,
+                                            name:filters.name
+                                        });
+                                    }}
+                                />
+                            </div>
                         </label>
                         
                         <label>Total cuotas</label>
@@ -221,11 +313,14 @@ export default function Gconvenios(){
 
                                     updateFilter({
                                         agente:filters.agente,
-                                        ult_date:filters.ult_date,
+                                        end_date:filters.end_date,
+                                        start_date:filters.start_date,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:filters.nro_cuotas,
                                         cartera:e.target.value,
-                                        state:filters.state
+                                        state:filters.state,
+                                        ci:filters.ci,
+                                        name:filters.name
                                     });
                                 }}
                             >
@@ -246,11 +341,14 @@ export default function Gconvenios(){
 
                                     updateFilter({
                                         agente:filters.agente,
-                                        ult_date:filters.ult_date,
+                                        end_date:filters.end_date,
+                                        start_date:filters.start_date,
                                         pend_date:filters.pend_date,
                                         nro_cuotas:filters.nro_cuotas,
                                         cartera:filters.cartera,
-                                        state:e.target.value
+                                        state:e.target.value,
+                                        ci:filters.ci,
+                                        name:filters.name
                                     });
                                 }}
                             >
@@ -265,7 +363,7 @@ export default function Gconvenios(){
 
                     {
                         convenios.map((convenio,index)=>(
-                            <div className="Convenios__item" key={index}>
+                            <div className="Convenios__item" style={{backgroundColor:`${(convenio.cuotas_pendientes>0 && convenio.status=='Convenio vigente') ? "#FFA191" : ""}`}} key={index}>
                                 <NavLink to={`/dashboard/recaudacion/view/${convenio.cartera}?id=${convenio.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{convenio.cartera}-{convenio.credito}</NavLink>
                                 <label>{convenio.titular}</label>
                                 <label>{convenio.cedula}</label>

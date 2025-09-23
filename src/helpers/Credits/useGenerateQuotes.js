@@ -58,7 +58,7 @@ export default async function useGenerateQuotes({
 
         //  Generamos un array vacío para llenar los valores de las cuotas
         const arr=await useFadeArray((parameter_value-2));
-
+        
         const check_sum=cobranza+first_quote_value+quote_value*(arr.length);
         
         //  Generamos los valores

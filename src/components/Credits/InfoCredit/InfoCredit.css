@@ -6,7 +6,7 @@
     background-color: var(--bg-2);
 }
 .InfoCredit>h4{
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 20px;
 }
 
@@ -19,5 +19,5 @@
 }
 
 .InfoCredit>div{
-    font-size: 12px;
+    font-size: 14px;
 }

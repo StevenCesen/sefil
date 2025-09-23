@@ -26,13 +26,13 @@
 
 
 .InfoPending>div>p{
-    font-size: 12px;
+    font-size: 16px;
     margin-top: 10px;
     text-align: center;
 }
 
 .InfoPending>div>h3{
-    font-size: 16px;
+    font-size: 18px;
     text-align: center;
     margin-top: 10px;
 }

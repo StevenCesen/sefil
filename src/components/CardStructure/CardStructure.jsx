@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./CardStructure.css";
 import useStruct from "../../hooks/useStruct";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
@@ -11,18 +11,7 @@ export default function CardStructure(){
 
     const [by_number_quote,setNumberQuote]=useState(0);
     const [by_amount_quote,setAmountQuote]=useState(0);
-    const [agreement,setAgreement]=useState({
-        valor_cuota:store_structure.amount_fee,
-        cuotas_pendientes:0,
-        cuota:0,
-        fecha:null,
-        credito:store_structure.credit_id,
-        cartera:store_structure.cartera,
-        cobranza:store_structure.gasto_cobranza,
-        status:'',
-        detail:'',
-        totalAmount:store_structure.total_amount
-    });
+    const [agreement,setAgreement]=useState({});
 
     const handlerCleanAgreement=({value,parameter_name})=>{
         if(parameter_name==='number'){
@@ -37,6 +26,22 @@ export default function CardStructure(){
     };
 
     const [quote_detail,setQuoteDetail]=useState([]);
+
+    useEffect(()=>{
+        setAgreement({
+        valor_cuota:store_structure.amount_fee,
+        cuotas_pendientes:0,
+        cuota:0,
+        fecha:null,
+        credito:store_structure.credit_id,
+        cartera:store_structure.cartera,
+        cobranza:store_structure.gasto_cobranza,
+        status:'',
+        detail:'',
+        totalAmount:store_structure.total_amount
+    });
+    },[store_structure]);
+
     if(!store_structure.isViewOn) return <></>
 
     return (

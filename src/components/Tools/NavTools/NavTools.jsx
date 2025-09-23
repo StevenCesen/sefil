@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./NavTools.css";
 import { ToolCase } from "lucide-react";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
@@ -22,7 +22,6 @@ export default function NavTools(){
                 ?
                     <div className="NavTools__menu">
                         <button onClick={()=>{
-                            store_condonation.viewOn(true);
                             store_condonation.setInfoCredit({
                                 total:credit.credit.total_amount-credit.credit.gasto_cobranza_sefil,
                                 capital:credit.credit.saldo_capital,
@@ -30,41 +29,44 @@ export default function NavTools(){
                                 interes:credit.credit.interes,
                                 seguro_desgravamen:credit.credit.seguro_desgravamen,
                                 gastos_judiciales:credit.credit.gastos_judiciales,
-                                gastos_cobranza:credit.credit.gasto_cobranza,
+                                gastos_cobranza:credit.credit.gastos_cobranza,
                                 otros_valores:credit.credit.otros_valores,
                                 id:credit.credit.id,
                                 cartera:credit.cartera
                             });
-                        }}>Condonación</button>
-                        <button onClick={async ()=>{
-                            //  Verificar si no existe convenio
-                            const check = await useVerifyStruct({
-                                credit_id:credit.credit.id,
-                                cartera:credit.cartera
-                            });
 
-                            if(check){
-                                store_structure.viewOn(true);
-                                store_structure.setInfoCredit({
-                                    total_amount:credit.credit.total_amount,
-                                    cartera:credit.cartera,
-                                    credit_id:credit.credit.id,
-                                    gasto_cobranza:credit.credit.gasto_cobranza_sefil
-                                });
-                            }else{
-                                sendpush({
-                                    title:'ERR: Convenio anterior.',
-                                    message:'Este crédito ya tuvo un convenio, revisa el estado.',
-                                    type:'Push--danger',
-                                    timeout:5000
-                                });
-                            }
-                        }} >Convenio de pago</button>
+                            store_condonation.viewOn(true);
+
+                        }}>Condonación</button>
+
                         {
                             (credit.credit.collection_state==='CONVENIO DE PAGO')
                             ?
                                 <button>Ver convenio</button>
-                            :   <></>
+                            :   
+                                <button onClick={async ()=>{
+                                    const check = await useVerifyStruct({
+                                        credit_id:credit.credit.id,
+                                        cartera:credit.cartera
+                                    });
+
+                                    if(check){
+                                        store_structure.viewOn(true);
+                                        store_structure.setInfoCredit({
+                                            total_amount:credit.credit.total_amount,
+                                            cartera:credit.cartera,
+                                            credit_id:credit.credit.id,
+                                            gasto_cobranza:credit.credit.gasto_cobranza_sefil
+                                        });
+                                    }else{
+                                        sendpush({
+                                            title:'ERR: Convenio anterior.',
+                                            message:'Este crédito ya tuvo un convenio, revisa el estado.',
+                                            type:'Push--danger',
+                                            timeout:5000
+                                        });
+                                    }
+                                }} >Convenio de pago</button>
                         }
                     </div>
                 :   <></>
