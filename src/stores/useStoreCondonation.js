@@ -30,5 +30,6 @@ export const useStoreCondonation = create((set) => ({
         set({setData})
         set({view})
         set({update})
+        set({isViewOn:true})
     }
 }));

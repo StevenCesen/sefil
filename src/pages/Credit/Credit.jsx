@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import MenuNav from "../../components/Tools/MenuNav/MenuNav";
 import CardActions from "../../components/Credits/CardActions/CardActions";
@@ -10,10 +10,15 @@ import InfoValues from "../../components/Credits/InfoValues/InfoValues";
 import InfoPending from "../../components/Credits/InfoPending/InfoPending";
 import InfoFees from "../../components/Credits/InfoFees/InfoFees";
 import CardClient from "../../components/Credits/CardClient/CardClient";
+import CardPay from "../../components/CardPay/CardPay";
+import CardConfirm from "../../components/CardConfirm/CardConfirm";
+import { useStoreCondonation } from "../../stores/useStoreCondonation";
 
 export default function Credit(){
     const params=useParams();
     const credit=useStoreManagement();
+    const store_condonation=useStoreCondonation();
+    const [action,setAction]=useState('');
     
     const attributes=new URLSearchParams(useLocation().search);
 
@@ -25,7 +30,26 @@ export default function Credit(){
 
     useEffect(()=>{
         helperCredit({credit_id:params.id,cartera:attributes.get('cartera')});
-    },[]);
+
+        if(action==='GEN_CONDONATION'){
+            store_condonation.setInfoCredit({
+                total:credit.credit.total_amount-credit.credit.gasto_cobranza_sefil,
+                capital:credit.credit.saldo_capital,
+                mora:credit.credit.mora,
+                interes:credit.credit.interes,
+                seguro_desgravamen:credit.credit.seguro_desgravamen,
+                gastos_judiciales:credit.credit.gastos_judiciales,
+                gastos_cobranza:credit.credit.gastos_cobranza,
+                otros_valores:credit.credit.otros_valores,
+                id:credit.credit.id,
+                cartera:credit.cartera
+            });
+        }else if(action==='GEN_CONVENIO'){
+
+        }else if(action==='GEN_JUDICIAL'){
+
+        }
+    },[action]);
 
     if(!credit.credit) return <></>
 
@@ -95,8 +119,8 @@ export default function Credit(){
                     </div>
                 </div>
                 
-                <CardActions/>
-
+                <CardActions setAction={setAction}/>
+                
                 <MenuNav
                     options={[
                         {
@@ -116,6 +140,37 @@ export default function Credit(){
                         }
                     ]}
                 />
+
+                {
+                    (action==='PAY_CREDIT')
+                    ?
+                        
+                        <CardPay
+                            setView={setAction} 
+                            credit={credit} 
+                            updateInfoValues={()=>{}}
+                        />
+
+                    :   (action==='PAY_GASTO')
+                        ?
+                            
+                            <CardConfirm
+                                id={credit.credit.id}
+                                cartera={credit.cartera}
+                                value={credit.credit.gasto_cobranza_sefil}
+                                email={''}
+                                name={credit.credit.name}
+                                ci={credit.credit.ci}
+                                direccion={''}
+                                telefono={''}
+                                setGastos={()=>{}}
+                                setView={()=>{}}
+                                setPDF={()=>{}}
+                            />
+
+                        :   <></>
+                }
+
             </div>
         </div>
     );
