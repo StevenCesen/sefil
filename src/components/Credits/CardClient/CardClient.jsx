@@ -4,9 +4,8 @@ import { useStoreManagement } from "../../../stores/useStoreManagement";
 import "./CardClient.css";
 import { useStoreEmail } from "../../../stores/useStoreEmail";
 import ClickToCopy from "../../../helpers/ClickToCopy";
-import { useState } from "react";
 
-export default function CardClient({credit_id,name,ci,sector_economico,days_past_due,type,total_amount,is_active,setActive}){
+export default function CardClient({credit_id,name,ci,sector_economico,type,actions}){
 
     const store_management=useStoreManagement();
     const store_email=useStoreEmail();
@@ -49,18 +48,23 @@ export default function CardClient({credit_id,name,ci,sector_economico,days_past
             <div>
                 <span className="CardClient__sector">Sector económico: {sector_economico}</span>
                 <span className={`${(type==='TITULAR') ? 'CardClient--titular' : 'CardClient--garante'}`} onClick={()=>{handleCopy({text:`${name} | ${type} ${ci}`})}}>{type}</span>
-                <button onClick={()=>{
-                    store_email.setContact({
-                        name,
-                        type,
-                        view:true,
-                        days_past_due,
-                        total_amount
-                    });
-                    console.log(store_email);
-                }} title='Enviar correo electrónico a este cliente'>
-                    <Mail size={18}/>
-                </button>
+                {
+                    (actions)
+                    ?
+                        <button onClick={()=>{
+                            store_email.setContact({
+                                name,
+                                type,
+                                view:true,
+                                days_past_due,
+                                total_amount
+                            });
+                            console.log(store_email);
+                            }} title='Enviar correo electrónico a este cliente'>
+                            <Mail size={18}/>
+                        </button>
+                    :   <></>
+                }
             </div>
         </div>
     );

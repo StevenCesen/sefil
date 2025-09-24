@@ -25,6 +25,7 @@ export default function CardSelectStateCall() {
         data_call.append('state_call',store_call.state_call);
         data_call.append('duration_call',Number(store_call.duration));
         data_call.append('phone',store_call.phone_number);
+        data_call.append('channel',store_call.channel);
         data_call.append('id_credit',store_call.credit_id);
         data_call.append('id_campain',store_call.campain_id);
 

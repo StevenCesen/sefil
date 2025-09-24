@@ -1,11 +1,18 @@
 import useFormatterNumber from "../../hooks/useFormatterNumber";
+import { useViewStruct } from "../../stores/useViewStruct";
 import "./CardViewConvenio.css";
 
-export default function CardViewConvenio({restruct}){
-    return (
-        <div className="DetailCredit__activity" style={{width:"50%",overflowY:"auto",height:"400px"}}>
+export default function CardViewConvenio(){
+    const store_structure=useViewStruct();
 
-            <span style={{fontSize:"18px"}}>Convenio realizado: {restruct.fecha}</span>
+    if(!store_structure.isViewOn) return <></>
+    
+    const restruct = store_structure.struct;
+    
+    return (
+        <div className="DetailCredit__activity">
+            <div>
+                <span style={{fontSize:"18px"}}>Convenio realizado: {restruct.fecha}</span>
             <div style={{marginTop:"10px",borderTop:"1px solid grey",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
                 <div style={{display:"grid",textAlign:"center",justifyContent:"center",alignItems:"center",gridTemplateColumns:"10% 30% 30% 30%",height:"30px",borderBottom:"1px solid grey"}}>
                     <p style={{fontSize:"14px",fontWeight:"bold"}}>Nro.</p>
@@ -29,6 +36,8 @@ export default function CardViewConvenio({restruct}){
                     ))
                 }
             </div>
+            </div>
+            <button onClick={()=>{store_structure.viewOn(false)}}>Volver</button>
         </div>
     );
 }

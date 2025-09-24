@@ -405,7 +405,7 @@ export default function DetailCredit(){
                     }
                     {
                         credit.restructs.map((restruct,index)=>(
-                            <div className="DetailCredit__activity" key={index}>
+                            <div className="DetailCredit__activity2" key={index}>
                                 <p key={index}>Convenio solicitado por: {restruct.byUser}</p>
                                 <p key={index}> {(restruct.status==='autorizado') ? "Autorizado por M. Bravo" : (restruct.status==='rechazado' | restruct.status==='anulado') ? `CONVENIO ${restruct.status.toUpperCase()}` : "Pendiente de autorizar"}</p>
                                 <span>Creado: {restruct.fecha}</span>

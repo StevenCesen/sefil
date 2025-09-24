@@ -6,6 +6,8 @@ import { useStoreStructure } from "../../../stores/useStoreStructure";
 import { useStoreCondonation } from "../../../stores/useStoreCondonation";
 import useVerifyStruct from "../../../hooks/useVerifyRestruct";
 import sendpush from "../../../helpers/sendpush";
+import getStruct from "../../../helpers/Credits/getStruct";
+import { useViewStruct } from "../../../stores/useViewStruct";
 
 export default function NavTools(){
     
@@ -13,6 +15,7 @@ export default function NavTools(){
     const credit=useStoreManagement();
     const store_structure=useStoreStructure();
     const store_condonation=useStoreCondonation();
+    const view_structure=useViewStruct();
 
     return (
         <div className="NavTools">
@@ -42,7 +45,14 @@ export default function NavTools(){
                         {
                             (credit.credit.collection_state==='CONVENIO DE PAGO')
                             ?
-                                <button>Ver convenio</button>
+                                <button
+                                    onClick={async ()=>{
+                                        const struct = await getStruct({credit_id:credit.credit.id,cartera:credit.cartera});
+                                        
+                                        view_structure.setStruct(struct.data);
+                                        view_structure.viewOn(true);
+                                    }}
+                                >Ver convenio</button>
                             :   
                                 <button onClick={async ()=>{
                                     const check = await useVerifyStruct({

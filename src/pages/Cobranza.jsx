@@ -11,9 +11,6 @@ export default function Cobranza(){
 
     //Estados para filtro de búsqueda en cabecera
     const [type_client,setClient]=useState('TITULAR');
-    const [canton_input,setInput]=useState('');
-    const [canton,setCanton]=useState('all');
-    const [parroquia,setParroquia]=useState('all');
 
     const [credits,setCredits]=useState({
         current_page:1,
@@ -102,9 +99,6 @@ export default function Cobranza(){
     useEffect(()=>{
 
         setClient('TITULAR');
-        setInput('');
-        setCanton('all');
-        setParroquia('all');
 
         setFound([]);
         setReference("");
@@ -259,35 +253,6 @@ export default function Cobranza(){
                                     :   <></>
                             }
                         </label>
-
-                        {/* <label>
-                            Empresa
-                            <select value={aux_busines} onChange={(e)=>{
-                                if(e.target.value!=='default'){
-                                    setLoading(true);
-                                    setAux(e.target.value);
-                                    localStorage.setItem('cartera',e.target.value);
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${e.target.value}`,{
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            setCredits(data);
-                                            setLoading(false);
-                                        });
-                                }
-                            }}>
-                                    <option value={"default"}>--Seleccionar--</option>
-                                {
-                                    business.map((bus,index)=>(
-                                        <option key={index} value={bus.name}>{bus.name.toUpperCase()}</option>
-                                    ))
-                                }
-                            </select>
-                        </label> */}
                     </div>
             }
             <div className="pageConsulta__results">
@@ -365,18 +330,6 @@ export default function Cobranza(){
                                                     status:filter.status,
                                                     estado_credito:filter.collection_state
                                                 });
-
-                                                // fetch(`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=${localStorage.getItem('cartera')}`,{
-                                                //     headers: {
-                                                //         Accept: 'application/json',
-                                                //         Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                //     }
-                                                // })
-                                                //     .then((response) => response.json())  
-                                                //     .then((data) => {
-                                                //         setAgents(data);
-                                                //         setLoading(false);
-                                                //     });
                                             }
                                         }}
                                     >
@@ -448,7 +401,7 @@ export default function Cobranza(){
                             {
                                 credits.data.map((credit,index)=>(
                                     <div key={index}>
-                                        <NavLink to={`/dashboard/recaudacion/view/${credit.cartera}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
+                                        <NavLink to={`/credits/${credit.id}?cartera=${credit.cartera}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
                                         <p>{credit.cartera}-{credit.credito}</p>
                                         <p>{credit.tipo}</p>
                                         <p>{credit.name}</p>

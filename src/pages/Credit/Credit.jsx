@@ -9,6 +9,7 @@ import InfoCredit from "../../components/Credits/InfoCredit/InfoCredit";
 import InfoValues from "../../components/Credits/InfoValues/InfoValues";
 import InfoPending from "../../components/Credits/InfoPending/InfoPending";
 import InfoFees from "../../components/Credits/InfoFees/InfoFees";
+import CardClient from "../../components/Credits/CardClient/CardClient";
 
 export default function Credit(){
     const params=useParams();
@@ -26,27 +27,56 @@ export default function Credit(){
         helperCredit({credit_id:params.id,cartera:attributes.get('cartera')});
     },[]);
 
+    if(!credit.credit) return <></>
+
     return (
         <div className="Credit">
             <h2>Consulta de crédito</h2>
 
             <div className="Credit__sections">
                 <div className="Credit__sectionInfo">
-                    <InfoCredit
-                        sync_id={credit.credit.credito}
-                        agency={credit.credit.agency}
-                        frequency={credit.credit.frequency}
-                        due_date={credit.credit.due_date}
-                        collection_state={credit.credit.collection_state}
-                    />
+                    <div className="Credit__sectionClients">
+                        <InfoCredit
+                            sync_id={credit.credit.credito}
+                            agency={credit.credit.agency}
+                            frequency={credit.credit.frequency}
+                            due_date={credit.credit.due_date}
+                            collection_state={credit.credit.collection_state}
+                            //Información adicional
+                            info_extra={
+                                {
+                                    monthly_fee_amount:credit.credit.monthlyFeeAmount,
+                                    agent:credit.credit.agent,
+                                    sync_status:credit.credit.status
+                                }
+                            }
+                        />
+                        <div>
+                            {
+                                credit.credit.clients.map((client)=>(
+                                    <CardClient
+                                        key={client.ci}
+                                        name={client.name}
+                                        ci={client.ci}
+                                        type={client.type}
+                                        sector_economico={client.sector_economico}
+                                        credit_id={credit.id}
+                                        days_past_due={credit.days_past_due}
+                                        total_amount={credit.total_amount}
+                                        actions={false}
+                                    />
+                                ))
+                            }
+                        </div>
+                    </div>
                     <div className="Credit__sectionPending">
                         <InfoValues
                             capital={credit.credit.saldo_capital}
                             interest={credit.credit.interes}
                             mora={credit.credit.mora}
                             seguro={credit.credit.seguro_desgravamen}
-                            gasto_cobranza_sefil={credit.credit.gasto_cobranza}
-                            gasto_cobranza={credit.credit.gasto_cobranza}
+                            gasto_cobranza_sefil={credit.credit.gasto_cobranza_sefil}
+                            gasto_cobranza={credit.credit.gastos_cobranza}
                             gastos_judiciales={credit.credit.gastos_judiciales}
                             otros_valores={credit.credit.otros_valores}
                         />

@@ -16,7 +16,7 @@ export default function PanelManagement({}){
     const store_management=useStoreManagement();
     const credits=useStoreFilterManagement();
     const credit=store_management.credit;
-
+    
     if(!store_management.view_panel) return <></>
     
     return(
@@ -70,6 +70,7 @@ export default function PanelManagement({}){
                                 credit_id={credit.id}
                                 days_past_due={credit.days_past_due}
                                 total_amount={credit.total_amount}
+                                actions={true}
                             />
                         ))
                     }

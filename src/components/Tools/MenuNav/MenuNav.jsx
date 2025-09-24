@@ -48,9 +48,12 @@ export default function MenuNav({options}){
                             <SectionPayments
                                 payments={store_management.payments}
                             />
-                        :   <SectionNotes
-                                notes={store_management.notes}
-                            />  
+                        :   (store_management.section==='NOTES')
+                            ?
+                                <SectionNotes
+                                    notes={store_management.notes}
+                                />
+                            :   <></>
                 }
             </div>
         </div>

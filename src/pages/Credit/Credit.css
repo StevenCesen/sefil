@@ -6,6 +6,13 @@
     margin-top: 10px;
 }
 
+.Credit__sectionClients{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 10px;
+}
+
 .Credit__sectionPending{
     width: 100%;
     display: grid;

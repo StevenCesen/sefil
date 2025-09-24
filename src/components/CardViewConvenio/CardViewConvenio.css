@@ -1,0 +1,47 @@
+
+.DetailCredit__activity{
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 50px;
+    z-index: 2002;
+    background-color: rgba(0, 0, 0, 0.336);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.DetailCredit__activity2{
+
+}
+
+.DetailCredit__activity2>p,.DetailCredit__activity2>span{
+    display: block;
+    font-size: 14px;
+}
+
+.DetailCredit__activity2>p{
+    margin-bottom: 10px;
+}
+
+.DetailCredit__activity>div{
+    width: 400px;
+    padding: 10px 10px;
+    border-radius:10px;
+    background-color: white;
+}
+
+.DetailCredit__activity>button{
+    width: 100px;
+    height: 40px;
+    margin-top: 10px;
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background-color: var(--color-error);
+    color: var(--color-3);
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
