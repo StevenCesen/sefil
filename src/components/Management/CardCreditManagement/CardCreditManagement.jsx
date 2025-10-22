@@ -10,7 +10,7 @@ export default function CardCreditManagement({credit,index}){
     
     return(
         <div className="CardCreditManagement">
-            <ExternalLink onClick={()=>{
+            <ExternalLink onClick={async ()=>{
                 store_management.setNew();
                 store_management.setCredit(credit);
                 store_management.setView(true);

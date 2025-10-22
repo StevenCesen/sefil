@@ -1,3 +1,8 @@
+/**
+ * =====================================================
+ *                  ELIMINAR COMPONENTE
+ * =====================================================
+ */
 import { NavLink, useParams } from "react-router-dom";
 import "./pages.css";
 import CardCredit from "../components/CardCredit/CardCredit";
@@ -384,7 +389,7 @@ export default function Consulta(){
                     {
                         credits.data.map((credit,index)=>(
                             <div key={index}>
-                                <NavLink to={`/dashboard/recaudacion/view/${credit.cartera}?id=${credit.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
+                                <NavLink to={`/credits/${credit.id}?cartera=${credit.cartera}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{credit.id}</NavLink>
                                 <p>{credit.cartera}-{credit.credito}</p>
                                 <p>{credit.tipo}</p>
                                 <p>{credit.name}</p>
@@ -398,8 +403,6 @@ export default function Consulta(){
                             </div> 
                         ))
                     }
-
-
                 </div>
 
                 {

@@ -80,6 +80,17 @@ export default function NavSlide({actions,permission}){
             }
 
             {
+                (options.includes('Consulta:all') || options.includes('Cobranza:all'))
+                ?
+                    <NavLink to="credits" className="NavSlide__option">
+                        <img src="./icons/ic_round-search.png"/>
+                        <label>Créditos</label>
+                        <span>Créditos</span>
+                    </NavLink>
+                :   <></>
+            }
+
+            {/* {
                 (options.includes('Consulta:all')) ?
                     <NavLink to="dashboard/consulta" className="NavSlide__option">
                         <img src="./icons/ic_round-search.png"/>
@@ -90,14 +101,14 @@ export default function NavSlide({actions,permission}){
             }
 
             {
-                (options.includes('Cobranza:all')) ?
+                () ?
                     <NavLink to="dashboard/recaudacion" className="NavSlide__option">
                         <img src="./icons/solar_cart-bold.png"/>
                         <label>Recaudación</label>
                         <span>Recaudación</span>
                     </NavLink>
                 : <></>
-            }
+            } */}
 
             {
                 (options.includes('Direcciones:all')) ?

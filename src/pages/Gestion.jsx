@@ -11,15 +11,18 @@ import SelectNameCampain from "../components/Campains/SelectCampain/SelectNameCa
 import { useStoreTemplate } from "../stores/useStoreTemplates";
 import CardSendSMS from "../components/Contacts/CardSendSMS/CardSendSMS";
 import CardSendMail from "../components/Credits/CardSendMail/CardSendMail";
+import { useStoreLoader } from "../stores/useStoreLoader";
 
 export default function Gestion(){
-    const [loading,setLoading]=useState();
     const credits=useStoreFilterManagement();
     const store_templates=useStoreTemplate();
+    const loader = useStoreLoader();
 
     useEffect(()=>{
+        loader.viewOn(true);
         credits.numberTrays();
         store_templates.getTemplates();
+        loader.viewOn(false);
     },[]);
     
     return (
@@ -50,20 +53,31 @@ export default function Gestion(){
             ))}
 
             {credits.credits && (
-                <p className="Gestion__subtitle">
-                    Registros del {credits.credits.from} al {credits.credits.to} de un total de {credits.credits.total}
-                </p>
+                <div>
+                    <p className="Gestion__subtitle">
+                        Registros del {credits.credits.from} al {credits.credits.to} de un total de {credits.credits.total}
+                    </p>
+                    <div className="Gestion__navPagination">
+                        <button
+                            onClick={async ()=>{
+                                if(credits.credits.prev_page_url!==null){        
+                                    await credits.nextPage({url:credits.credits.prev_page_url});
+                                }
+                            }}
+                        >Anterior</button>
+                        <button
+                            onClick={async ()=>{
+                                if(credits.credits.next_page_url!==null){        
+                                    await credits.nextPage({url:credits.credits.next_page_url});
+                                }
+                            }}
+                        >Siguiente</button>
+                    </div>
+                </div>
             )}
 
             {
                 <PanelManagement/>
-            }
-
-            {
-                (loading)
-                ?
-                    <Loader/>
-                :   <></>
             }
         </div>
     );

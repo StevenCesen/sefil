@@ -13,7 +13,6 @@ export default function CardSendMail(){
         const send_email=await store_email.sendEmail();
 
         if(send_email.client_email!=='' || send_email.template!==''){
-            console.log(send_email);
             sendpush({
                 title:'Envío completado.',
                 message:'Se envío el correo electrónico.',
@@ -28,7 +27,6 @@ export default function CardSendMail(){
                 timeout:5000
             });
         }
-
         e.target.textContent=`Enviar correo`;
     }
 
@@ -65,6 +63,7 @@ export default function CardSendMail(){
                     Correo electrónico
                     <input 
                         type="email"
+                        value={store_email.client_email}
                         placeholder="user@domain.com"
                         onChange={(e)=>{
                             store_email.setEmail(e.target.value);

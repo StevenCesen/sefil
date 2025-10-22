@@ -3,7 +3,6 @@ import "./CardAssignCampain.css";
 import { useEffect } from "react";
 import FilterRange from "../FilterRange/FilterRange";
 import useAssignSearch from "../../hooks/useAssignSearch";
-import useFormatterNumber from "../../hooks/useFormatterNumber";
 import CardItemCharge from "../CardItemCharge/CardItemCharge";
 import useSearchCreditInDistribution from "../../hooks/useSearchCreditInDistribution";
 import CardItemErrorCharge from "../CardItemErrorCharge/CardItemErrorCharge";
@@ -467,9 +466,9 @@ export default function CardAssignCampain({data,updateCredits}){
                                 ref={busc}
                                 onChange={(e)=>{  
                                     useAssignSearch(
-                                        charge, // Esta es la data que le pasamos para que filtro
-                                        e.target.value, //Este es el texto {nombre del cliente o cédula}
-                                        update, //Método para actualizar la carga
+                                        charge,
+                                        e.target.value,
+                                        update,
                                         item_filter.filter,
                                         item_filter.mode,
                                         item_filter.mora,

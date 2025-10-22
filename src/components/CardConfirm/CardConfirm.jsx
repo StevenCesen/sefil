@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import "./CardConfirm.css";
+import { useStoreLoader } from "../../stores/useStoreLoader";
 
 export default function CardConfirm({id,cartera,value,email,name,ci,direccion,telefono,setGastos,setView,setPDF}){
     const [dates,setDates]=useState();
     const [cuentas_bancarias,setCuentas]=useState();
     const [metodos,setMetodos]=useState();
     const [formas,setFormas]=useState();
+    const loader = useStoreLoader();
 
     useEffect(()=>{
+        loader.viewOn(true);
 
         fetch(`${import.meta.env.VITE_URL_BASE}/sofiaconfig`,{
             headers: {
@@ -20,11 +23,9 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 const cuentas=data.contribuyentes.contrib[0].cuentasBancarias.cuenta;
                 const formas_pago=data.formasPago.formaPago;
                 const metodos_pago=['ANTICIPO', 'CHEQUE', 'EFECTIVO', 'OTROS', 'TARJETA_CREDITO', 'TRANSFERENCIA', 'DEPOSITO'];
-
                 setCuentas(cuentas);
                 setFormas(formas_pago);
                 setMetodos(metodos_pago);
-                
             });
 
         if(id){
@@ -42,19 +43,18 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 referencia:"",
                 idBanco:""
             });
-        }else{
-            
+            loader.viewOn(false);
         }
-        
     },[]);
 
     if(!dates) return <></>
     if(!cuentas_bancarias) return <></>
     if(!formas) return <></>
     if(!metodos) return <></>
-
+    
     return (
         <div className="CardConfirm__background">
+            <button onClick={()=>{setView(false)}}>Volver</button>
             <div className="CardConfirm">
                 <p>Gastos de cobranza</p>
                 <label>

@@ -6,12 +6,13 @@ import { useEffect, useRef } from "react";
 import { useStoreTemplate } from "../../../stores/useStoreTemplates";
 import createManagement from "../../../helpers/Managements/createManagement";
 import sendpush from "../../../helpers/sendpush";
+import { useViewStruct } from "../../../stores/useViewStruct";
 
 export default function FormManagement(){
-
     const store_management=useStoreManagement();
     const store_credits=useStoreFilterManagement();
     const store_templates=useStoreTemplate();
+    const store_view_struct=useViewStruct();
     const button=useRef();
 
     const selectedOptions = store_templates.current_template.find(item => item.title === store_management.state_gestion)?.options || [];
@@ -40,30 +41,68 @@ export default function FormManagement(){
 
         button.current.textContent='Guardando...';
 
-        const create_management=await createManagement({data_management});
+        if(store_management.substate_gestion==='OFERTA DE PAGO'){
+            const prev_effective= await store_management.checkManagement();
+            console.log(prev_effective);
+
+            if(prev_effective===200){
+                sendpush({
+                    title:'Oferta registrada.',
+                    message:'Este crédito ya tiene una OFERTA DE PAGO registrada en esta campaña.',
+                    type:'Push--warning',
+                    timeout:3000
+                });
+
+                button.current.textContent='Intentar de nuevo';
+
+            }else{
+                const create_management=await createManagement({data_management});
         
-        if(create_management.status===200){
-            button.current.textContent='Guardar gestión';
-            
-            sendpush({
-                title:'Estado de gestión.',
-                message:'Se ha guardado la gestión correctamente.',
-                type:'Push--sucessful',
-                timeout:3000
-            });
-            
-            store_management.clean();
-            store_management.addManagement(create_management.management);
-            store_management.setMessage('Gestionado recién');
-            
+                if(create_management.status===200){
+                    button.current.textContent='Guardar gestión';
+                    
+                    sendpush({
+                        title:'Estado de gestión.',
+                        message:'Se ha guardado la gestión correctamente.',
+                        type:'Push--sucessful',
+                        timeout:3000
+                    });
+                    
+                    store_management.clean();
+                    store_management.addManagement(create_management.management);
+                    store_management.setMessage('Gestionado recién');
+                    
+                }else{
+                    button.current.textContent='Intentar de nuevo';
+                }
+            }
         }else{
-            button.current.textContent='Intentar de nuevo';
+            const create_management=await createManagement({data_management});
+        
+            if(create_management.status===200){
+                button.current.textContent='Guardar gestión';
+                
+                sendpush({
+                    title:'Estado de gestión.',
+                    message:'Se ha guardado la gestión correctamente.',
+                    type:'Push--sucessful',
+                    timeout:3000
+                });
+                
+                store_management.clean();
+                store_management.addManagement(create_management.management);
+                store_management.setMessage('Gestionado recién');
+                
+            }else{
+                button.current.textContent='Intentar de nuevo';
+            }
         }
     }
 
     const handleNextCredit=async (e)=>{
         e.preventDefault();
         store_management.clean();
+        store_view_struct.clean();
 
         let next_credit=store_credits.getNextCredit();
 

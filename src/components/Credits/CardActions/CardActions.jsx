@@ -1,7 +1,10 @@
 import { BanknoteArrowDownIcon, BanknoteArrowUpIcon, CreditCard, HandshakeIcon } from "lucide-react";
 import "./CardActions.css";
 
-export default function CardActions({setAction}){
+export default function CardActions({isViewOn,setAction}){
+
+    if(!isViewOn) return <></>
+
     return(
         <div className="CardActions">
             <h2>Acciones</h2>

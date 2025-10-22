@@ -10,7 +10,6 @@ import hangupCall from "../../../helpers/Calls/hangupCall";
 let recorder,streamer;
 
 export default function CardDial({credit_id,campain_id,credit_status}){
-
     const store_call=useStoreProgressCall();
     const [counter,setCounter]=useState(0);
     const intervalRef = useRef(null);
@@ -26,44 +25,66 @@ export default function CardDial({credit_id,campain_id,credit_status}){
      * Originar la llamada
      * @param {*} channel 
      */
-    const handlerDial=async (channel)=>{
-
-        if(store_call.phone_number===''){
+    
+    const handlerDial = async (channel) => {
+        if (store_call.phone_number === '') {
             sendpush({
-                title:'Sin número',
-                message:'Selecciona o ingresa un número de teléfono',
-                type:'Push--warning',
-                timeout:3000
+                title: 'Sin número',
+                message: 'Selecciona o ingresa un número de teléfono',
+                type: 'Push--warning',
+                timeout: 3000
             });
-        }else{
+            return;
+        }
+
+        try {
+            // Solicitar permiso para usar el micrófono
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+            // Guardar el stream si es necesario para grabar
+            streamer = stream;
+            recorder = new MediaRecorder(streamer);
+            recorder.start();
+
+            // Actualizar estado de llamada
             store_call.setInCall(true);
             store_call.setChannel(channel);
 
-            const message=`En llamada ${(channel==='PBX') ? 'normal con' : 'por whatsapp con:'}`;
+            const message = `En llamada ${(channel === 'PBX') ? 'normal con' : 'por whatsapp con:'}`;
             store_call.setMessage(message);
 
             sendpush({
-                title:'En llamada',
-                message:'Iniciaste una llamada',
-                type:'Push--sucessful',
-                timeout:3000
+                title: 'En llamada',
+                message: 'Iniciaste una llamada',
+                type: 'Push--sucessful',
+                timeout: 3000
             });
 
-            if(channel==='PBX'){
-                const in_call=await originateCall({phone_number:store_call.phone_number});
+            // Iniciar llamada PBX si aplica
+            if (channel === 'PBX') {
+                await originateCall({ phone_number: store_call.phone_number });
             }
 
+            // Iniciar contador
             if (!intervalRef.current) {
                 intervalRef.current = setInterval(() => {
                     setCounter((prev) => prev + 1);
                 }, 1000);
             }
 
-            streamer=await navigator.mediaDevices.getUserMedia({ audio: true, video:false});
-            recorder = new MediaRecorder(streamer);
-            recorder.start();
+        } catch (error) {
+            // Si el usuario deniega el permiso o hay un error
+            sendpush({
+                title: 'Permiso denegado',
+                message: 'No se pudo acceder al micrófono. Permite el uso para iniciar la llamada.',
+                type: 'Push--error',
+                timeout: 4000
+            });
+
+            console.error('Error al acceder al micrófono:', error);
         }
-    }
+    };
+
     
     /**
      * Cortar llamada

@@ -1,24 +1,23 @@
 import { NavLink } from "react-router-dom";
 import "./pages.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import CardUserState from "../components/CardUserState/CardUserState.jsx";
-import Loader from "../components/Loader/loader.jsx";
 import { useStoreMonitor } from "../stores/useStoreMonitor.js";
+import { useStoreLoader } from "../stores/useStoreLoader.js";
 
 export default function Monitor(){
-    const [loading,setLoading]=useState();
     const store_monitor=useStoreMonitor();
     const connection=useRef();
+    const loader = useStoreLoader();
 
     useEffect(()=>{
-
-        setLoading(true);
+        loader.viewOn(true);
         const conn = new WebSocket('wss://check.sefil.com.ec/ws');
         
         conn.onopen = function(e) {
             console.log("WSS: Connection established!");
             store_monitor.setAgents();
-            setLoading(false);
+            loader.viewOn(false);
         };
 
         conn.onmessage = async function(e) {
@@ -57,10 +56,10 @@ export default function Monitor(){
                     Campaña
                     <select
                         onChange={async (e)=>{
-                            setLoading(true);
+                            loader.viewOn(true);
                             store_monitor.setIDCampain(e.target.value);
                             await store_monitor.setAgents();
-                            setLoading(false);
+                            loader.viewOn(false);
                         }}
                     >
                         <option value={""}>-- Todas --</option>
@@ -129,12 +128,6 @@ export default function Monitor(){
                     ))
                 }
             </div>
-            {
-                (loading)
-                ?
-                    <Loader/>
-                :   <></>
-            }
         </div>
     );
 }

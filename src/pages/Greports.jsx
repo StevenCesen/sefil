@@ -59,8 +59,19 @@ export const options = {
 
 const estados_efectivos=[
     'OFERTA DE PAGO',
-    'COMPROMISO DE PAGO',
-    'MENSAJE A TERCEROS',
+    'COMPROMISO DE PAGO'
+];
+
+const estados_no_efectivos=[
+    'CONTACTO INDICA QUE ESTA EQUIVOCADO',
+    'NO CONTESTA',
+    'SUSPENDIDO POR FALTA DE PAGO',
+    'NUMERO INCORRECTO',
+    'FUERA DEL AREA DE COBERTURA',
+    'NO VIVE EN LA MISMA DIRECCIÓN',
+    'DEBE PASAR A TRAMITE LEGAL',
+    'INUBICABLE',
+     'MENSAJE A TERCEROS',
     'MENSAJE EN BUZÓN DEL CLIENTE',
     'YA PAGÓ',
     'SOLICITA REFINANCIAMIENTO',
@@ -75,21 +86,9 @@ const estados_efectivos=[
     'MENSAJE DE TEXTO'
 ];
 
-const estados_no_efectivos=[
-    'CONTACTO INDICA QUE ESTA EQUIVOCADO',
-    'NO CONTESTA',
-    'SUSPENDIDO POR FALTA DE PAGO',
-    'NUMERO INCORRECTO',
-    'FUERA DEL AREA DE COBERTURA',
-    'NO VIVE EN LA MISMA DIRECCIÓN',
-    'DEBE PASAR A TRAMITE LEGAL',
-    'INUBICABLE'
-];
-
 export default function Greports(){
     const [campains,setCampains]=useState();
     const [agents,setAgents]=useState();
-    const [current,setCurrent]=useState();
     const [filters,setFilters]=useState();
     const [loading,setLoading]=useState();
     const [results,setResults]=useState();
@@ -97,7 +96,6 @@ export default function Greports(){
     const [view_compare,setCompare]=useState();
     const [trays,setTrays]=useState();
     const [select_trays,setSelectTrays]=useState();
-    const [data,setData]=useState();
     const [Efectividad_gestiones,setEfectividad]=useState();
 
     const updateFilter=async ({campain,corte,inicio,fin,state,agencia,agente,trays,group,estado,type_agent})=>{
@@ -107,14 +105,6 @@ export default function Greports(){
         if(campain!==""){
             filter+=`&campain=${campain}`;
         }
-
-        // if(state!==""){
-        //     filter+=`&estado=${state}`;
-        // }
-
-        // if(agencia!==""){
-        //     filter+=`&agencia=${agencia}`;
-        // }
 
         if(agente!==""){
             filter+=`&agente=${agente}`;

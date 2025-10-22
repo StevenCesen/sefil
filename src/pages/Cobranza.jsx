@@ -1,3 +1,8 @@
+/**
+ * =====================================================
+ *                  ELIMINAR COMPONENTE
+ * =====================================================
+ */
 import { NavLink, useParams } from "react-router-dom";
 import "./pages.css";
 import DetailCredit from "./DetailCredit";
@@ -42,7 +47,6 @@ export default function Cobranza(){
 
     const updateFilter=({canton,status,campain,agente,estado_credito})=>{
         let filter="";
-
 
         if(canton!==""){
             filter+=`&canton=${canton}`;

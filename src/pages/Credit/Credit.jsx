@@ -13,26 +13,40 @@ import CardClient from "../../components/Credits/CardClient/CardClient";
 import CardPay from "../../components/CardPay/CardPay";
 import CardConfirm from "../../components/CardConfirm/CardConfirm";
 import { useStoreCondonation } from "../../stores/useStoreCondonation";
+import { useStoreLoader } from "../../stores/useStoreLoader";
+import { useStoreStructure } from "../../stores/useStoreStructure";
+import CardActivity from "../../components/Credits/CardActivity/CardActivity";
+import HistorialNav from "../../components/Tools/HistorialNav/HistorialNav";
+import ViewPDFCondonation from "../../components/Credits/ViewPDFCondonation/ViewPDFCondonation";
+import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFStructure";
 
 export default function Credit(){
     const params=useParams();
     const credit=useStoreManagement();
     const store_condonation=useStoreCondonation();
+    const store_structure=useStoreStructure();
     const [action,setAction]=useState('');
+    const loader = useStoreLoader();
     
     const attributes=new URLSearchParams(useLocation().search);
 
     const helperCredit=async ({credit_id,cartera})=>{
+        loader.viewOn(true);
         credit.setIDCampain(cartera);
         const data_credit=await getCredit({credit_id,cartera});
+        console.log(data_credit)
         credit.setCredit(data_credit);
+        loader.viewOn(false);
     }
 
     useEffect(()=>{
+        console.log(params.id)
         helperCredit({credit_id:params.id,cartera:attributes.get('cartera')});
 
         if(action==='GEN_CONDONATION'){
             store_condonation.setInfoCredit({
+                ci:credit.credit.clients[0].ci,
+                name:credit.credit.clients[0].name,
                 total:credit.credit.total_amount-credit.credit.gasto_cobranza_sefil,
                 capital:credit.credit.saldo_capital,
                 mora:credit.credit.mora,
@@ -45,9 +59,17 @@ export default function Credit(){
                 cartera:credit.cartera
             });
         }else if(action==='GEN_CONVENIO'){
-
+            store_structure.viewOn(true);
+            store_structure.setInfoCredit({
+                ci:credit.credit.clients[0].ci,
+                name:credit.credit.clients[0].name,
+                total_amount:credit.credit.total_amount,
+                cartera:credit.cartera,
+                credit_id:credit.credit.id,
+                gasto_cobranza:credit.credit.gasto_cobranza_sefil
+            });
         }else if(action==='GEN_JUDICIAL'){
-
+            //  Ver después
         }
     },[action]);
 
@@ -55,17 +77,23 @@ export default function Credit(){
 
     return (
         <div className="Credit">
+            <ViewPDFCondonation/>
+            <ViewPDFStructure/>
+            <HistorialNav/>
+
             <h2>Consulta de crédito</h2>
 
             <div className="Credit__sections">
                 <div className="Credit__sectionInfo">
                     <div className="Credit__sectionClients">
                         <InfoCredit
-                            sync_id={credit.credit.credito}
+                            business={credit.cartera}
+                            sync_id={credit.credit.sync_id}
                             agency={credit.credit.agency}
                             frequency={credit.credit.frequency}
                             due_date={credit.credit.due_date}
                             collection_state={credit.credit.collection_state}
+                            monthly_fee_amount={credit.credit.monthly_fee_amount}
                             //Información adicional
                             info_extra={
                                 {
@@ -108,7 +136,7 @@ export default function Credit(){
                             <InfoPending
                                 days_past_due={credit.credit.days_past_due}
                                 total_amount={credit.credit.total_amount}
-                                payment_date={credit.credit.paymentDate}
+                                payment_date={('payment_date' in credit.credit) ? credit.credit.payment_date : credit.credit.paymentDate}
                             />
                             <InfoFees
                                 pending_fees={credit.credit.pending_fees}
@@ -116,10 +144,14 @@ export default function Credit(){
                                 total_fees={credit.credit.total_fees}
                             />
                         </div>
+                        <CardActivity
+                            credit_id={credit.credit.id}
+                            cartera={credit.cartera}
+                        />
                     </div>
                 </div>
                 
-                <CardActions setAction={setAction}/>
+                <CardActions isViewOn={(credit.cartera==='syncs') ? false : true} setAction={setAction}/>
                 
                 <MenuNav
                     options={[
@@ -147,13 +179,13 @@ export default function Credit(){
                         
                         <CardPay
                             setView={setAction} 
-                            credit={credit} 
+                            credit={credit.credit}
+                            cartera={credit.cartera}
                             updateInfoValues={()=>{}}
                         />
 
                     :   (action==='PAY_GASTO')
-                        ?
-                            
+                        ?   
                             <CardConfirm
                                 id={credit.credit.id}
                                 cartera={credit.cartera}
@@ -164,13 +196,11 @@ export default function Credit(){
                                 direccion={''}
                                 telefono={''}
                                 setGastos={()=>{}}
-                                setView={()=>{}}
+                                setView={setAction}
                                 setPDF={()=>{}}
                             />
-
                         :   <></>
                 }
-
             </div>
         </div>
     );

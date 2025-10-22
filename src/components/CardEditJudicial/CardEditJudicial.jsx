@@ -72,6 +72,10 @@ export default function CardEditJudicial({id,cartera,totalAmount,gastos_judicial
                         }}
                     >
                         <option value={""}>--Seleccionar--</option>
+                        <option value="NOTIFICACIÓN">NOTIFICACIÓN</option>
+                        <option value="DEMANDA JUDICIAL">DEMANDA JUDICIAL</option>
+                        <option value="ENTREGA DE PAGARÉ">ENTREGA DE PAGARÉ</option>
+                        <option value="INICIO TRÁMITE JUDICIAL">INICIO TRÁMITE JUDICIAL</option>
                         <option value="GASTOS NOTARÍA">GASTOS NOTARÍA</option>
                         <option value="GASTOS CERTIFICADOS">GASTOS CERTIFICADOS</option>
                         <option value="GASTOS PERITAJE">GASTOS PERITAJE</option>

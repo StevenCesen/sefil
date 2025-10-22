@@ -1,0 +1,16 @@
+.HistorialNav{
+    margin-bottom: 20px;
+}
+
+.HistorialNav>a{
+    text-decoration: none;
+    color: var(--color-1);
+    font-weight: bold;
+}
+
+.HistorialNav>a::before{
+    content: '<<';
+    text-decoration: none;
+    color: var(--color-1);
+    font-weight: bold;
+}

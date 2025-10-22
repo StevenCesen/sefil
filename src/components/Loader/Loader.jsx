@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { useStoreLoader } from "../../stores/useStoreLoader";
 import "./loader.css";
 
 export default function Loader(){
 
-    useEffect(()=>{
-        console.log("cargando loader...")
-    },[]);
+    const loader = useStoreLoader();
+
+    if(!loader.isViewOn) return <></>
 
     return (
         <div className="ContentLoader">

@@ -1,3 +1,8 @@
+/**
+ * =====================================================
+ *                  ELIMINAR COMPONENTE
+ * =====================================================
+ */
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { useEffect, useRef, useState } from "react";
@@ -303,7 +308,7 @@ export default function Comprobantes(){
                         <PDFViewer width={'500px'} height={'500px'}>
                             <PDF 
                                 nro_voucher={comprobante.id}
-                                type_print={(comprobante.status==='revertido') ? 'REVERTIDO' : 'COPIA'}
+                                type_print={(comprobante.status==='revertido') ? 'REVERTIDO' : 'ORIGINAL'}
                                 credito={comprobante.sync}
                                 forma_pago={comprobante.forma_pago}
                                 insitucion_financiera={comprobante.institucion_financiera}

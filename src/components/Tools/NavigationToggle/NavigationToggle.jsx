@@ -1,12 +1,23 @@
 import { useState } from "react";
 import "./NavigationToggle.css";
+import { useStoreLoader } from "../../../stores/useStoreLoader";
+import getPage from "../../../helpers/Credits/getPage";
 
-export default function NavigationToggle({first_url,prev_url,per_page,next_url,last_url,setData}){
-
+export default function NavigationToggle({first_url,prev_url,per_page,next_url,last_url,setData,filters}){
     const [per_pagination,setPerPagination]=useState(per_page);
+    const loader = useStoreLoader();
 
-    const handlerNavigation=({url,per_page})=>{
-        setData([]);
+    const handlerNavigation = async ({url,per_page})=>{
+        console.log(url);
+        if(url){
+            loader.viewOn(true);
+            const data = await getPage({
+                per_page,
+                filters:filters
+            });
+            setData(data);
+            loader.viewOn(false);
+        }
     };
 
     return(

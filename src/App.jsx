@@ -10,7 +10,7 @@ import Push from './components/Push/Push'
 import CardSelectStateCall from './components/Management/CardSelectStateCall/CardSelectStateCall'
 import CardStructure from './components/CardStructure/CardStructure'
 import CardCondonacion from './components/CardCondonacion/CardCondonacion'
-import CardViewConvenio from './components/CardViewConvenio/CardViewConvenio'
+import Loader from './components/Loader/loader'
 
 function App() {
   
@@ -53,7 +53,7 @@ function App() {
     }
     
   },[]);
-
+  
   if(!session) return <></>
 
   return (
@@ -63,7 +63,7 @@ function App() {
       <CardSelectStateCall/>
       <CardStructure/>
       <CardCondonacion/>
-      <CardViewConvenio/>
+      <Loader/>
 
       {
         (!useSessions() & !session.state) 

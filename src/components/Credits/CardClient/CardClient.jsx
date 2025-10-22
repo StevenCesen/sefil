@@ -5,7 +5,7 @@ import "./CardClient.css";
 import { useStoreEmail } from "../../../stores/useStoreEmail";
 import ClickToCopy from "../../../helpers/ClickToCopy";
 
-export default function CardClient({credit_id,name,ci,sector_economico,type,actions}){
+export default function CardClient({credit_id,name,email,ci,sector_economico,days_past_due,type,total_amount,actions}){
 
     const store_management=useStoreManagement();
     const store_email=useStoreEmail();
@@ -57,9 +57,10 @@ export default function CardClient({credit_id,name,ci,sector_economico,type,acti
                                 type,
                                 view:true,
                                 days_past_due,
-                                total_amount
+                                total_amount,
+                                email
                             });
-                            console.log(store_email);
+
                             }} title='Enviar correo electrónico a este cliente'>
                             <Mail size={18}/>
                         </button>

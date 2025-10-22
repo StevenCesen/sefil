@@ -4,7 +4,6 @@ import CardCreateCampain from "../components/CardCreateCampain/CardCreateCampain
 import CardAssignCampain from "../components/CardAssignCampain/CardAssignCampain";
 import CardEditCampain from "../components/CardEdirCampain/CardEditCampain";
 import CardSync from "../components/CardSync/CardSync";
-import Loader from "../components/Loader/loader";
 
 export default function Campain(){
 
@@ -61,7 +60,7 @@ export default function Campain(){
             });
     },[]);
 
-    if(!campains) return <Loader/>
+    if(!campains) return <></>
 
     return (
         <div className="pageConsulta">

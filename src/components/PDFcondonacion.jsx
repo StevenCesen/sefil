@@ -60,13 +60,11 @@ import logo from '../assets/icons/logo.png';
               <Text style={[{fontSize:15,textAlign:"right"}]}>CONDONACIÓN</Text>
               <View style={[{backgroundColor:'#CBE8EC',padding:5}]}>
                 <Text style={[{fontSize:9,marginBottom:10,color:'#178DAB',fontWeight:"bold"}]}>SERVICIOS DE ADMINISTRACIÓN INTEGRAL SEFIL S.A.</Text>
-
                 <View>
                   <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>RUC: 1792679443001</Text>
                   <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>FECHA Y HORA DE AUTORIZACIÓN: {fecha}</Text>
-                  <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>{(localStorage.getItem('permission').includes('User:minimize')) ? "AUTORIZADO POR:" : "SOLICITADO POR" } {user_auth.toUpperCase()}</Text>
+                  {/* <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>{(localStorage.getItem('permission').includes('User:minimize')) ? "AUTORIZADO POR:" : "SOLICITADO POR" } {user_auth.toUpperCase()}</Text> */}
                 </View>
-
               </View>
             </View>
           </View>
@@ -167,6 +165,17 @@ import logo from '../assets/icons/logo.png';
                     Number(JSON.parse(prevDates).otros_valores)-Number(JSON.parse(postDates).otros_valores),currency:'USD'}))
                 
                 }</Text>
+            </View>
+          </View>
+
+          <View style={{marginTop:'100px',width:'100%',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+            <View style={{width:'50%',padding:5,fontSize:8,textAlign:"center"}}>
+              <Text>SOLICITADO POR:</Text>
+              <Text>GESTOR. {user_auth.toUpperCase()}</Text>
+            </View>
+            <View style={{width:'50%',padding:5,fontSize:8,textAlign:"center"}}>
+              <Text>AUTORIZADO POR:</Text>
+              <Text>GERENTE. MARIA ELENA BRAVO</Text>
             </View>
           </View>
         </Page>

@@ -1,3 +1,8 @@
+/**
+ * =====================================================
+ *                  ELIMINAR COMPONENTE
+ * =====================================================
+ */
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";

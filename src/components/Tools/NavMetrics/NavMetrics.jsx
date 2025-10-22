@@ -10,7 +10,7 @@ export default function NavMetrics(){
 
     const handleMetric = async ()=>{
         const value = await getMetrics();
-        setMetric(value[0].total);
+        setMetric(value[0]);
     }
 
     useEffect(()=>{
@@ -19,7 +19,8 @@ export default function NavMetrics(){
     
     return (
         <div className="NavMetrics">
-            <p><CircleDollarSign size={22} color="rgba(204, 152, 8, 1)"/> Valor recuperado {useFormatterNumber({value:metric,currency:'USD'})}</p>
+            <p><CircleDollarSign size={22} color="rgba(204, 152, 8, 1)"/> Créditos: {metric.nro_credits}</p>
+            <p>Valor recuperado {useFormatterNumber({value:metric.total,currency:'USD'})}</p>
         </div>
     );
 }

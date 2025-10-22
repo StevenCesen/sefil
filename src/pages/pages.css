@@ -101,7 +101,7 @@
     display: grid;
     grid-template-columns: 12% 88%;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     flex-direction: column;
     transition: all 0.3s ease-in;
 }
@@ -2511,6 +2511,11 @@
     padding: 5px 0;
     border-bottom: 1px solid rgb(174, 174, 174);
 }
+
+.Historial__item--wweb{
+    background-color: rgba(175, 243, 175, 0.26);
+}
+
 .Historial__item>label{
     width: 100%;
     text-align: center;

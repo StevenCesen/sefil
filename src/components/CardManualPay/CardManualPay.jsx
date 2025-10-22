@@ -5,7 +5,7 @@ import useFormatterNumber from "../../hooks/useFormatterNumber";
 export default function CardManualPay({callback,pays,cartera,setUpdate}){
 
     const [pagos,setPays]=useState();
-
+    
     useEffect(()=>{
         setPays(pays.data[0]);
     },[]);
@@ -25,7 +25,24 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                         <p><strong>TITULAR:</strong> {pagos.name}</p>
                         <p><strong>CÉDULA:</strong> {pagos.ci}</p>
                         <p><strong>CRÉDITO:</strong> {pagos.credito}</p>
-                        <p><strong>ESTADO:</strong> {pagos.estado}</p>
+                        <p>
+                            <strong>ESTADO:</strong>
+                            <select 
+                                value={pagos.estado}
+                                onChange={(e)=>{
+                                    setPays({
+                                        ...pagos,
+                                        estado:e.target.value
+                                    });
+                                }}
+                            >
+                                <option value={"VENCIDO"}>VENCIDO</option>
+                                <option value={"CASTIGADO"}>CASTIGADO</option>
+                                <option value={"JUDICIAL"}>JUDICIAL</option>
+                                <option value={"PREJUDICIAL"}>PREJUDICIAL</option>
+                                <option value={"CANCELADO"}>CANCELADO</option>
+                            </select>
+                        </p>
                         <p><strong>FECHA DE PAGO:</strong>{pagos.paymentDay_actual.split(' ')[0]}</p>
                     </div>
                     
@@ -100,10 +117,8 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                         .then((response) => response.json())  
                                         .then((data) => {
                                             e.target.textContent="Anterior";
-                                        
-                                            setUpdate(data)
-                                            setPays(data.data[0])
-
+                                            setUpdate(data);
+                                            setPays(data.data[0]);
                                         });
                                 }}
                             >Anterior</button>
@@ -137,8 +152,6 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                             e.target.textContent="Cargando...";
 
                             if(pays.to<pays.last_page){
-                                //Actualizo el crédito
-
                                 const pay_denied=new URLSearchParams({
                                     cartera:cartera,
                                     credito:pagos.credito,
@@ -146,7 +159,8 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     interes_actual:pagos.interes_actual,
                                     mora_actual:pagos.mora_actual,
                                     seguro_actual:pagos.seguro_actual,
-                                    judicial_actual:pagos.judicial_actual
+                                    judicial_actual:pagos.judicial_actual,
+                                    collection_state:pagos.estado
                                 });
 
                                 fetch(`${import.meta.env.VITE_URL_BASE}/pays/edit`,{
@@ -186,19 +200,10 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     interes_actual:pagos.interes_actual,
                                     mora_actual:pagos.mora_actual,
                                     seguro_actual:pagos.seguro_actual,
-                                    judicial_actual:pagos.judicial_actual
+                                    judicial_actual:pagos.judicial_actual,
+                                    collection_state:pagos.estado
                                 });
                                 
-                                // console.log({
-                                //     cartera:cartera,
-                                //     credito:pagos.credito,
-                                //     saldo_capital_actual:pagos.saldo_capital_actual,
-                                //     interes_actual:pagos.interes_actual,
-                                //     mora_actual:pagos.mora_actual,
-                                //     seguro_actual:pagos.seguro_actual,
-                                //     judicial_actual:pagos.judicial_actual
-                                // });
-
                                 fetch(`${import.meta.env.VITE_URL_BASE}/pays/edit`,{
                                     method:'POST',
                                     headers: {
@@ -218,12 +223,10 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                         }
                                     })
                             }
-                            
                         }}
                     >Guardar con diferencia</button>
                 </div>
             </div>
-
         </div>
     );
 

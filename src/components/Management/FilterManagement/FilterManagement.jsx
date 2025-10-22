@@ -5,7 +5,7 @@ import "./FilterManagement.css";
 export default function FilterManagement(){
 
     const filter_management=useStoreFilterManagement();    
-
+    
     return(
         <div className="FilterManagement">
             <div>
@@ -138,6 +138,7 @@ export default function FilterManagement(){
                     <option value={""}>-- Seleccionar --</option>
                     <option value={"PENDIENTE"}>PENDIENTE</option>
                     <option value={"OFERTA DE PAGO"}>OFERTA DE PAGO</option>
+                    <option value={"REGESTION DE OFERTA"}>REGESTION DE OFERTA</option>
                     <option value={"VISITA CAMPO"}>VISITA CAMPO</option>
                     <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
                     <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>

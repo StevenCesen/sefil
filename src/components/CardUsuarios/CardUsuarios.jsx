@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./CardUsuarios.css";
 import useMenu from "../../hooks/useMenu";
-import useUpdatePermiss from "../../hooks/useUpdatePermiss";
 
 const list={
     "consulta":{
@@ -128,7 +127,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
     useEffect(()=>{
         setUser(permission);
 
-        console.log(permission)
         list.consulta.checked=user_permisos.includes(list.consulta.action);
         list.recaudacion.checked=user_permisos.includes(list.recaudacion.action);
         list.cobranza.checked=user_permisos.includes(list.cobranza.action);
@@ -695,25 +693,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                     />
                     Asignación de campaña
                 </label>
-
-                {/* <label>
-                    <input
-                        value={permisos.reportes.action}
-                        onChange={(e)=>{
-                            setPermisos({
-                                ...permisos,
-                                reportes:{
-                                    ...permisos.reportes,
-                                    checked:e.target.checked
-                                }
-                            });
-                            setChange(true);
-                        }} 
-                        type="checkbox" 
-                        checked={permisos.reportes.checked}
-                    />
-                    Reportes
-                </label> */}
                 <label>
                     <input
                         value={permisos.usuarios.action}
@@ -750,61 +729,6 @@ export default function CardUsuarios({id,name,email,rol,permission,setChange}){
                     />
                     Bases de datos y backup
                 </label>
-                
-                {/* <label>
-                    <input
-                        value={permisos.cierre_caja.action}
-                        onChange={(e)=>{
-                            setPermisos({
-                                ...permisos,
-                                cierre_caja:{
-                                    ...permisos.cierre_caja,
-                                    checked:e.target.checked
-                                }
-                            });
-                            setChange(true);
-                        }} 
-                        type="checkbox" 
-                        checked={permisos.cierre_caja.checked}
-                    />
-                    Reporte de cierre de caja
-                </label> */}
-                {/* <label>
-                    <input
-                        value={permisos.gastos_gestion.action}
-                        onChange={(e)=>{
-                            setPermisos({
-                                ...permisos,
-                                gastos_gestion:{
-                                    ...permisos.gastos_gestion,
-                                    checked:e.target.checked
-                                }
-                            });
-                            setChange(true);
-                        }} 
-                        type="checkbox" 
-                        checked={permisos.gastos_gestion.checked}
-                    />
-                    Reporte de gastos de gestión
-                </label> */}
-                {/* <label>
-                    <input
-                        value={permisos.historico_condonaciones.action}
-                        onChange={(e)=>{
-                            setPermisos({
-                                ...permisos,
-                                historico_condonaciones:{
-                                    ...permisos.historico_condonaciones,
-                                    checked:e.target.checked
-                                }
-                            });
-                            setChange(true);
-                        }}
-                        type="checkbox"
-                        checked={permisos.historico_condonaciones.checked}
-                    />
-                    Reporte histórico de condonaciones
-                </label> */}
             </span>
             
             <button>

@@ -45,14 +45,7 @@ export default function NavTools(){
                         {
                             (credit.credit.collection_state==='CONVENIO DE PAGO')
                             ?
-                                <button
-                                    onClick={async ()=>{
-                                        const struct = await getStruct({credit_id:credit.credit.id,cartera:credit.cartera});
-                                        
-                                        view_structure.setStruct(struct.data);
-                                        view_structure.viewOn(true);
-                                    }}
-                                >Ver convenio</button>
+                                <></>
                             :   
                                 <button onClick={async ()=>{
                                     const check = await useVerifyStruct({

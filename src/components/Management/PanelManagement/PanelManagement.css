@@ -10,7 +10,7 @@
     width: 100%;
     display: grid;
     gap: 10px;
-    grid-template-columns: calc(60% - 10px) 40%;
+    grid-template-columns: calc(50% - 10px) 50%;
 }
 
 

@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
-// import ReactAudioPlayer from 'react-audio-player';
 import "./CardCurrentGestion.css";
+import { MessageCircle } from "lucide-react";
 
 export default function CardCurrentGestion({data}){
 
     const [calls,setCalls]=useState();
-
-    const updateCall=(call)=>{
-        let copy=(calls.length>0) ? calls : [];
-        copy.push(call);
-        setCalls(copy);
-    }
-
+    
     useEffect(()=>{
         const ids=JSON.parse(data.id_calls_extras);
         localStorage.removeItem('calls');
@@ -65,13 +59,8 @@ export default function CardCurrentGestion({data}){
                         <label>{call.fecha}</label>
                         <label>{call.duration_call} seg.</label>
                         <label>{data.client_name}</label>
-                        <label>{call.phone}</label>
+                        <label>{(call.channel==='WA') ? <MessageCircle color="green" size={16}/> : <></>} {call.phone}</label>
                         <label>{call.state_call}</label>
-                        {/* <ReactAudioPlayer
-                            style={{width:"100%"}}
-                            src={`https://core.sefil.com.ec/api/public/files/audios/${call.id_record}`}
-                            controls
-                        /> */}
                         <audio controls style={{width:"100%"}} src={`./public/files/audios/${call.id_record}`}></audio>
                     </div>
                 ))

@@ -1,8 +1,11 @@
+/**
+ * =====================================================
+ *                  ELIMINAR COMPONENTE
+ * =====================================================
+ */
 import { NavLink, useParams } from "react-router-dom";
 import "./pages.css";
-import CardCredit from "../components/CardCredit/CardCredit";
-import { useEffect, useRef, useState } from "react";
-import useSearch from "../hooks/useSearch.js";
+import { useEffect, useState } from "react";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
 import useSearchSyncs from "../hooks/useSearchSync.js";
 
@@ -10,12 +13,8 @@ export default function Clist(){
     const param = useParams();
 
     const [data_credit,setCredit]=useState();
-    const [canton_input,setInput]=useState('');
-    const [canton,setCanton]=useState('all');
-    const [parroquia,setParroquia]=useState('all');
     const [agents,setAgents]=useState();
     const [agent,setAgent]=useState();
-    const [view_phones,setPhones]=useState();
 
     const [message,setMessage]=useState("");
 
@@ -36,7 +35,6 @@ export default function Clist(){
         acumulado:0,
     });
 
-    const [aux_busines,setAux]=useState("");
     const [filter,setFilter]=useState();
 
     const genFilter=({mora_min,mora_max,user_id,state,sync_status})=>{
@@ -80,17 +78,6 @@ export default function Clist(){
             });
     }
 
-    // const updateData=(url)=>{
-    //     fetch(url,{
-    //         headers: {
-    //             Accept: 'application/json',
-    //             Authorization: `Bearer ${localStorage.getItem('token')}`
-    //         }
-    //     })
-    //         .then((response) => response.json())  
-	//         .then((data) => setCredits(data));
-    // }
-
     const updateCredits=(data)=>{
         setCredits({
             ...credits,
@@ -99,7 +86,6 @@ export default function Clist(){
     }
 
     useEffect(()=>{
-        setInput('');
         setAgent("all");
         
         setCredits({
@@ -108,7 +94,6 @@ export default function Clist(){
             links:[]
         });
         setMessage("");
-        setPhones(false);
         setFilter({
             mora_min:'',
             mora_max:'',
@@ -118,10 +103,8 @@ export default function Clist(){
         });
 
         localStorage.setItem('cartera','syncs');
-        setAux(localStorage.getItem('cartera'));
 
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null & param.ci==undefined){
-            setAux(localStorage.getItem('cartera'));
             fetch(`${import.meta.env.VITE_URL_BASE}/bussines/${localStorage.getItem('cartera')}`,{
                 headers: {
                     Accept: 'application/json',

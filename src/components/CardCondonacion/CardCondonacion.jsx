@@ -6,6 +6,11 @@ import { useStoreCondonation } from "../../stores/useStoreCondonation";
 export default function CardCondonacion(){
     const [credit,setValues]=useState();
     const store_condonation=useStoreCondonation();
+
+    const handleViewPDF = (data) =>{
+        store_condonation.setResponse(data);
+        store_condonation.setViewPDF(true);
+    }
     
     useEffect(()=>{
         setValues({
@@ -111,7 +116,7 @@ export default function CardCondonacion(){
 
                 <button className="CardCondonacion__save" 
                     onClick={(e)=>{
-
+                        
                         e.target.textContent='Guardando...';
 
                         const data={
@@ -136,13 +141,7 @@ export default function CardCondonacion(){
                             credito:Number(store_condonation.id),
                             cartera:store_condonation.cartera
                         }
-                        /*
-                        ================================ AUTORIZACIÓN ==================================
-                        => Si lo hace un usuario administrador, la condonación se aplica directamente
-                        => Si lo hace un agente de cobranza o gestión, la condonación se aplica cuando un usuario administrador la autorice
-                        */
-                       console.log(data);
-                        //useCondonation(data,e.target,store_condonation.id);
+                        useCondonation(data,e.target,store_condonation.id,handleViewPDF);
                     }}
                 >Guardar condonación</button>
             </div>

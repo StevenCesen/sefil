@@ -8,12 +8,13 @@ import Dashboard from './pages/Dashboard.jsx'
 import { NotifierContextProvider } from './contexts/notifierContext.jsx'
 import { SessionContextProvider } from './contexts/SessionContext.jsx'
 import Credit from './pages/Credit/Credit.jsx'
+import Credits from './pages/Credits/Credits.jsx'
 
 (function () {
   const TAB_LIST_KEY = 'system-tab-ids';
   const INSTANCE_ID = Date.now().toString() + '-' + Math.random().toString(36).substr(2, 6);
-  const HEARTBEAT_INTERVAL = 5000; // 5 segundos
-  const TIMEOUT = 10000; // si no hay heartbeat en 10 segundos, se considera muerta
+  const HEARTBEAT_INTERVAL = 5000;
+  const TIMEOUT = 10000;
 
   function getTabList() {
     const raw = localStorage.getItem(TAB_LIST_KEY);
@@ -97,6 +98,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path='dashboard/:action/:id' element={<Dashboard/>}></Route>
               <Route path='dashboard/:action/:type' element={<Dashboard/>}></Route>
               <Route path='dashboard/:action/:type' element={<Dashboard/>}></Route>
+              <Route path='credits' element={<Credits/>}></Route>
               <Route path='credits/:id' element={<Credit/>}></Route>
             </Route>
             

@@ -5,7 +5,7 @@ export default function InfoFees({pending_fees,paid_fees,total_fees}){
         <div className="InfoFees">
             <div>
                 <h3>{pending_fees}</h3>
-                <p>Cuotas pendientes</p>
+                <p>Cuotas vencidas</p>
             </div>
             <div>
                 <h3>{paid_fees}</h3>

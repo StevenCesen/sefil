@@ -55,30 +55,6 @@ export default function CardListCarteras({name,fecha_upload,last_update,versions
                 <p>{cartera.fecha_upload}</p>
                 <p>{cartera.last_update}</p>
                 <p>{cartera.fecha_carga}</p>
-                {/* <button onClick={(e)=>{
-                    setView(!viewVersions);
-
-                    if(!viewVersions){
-                        e.target.textContent="Ocultar versiones";
-                    }else{
-                        e.target.textContent="Ver versiones";
-                    }
-                }}>Ver versiones</button>
-                <button>Actualizar</button>
-
-                {
-                    (viewVersions)
-                    ?
-                        <div className="CardListCarteras__versions">
-                            {
-                                cartera.versions.map((version,index)=>(
-                                    <NavLink key={index}>{version}</NavLink>
-                                ))
-                            }
-                        </div>
-                    :   <></>
-                } */}
-                
                 <p>{cartera.state}</p>
                 <NavLink target="blank" to={`${import.meta.env.VITE_URL_BASE}/exportar?cartera=${cartera.name}`}>Excel</NavLink>
                 <div>

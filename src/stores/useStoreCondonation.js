@@ -2,6 +2,7 @@ import { create } from 'zustand'
 
 export const useStoreCondonation = create((set) => ({
     isViewOn: false,
+    viewPDF: false,
     total:0,
     capital:0,
     mora:0,
@@ -12,11 +13,18 @@ export const useStoreCondonation = create((set) => ({
     otros_valores:0,
     id:0,
     cartera:'',
+    ci:'',
+    name:'',
     setData:'',
     view:'',
     update:'',
+    response:{},
+    setResponse:(value)=>{set({response:value})},
     viewOn:(value)=>{set({isViewOn:value})},
-    setInfoCredit: ({total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,otros_valores,id,cartera,setData,view,update})=>{
+    setViewPDF:(value)=>{set({viewPDF:value})},
+    setInfoCredit: ({ci,name,total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,otros_valores,id,cartera,setData,view,update})=>{
+        set({ci})
+        set({name})
         set({total})
         set({capital})
         set({mora})

@@ -1,0 +1,21 @@
+.CardQuote{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 10% 30% 30% 30%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    border-left: 1px solid rgb(221, 221, 221);
+    border-right: 1px solid rgb(221, 221, 221);
+    padding: 10px 0;
+}
+
+.CardQuote>p:first-child{
+    font-weight: bold;
+}
+
+.CardQuote>button{
+    height: 35px;
+    font-weight: bold;
+}

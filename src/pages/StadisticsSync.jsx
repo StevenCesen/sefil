@@ -6,6 +6,7 @@ import useSearch from "../hooks/useSearch.js";
 import useFormatterNumber from "../hooks/useFormatterNumber.js";
 import useSearchSyncs from "../hooks/useSearchSync.js";
 import Loader from "../components/Loader/loader.jsx";
+import { useStoreLoader } from "../stores/useStoreLoader.js";
 
 export default function Stadistics(){
     const param = useParams();
@@ -16,12 +17,15 @@ export default function Stadistics(){
     const [agents,setAgents]=useState();
     const [agent,setAgent]=useState();
     const [filter,setFilter]=useState();
-    const [loading,setLoading]=useState();
     const [total,setTotal]=useState(0);
+    const [nro_credits,setNroCredits]=useState(0);
     const [total_general,setTotalGeneral]=useState(0);
     const [total_campain,setTotalCampain]=useState(0);
+    const [total_castigado,setTotalCastigado]=useState(0);
+    const [total_vencido,setTotalVencido]=useState(0);
 
     const [message,setMessage]=useState("");
+    const loader = useStoreLoader();
 
     const [credits,setCredits]=useState({
         current_page:1,
@@ -50,7 +54,7 @@ export default function Stadistics(){
             con_gestion:filter.con_gestion
         });
 
-        setLoading(true);
+        loader.viewOn(true);
 
         url=`${url}&campain=29&cartera=syncs${complemento}`;
 
@@ -63,17 +67,9 @@ export default function Stadistics(){
             .then((response) => response.json())  
             .then((data) => {
                 let total=data.total;
-
-                // data.data.map((item)=>{
-                //     if(item.con_gestion=="SI"){
-                //         total+=Number(item.payment_value);
-                //     }
-                // });
-
                 setTotal(total);
-
                 setCredits(data.info);
-                setLoading(false);
+                loader.viewOn(false);
         });
     }
     
@@ -105,7 +101,8 @@ export default function Stadistics(){
 
     const setFilters=({mora,estado,agente,con_gestion})=>{
         let filter_apply="";
-        setLoading(true);
+        
+        loader.viewOn(true);
 
         if(Number(mora.min)!==0 & mora.min!==""){
             filter_apply+=`&mora_min=${mora.min}`
@@ -127,7 +124,6 @@ export default function Stadistics(){
             filter_apply+=`&con_gestion=SI`
         }
 
-        // console.log(`${import.meta.env.VITE_URL_BASE}/campains/stadistics?campain=28&cartera=syncs${filter_apply}`);
         fetch(`${import.meta.env.VITE_URL_BASE}/campains/stadistics?campain=29&cartera=syncs${filter_apply}`,{
             headers: {
                 Accept: 'application/json',
@@ -137,19 +133,15 @@ export default function Stadistics(){
             .then((response) => response.json())  
             .then((data) => {
                 let total=data.total.total;
-                console.log(data);
-
-                // data.info.data.map((item)=>{
-                //     if(item.con_gestion=="SI"){
-                //         total+=Number(item.payment_value);
-                //     }
-                // });
-
+                
                 setTotal(total);
+                setNroCredits(data.total.nro_credits);
                 setTotalGeneral(data.total.total_general)
                 setTotalCampain(data.total.total_campain)
+                setTotalCastigado(data.total.total_castigado)
+                setTotalVencido(data.total.total_vencido)
                 setCredits(data.info);
-                setLoading(false);
+                loader.viewOn(false);
             });
     }
 
@@ -178,13 +170,12 @@ export default function Stadistics(){
 
         localStorage.setItem('cartera','syncs');
         setAux(localStorage.getItem('cartera'));
-        setLoading(true);
+        loader.viewOn(true);
 
         if(localStorage.getItem('cartera')!=='' & localStorage.getItem('cartera')!==null & param.ci==undefined){
             setAux(localStorage.getItem('cartera'));
 
-            //  Seleccionamos la campaña
-            fetch(`${import.meta.env.VITE_URL_BASE}/campains/stadistics?campain=29`,{
+            fetch(`${import.meta.env.VITE_URL_BASE}/campains/stadistics?campain=33`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -193,10 +184,12 @@ export default function Stadistics(){
                 .then((response) => response.json())  
                 .then((data) => {
                     let total=data.total.total;
-                    console.log(data);
                     setTotal(total);
+                    setNroCredits(data.total.nro_credits);
                     setTotalGeneral(data.total.total_general)
                     setTotalCampain(data.total.total_campain)
+                    setTotalCastigado(data.total.total_castigado)
+                    setTotalVencido(data.total.total_vencido)
                     setCredits(data.info);
                 });
 
@@ -210,7 +203,7 @@ export default function Stadistics(){
                 .then((response) => response.json())  
                 .then((data) => {
                     setAgents(data);
-                    setLoading(false);
+                    loader.viewOn(false);
                 });
 
             setCredit([]);
@@ -228,15 +221,15 @@ export default function Stadistics(){
                 .then((response) => response.json())  
                 .then((data) => {
                     setCredit(data);
-                    setLoading(false);
+                    loader.viewOn(false);
                 });
         }
 
     },[]);
 
-    if(!agents) return <Loader/>
-    if(!agent) return <Loader/>
-    if(!data_credit) return <Loader/>
+    if(!agents) return <></>
+    if(!agent) return <></>
+    if(!data_credit) return <></>
 
     return (
         <div className="pageConsulta">
@@ -322,9 +315,15 @@ export default function Stadistics(){
                             <h4 className="Reports__title">Pagos con gestión</h4>
                         </div>
 
-                        <div className="pageConsulta__search" style={{flexDirection:'column',alignItems:'flex-start'}}>
-                            <h4 className="Reports__title" style={{color:"black"}}>Total general con gestión: {useFormatterNumber({value:total_general,currency:'USD'})}</h4>
-                            <h4 className="Reports__title" style={{color:"black"}}>Total con gestión en campaña: {useFormatterNumber({value:total_campain,currency:'USD'})}</h4>
+                        <div className="pageConsulta__search" style={{alignItems:'flex-start',justifyContent:'flex-start',gap:'50px'}}>
+                            <div>
+                                <h4 className="Reports__title" style={{color:"black"}}>Total general con gestión: {useFormatterNumber({value:total_general,currency:'USD'})}</h4>
+                                <h4 className="Reports__title" style={{color:"black"}}>Total con gestión en campaña: {useFormatterNumber({value:total_campain,currency:'USD'})}</h4>
+                            </div>
+                            <div>
+                                <h4 className="Reports__title" style={{color:"black"}}>Total general Castigado en campaña: {useFormatterNumber({value:total_castigado,currency:'USD'})}</h4>
+                                <h4 className="Reports__title" style={{color:"black"}}>Total general Vencido en campaña: {useFormatterNumber({value:total_vencido,currency:'USD'})}</h4>
+                            </div>
                         </div>
 
                         <div className="pageConsulta__results">
@@ -455,7 +454,7 @@ export default function Stadistics(){
                                     <p>Gestiones no efectivas</p>
                                     <p>
                                         Total pagado con gestión
-                                        <p style={{marginTop:"10px",color:"white",fontSize:"16px"}}>{useFormatterNumber({value:total,currency:'USD'})}</p>
+                                        <p style={{marginTop:"10px",color:"white",fontSize:"16px"}}>Créditos {nro_credits} - {useFormatterNumber({value:total,currency:'USD'})}</p>
                                     </p>
                                     <p>Total pagado sin gestión</p>
                                     <p>Total pagado</p>
@@ -574,12 +573,6 @@ export default function Stadistics(){
 
                         </div>
                     </>
-            }
-            {
-                (loading)
-                ?
-                    <Loader/>
-                :   <></>
             }
         </div>
     );

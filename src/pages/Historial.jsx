@@ -7,18 +7,16 @@ import useReturnFilter from "../hooks/useReturnFilter";
 import Loader from "../components/Loader/loader";
 
 export default function GHistorial(){
-
-    const [campain,setCampain]=useState('');
     const [campains,setCampains]=useState();
     const [current,setCurrent]=useState();
     const [agents,setAgents]=useState();
     const [filters,setFilters]=useState();
     const [loading,setLoading]=useState();
-
+    
     const params=new URLSearchParams(useLocation().search);
     const param=useParams();
 
-    const [data,setData]=useState(); //Aquí tenemos todos los créditos
+    const [data,setData]=useState();
     
     const updateData=(url)=>{
         setLoading(true);
@@ -118,6 +116,7 @@ export default function GHistorial(){
                     })
                         .then((response) => response.json())  
                         .then((data) => {
+
                             data.path+=`?credit=${param.ci}&cartera=${params.get('cartera')}`;
 
                             if(data.next_page_url!==null){
@@ -143,6 +142,7 @@ export default function GHistorial(){
                     })
                         .then((response) => response.json())  
                         .then((data) => {
+                            console.log(data);
                             setData(data);
                         });
                 }
@@ -510,7 +510,7 @@ export default function GHistorial(){
 
                 {
                     data.data.map((gestion,index)=>(
-                        <div className="Historial__item">
+                        <div className={`Historial__item ${(gestion.is_wweb) ? "Historial__item--wweb" : ""}`}>
                             <button
                                 onClick={(e)=>{
                                     setCurrent(gestion)

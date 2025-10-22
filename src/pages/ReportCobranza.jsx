@@ -23,18 +23,18 @@ export default function ReportCobranza(){
     const [campains,setCampains]=useState();
 
     useEffect(()=>{
-        setReport({
-            status:false,
-            data:['','',''],
-            state_cartera:{},
-            credits_active:{},
-            credits_by_month:{},
-            credits_by_mora:{},
-            filters:{}
-        });
+        // setReport({
+        //     status:false,
+        //     data:['','',''],
+        //     state_cartera:{},
+        //     credits_active:{},
+        //     credits_by_month:{},
+        //     credits_by_mora:{},
+        //     filters:{}
+        // });
 
-        setNumber(0);
-        setTypeSearch('0');
+        // setNumber(0);
+        // setTypeSearch('0');
 
         fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
             headers: {
@@ -47,14 +47,6 @@ export default function ReportCobranza(){
                 setCampains(data);
             });
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/users/departament?role=cobranza`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => setAgents(data));
 
         fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
             headers: {
@@ -67,22 +59,9 @@ export default function ReportCobranza(){
                 setBusiness(data.data);
             });
 
-        setEmpresa("");
         setEmpresa2("");
-        setAgencyAmount("catacocha");
-        setUnificate('normal');
-
-        setSelect("");
-        setProvincia("");
-        setCanton("");
-        setResults([]);
-        setFechaInicio("");
-        setFechaFinal("");
-        setFechaInicio1("");
-        setFechaFinal1("");
         setFechaInicio2("");
         setFechaFinal2("");
-        setAgent("");
     },[]);
 
     if(!business) return <></>

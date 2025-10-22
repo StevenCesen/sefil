@@ -363,7 +363,7 @@ export default function Gconvenios(){
 
                     {
                         convenios.map((convenio,index)=>(
-                            <div className="Convenios__item" style={{backgroundColor:`${(convenio.cuotas_pendientes>0 && convenio.status=='Convenio vigente') ? "#FFA191" : ""}`}} key={index}>
+                            <div className="Convenios__item" style={{backgroundColor:`${(convenio.status!=='Convenio vigente') ? "#FFA191" : ""}`}} key={index}>
                                 <NavLink to={`/dashboard/recaudacion/view/${convenio.cartera}?id=${convenio.id}`} onClick={()=>{localStorage.setItem('hash',location.hash)}}>{convenio.cartera}-{convenio.credito}</NavLink>
                                 <label>{convenio.titular}</label>
                                 <label>{convenio.cedula}</label>

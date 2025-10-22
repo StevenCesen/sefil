@@ -92,6 +92,29 @@ export const useStoreFilterManagement = create((set,get) => ({
             console.error('Error al hacer fetchFilteredCredits:', error);
         }
     },
+    nextPage: async({url})=>{
+        const {getFilterString}=get();
+        const filters=getFilterString();
+
+        try {
+            const request=await fetch(`${url}&${filters}`,{
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!request.ok) {
+                throw new Error('Error al consultar la API');
+            }
+
+            const data = await request.json();
+            set({credits:data});
+
+        } catch (error) {
+            console.error('Error al hacer fetchFilteredCredits:', error);
+        }
+    },
     numberTrays: async () => {
         const {business}=get();
         const end_point=`${import.meta.env.VITE_URL_BASE}/campains/NumberTrays?user_id=${localStorage.getItem('temp_uS')}&business=${business}`;

@@ -11,6 +11,21 @@
     align-items: center;
 }
 
+.CardConfirm__background>button{
+    position: absolute;
+    background-color: inherit;
+    font-size: 14px;
+    border: none;
+    top: 100px;
+    right: 30px;
+    width: 100px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+    background-color: var(--color-error);
+    color: var(--color-3);
+}
+
 .CardConfirm{
     width:300px;
     background-color: var(--bg-2);

@@ -1,23 +1,11 @@
 import { useEffect, useState } from "react";
 import Loader from "../Loader/loader";
 import "./CardCompare.css";
+import { useStoreLoader } from "../../stores/useStoreLoader";
 
 const estados_efectivos=[
     'OFERTA DE PAGO',
-    'COMPROMISO DE PAGO',
-    'MENSAJE A TERCEROS',
-    'MENSAJE EN BUZÓN DEL CLIENTE',
-    'YA PAGÓ',
-    'SOLICITA REFINANCIAMIENTO',
-    'CLIENTE SE NIEGA A PAGAR',
-    'CLIENTE INDICA QUE NO ES SU DEUDA',
-    'CORTA LA LLAMADA',
-    'CONTESTA MENOR DE EDAD',
-    'VOLVER A LLAMAR',
-    'CONVENIO DE PAGO',
-    'YA PAGO',
-    'MENSAJE DE WHATSAPP',
-    'MENSAJE DE TEXTO'
+    'COMPROMISO DE PAGO'
 ];
 
 export default function CardCompare({agents}){
@@ -26,35 +14,28 @@ export default function CardCompare({agents}){
     const [agents_compare,setAgents]=useState();
     const [filters,setFilters]=useState();
     const [campains,setCampains]=useState();
-    const [loading,setLoading]=useState();
     const [results,setResults]=useState();
     const [dataestados,setDataEstados]=useState();
     const [estados,setEstados]=useState();
     const [trays,setTrays]=useState();
     const [select_trays,setSelectTrays]=useState();
+    const loader = useStoreLoader();
 
     const completarEstados = (lista,estadosUnicos) => {
         return estadosUnicos.map(estado => {
             const item = lista.find(e => e.estado === estado);
-            return item ? item : { estado, nro: 0 }; // Si no existe, se agrega con nro: 0
+            return item ? item : { estado, nro: 0 };
         });
     };
 
     const updateFilter=async ({campain,corte,state,agencia,agente,inicio,fin,trays,group,estado})=>{
         let filter=``;
-        setLoading(true);
+        
+        loader.viewOn(true);
 
         if(campain!==""){
             filter+=`&campain=${campain}`;
         }
-
-        // if(state!==""){
-        //     filter+=`&estado=${state}`;
-        // }
-
-        // if(agencia!==""){
-        //     filter+=`&agencia=${agencia}`;
-        // }
 
         filter+=`&agentes=${JSON.stringify(agents_compare)}`;
 
@@ -148,8 +129,7 @@ export default function CardCompare({agents}){
         });
 
         setDataEstados(completados);
-
-        setLoading(false);
+        loader.viewOn(false);
     }
 
     const padDate=(value)=>{
@@ -161,6 +141,7 @@ export default function CardCompare({agents}){
     }
 
     useEffect(()=>{
+        loader.viewOn(true);
         setListAgents(agents);
         setFilters({
             campain:"",
@@ -191,14 +172,15 @@ export default function CardCompare({agents}){
             .then((data) => {
                 setCampains(data.data);
             });
+
         setAgents([]);
         setEstados([]);
     },[]);
 
-    if(!list_agents) return <Loader/>
-    if(!agents_compare) return <Loader/>
-    if(!campains) return <Loader/>
-    if(!estados) return <Loader/>
+    if(!list_agents) return <></>
+    if(!agents_compare) return <></>
+    if(!campains) return <></>
+    if(!estados) return <></>
 
     return (
         <div className="CardCompare">
@@ -501,23 +483,12 @@ export default function CardCompare({agents}){
                                         ))
                                     :   <></>
                                 }
-
-
-                                
                             </div>
                         </div>
 
                     </div>
                 </div>
             </div>
-
-            {
-                (loading)
-                ?
-                    <Loader/>
-                :   <></>
-            }
-
         </div>
     );
 }

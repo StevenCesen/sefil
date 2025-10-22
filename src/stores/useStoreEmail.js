@@ -19,12 +19,13 @@ export const useStoreEmail = create((set,get) => ({
     client_email:'',
     promise_date:'',
 
-    setContact:({name,type,view,days_past_due,total_amount})=>{
+    setContact:({name,type,view,days_past_due,email,total_amount})=>{
         set({client_name:name})
         set({client_type:type})
         set({view:view})
         set({days_past_due:days_past_due})
         set({total_amount:total_amount})
+        set({client_email:email})
     },
     setEmail:(value)=>{set({email:value})},
     setView:(value)=>{set({view:value})},

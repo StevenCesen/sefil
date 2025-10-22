@@ -1,0 +1,61 @@
+.SearchVoucher{
+    margin: 10px 0;
+    position: relative;
+}
+
+.SearchVoucher__head{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.SearchVoucher__label,.SearchVoucher__select{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    font-weight: bold;
+}
+
+.SearchVoucher__label>input,.SearchVoucher__select>select{
+    margin-top: 5px;
+}
+
+.SearchVoucher__label>input{
+    width: 250px;
+    height: 35px;
+    border-radius: 5px;
+    border: none;
+    padding-left: 10px;
+}
+
+.SearchVoucher__select>select{
+    width: 100px;
+    height: 35px;
+    border-radius: 5px;
+    border: none;
+    padding-left: 10px;
+}
+
+.SearchVoucher__menu{
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: -50px;
+    height: 50px;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.SearchVoucher__menu>a{
+    font-size: 14px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+}

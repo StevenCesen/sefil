@@ -1,4 +1,4 @@
-export default async function useCondonation(data,btn,id,setData,view,set,update){
+export default async function useCondonation(data,btn,id,setPDF){
     const request= await fetch(`${import.meta.env.VITE_URL_BASE}/credit/condonar/${id}`,{
         method:'POST',
         body:new URLSearchParams(data),
@@ -11,29 +11,22 @@ export default async function useCondonation(data,btn,id,setData,view,set,update
     const response=await request.json();
 
     if(response.status===200){
-        
-        data.by_user=response.by_user;
-        data.fecha=response.fecha;
-        data.ci=response.ci;
-        data.name=response.name;
-        if(update!==null){
-            update({
-                capital:data.saldo_capital,
-                interes:data.interes,
-                mora:data.mora,
-                seguro_desgravamen:data.seguro_desgravamen,
-                gastos_judiciales:data.gastos_judiciales,
-                gastos_cobranza:data.gastos_cobranza,
-                otros_valores:data.otros_valores,
-                totalAmount:data.totalAmount
-            }); 
-        }
-
-        setData(data);
+        // if(update!==null){
+        //     update({
+        //         capital:data.saldo_capital,
+        //         interes:data.interes,
+        //         mora:data.mora,
+        //         seguro_desgravamen:data.seguro_desgravamen,
+        //         gastos_judiciales:data.gastos_judiciales,
+        //         gastos_cobranza:data.gastos_cobranza,
+        //         otros_valores:data.otros_valores,
+        //         totalAmount:data.totalAmount
+        //     }); 
+        // }
+        console.log(response);
+        setPDF(response.data);
         btn.textContent='Condonación guardada';
         btn.setAttribute('disabled','');
-        set();
-        view();
     }else{
         btn.textContent='Inténtalo de nuevo';
         btn.removeAttribute('disabled','');

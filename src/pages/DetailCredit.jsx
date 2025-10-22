@@ -1,3 +1,8 @@
+/**
+ * =====================================================
+ *                  ELIMINAR COMPONENTE
+ * =====================================================
+ */
 import { NavLink, useLocation, useParams} from "react-router-dom";
 import "./pages.css";
 import { useEffect, useState } from "react";
@@ -774,12 +779,12 @@ export default function DetailCredit(){
                         <button className="CardCondonacion__close" onClick={()=>{setPDFcondonation(false)}}>Volver</button>
                         <PDFViewer width={'800px'} height={'600px'}>
                             <PDFcondonacion
-                                //  ci={"1003934617"}
-                                //  credito={"313"}
-                                //  name={"GUERRA SANCHEZ ELVIA VALERIA"}
-                                //  fecha={"2025/02/19 09:36:25"}
-                                //  prevDates={'{"capital":"593.9","interes":"22.75","mora":"104.78","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"30.48"}'}
-                                //  postDates={'{"capital":"593.9","interes":"22.75","mora":"55.14","seguro_desgravamen":"0","gastos_cobranza":"0","gastos_judiciales":"0","otros_valores":"0"}'}
+                                //  ci={"1900568971"}
+                                //  credito={"353"}
+                                //  name={"CALI PANDIGUANA ROSA TATIANA"}
+                                //  fecha={"2025/09/30 09:56:18"}
+                                //  prevDates={'{"mora":"667.21","interes":"363.94","capital":"1875","seguro_desgravamen":"17.55","gastos_cobranza":"78.4","gastos_judiciales":"23.75","otros_valores":0}'}
+                                //  postDates={'{"capital":"1211.32","mora":"0.00","interes":"0.00","seguro_desgravamen":"0","gastos_judiciales":"0","gastos_cobranza":"0","otros_valores":0}'}
                                 //  user_auth={'María Bravo'}
                                 ci={value_condonacion.ci}
                                 credito={value_condonacion.credito}
@@ -797,7 +802,6 @@ export default function DetailCredit(){
                 (edit_judicial) &&
                     <div className="CardPay">
                         <button className="CardCondonacion__close" onClick={()=>{setEditJudicial(false)}}>Volver</button>
-                        
                         <CardEditJudicial
                             id={param.get('id')}
                             cartera={cartera.id}
@@ -806,7 +810,6 @@ export default function DetailCredit(){
                             setNew={updateGastosJudiciales}
                             close={setEditJudicial}
                         />
-                    
                     </div>
             }
 

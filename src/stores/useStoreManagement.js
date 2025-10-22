@@ -3,6 +3,7 @@ import getListPhones from '../helpers/Calls/getListPhones';
 import getListManagements from '../helpers/Managements/getListManagements';
 import getListPayments from '../helpers/Payments/getListPayments';
 import getListNotes from '../helpers/Managements/getListNotes';
+import checkManagement from '../helpers/Managements/checkManagement';
 
 export const useStoreManagement = create((set,get) => ({
     credit:null,
@@ -133,5 +134,10 @@ export const useStoreManagement = create((set,get) => ({
         set({observation:''}),
         set({nro_notificacion:''}),
         set({message:'No gestionado'})
+    },
+    checkManagement: async () => {
+        const {campain_id,credit_id}=get();
+        const state=await checkManagement({credit_id,campain_id});
+        return state.state;
     }
 }));

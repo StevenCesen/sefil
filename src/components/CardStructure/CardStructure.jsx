@@ -193,8 +193,7 @@ export default function CardStructure(){
                         
                         const create_agreement=await useStruct(data,e.target,store_structure.credit_id);
                     }}
-                >Guardar cambios</button> 
-
+                >Guardar cambios</button>
             </div>
         </div>
     );

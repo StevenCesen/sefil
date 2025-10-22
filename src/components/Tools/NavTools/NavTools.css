@@ -19,11 +19,16 @@
 
 .NavTools__menu{
     width: 120px;
+    height: 100px;
     position: absolute;
-    bottom: -110px;
+    bottom: -100px;
     background-color: var(--bg-2);
     padding: 10px;
     border-radius: 5px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
     box-shadow: var(--box-shadow);
 }
 

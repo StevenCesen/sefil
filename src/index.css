@@ -98,6 +98,22 @@ body{
   
 }
 
+.Gestion__navPagination{
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.Gestion__navPagination>button{
+  width:  80px;
+  height: 35px;
+  border: none;
+  border-radius: 5px;
+  border: 1px solid rgb(202, 202, 202);
+}
+
 .custom-scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);

@@ -1,3 +1,8 @@
+/**
+ * =====================================================
+ *                      REFACTORIZAR
+ * =====================================================
+ */
 import { useEffect, useRef, useState } from "react";
 import "./CardPay.css";
 import { PDFViewer } from "@react-pdf/renderer";
@@ -5,8 +10,9 @@ import PDF from "../PDF";
 import usePrelacion from "../../hooks/usePrelacion";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useUpdateCredit from "../../hooks/useUpdateCredit";
+import { useStoreLoader } from "../../stores/useStoreLoader";
 
-export default function CardPay({setView,credit,updateInfoValues}){
+export default function CardPay({setView,cartera,credit,updateInfoValues}){
     const [pay,setData]=useState();
 
     const [send,setSend]=useState({
@@ -26,7 +32,7 @@ export default function CardPay({setView,credit,updateInfoValues}){
         valor_devuelto:'',
         institucion_financiera:'',
         codigo_deposito:'',
-        credito:credit.credit.id,
+        credito:credit.id,
         detalle:{
             totalAmount:0.00,
             saldo_capital:0.00,
@@ -60,41 +66,47 @@ export default function CardPay({setView,credit,updateInfoValues}){
 
     const ref=useRef();
 
+    //  OJOOOOOOOOOOOOOO
     const updateDetalle=(detalle)=>{
         setData({
             ...pay,
-            tipo_transaccion: (data_convenio!==null) ? 'parcial' : 'total',
-            valor_recibido:(data_convenio!==null) ? data_convenio.valor_cuota : 0,
+            //tipo_transaccion: (credit.collection_state==='CONVENIO DE PAGO') ? 'parcial' : 'total',
+            //valor_recibido:(credit.collection_state==='CONVENIO DE PAGO') ? credit.valor_cuota : 0,
             detalle:detalle
         });
     };
-    
+
+    const loader = useStoreLoader();
+
     useEffect(()=>{
+
+        loader.viewOn(true);
+
         setData({
             ...pay,
             forma_pago:             '',
             fecha_pago:             '',
-            tipo_transaccion:       (credit.credit.collection_state==='CONVENIO DE PAGO') ? 'parcial' : 'total',
+            tipo_transaccion:       (credit.collection_state==='CONVENIO DE PAGO') ? 'parcial' : 'total',
             institucion_financiera: '',
             valor_devuelto:         0,
-            valor_recibido:         (credit.credit.collection_state==='CONVENIO DE PAGO') ? 0 : 0,
+            valor_recibido:         (credit.collection_state==='CONVENIO DE PAGO') ? 0 : 0,
             codigo_deposito:        0,
-            credito:                credit.credit.id,
+            credito:                credit.id,
             detalle:{
-                totalAmount:        credit.credit.totalAmount,
-                saldo_capital:      credit.credit.saldo_capital,
-                interes:            credit.credit.interes,
-                mora:               credit.credit.mora,
-                seguro_desgravamen: credit.credit.seguro_desgravamen,
-                gastos_cobranza:    credit.credit.gastos_cobranza,
-                gastos_judiciales:  credit.credit.gastos_judiciales,
-                otros_valores:      credit.credit.otros_valores
+                totalAmount:        credit.totalAmount,
+                saldo_capital:      credit.saldo_capital,
+                interes:            credit.interes,
+                mora:               credit.mora,
+                seguro_desgravamen: credit.seguro_desgravamen,
+                gastos_cobranza:    credit.gastos_cobranza,
+                gastos_judiciales:  credit.gastos_judiciales,
+                otros_valores:      credit.otros_valores
             }
         });
 
         setActive(true);
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/bussines/prelacion?cartera=${credit.cartera}`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/bussines/prelacion?cartera=${cartera}`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -103,9 +115,7 @@ export default function CardPay({setView,credit,updateInfoValues}){
             .then((response) => response.json())  
             .then((data_pre) => {
                 setOrdenPrelacion(data_pre);
-                // if('detail' in data_convenio){
-                //     usePrelacion(data_convenio.valor_cuota,data,setPrelacion,updateDetalle,data_pre);
-                // }
+                loader.viewOn(false);
             });
     },[]);
 
@@ -239,14 +249,14 @@ export default function CardPay({setView,credit,updateInfoValues}){
                             <label>Nombre</label>
                             <label>:</label>
                         </p>
-                        <p>{credit.credit.name}</p>
+                        <p>{credit.name}</p>
                     </div>
                     <div>
                         <p>
                             <label>Cédula</label>
                             <label>:</label>
                         </p>
-                        <p>{credit.credit.ci}</p>
+                        <p>{credit.ci}</p>
                     </div>
 
                     <div>
@@ -344,15 +354,15 @@ export default function CardPay({setView,credit,updateInfoValues}){
                                                     valor_recibido:Number(e.target.value)
                                                 });
 
-                                                usePrelacion(e.target.value,credit.credit,setPrelacion,updateDetalle,orden_prelacion);
+                                                usePrelacion(e.target.value,credit,setPrelacion,updateDetalle,orden_prelacion);
                                             
                                             }else{
                                                 if(pay.forma_pago==='efectivo'){
                                                     setData({
                                                         ...pay,
                                                         valor_recibido:e.target.value,
-                                                        valor_devuelto:(Number(e.target.value)>Number(credit.credit.totalAmount)) ? String((Number(e.target.value)-Number(credit.credit.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')) : 0
-                                                    })
+                                                        valor_devuelto:(Number(e.target.value)>Number(credit.totalAmount)) ? String((Number(e.target.value)-Number(credit.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')) : 0
+                                                    });
                                                 }
                                             }
                                         }}
@@ -402,14 +412,14 @@ export default function CardPay({setView,credit,updateInfoValues}){
 
                             let data_send={
                                 prevDates:{
-                                    mora:data.mora,
-                                    interes:data.interes,
-                                    seguro_desgravamen:data.seguro_desgravamen,
-                                    gastos_judiciales:data.gastos_judiciales,
-                                    saldo_capital:data.saldo_capital,
-                                    gastos_cobranza:data.gastos_cobranza,
-                                    totalAmount:data.totalAmount,
-                                    otros_valores:data.otros_valores
+                                    mora:credit.mora,
+                                    interes:credit.interes,
+                                    seguro_desgravamen:credit.seguro_desgravamen,
+                                    gastos_judiciales:credit.gastos_judiciales,
+                                    saldo_capital:credit.saldo_capital,
+                                    gastos_cobranza:credit.gastos_cobranza,
+                                    totalAmount:credit.totalAmount,
+                                    otros_valores:credit.otros_valores
                                 },
                                 tipo_transaccion:pay.tipo_transaccion,
                                 forma_pago:pay.forma_pago,
@@ -417,7 +427,7 @@ export default function CardPay({setView,credit,updateInfoValues}){
                                 valor_devuelto:'',
                                 institucion_financiera:pay.institucion_financiera,
                                 codigo_deposito:pay.codigo_deposito,
-                                credito:id,
+                                credito:credit.id,
                                 detalle:{
                                     totalAmount:0.00,
                                     saldo_capital:0.00,
@@ -441,13 +451,13 @@ export default function CardPay({setView,credit,updateInfoValues}){
                                 data_send.totalAmount=String(Number(prelacion.totalAmount).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
                                 data_send.otros_valores=String(Number(prelacion.otros_valores).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
 
-                                data_send.detalle.saldo_capital=String((Number(data.saldo_capital)-Number(prelacion.saldo_capital)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.interes=String((Number(data.interes)-Number(prelacion.interes)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.mora=String((Number(data.mora)-Number(prelacion.mora)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.seguro_desgravamen=String((Number(data.seguro_desgravamen)-Number(prelacion.seguro_desgravamen)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.gastos_cobranza=String((Number(data.gastos_cobranza)-Number(prelacion.gastos_cobranza)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.gastos_judiciales=String((Number(data.gastos_judiciales)-Number(prelacion.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.otros_valores=String((Number(data.otros_valores)-Number(prelacion.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.saldo_capital=String((Number(credit.saldo_capital)-Number(prelacion.saldo_capital)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.interes=String((Number(credit.interes)-Number(prelacion.interes)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.mora=String((Number(credit.mora)-Number(prelacion.mora)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.seguro_desgravamen=String((Number(credit.seguro_desgravamen)-Number(prelacion.seguro_desgravamen)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.gastos_cobranza=String((Number(credit.gastos_cobranza)-Number(prelacion.gastos_cobranza)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.gastos_judiciales=String((Number(credit.gastos_judiciales)-Number(prelacion.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
+                                data_send.detalle.otros_valores=String((Number(credit.otros_valores)-Number(prelacion.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
                                 data_send.detalle.totalAmount=String((Number(prelacion.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
 
                                 data_send.valor_recibido=ref.current.value;
@@ -458,7 +468,7 @@ export default function CardPay({setView,credit,updateInfoValues}){
                                 data_send.valor_devuelto=pay.valor_devuelto;
 
                             }else{
-                                data_send.valor_recibido=Number(data.totalAmount)+Number(pay.valor_devuelto);
+                                data_send.valor_recibido=Number(credit.totalAmount)+Number(pay.valor_devuelto);
                                 data_send.valor_devuelto=pay.valor_devuelto;
                             }
 
@@ -477,16 +487,14 @@ export default function CardPay({setView,credit,updateInfoValues}){
                                 e.target.textContent='Error, falta institución financiera.';
                             }else if(data_encode.forma_pago!=='efectivo' & data_encode.codigo_deposito===0){
                                 e.target.textContent='Error, falta código de transacción.'
-                            }else if(data_encode.tipo_transaccion==='total' & (Number(data_encode.valor_recibido)<Number(data.totalAmount))){
+                            }else if(data_encode.tipo_transaccion==='total' & (Number(data_encode.valor_recibido)<Number(credit.totalAmount))){
                                 e.target.textContent='Error, valor recibido no es correcto, inténtalo de nuevo.';
                             }else if(data_encode.valor_recibido==='0'){
                                 e.target.textContent='Error, falta valor recibido.';
                             }else if(data_encode.fecha_pago===''){
                                 e.target.textContent='Error, falta fecha de pago.';
                             }else{ 
-                                //Compruebo si no existe el mismo codigo de deposito
-                                if(data_encode.forma_pago!=='efectivo'){
-                                    
+                                if(data_encode.forma_pago!=='efectivo'){                                    
                                     fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
                                             headers: {
                                                 Accept: 'application/json'
@@ -494,10 +502,9 @@ export default function CardPay({setView,credit,updateInfoValues}){
                                         })
                                             .then((response) => response.json())  
                                             .then(async (data) => {
-                                                /*========================================================EL CÓDIGO DE DEPOSITO ES ÚNICO Y NO EXISTE AÚN EN BASE================================================*/
-    
+                                                /*=======EL CÓDIGO DE DEPOSITO ES ÚNICO Y NO EXISTE AÚN EN BASE======*/
                                                 if(data.state===200){
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${id}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${credit.id}`,{
                                                         method:'PUT',
                                                         headers: {
                                                             Accept: 'application/json',
@@ -508,10 +515,10 @@ export default function CardPay({setView,credit,updateInfoValues}){
                                                         .then((response) => response.json())  
                                                         .then(async (data) => {
                                                             
-                                                            /*========================================================PAGO EXITOSO================================================*/
+                                                            /*==================PAGO EXITOSO===============*/
                                                             if(data.status===200){
 
-                                                                if('id' in data.gasto & estado!=='Convenio de pago'){
+                                                                if('id' in data.gasto & credit.collection_state!=='Convenio de pago'){
                                                                     //setPreview(true);
                                                                     setGastos({
                                                                         credito:data.gasto.credito,
@@ -527,10 +534,8 @@ export default function CardPay({setView,credit,updateInfoValues}){
 
                                                                 e.target.textContent='Pago registrado';
                                                                 title.current.textContent='COMPROBANTE DE PAGO';
-
                                                                 setActive(false);
-                                                                useUpdateCredit(cartera,id,setCredit);
-
+                                                                useUpdateCredit(cartera,credit.id,()=>{});
                                                             }else{
                                                                 e.target.textContent='Error, inténtalo de nuevo';
                                                             }
@@ -541,8 +546,8 @@ export default function CardPay({setView,credit,updateInfoValues}){
 
                                             });
                                 }else{
-                                    /*========================================================PAGO EXITOSO================================================*/
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${id}`,{
+                                    /*========================PAGO EXITOSO=====================*/
+                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${credit.id}`,{
                                             method:'PUT',
                                             headers: {
                                                 Accept: 'application/json',
@@ -553,11 +558,10 @@ export default function CardPay({setView,credit,updateInfoValues}){
                                             .then((response) => response.json())  
                                             .then(async (data) => {
                                                 if(data.status===200){
-
                                                     if('id' in data.gasto){
                                                         //setPreview(true);
                                                         setGastos({
-                                                            credito:data.gasto.credito,
+                                                            credito:credit.id.credito,
                                                             id:data.gasto.id,
                                                             valor_gasto:data.gasto.postDates,
                                                             fecha:'',
@@ -572,10 +576,8 @@ export default function CardPay({setView,credit,updateInfoValues}){
 
                                                     e.target.textContent='Pago registrado';
                                                     title.current.textContent='COMPROBANTE DE PAGO';
-
                                                     setActive(false);
-                                                    //Actualizar datos del crédito
-                                                    useUpdateCredit(cartera,id,setCredit);
+                                                    useUpdateCredit(cartera,credit.id,()=>{});
                                                 }else{
                                                     e.target.textContent='Error, inténtalo de nuevo';
                                                 }
@@ -607,8 +609,8 @@ export default function CardPay({setView,credit,updateInfoValues}){
                             forma_pago={send.forma_pago}
                             insitucion_financiera={send.institucion_financiera}
                             codigo_deposito={send.codigo_deposito}
-                            name={credit.credit.name}
-                            ci={credit.credit.ci}
+                            name={credit.name}
+                            ci={credit.ci}
                             credito={idVouch.sync}
                             
                             mora={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).mora : JSON.parse(send.prevDates).mora}
