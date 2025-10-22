@@ -5,13 +5,18 @@ import { useStoreSMS } from "../../../stores/useStoreSMS";
 import { useEffect } from "react";
 import sendpush from "../../../helpers/sendpush";
 
-export default function CardContact({phone_number,nro_sucessful,nro_fails,name,ci,type,total_amount,days_past_due}){
+export default function CardContact({phone_number,nro_sucessful,nro_fails,name,ci,type,total_amount,days_past_due,channel}){
     const store_call=useStoreProgressCall();
     const store_sms=useStoreSMS();
     
     return(
         <div className="CardContact">
-            <p>{phone_number}</p>
+            <p 
+                className={`${(channel==='FACES') ? "CardContact__labelred" : ""}`}
+                title={`${(channel==='FACES') ? "Número enviado por FACES" : "Número creado por Gestor en SEFIL"}`}
+            >
+                {phone_number}
+            </p>
             <div className="CardContact__metrics">
                 <label 
                     title="Número de veces que contestó" 

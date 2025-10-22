@@ -11,6 +11,11 @@
     font-size: 18px;
 }
 
+.CardContact__labelred{
+    color: rgb(240, 118, 118);
+    font-weight: bold;
+}
+
 .CardContact__metrics,.CardContact__actions{
     display: flex;
     justify-content:center;
