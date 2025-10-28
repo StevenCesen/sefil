@@ -7,11 +7,11 @@ export default function NavigationToggle({first_url,prev_url,per_page,next_url,l
     const [per_pagination,setPerPagination]=useState(per_page);
     const loader = useStoreLoader();
 
-    const handlerNavigation = async ({url,per_page})=>{
-        console.log(url);
+    const handlerNavigation = async ({url,per_page,filters})=>{
         if(url){
             loader.viewOn(true);
             const data = await getPage({
+                url,
                 per_page,
                 filters:filters
             });
@@ -23,11 +23,11 @@ export default function NavigationToggle({first_url,prev_url,per_page,next_url,l
     return(
         <div className="NavigationToggle">
             <button 
-                onClick={()=>{handlerNavigation({url:first_url,per_page:per_pagination})}} 
+                onClick={()=>{handlerNavigation({url:first_url,per_page:per_pagination,filters})}} 
                 title="Primer página"
             >⏪</button>
             <button
-                onClick={()=>{handlerNavigation({url:prev_url,per_page:per_pagination})}} 
+                onClick={()=>{handlerNavigation({url:prev_url,per_page:per_pagination,filters})}} 
                 title="Página anterior"
             >◀️</button>
             <input
@@ -36,11 +36,11 @@ export default function NavigationToggle({first_url,prev_url,per_page,next_url,l
                 onChange={(e)=>{setPerPagination(e.target.value)}}
             />
             <button
-                onClick={()=>{handlerNavigation({url:next_url,per_page:per_pagination})}} 
+                onClick={()=>{handlerNavigation({url:next_url,per_page:per_pagination,filters})}} 
                 title="Página siguiente"
             >▶️</button>
             <button
-                onClick={()=>{handlerNavigation({url:last_url,per_page:per_pagination})}} 
+                onClick={()=>{handlerNavigation({url:last_url,per_page:per_pagination,filters})}} 
                 title="Última página"
             >⏩</button>
         </div>

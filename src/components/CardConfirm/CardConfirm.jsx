@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import "./CardConfirm.css";
 import { useStoreLoader } from "../../stores/useStoreLoader";
+import { useStoreBilling } from "../../stores/useStoreBilling";
 
-export default function CardConfirm({id,cartera,value,email,name,ci,direccion,telefono,setGastos,setView,setPDF}){
-    const [dates,setDates]=useState();
-    const [cuentas_bancarias,setCuentas]=useState();
-    const [metodos,setMetodos]=useState();
-    const [formas,setFormas]=useState();
-    const loader = useStoreLoader();
+export default function CardConfirm({id,cartera,value,email,name,ci,direccion,telefono,setView}){
+    const [dates,setDates]                  =   useState();
+    const [cuentas_bancarias,setCuentas]    =   useState();
+    const [metodos,setMetodos]              =   useState();
+    const [formas,setFormas]                =   useState();
+    const loader                            =   useStoreLoader();
+    const store_billing                     =   useStoreBilling();
 
     useEffect(()=>{
         loader.viewOn(true);
@@ -43,14 +45,13 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 referencia:"",
                 idBanco:""
             });
-            loader.viewOn(false);
         }
     },[]);
 
-    if(!dates) return <></>
-    if(!cuentas_bancarias) return <></>
-    if(!formas) return <></>
-    if(!metodos) return <></>
+    if(!dates)              return <></>
+    if(!cuentas_bancarias)  return <></>
+    if(!formas)             return <></>
+    if(!metodos)            return <></>
     
     return (
         <div className="CardConfirm__background">
@@ -198,6 +199,15 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                                                     clave_acceso:data.clave_acceso
                                                 });
                                                 setPDF(true);
+                                                e.target.textContent = "Factura generada";
+                                                store_billing.setInfo({
+                                                    ci,
+                                                    name,
+                                                    direction:direccion,
+                                                    access_key:'152542673788939838393898338',
+                                                    date:'2025/10/10 14:00:00',
+                                                    value:43.36
+                                                });
                                             }else{
                                                 e.target.textContent='Error, inténtalo de nuevo';
                                             }

@@ -167,8 +167,8 @@ export default function FilterCredits(){
                     <option value={"Vigente"}>Vigente</option>
                     <option value={"Vencido"}>Vencido</option>
                     <option value={"Vencido en tramite judicial"}>Vencido en tramite judicial</option>
-                    <option value={"Castigadp"}>Castigado</option>
-                    <option value={"Convenio de pago"}>Convenio de pago</option>
+                    <option value={"Castigado"}>Castigado</option>
+                    <option value={"CONVENIO DE PAGO"}>Convenio de pago</option>
                     <option value={"Cancelado"}>Cancelado</option>
                 </select>
             </label>

@@ -47,7 +47,7 @@ export default function CardStructure(){
     return (
         <div className="CardPay">
             <button className="CardCondonacion__close" onClick={()=>{store_structure.viewOn(false)}}>Volver</button>
-            <div className="CardStructure">
+            <div className="CardStructure" style={{width:"350px"}}>
 
                 <p>Convenio de pago</p>
 

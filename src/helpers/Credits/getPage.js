@@ -1,6 +1,5 @@
-export default async function getPage({per_page,filters}){
-    const end_point=`${import.meta.env.VITE_URL_BASE}/campains/credits?per_page=${per_page}&${filters}`;
-    
+export default async function getPage({url,per_page,filters}){
+    const end_point=`${url}&per_page=${per_page}&${filters}`;
     try {
         const request=await fetch(end_point,{
             headers: {

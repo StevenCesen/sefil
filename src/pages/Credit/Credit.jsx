@@ -19,6 +19,7 @@ import CardActivity from "../../components/Credits/CardActivity/CardActivity";
 import HistorialNav from "../../components/Tools/HistorialNav/HistorialNav";
 import ViewPDFCondonation from "../../components/Credits/ViewPDFCondonation/ViewPDFCondonation";
 import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFStructure";
+import ViewPDFBilling from "../../components/Credits/ViewPDFBilling/ViewPDFBilling";
 
 export default function Credit(){
     const params=useParams();
@@ -34,13 +35,11 @@ export default function Credit(){
         loader.viewOn(true);
         credit.setIDCampain(cartera);
         const data_credit=await getCredit({credit_id,cartera});
-        console.log(data_credit)
         credit.setCredit(data_credit);
         loader.viewOn(false);
     }
 
     useEffect(()=>{
-        console.log(params.id)
         helperCredit({credit_id:params.id,cartera:attributes.get('cartera')});
 
         if(action==='GEN_CONDONATION'){
@@ -79,6 +78,7 @@ export default function Credit(){
         <div className="Credit">
             <ViewPDFCondonation/>
             <ViewPDFStructure/>
+            <ViewPDFBilling/>
             <HistorialNav/>
 
             <h2>Consulta de crédito</h2>
@@ -144,10 +144,7 @@ export default function Credit(){
                                 total_fees={credit.credit.total_fees}
                             />
                         </div>
-                        <CardActivity
-                            credit_id={credit.credit.id}
-                            cartera={credit.cartera}
-                        />
+                        <CardActivity/>
                     </div>
                 </div>
                 

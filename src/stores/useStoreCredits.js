@@ -31,7 +31,6 @@ export const useStoreFilterCredits = create((set,get) => ({
     setCollectionState: (value)=>{set({collection_state:value})},
     setAgent:           (value)=>{set({agent:value})},
     setCredits:         async (data)=>{
-        console.log(data);
         set({credits:data})
     },
     getAgents:          async ()=>{
@@ -79,6 +78,7 @@ export const useStoreFilterCredits = create((set,get) => ({
     },
     filterCredits: async (filters) => {
         const end_point=`${import.meta.env.VITE_URL_BASE}/campains/credits?${filters}`;
+        console.log(end_point)
         try {
             const request=await fetch(end_point,{
                 headers: {

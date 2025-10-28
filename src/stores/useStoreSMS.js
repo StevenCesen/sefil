@@ -86,13 +86,13 @@ export const useStoreSMS = create((set,get) => ({
         });
     },
     sendSMS:async ()=>{
-        const {name,type,total_amount,phone_contact,days_past_due,payment_date,cod_sms,campain_id,credit_id}=get();
+        const {name,type,total_amount,phone_contact,phone_number,days_past_due,payment_date,cod_sms,campain_id,credit_id}=get();
 
         let data={}
 
         if(Number(cod_sms)===43334){
             data={
-                "phone":phone_contact,
+                "phone":phone_number,
                 "cod_sms":cod_sms,
                 "name":`Sr(a) ${name} ${type}`,
                 "payment_date":payment_date,
@@ -100,7 +100,7 @@ export const useStoreSMS = create((set,get) => ({
             }
         }else if(Number(cod_sms)===43335){
             data={
-                "phone":phone_contact,
+                "phone":phone_number,
                 "cod_sms":cod_sms,
                 "name":`Sr(a) ${name} ${type}`,
                 "days_past_due":days_past_due,
@@ -108,7 +108,7 @@ export const useStoreSMS = create((set,get) => ({
             }
         }else if(Number(cod_sms)===48392){
             data={
-                "phone":phone_contact,
+                "phone":phone_number,
                 "cod_sms":cod_sms,
                 "name":`Sr(a) ${name} ${type}`,
                 "total_amount":total_amount,

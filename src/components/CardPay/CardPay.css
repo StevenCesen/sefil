@@ -5,7 +5,7 @@
     background-color: rgba(100, 100, 100, 0.437);
     top: var(--height-header);
     left: 0;
-    z-index: 2001;
+    z-index: 2010;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -47,7 +47,7 @@ import logo2 from '../assets/icons/logo.png';
     
   });
   
-  function PDFgastos({nro_voucher,credito,name,ci,direccion,fecha,clave_acceso,valor_gasto}) {
+  function PDFgastos({name,ci,direccion,fecha,clave_acceso,valor_gasto}) {
     return (
       <Document>
         <Page style={styles.page}>
@@ -71,7 +71,7 @@ import logo2 from '../assets/icons/logo.png';
 
             {/* DATOS DE LA EMPRESA */}
             <View style={styles.sectionHeaderRuc}>
-              <Text style={[{fontSize:15,textAlign:"right"}]}>FACTURA ELECTRÓNICA {clave_acceso.substring(24,27)}-{clave_acceso.substring(28,30)}-{clave_acceso.substring(31,39)}</Text>
+              <Text style={[{fontSize:15,textAlign:"right"}]}>FACTURA ELECTRÓNICA {clave_acceso.substring(24,27)}-{clave_acceso.substring(28,30)}{clave_acceso.substring(31,39)}</Text>
               <View style={[{backgroundColor:'#CBE8EC',padding:5}]}>
                 <Text style={[{fontSize:9,marginBottom:10,color:'#178DAB',fontWeight:"bold"}]}>SERVICIOS DE ADMINISTRACIÓN INTEGRAL SEFIL S.A.</Text>
                 <View>
