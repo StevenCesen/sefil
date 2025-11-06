@@ -1,6 +1,7 @@
 import "./InfoCredit.css";
 
 export default function InfoCredit({business,sync_id,agency,frequency,due_date,collection_state,monthly_fee_amount,info_extra}){
+    console.log(info_extra)
     return(
         <div className="InfoCredit">
             <h4>📓 Información del crédito</h4>

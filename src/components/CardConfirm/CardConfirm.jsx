@@ -10,10 +10,9 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
     const [formas,setFormas]                =   useState();
     const loader                            =   useStoreLoader();
     const store_billing                     =   useStoreBilling();
-
+    
     useEffect(()=>{
-        loader.viewOn(true);
-
+        loader.viewOn(false);
         fetch(`${import.meta.env.VITE_URL_BASE}/sofiaconfig`,{
             headers: {
                 Accept: 'application/json',
@@ -191,22 +190,22 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                                             if('status' in data){
                                                 e.target.textContent='Facturado';
                                                 setView(false);
-                                                setGastos({
-                                                    status:false,
-                                                    email:dates.email,
-                                                    valor_gasto:dates.value,
-                                                    fecha:data.fecha,
-                                                    clave_acceso:data.clave_acceso
-                                                });
-                                                setPDF(true);
+                                                // setGastos({
+                                                //     status:false,
+                                                //     email:dates.email,
+                                                //     valor_gasto:dates.value,
+                                                //     fecha:data.fecha,
+                                                //     clave_acceso:data.clave_acceso
+                                                // });
+                                                // setPDF(true);
                                                 e.target.textContent = "Factura generada";
                                                 store_billing.setInfo({
                                                     ci,
                                                     name,
                                                     direction:direccion,
-                                                    access_key:'152542673788939838393898338',
-                                                    date:'2025/10/10 14:00:00',
-                                                    value:43.36
+                                                    access_key:data.clave_acceso,
+                                                    date:data.fecha,
+                                                    value:data.valor_gasto
                                                 });
                                             }else{
                                                 e.target.textContent='Error, inténtalo de nuevo';

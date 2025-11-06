@@ -64,7 +64,7 @@ function App() {
       <CardStructure/>
       <CardCondonacion/>
       <Loader/>
-
+      
       {
         (!useSessions() & !session.state) 
         ?

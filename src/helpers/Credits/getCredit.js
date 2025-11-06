@@ -8,7 +8,7 @@ export default async function getCredit({credit_id,cartera}){
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         });
-
+        
         if (!request.ok) {
             throw new Error('Error al consultar la API');
         }

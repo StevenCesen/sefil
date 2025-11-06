@@ -12,9 +12,8 @@ import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useUpdateCredit from "../../hooks/useUpdateCredit";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 
-export default function CardPay({setView,cartera,credit,updateInfoValues}){
+export default function CardPay({setView,cartera,credit,updateInfoValues,amount,quoteNumber,paymentDate}){
     const [pay,setData]=useState();
-
     const [send,setSend]=useState({
         prevDates:{
             mora:0,
@@ -66,12 +65,11 @@ export default function CardPay({setView,cartera,credit,updateInfoValues}){
 
     const ref=useRef();
 
-    //  OJOOOOOOOOOOOOOO
     const updateDetalle=(detalle)=>{
         setData({
             ...pay,
-            //tipo_transaccion: (credit.collection_state==='CONVENIO DE PAGO') ? 'parcial' : 'total',
-            //valor_recibido:(credit.collection_state==='CONVENIO DE PAGO') ? credit.valor_cuota : 0,
+            tipo_transaccion: (amount!==null) ? 'parcial' : 'total',
+            valor_recibido:(amount!==null) ? amount : 0,
             detalle:detalle
         });
     };
@@ -86,10 +84,10 @@ export default function CardPay({setView,cartera,credit,updateInfoValues}){
             ...pay,
             forma_pago:             '',
             fecha_pago:             '',
-            tipo_transaccion:       (credit.collection_state==='CONVENIO DE PAGO') ? 'parcial' : 'total',
+            tipo_transaccion:       (amount!==null) ? 'parcial' : 'total',
             institucion_financiera: '',
             valor_devuelto:         0,
-            valor_recibido:         (credit.collection_state==='CONVENIO DE PAGO') ? 0 : 0,
+            valor_recibido:         (amount!==null) ? amount : 0,
             codigo_deposito:        0,
             credito:                credit.id,
             detalle:{
@@ -115,6 +113,9 @@ export default function CardPay({setView,cartera,credit,updateInfoValues}){
             .then((response) => response.json())  
             .then((data_pre) => {
                 setOrdenPrelacion(data_pre);
+                if(amount!==null){
+                    usePrelacion(amount,credit,setPrelacion,updateDetalle,data_pre);
+                }
                 loader.viewOn(false);
             });
     },[]);

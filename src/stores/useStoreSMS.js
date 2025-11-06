@@ -39,7 +39,7 @@ export const useStoreSMS = create((set,get) => ({
         set({type:type})
         set({view:view})
         set({days_past_due:days_past_due})
-        set({total_amount:total_amount})
+        set({total_amount:Math.round(total_amount,2)})
         set({phone_contact:localStorage.getItem('phone_number')})
         set({campain_id:campain_id})
         set({credit_id:credit_id})

@@ -20,16 +20,23 @@ import HistorialNav from "../../components/Tools/HistorialNav/HistorialNav";
 import ViewPDFCondonation from "../../components/Credits/ViewPDFCondonation/ViewPDFCondonation";
 import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFStructure";
 import ViewPDFBilling from "../../components/Credits/ViewPDFBilling/ViewPDFBilling";
+import getActivity from "../../helpers/Credits/getActivity";
 
 export default function Credit(){
     const params=useParams();
     const credit=useStoreManagement();
     const store_condonation=useStoreCondonation();
+    const [items,setItems]=useState([]);
     const store_structure=useStoreStructure();
     const [action,setAction]=useState('');
     const loader = useStoreLoader();
     
     const attributes=new URLSearchParams(useLocation().search);
+
+    const handleItems = async ({credit_id,cartera}) =>{
+        const data_items = await getActivity({ credit_id,cartera });
+        setItems(data_items);
+    }
 
     const helperCredit=async ({credit_id,cartera})=>{
         loader.viewOn(true);
@@ -41,6 +48,7 @@ export default function Credit(){
 
     useEffect(()=>{
         helperCredit({credit_id:params.id,cartera:attributes.get('cartera')});
+        handleItems({credit_id:params.id,cartera:attributes.get('cartera')});
 
         if(action==='GEN_CONDONATION'){
             store_condonation.setInfoCredit({
@@ -144,7 +152,7 @@ export default function Credit(){
                                 total_fees={credit.credit.total_fees}
                             />
                         </div>
-                        <CardActivity/>
+                        <CardActivity items={items} />
                     </div>
                 </div>
                 
@@ -179,6 +187,7 @@ export default function Credit(){
                             credit={credit.credit}
                             cartera={credit.cartera}
                             updateInfoValues={()=>{}}
+                            amount={null}
                         />
 
                     :   (action==='PAY_GASTO')
