@@ -7,6 +7,7 @@ export default function SectionPayments({payments}){
     return(
         <div className="SectionPayments">
             <div className="SectionPayments__header">
+                <label>Nro.</label>
                 <label>Fecha pago</label>
                 <label>Tipo de pago</label>
                 <label>Monto</label>
@@ -17,6 +18,7 @@ export default function SectionPayments({payments}){
             {
                 payments.map((payment,n)=>(
                     <div key={n} className="SectionPayments__item">
+                        <label>{payment.id}</label>
                         <label>{payment.fecha}</label>
                         <label>{payment.forma_pago}</label>
                         <label>{useFormatterNumber({value:payment.valor_recibido,currency:'USD'})}</label>

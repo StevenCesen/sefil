@@ -23,6 +23,7 @@ export default function Stadistics(){
     const [total_campain,setTotalCampain]=useState(0);
     const [total_castigado,setTotalCastigado]=useState(0);
     const [total_vencido,setTotalVencido]=useState(0);
+    const [nro_credits_total,setNroCreditsTotal]=useState(0);
 
     const [message,setMessage]=useState("");
     const loader = useStoreLoader();
@@ -140,6 +141,7 @@ export default function Stadistics(){
                 setTotalCampain(data.total.total_campain)
                 setTotalCastigado(data.total.total_castigado)
                 setTotalVencido(data.total.total_vencido)
+                setNroCreditsTotal(data.total.nro_credits_total);
                 setCredits(data.info);
                 loader.viewOn(false);
             });
@@ -190,6 +192,7 @@ export default function Stadistics(){
                     setTotalCampain(data.total.total_campain)
                     setTotalCastigado(data.total.total_castigado)
                     setTotalVencido(data.total.total_vencido)
+                    setNroCreditsTotal(data.total.nro_credits_total);
                     setCredits(data.info);
                 });
 
@@ -313,12 +316,21 @@ export default function Stadistics(){
                     <>
                         <div className="pageConsulta__search">
                             <h4 className="Reports__title">Pagos con gestión</h4>
+                            <label>
+                                Cartera
+                                <select>
+                                    <option>SEFIL 1</option>
+                                    <option>SEFIL 2</option>
+                                    <option>FACES</option>
+                                </select>
+                            </label>
                         </div>
 
                         <div className="pageConsulta__search" style={{alignItems:'flex-start',justifyContent:'flex-start',gap:'50px'}}>
                             <div>
                                 <h4 className="Reports__title" style={{color:"black"}}>Total general con gestión: {useFormatterNumber({value:total_general,currency:'USD'})}</h4>
                                 <h4 className="Reports__title" style={{color:"black"}}>Total con gestión en campaña: {useFormatterNumber({value:total_campain,currency:'USD'})}</h4>
+                                <h4 className="Reports__title" style={{color:"black"}}>Total de créditos con pago: {useFormatterNumber({value:nro_credits_total,currency:'USD'})}</h4>
                             </div>
                             <div>
                                 <h4 className="Reports__title" style={{color:"black"}}>Total general Castigado en campaña: {useFormatterNumber({value:total_castigado,currency:'USD'})}</h4>

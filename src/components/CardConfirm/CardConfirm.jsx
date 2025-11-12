@@ -205,7 +205,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                                                     direction:direccion,
                                                     access_key:data.clave_acceso,
                                                     date:data.fecha,
-                                                    value:data.valor_gasto
+                                                    value:dates.value
                                                 });
                                             }else{
                                                 e.target.textContent='Error, inténtalo de nuevo';

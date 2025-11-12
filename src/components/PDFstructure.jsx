@@ -98,7 +98,7 @@ function PDFstructure({ci,credito,name,fecha,quotes,user_auth}) {
                                 {cuota.cuota}
                             </Text>
                             <Text style={{width:'30%',borderRight:'1px solid black',borderTop:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>
-                                ${cuota.valor}
+                                {useFormatterNumber({value:cuota.valor,currency:'USD'})}
                             </Text>
                             <Text style={{width:'30%',borderTop:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>
                                 {cuota.fecha_pago}

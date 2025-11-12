@@ -190,8 +190,9 @@ export default function CardStructure(){
                             fecha:quote_detail[0].fecha_pago,
                             valor_cuota:quote_detail[0].valor
                         }
-                        
                         const create_agreement=await useStruct(data,e.target,store_structure.credit_id);
+                        store_structure.setResponse(create_agreement.data);
+                        store_structure.setViewPDF(true);
                     }}
                 >Guardar cambios</button>
             </div>

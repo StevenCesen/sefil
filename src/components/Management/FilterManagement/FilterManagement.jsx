@@ -142,6 +142,7 @@ export default function FilterManagement(){
                     <option value={"VISITA CAMPO"}>VISITA CAMPO</option>
                     <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
                     <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>
+                    <option value={"MENSAJE DE WHATSAPP"}>MENSAJE DE WHATSAPP</option>
                     <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
                     <option value={"YA PAGÓ"}>YA PAGÓ</option>
                     <option value={"MENSAJE DE TEXTO"}>MENSAJE DE TEXTO</option>

@@ -5,7 +5,7 @@
 .SectionPayments__header{
     display: grid;
     justify-content: center;
-    grid-template-columns: 25% 10% 20% 25% 20%;
+    grid-template-columns: 8% 17% 10% 20% 25% 20%;
     align-items: center;
     font-size: 12px;
     text-align: center;
@@ -20,7 +20,7 @@
 .SectionPayments__item{
     display: grid;
     justify-content: center;
-    grid-template-columns: 25% 10% 20% 25% 20%;
+    grid-template-columns: 8% 17% 10% 20% 25% 20%;
     align-items: center;
     font-size: 14px;
     text-align: center;

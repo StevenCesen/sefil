@@ -211,14 +211,15 @@ export default function Home(){
     if(!vouchers) return <></>
     if(!totalMonth) return <></>
     if(!comprobantes) return <></>
-    // if(!condonations) return <></>
-    // if(!restruct) return <></>
-    // if(!data) return <></>
-    // if(!users) return <></>
 
     return(
         <div className="Home">
             <div className="Home__head">
+                <CardDataShort
+                    title="Recuperación FACES"
+                    subtitle={new Date().toLocaleDateString()}
+                    data={`120 créditos con $18,531.31`}
+                />
                 <CardDataShort
                     title="Ingresos diarios"
                     subtitle={new Date().toLocaleDateString()}
@@ -237,18 +238,6 @@ export default function Home(){
                 <CardDataStatics
                     data={comprobantes}
                 />
-
-                {
-                    // users.data.map((user,index)=>(
-                    //     <CardDataShort
-                    //         key={index}
-                    //         title="Usuarios"
-                    //         status={"Creados"}
-                    //         subtitle={user.name.toUpperCase()}
-                    //         data={`${user.size}`}
-                    //     />
-                    // ))
-                }
             </div>
 
             <div className="Home__stadisticOne">

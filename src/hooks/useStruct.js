@@ -12,6 +12,7 @@ export default async function useStruct(data,btn,id){
 
     if(response.status===200){
         btn.textContent='Guardado correctamente';
+        return response;
     }else{
         btn.textContent='Inténtalo de nuevo';
     }

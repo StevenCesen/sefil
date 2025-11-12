@@ -152,31 +152,33 @@ export default function Credit(){
                                 total_fees={credit.credit.total_fees}
                             />
                         </div>
-                        <CardActivity items={items} />
                     </div>
                 </div>
                 
-                <CardActions isViewOn={(credit.cartera==='syncs') ? false : true} setAction={setAction}/>
+                <CardActions isViewOn={(credit.cartera==='syncs' || credit.credit.collection_state.toLowerCase()==='cancelado') ? false : true} setAction={setAction}/>
                 
-                <MenuNav
-                    options={[
-                        {
-                            name:'🕑 Historial de gestiones',
-                            default_option:true,
-                            end_point:`MANAGEMENTS`
-                        },
-                        {
-                            name:'📞 Historial de llamadas',
-                            default_option:false,
-                            end_point:`CALLS`
-                        },
-                        {
-                            name:'💰 Historial de pagos',
-                            default_option:false,
-                            end_point:`PAYMENTS`
-                        }
-                    ]}
-                />
+                <div style={{display:'grid',gridTemplateColumns:'70% 30%',gap:'10px'}}>
+                    <MenuNav
+                        options={[
+                            {
+                                name:'🕑 Historial de gestiones',
+                                default_option:true,
+                                end_point:`MANAGEMENTS`
+                            },
+                            {
+                                name:'📞 Historial de llamadas',
+                                default_option:false,
+                                end_point:`CALLS`
+                            },
+                            {
+                                name:'💰 Historial de pagos',
+                                default_option:false,
+                                end_point:`PAYMENTS`
+                            }
+                        ]}
+                    />
+                    <CardActivity items={items} />
+                </div>
 
                 {
                     (action==='PAY_CREDIT')
