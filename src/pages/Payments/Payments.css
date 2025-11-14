@@ -1,0 +1,14 @@
+.Payments{
+    padding: 20px;
+}
+
+.Payments__text{
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-weight: 100;
+}
+
+.Payments__text>strong{
+    font-weight: 600;
+    color: var(--color-1);
+}

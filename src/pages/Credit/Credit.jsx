@@ -60,6 +60,7 @@ export default function Credit(){
                 interes:credit.credit.interes,
                 seguro_desgravamen:credit.credit.seguro_desgravamen,
                 gastos_judiciales:credit.credit.gastos_judiciales,
+                gastos_cobranza_sefil:credit.credit.gasto_cobranza_sefil,
                 gastos_cobranza:credit.credit.gastos_cobranza,
                 otros_valores:credit.credit.otros_valores,
                 id:credit.credit.id,

@@ -9,6 +9,7 @@ export const useStoreCondonation = create((set) => ({
     interes:0,
     seguro_desgravamen:0,
     gastos_judiciales:0,
+    gastos_cobranza_sefil:0,
     gastos_cobranza:0,
     otros_valores:0,
     id:0,
@@ -22,7 +23,7 @@ export const useStoreCondonation = create((set) => ({
     setResponse:(value)=>{set({response:value})},
     viewOn:(value)=>{set({isViewOn:value})},
     setViewPDF:(value)=>{set({viewPDF:value})},
-    setInfoCredit: ({ci,name,total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,otros_valores,id,cartera,setData,view,update})=>{
+    setInfoCredit: ({ci,name,total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,gastos_cobranza_sefil,otros_valores,id,cartera,setData,view,update})=>{
         set({ci})
         set({name})
         set({total})
@@ -31,6 +32,7 @@ export const useStoreCondonation = create((set) => ({
         set({interes})
         set({seguro_desgravamen})
         set({gastos_judiciales})
+        set({gastos_cobranza_sefil})
         set({gastos_cobranza})
         set({otros_valores})
         set({id})

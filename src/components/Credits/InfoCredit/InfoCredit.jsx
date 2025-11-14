@@ -20,10 +20,6 @@ export default function InfoCredit({business,sync_id,agency,frequency,due_date,c
                 <h4>Estado del crédito:</h4>
                 <p>{collection_state}</p>
             </div>
-            <div>
-                <h4>Terminación:</h4>
-                <p>{due_date}</p>
-            </div>
             {
                 (info_extra)
                 ?
@@ -42,10 +38,16 @@ export default function InfoCredit({business,sync_id,agency,frequency,due_date,c
             {
                 (business==='syncs')
                 ?
-                    <div>
-                        <h4>Valor cuota:</h4>
-                        <p>{monthly_fee_amount}</p>
-                    </div>
+                    <>
+                        <div>
+                            <h4>Valor cuota:</h4>
+                            <p>{monthly_fee_amount}</p>
+                        </div>
+                        <div>
+                            <h4>Terminación:</h4>
+                            <p>{due_date}</p>
+                        </div>
+                    </>    
                 :   <></>
             }
         </div>

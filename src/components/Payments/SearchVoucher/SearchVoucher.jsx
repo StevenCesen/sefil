@@ -12,14 +12,21 @@ export default function SearchVoucher(){
     });
     
     const handleSearch = async ({value,search_by}) =>{
-        if(value!==''){
-            const payment = await searchPayment({
-                value,
-                search_by
-            });
-            setPayment(payment.data);
-            setViewMenu(true);
+        if(value.length===0){
+            setPayment([]);
+            setViewMenu(false);
+            return;
         }
+
+        const payment = await searchPayment({
+            value,
+            search_by
+        });
+
+        console.log(payment);
+
+        setPayment(payment.data);
+        setViewMenu(true);
     }
 
     return (
@@ -71,7 +78,7 @@ export default function SearchVoucher(){
                     (payment && 'ci' in payment)
                     ?
                         <div className="SearchVoucher__menu">
-                            <NavLink target="_blank" to={`/dashboard/comprobantes/view/${payment.ci}?cartera=${payment.cartera}&${payment.name}`}>{payment.name} | {payment.institucion_financiera}</NavLink>
+                            <NavLink target="_self" to={`/credits/payments/${payment.credito}?cartera=${payment.cartera}&name=${payment.name}&ci=${payment.ci}`}>{payment.name} | {payment.institucion_financiera}</NavLink>
                         </div>
                     :
                         <div className="SearchVoucher__menu">

@@ -4,6 +4,7 @@ import useStruct from "../../hooks/useStruct";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useGenerateQuotes from "../../helpers/Credits/useGenerateQuotes";
 import { useStoreStructure } from "../../stores/useStoreStructure";
+import sendpush from "../../helpers/sendpush";
 
 export default function CardStructure(){
     
@@ -29,17 +30,17 @@ export default function CardStructure(){
 
     useEffect(()=>{
         setAgreement({
-        valor_cuota:store_structure.amount_fee,
-        cuotas_pendientes:0,
-        cuota:0,
-        fecha:null,
-        credito:store_structure.credit_id,
-        cartera:store_structure.cartera,
-        cobranza:store_structure.gasto_cobranza,
-        status:'',
-        detail:'',
-        totalAmount:store_structure.total_amount
-    });
+            valor_cuota:store_structure.amount_fee,
+            cuotas_pendientes:0,
+            cuota:0,
+            fecha:null,
+            credito:store_structure.credit_id,
+            cartera:store_structure.cartera,
+            cobranza:store_structure.gasto_cobranza,
+            status:'',
+            detail:'',
+            totalAmount:store_structure.total_amount
+        });
     },[store_structure]);
 
     if(!store_structure.isViewOn) return <></>
@@ -121,7 +122,19 @@ export default function CardStructure(){
                             setQuoteDetail([]);
                             
                             if(agreement.fecha=="" | agreement.fecha==null){
-                                
+                                sendpush({
+                                    title:'ERR: Sin Fecha.',
+                                    message:'Se debe ingresar la fecha de la primer cuota.',
+                                    type:'Push--danger',
+                                    timeout:5000
+                                })
+                            }else if(by_amount_quote===0 & by_number_quote===0){
+                                sendpush({
+                                    title:'ERR: Sin datos.',
+                                    message:'Se debe ingresar el número de cuotas o el monto de la cuota.',
+                                    type:'Push--danger',
+                                    timeout:5000
+                                })
                             }else{
                                 if(by_number_quote>0){
                                     await useGenerateQuotes({
@@ -181,18 +194,43 @@ export default function CardStructure(){
                     className="CardStructure__button--save"
                     onClick={async (e)=>{
                         e.target.textContent="Guardando...";
+                        
+                        if(quote_detail.length===0){
+                            sendpush({
+                                title:'ERR: Sin desgloce.',
+                                message:'Se debe generar el desgloce de cuotas.',
+                                type:'Push--danger',
+                                timeout:5000
+                            });
+                        }else if(agreement.fecha=="" || agreement.fecha==null){
+                            sendpush({
+                                title:'ERR: Sin Fecha.',
+                                message:'Se debe ingresar la fecha de la primer cuota.',
+                                type:'Push--danger',
+                                timeout:5000
+                            });
+                        }else if(by_amount_quote===0 && by_number_quote===0){
+                            sendpush({
+                                title:'ERR: Sin datos.',
+                                message:'Se debe ingresar el número de cuotas o el monto de la cuota.',
+                                type:'Push--danger',
+                                timeout:5000
+                            })
+                        }else{
+                            const data={
+                                ...agreement,
+                                detail:JSON.stringify(quote_detail),
+                                cuota:1,
+                                cuotas_pendientes:quote_detail.length-1,
+                                fecha:quote_detail[0].fecha_pago,
+                                valor_cuota:quote_detail[0].valor
+                            };
 
-                        const data={
-                            ...agreement,
-                            detail:JSON.stringify(quote_detail),
-                            cuota:1,
-                            cuotas_pendientes:quote_detail.length-1,
-                            fecha:quote_detail[0].fecha_pago,
-                            valor_cuota:quote_detail[0].valor
+                            const create_agreement=await useStruct(data,e.target,store_structure.credit_id);
+                            store_structure.setResponse(create_agreement.data);
+                            store_structure.setViewPDF(true);   
                         }
-                        const create_agreement=await useStruct(data,e.target,store_structure.credit_id);
-                        store_structure.setResponse(create_agreement.data);
-                        store_structure.setViewPDF(true);
+                        e.target.textContent="Guardar cambios";
                     }}
                 >Guardar cambios</button>
             </div>

@@ -9,6 +9,7 @@ import { NotifierContextProvider } from './contexts/notifierContext.jsx'
 import { SessionContextProvider } from './contexts/SessionContext.jsx'
 import Credit from './pages/Credit/Credit.jsx'
 import Credits from './pages/Credits/Credits.jsx'
+import Payments from './pages/Payments/Payments.jsx'
 
 (function () {
   const TAB_LIST_KEY = 'system-tab-ids';
@@ -100,6 +101,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path='dashboard/:action/:type' element={<Dashboard/>}></Route>
               <Route path='credits' element={<Credits/>}></Route>
               <Route path='credits/:id' element={<Credit/>}></Route>
+              <Route path='credits/payments/:id' element={<Payments/>}></Route>
             </Route>
             
           </Routes>

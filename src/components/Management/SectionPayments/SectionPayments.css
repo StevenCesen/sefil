@@ -1,37 +1,290 @@
-.SectionPayments{
-    margin-top: 10px;
+.SectionPayments {
+    width: 100%;
+    margin: 20px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: white;
 }
 
-.SectionPayments__header{
+.SectionPayments__header {
     display: grid;
-    justify-content: center;
-    grid-template-columns: 8% 17% 10% 20% 25% 20%;
-    align-items: center;
-    font-size: 12px;
-    text-align: center;
-    font-size: 12px;
-    background-color: var(--bg-alert-error);
-    font-weight: bold;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    padding: 10px 0;
-}
-
-.SectionPayments__item{
-    display: grid;
-    justify-content: center;
-    grid-template-columns: 8% 17% 10% 20% 25% 20%;
-    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    background: linear-gradient(135deg, var(--color-1, #2563eb), var(--color-2, #1d4ed8));
+    color: white;
+    font-weight: 600;
     font-size: 14px;
+    padding: 15px 10px;
+    gap: 10px;
     text-align: center;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    padding: 10px 0;
+    align-items: center;
 }
 
-.SectionPayments__item>label:last-child{
+.SectionPayments__header label {
+    padding: 5px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.SectionPayments__header label:last-child {
+    border-right: none;
+}
+
+.SectionPayments__item {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    padding: 12px 10px;
+    gap: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.SectionPayments__item:hover {
+    background-color: #f9fafb;
+}
+
+.SectionPayments__item:last-child {
+    border-bottom: none;
+}
+
+.SectionPayments__item label {
+    text-align: center;
+    font-size: 13px;
+    color: #374151;
+    padding: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #e5e7eb;
+}
+
+.SectionPayments__item label:last-child {
+    border-right: none;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 8px;
+}
+
+/* Iconos de acciones */
+.SectionPayments__item label svg {
+    transition: all 0.2s ease;
+}
+
+.SectionPayments__item label svg:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+/* Responsividad */
+@media (max-width: 1200px) {
+    .SectionPayments__header,
+    .SectionPayments__item {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .SectionPayments__header,
+    .SectionPayments__item {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+    
+    .SectionPayments__header label,
+    .SectionPayments__item label {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 8px 15px;
+    }
+    
+    .SectionPayments__header label:last-child,
+    .SectionPayments__item label:last-child {
+        border-bottom: none;
+    }
+    
+    .SectionPayments__item {
+        padding: 0;
+    }
+    
+    .SectionPayments__item label:last-child {
+        justify-content: flex-start;
+        padding: 12px 15px;
+    }
+}
+
+/* Estados especiales */
+.SectionPayments__item[data-status="revertido"] {
+    opacity: 0.7;
+    background-color: #fef2f2;
+}
+
+.SectionPayments__item[data-status="revertido"]:hover {
+    background-color: #fee2e2;
+}
+
+/* Estilos para valores monetarios */
+.SectionPayments__item label:nth-child(n+4):nth-last-child(n+3) {
+    font-family: monospace;
+    font-weight: 500;
+    font-size: 14px;
+    color: #059669;
+}
+
+/* Modal overlay */
+.SectionPayments .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+/* Modal de confirmación */
+.SectionPayments .modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.SectionPayments .modal-content h3 {
+    margin: 0 0 15px 0;
+    color: #1f2937;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.SectionPayments .modal-content p {
+    margin: 10px 0;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.SectionPayments .warning-text {
+    color: #d97706 !important;
+    font-weight: bold;
+    background: #fef3c7;
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 4px solid #f59e0b;
+}
+
+.SectionPayments .modal-actions {
+    display: flex;
     gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.SectionPayments .btn-danger {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.SectionPayments .btn-danger:hover {
+    background: #b91c1c;
+}
+
+.SectionPayments .btn-cancel {
+    background: #e5e7eb;
+    color: #374151;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.SectionPayments .btn-cancel:hover {
+    background: #d1d5db;
+}
+
+/* Modal PDF */
+.SectionPayments .pdf-modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.SectionPayments .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.SectionPayments .close-btn:hover {
+    background: #b91c1c;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.SectionPayments .modal-content,
+.SectionPayments .pdf-modal {
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Estados de carga */
+.SectionPayments.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Scrollbar personalizado para PDF */
+.SectionPayments .pdf-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.SectionPayments .pdf-modal::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.SectionPayments .pdf-modal::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.SectionPayments .pdf-modal::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }

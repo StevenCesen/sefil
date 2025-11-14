@@ -82,6 +82,7 @@ export default function Credits(){
                 ))
             }
             <NavigationFooter
+                page={credits.credits.current_page}
                 from={credits.credits.from}
                 to={credits.credits.to}
                 total={credits.credits.total}

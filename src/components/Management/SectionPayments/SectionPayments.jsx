@@ -2,20 +2,62 @@ import { Ban, Printer } from "lucide-react";
 import useFormatterNumber from "../../../hooks/useFormatterNumber";
 import "./SectionPayments.css";
 import sendpush from "../../../helpers/sendpush";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { PDFViewer } from "@react-pdf/renderer";
 import PDF from "../../PDF";
 import { useStoreLoader } from "../../../stores/useStoreLoader";
 
-export default function SectionPayments({ payments, credit }) {
+export default function SectionPayments({ payments, credit, view_complete_info = false }) {
     const [showPDF, setShowPDF] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState(null);
     const [showReverseModal, setShowReverseModal] = useState(false);
     const [paymentToReverse, setPaymentToReverse] = useState(null);
     const loader = useStoreLoader();
 
+    const { headers, detailFields } = useMemo(() => {
+        const baseHeaders = ['Comprobante', 'Fecha pago', 'Tipo de pago'];
+        const endHeaders = ['Monto', 'Estado', 'Acciones'];
+        const detailHeaders = view_complete_info 
+            ? ['Capital', 'Interes', 'Mora', 'Seguro', 'Judicial', 'Cobranza', 'Otros valores']
+            : [];
+        
+        return {
+            headers: [...baseHeaders, ...detailHeaders, ...endHeaders],
+            detailFields: view_complete_info 
+                ? ['saldo_capital', 'interes', 'mora', 'seguro_desgravamen', 'gastos_judiciales', 'gastos_cobranza', 'otros_valores']
+                : []
+        };
+    }, [view_complete_info]);
+
+    const getDetailValue = (payment, field) => {
+        try {
+            return payment.detalle ? JSON.parse(payment.detalle)[field] || 0 : 0;
+        } catch {
+            return 0;
+        }
+    };
+
+    const renderPaymentCells = (payment) => {
+        const baseCells = [
+            payment.id,
+            payment.fecha,
+            payment.forma_pago
+        ];
+
+        const detailCells = detailFields.map(field => 
+            useFormatterNumber({ value: getDetailValue(payment, field), currency: 'USD' })
+        );
+
+        const endCells = [
+            useFormatterNumber({ value: payment.valor_recibido, currency: 'USD' }),
+            payment.status === 'guardado' ? 'Guardado' : 'Revertido'
+        ];
+
+        return [...baseCells, ...detailCells, ...endCells];
+    };
+
     const handlePrintClick = (payment) => {
-        if (payment.id === 'FACES') {
+        if (payment.id === 'FACES' || payment.id === 'Gasto Cob.') {
             sendpush({
                 title: 'No disponible',
                 message: 'No se puede reimprimir este pago, debido a que fue generado por fuente externa.',
@@ -45,7 +87,7 @@ export default function SectionPayments({ payments, credit }) {
     };
 
     const handleReverseClick = (payment) => {
-        if (payment.id === 'FACES') {
+        if (payment.id === 'FACES' || payment.id === 'Gasto Cob.') {
             sendpush({
                 title: 'No disponible',
                 message: 'No se puede anular un comprobante externo.',
@@ -55,10 +97,7 @@ export default function SectionPayments({ payments, credit }) {
             return;
         }
 
-        const paymentDate = new Date(payment.fecha);
-        const currentDate = new Date();
-        const hoursDifference = (currentDate - paymentDate) / (1000 * 60 * 60);
-
+        const hoursDifference = (new Date() - new Date(payment.fecha)) / (1000 * 60 * 60);
         if (hoursDifference > 24) {
             sendpush({
                 title: 'Tiempo excedido',
@@ -84,28 +123,24 @@ export default function SectionPayments({ payments, credit }) {
                 }
             });
 
-            if (response.ok) {
-                sendpush({
-                    title: 'Comprobante anulado',
-                    message: 'El comprobante se ha anulado correctamente.',
-                    type: 'Push--successful',
-                    timeout: 3000
-                });
-                window.location.reload();
-            } else {
-                throw new Error('Error al anular el comprobante');
-            }
-        } catch (error) {
+            const message = response.ok
+                ? { title: 'Comprobante anulado', message: 'El comprobante se ha anulado correctamente.', type: 'Push--successful', timeout: 3000 }
+                : { title: 'Error', message: 'No se pudo anular el comprobante.', type: 'Push--danger', timeout: 5000 };
+            
+            sendpush(message);
+            if (response.ok) window.location.reload();
+        } catch {
             sendpush({
                 title: 'Error',
                 message: 'No se pudo anular el comprobante.',
                 type: 'Push--danger',
                 timeout: 5000
             });
+        } finally {
+            loader.viewOn(false);
+            setShowReverseModal(false);
+            setPaymentToReverse(null);
         }
-        loader.viewOn(false);
-        setShowReverseModal(false);
-        setPaymentToReverse(null);
     };
 
     const handleCancelReverse = () => {
@@ -117,22 +152,17 @@ export default function SectionPayments({ payments, credit }) {
         <>
             <div className="SectionPayments">
                 <div className="SectionPayments__header">
-                    <label>Nro.</label>
-                    <label>Fecha pago</label>
-                    <label>Tipo de pago</label>
-                    <label>Monto</label>
-                    <label>Estado</label>
-                    <label>Acciones</label>
+                    {headers.map(header => <label key={header}>{header}</label>)}
                 </div>
                 
-                {
-                    payments.map((payment, n) => (
+                {payments.map((payment, n) => {
+                    const cells = renderPaymentCells(payment);
+                    
+                    return (
                         <div key={n} className="SectionPayments__item">
-                            <label>{payment.id}</label>
-                            <label>{payment.fecha}</label>
-                            <label>{payment.forma_pago}</label>
-                            <label>{useFormatterNumber({ value: payment.valor_recibido, currency: 'USD' })}</label>
-                            <label>{(payment.status === 'guardado') ? 'Guardado' : 'Revertido'}</label>
+                            {cells.map((cell, index) => (
+                                <label key={index}>{cell}</label>
+                            ))}
                             <label>
                                 <Printer 
                                     onClick={() => handlePrintClick(payment)} 
@@ -144,8 +174,8 @@ export default function SectionPayments({ payments, credit }) {
                                 />
                             </label>
                         </div>
-                    ))
-                }
+                    );
+                })}
             </div>
 
             {showReverseModal && paymentToReverse && (
@@ -261,13 +291,13 @@ export default function SectionPayments({ payments, credit }) {
                                 ci={credit.ci}
                                 credito={credit.id}
                                 
-                                mora={selectedPayment.detalle ? JSON.parse(selectedPayment.detalle).mora : 0}
-                                interes={selectedPayment.detalle ? JSON.parse(selectedPayment.detalle).interes : 0}
-                                seguro_desgravamen={selectedPayment.detalle ? JSON.parse(selectedPayment.detalle).seguro_desgravamen : 0}
-                                gastos_judiciales={selectedPayment.detalle ? JSON.parse(selectedPayment.detalle).gastos_judiciales : 0}
-                                saldo_capital={selectedPayment.detalle ? JSON.parse(selectedPayment.detalle).saldo_capital : 0}
-                                gastos_cobranza={selectedPayment.detalle ? JSON.parse(selectedPayment.detalle).gastos_cobranza : 0}
-                                otros_valores={selectedPayment.detalle ? JSON.parse(selectedPayment.detalle).otros_valores : 0}
+                                mora={getDetailValue(selectedPayment, 'mora')}
+                                interes={getDetailValue(selectedPayment, 'interes')}
+                                seguro_desgravamen={getDetailValue(selectedPayment, 'seguro_desgravamen')}
+                                gastos_judiciales={getDetailValue(selectedPayment, 'gastos_judiciales')}
+                                saldo_capital={getDetailValue(selectedPayment, 'saldo_capital')}
+                                gastos_cobranza={getDetailValue(selectedPayment, 'gastos_cobranza')}
+                                otros_valores={getDetailValue(selectedPayment, 'otros_valores')}
                                 
                                 valor_recibido={selectedPayment.valor_recibido}
                                 valor_devuelto={selectedPayment.valor_devuelto || 0}
