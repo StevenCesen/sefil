@@ -78,7 +78,6 @@ export const useStoreFilterCredits = create((set,get) => ({
     },
     filterCredits: async (filters) => {
         const end_point=`${import.meta.env.VITE_URL_BASE}/campains/credits?${filters}`;
-        console.log(end_point)
         try {
             const request=await fetch(end_point,{
                 headers: {
@@ -90,7 +89,7 @@ export const useStoreFilterCredits = create((set,get) => ({
             if (!request.ok) {
                 throw new Error('Error al consultar la API');
             }
-
+            
             const data = await request.json();
             set({ credits:data});
 
