@@ -8,7 +8,7 @@ export default function ViewPDFStructure(){
     if(!store_structure.viewPDF) return <></>
     
     return (
-        <div className="CardPay">
+        <div className="CardPay" style={{zIndex:"4000"}}>
             <button className="CardCondonacion__close" onClick={()=>{store_structure.setViewPDF(false)}}>Volver</button>
             <PDFViewer width={'800px'} height={'600px'}>
                 <PDFstructure

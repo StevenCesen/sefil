@@ -1,8 +1,3 @@
-/**
- * =====================================================
- *                      REFACTORIZAR
- * =====================================================
- */
 import { useEffect, useRef, useState } from "react";
 import "./CardPay.css";
 import { PDFViewer } from "@react-pdf/renderer";
@@ -11,625 +6,496 @@ import usePrelacion from "../../hooks/usePrelacion";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useUpdateCredit from "../../hooks/useUpdateCredit";
 import { useStoreLoader } from "../../stores/useStoreLoader";
+import sendpush from "../../helpers/sendpush";
 
-export default function CardPay({setView,cartera,credit,updateInfoValues,amount,quoteNumber,paymentDate}){
-    const [pay,setData]=useState();
-    const [send,setSend]=useState({
-        prevDates:{
-            mora:0,
-            interes:0,
-            seguro_desgravamen:0,
-            gastos_judiciales:0,
-            saldo_capital:0,
-            gastos_cobranza:0,
-            totalAmount:0,
-            otros_valores:0
-        },
-        tipo_transaccion:'',
-        forma_pago:'',
-        valor_recibido:'',
-        valor_devuelto:'',
-        institucion_financiera:'',
-        codigo_deposito:'',
-        credito:credit.id,
-        detalle:{
-            totalAmount:0.00,
-            saldo_capital:0.00,
-            interes:0.00,
-            mora:0.00,
-            seguro_desgravamen:0.00,
-            gastos_cobranza:0.00,
-            gastos_judiciales:0.00,
-            otros_valores:0.00
-        }
-    });
+const INITIAL_DETAIL = {
+    totalAmount: 0,
+    saldo_capital: 0,
+    interes: 0,
+    mora: 0,
+    seguro_desgravamen: 0,
+    gastos_cobranza: 0,
+    gastos_judiciales: 0,
+    otros_valores: 0
+};
+
+const FINANCIAL_INSTITUTIONS = [
+    { value: "", label: "-- Seleccionar --" },
+    { value: "Banco de Loja | AHORROS", label: "Banco de Loja | AHORROS" },
+    { value: "Banco de Loja | CORRIENTE", label: "Banco de Loja | CORRIENTE" },
+    { value: "Banco Pichincha | AHORROS", label: "Banco Pichincha | AHORROS" },
+    { value: "SERVIPAGOS_BL", label: "SERVIPAGOS_BL" },
+    { value: "PAGO ÁGIL_BL", label: "PAGO ÁGIL_BL" },
+    { value: "CACPE Loja", label: "CACPE Loja" },
+    { value: "BanEcuador", label: "BanEcuador" }
+];
+
+const PAYMENT_METHODS = [
+    { value: "", label: "-- Seleccionar --" },
+    { value: "efectivo", label: "Efectivo" },
+    { value: "deposito", label: "Depósito" },
+    { value: "transferencia", label: "Transferencia" }
+];
+
+const DETAIL_LABELS = {
+    saldo_capital: 'Capital',
+    interes: 'Interés',
+    mora: 'Mora',
+    seguro_desgravamen: 'Seguro desgravamen',
+    gastos_cobranza: 'Gastos de cobranza',
+    gastos_judiciales: 'Gastos judiciales',
+    otros_valores: 'Otros valores',
+    totalAmount: 'Total'
+};
+
+export default function CardPay({ setView, cartera, credit, updateInfoValues, amount, quoteNumber, paymentDate }) {
+    const [payment, setPayment] = useState(null);
+    const [isActive, setIsActive] = useState(true);
+    const [voucher, setVoucher] = useState(null);
+    const [prelacion, setPrelacion] = useState(INITIAL_DETAIL);
+    const [ordenPrelacion, setOrdenPrelacion] = useState(null);
+    const [sendData, setSendData] = useState(null);
+    const [isInitialized, setIsInitialized] = useState(false);
     
-    const title=useRef();
-
-    const [active,setActive]=useState(true);
-
-    const [prelacion,setPrelacion]=useState({
-        totalAmount:0,
-        saldo_capital:0.00,
-        interes:0.00,
-        mora:0.00,
-        seguro_desgravamen:0.00,
-        gastos_cobranza:0.00,
-        gastos_judiciales:0.00,
-        otros_valores:0.00
-    });
-
-    const [orden_prelacion,setOrdenPrelacion]=useState();
-
-    const [idVouch,setVouch]=useState(0);
-
-    const ref=useRef();
-
-    const updateDetalle=(detalle)=>{
-        setData({
-            ...pay,
-            tipo_transaccion: (amount!==null) ? 'parcial' : 'total',
-            valor_recibido:(amount!==null) ? amount : 0,
-            detalle:detalle
-        });
-    };
-
+    const titleRef = useRef();
+    const valueRef = useRef();
     const loader = useStoreLoader();
 
-    useEffect(()=>{
+    const isPresetAmount = amount !== null && amount !== undefined;
+    const maxDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
 
-        loader.viewOn(true);
+    const initializePayment = () => {
+        const detail = {
+            totalAmount: credit.totalAmount,
+            saldo_capital: credit.saldo_capital,
+            interes: credit.interes,
+            mora: credit.mora,
+            seguro_desgravamen: credit.seguro_desgravamen,
+            gastos_cobranza: credit.gastos_cobranza,
+            gastos_judiciales: credit.gastos_judiciales,
+            otros_valores: credit.otros_valores
+        };
 
-        setData({
-            ...pay,
-            forma_pago:             '',
-            fecha_pago:             '',
-            tipo_transaccion:       (amount!==null) ? 'parcial' : 'total',
+        return {
+            forma_pago: '',
+            fecha_pago: '',
+            tipo_transaccion: isPresetAmount ? 'parcial' : 'total',
             institucion_financiera: '',
-            valor_devuelto:         0,
-            valor_recibido:         (amount!==null) ? amount : 0,
-            codigo_deposito:        0,
-            credito:                credit.id,
-            detalle:{
-                totalAmount:        credit.totalAmount,
-                saldo_capital:      credit.saldo_capital,
-                interes:            credit.interes,
-                mora:               credit.mora,
-                seguro_desgravamen: credit.seguro_desgravamen,
-                gastos_cobranza:    credit.gastos_cobranza,
-                gastos_judiciales:  credit.gastos_judiciales,
-                otros_valores:      credit.otros_valores
-            }
-        });
+            valor_devuelto: 0,
+            valor_recibido: isPresetAmount ? amount : 0,
+            codigo_deposito: '',
+            credito: credit.id,
+            detalle: detail
+        };
+    };
 
-        setActive(true);
+    const updateDetalle = (detalle) => {
+        setPayment(prev => ({
+            ...prev,
+            detalle
+        }));
+    };
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/bussines/prelacion?cartera=${cartera}`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
+    const handleFieldChange = (field, value) => {
+        if (field === 'tipo_transaccion') {
+            setPayment(prev => ({ 
+                ...prev, 
+                [field]: value,
+                valor_recibido: 0,
+                valor_devuelto: 0
+            }));
+            
+            if (valueRef.current) {
+                valueRef.current.value = 0;
             }
-        })
-            .then((response) => response.json())  
-            .then((data_pre) => {
-                setOrdenPrelacion(data_pre);
-                if(amount!==null){
-                    usePrelacion(amount,credit,setPrelacion,updateDetalle,data_pre);
+            
+            if (value === 'total') {
+                setPrelacion(INITIAL_DETAIL);
+            }
+        } else {
+            setPayment(prev => ({ ...prev, [field]: value }));
+        }
+    };
+
+    const handleReceivedValueChange = (value) => {
+        if (!payment || !ordenPrelacion) return;
+
+        const numValue = Number(value) || 0;
+
+        if (payment.tipo_transaccion === 'parcial') {
+            setPayment(prev => ({ ...prev, valor_recibido: numValue }));
+            if (numValue > 0) {
+                usePrelacion(value, credit, setPrelacion, updateDetalle, ordenPrelacion);
+            } else {
+                setPrelacion(INITIAL_DETAIL);
+                updateDetalle({
+                    totalAmount: credit.totalAmount,
+                    saldo_capital: credit.saldo_capital,
+                    interes: credit.interes,
+                    mora: credit.mora,
+                    seguro_desgravamen: credit.seguro_desgravamen,
+                    gastos_cobranza: credit.gastos_cobranza,
+                    gastos_judiciales: credit.gastos_judiciales,
+                    otros_valores: credit.otros_valores
+                });
+            }
+        } else if (payment.forma_pago === 'efectivo') {
+            const totalAmount = Number(credit.totalAmount);
+            const change = numValue > totalAmount ? (numValue - totalAmount).toFixed(2) : 0;
+            
+            setPayment(prev => ({
+                ...prev,
+                valor_recibido: value,
+                valor_devuelto: change
+            }));
+        }
+    };
+
+    const validatePayment = () => {
+        const errors = [];
+        
+        if (!payment.forma_pago) errors.push('Falta forma de pago');
+        if (payment.forma_pago !== 'efectivo' && !payment.institucion_financiera) {
+            errors.push('Falta institución financiera');
+        }
+        if (payment.forma_pago !== 'efectivo' && !payment.codigo_deposito) {
+            errors.push('Falta código de transacción');
+        }
+        if (payment.tipo_transaccion === 'total' && Number(payment.valor_recibido) < Number(credit.totalAmount)) {
+            errors.push('Valor recibido no es correcto');
+        }
+        if (!payment.valor_recibido || payment.valor_recibido === '0') {
+            errors.push('Falta valor recibido');
+        }
+        if (!payment.fecha_pago) errors.push('Falta fecha de pago');
+        
+        return errors;
+    };
+
+    const processPayment = async (button) => {
+        const errors = validatePayment();
+        if (errors.length > 0) {
+            button.textContent = `Error: ${errors[0]}`;
+            setTimeout(() => button.textContent = 'Registrar pago', 3000);
+            return;
+        }
+
+        button.textContent = 'Registrando pago...';
+        
+        try {
+            const paymentData = {
+                ...payment,
+                cartera,
+                prevDates: JSON.stringify({
+                    mora: credit.mora,
+                    interes: credit.interes,
+                    seguro_desgravamen: credit.seguro_desgravamen,
+                    gastos_judiciales: credit.gastos_judiciales,
+                    saldo_capital: credit.saldo_capital,
+                    gastos_cobranza: credit.gastos_cobranza,
+                    totalAmount: credit.totalAmount,
+                    otros_valores: credit.otros_valores
+                })
+            };
+
+            if (payment.tipo_transaccion === 'parcial') {
+                const valorRecibido = valueRef.current?.value || payment.valor_recibido;
+                Object.assign(paymentData, {
+                    valor_recibido: valorRecibido,
+                    valor_devuelto: 0,
+                    detalle: JSON.stringify({
+                        ...INITIAL_DETAIL,
+                        saldo_capital: Math.max(0, (credit.saldo_capital - prelacion.saldo_capital)).toFixed(2),
+                        interes: Math.max(0, (credit.interes - prelacion.interes)).toFixed(2),
+                        mora: Math.max(0, (credit.mora - prelacion.mora)).toFixed(2),
+                        seguro_desgravamen: Math.max(0, (credit.seguro_desgravamen - prelacion.seguro_desgravamen)).toFixed(2),
+                        gastos_cobranza: Math.max(0, (credit.gastos_cobranza - prelacion.gastos_cobranza)).toFixed(2),
+                        gastos_judiciales: Math.max(0, (credit.gastos_judiciales - prelacion.gastos_judiciales)).toFixed(2),
+                        otros_valores: Math.max(0, (credit.otros_valores - prelacion.otros_valores)).toFixed(2),
+                        totalAmount: Math.max(0, (credit.totalAmount - prelacion.totalAmount)).toFixed(2)
+                    }),
+                    saldo_capital: Math.max(0, (prelacion.saldo_capital)).toFixed(2),
+                    interes: Math.max(0, (prelacion.interes)).toFixed(2),
+                    mora: Math.max(0, (prelacion.mora)).toFixed(2),
+                    seguro_desgravamen: Math.max(0, (prelacion.seguro_desgravamen)).toFixed(2),
+                    gastos_cobranza: Math.max(0, (prelacion.gastos_cobranza)).toFixed(2),
+                    gastos_judiciales: Math.max(0, (prelacion.gastos_judiciales)).toFixed(2),
+                    otros_valores: Math.max(0, (prelacion.otros_valores)).toFixed(2),
+                    totalAmount: Math.max(0, (prelacion.totalAmount)).toFixed(2)
+                });
+            } else {
+                paymentData.detalle = JSON.stringify(INITIAL_DETAIL);
+                if (payment.forma_pago === 'efectivo') {
+                    paymentData.valor_recibido = valueRef.current?.value || payment.valor_recibido;
+                } else {
+                    paymentData.valor_recibido = Number(credit.totalAmount) + Number(payment.valor_devuelto);
                 }
-                loader.viewOn(false);
+            }
+
+            if (payment.forma_pago !== 'efectivo') {
+                const verifyResponse = await fetch(
+                    `${import.meta.env.VITE_URL_BASE}/vouchers/verify?institucion=${paymentData.institucion_financiera}&codigo=${paymentData.codigo_deposito.trim()}`
+                );
+                const verifyData = await verifyResponse.json();
+                
+                if (verifyData.state !== 200) {
+                    throw new Error('Código de depósito repetido');
+                }
+            }
+
+            const response = await fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${credit.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: new URLSearchParams(paymentData)
             });
-    },[]);
 
-    if(!pay) return <></>
-    if(!orden_prelacion) return <></>
+            const result = await response.json();
+            
+            if (result.status === 200) {
+                setVoucher({ id: result.id, sync: result.sync });
+                setSendData(paymentData);
+                button.textContent = 'Pago registrado';
+                titleRef.current.textContent = 'COMPROBANTE DE PAGO';
+                setIsActive(false);
+                useUpdateCredit(cartera, credit.id, () => {});
+                
+                sendpush({
+                    title: 'Pago registrado',
+                    message: 'El pago se ha registrado correctamente',
+                    type: 'Push--successful',
+                    timeout: 3000
+                });
+            } else {
+                throw new Error('Error al procesar el pago');
+            }
+        } catch (error) {
+            button.textContent = error.message || 'Error, inténtalo de nuevo';
+            setTimeout(() => button.textContent = 'Registrar pago', 3000);
+            
+            sendpush({
+                title: 'Error en el pago',
+                message: error.message || 'No se pudo procesar el pago',
+                type: 'Push--danger',
+                timeout: 5000
+            });
+        }
+    };
 
-    return(
+    useEffect(() => {
+        if (isInitialized || !credit?.id) return;
+
+        const init = async () => {
+            loader.viewOn(true);
+            setPayment(initializePayment());
+            
+            try {
+                const response = await fetch(
+                    `${import.meta.env.VITE_URL_BASE}/bussines/prelacion?cartera=${cartera}`,
+                    {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                );
+                const prelacionData = await response.json();
+                setOrdenPrelacion(prelacionData);
+                
+                if (isPresetAmount && amount > 0) {
+                    usePrelacion(amount, credit, setPrelacion, updateDetalle, prelacionData);
+                }
+                
+                setIsInitialized(true);
+            } catch (error) {
+                console.error('Error loading prelacion:', error);
+            } finally {
+                loader.viewOn(false);
+            }
+        };
+
+        init();
+    }, [credit?.id, cartera]);
+
+    useEffect(() => {
+        if (isPresetAmount && valueRef.current && isInitialized) {
+            valueRef.current.value = amount;
+        }
+    }, [amount, isInitialized, isPresetAmount]);
+
+    if (!payment || !ordenPrelacion || !isInitialized) {
+        return null;
+    }
+
+    return (
         <div className="CardPay">
-            <button 
-                className="CardCondonacion__close" 
-                onClick={()=>{
-                    setView('');
-                }}
-            >Volver</button>
+            <button className="CardCondonacion__close" onClick={() => setView('')}>
+                Volver
+            </button>
             
             <div className="CardPay__contentPay">
-
                 <div className="CardPay__head">
-                    <h3 ref={title}>PAGO</h3>
-                    <img src={'./icons/logo.png'}/>
+                    <h3 ref={titleRef}>PAGO</h3>
+                    <img src="./icons/logo.png" alt="Logo" />
                 </div>
                 
                 <div className="CardPay__detailPay">
                     <div>
-                        <p>
-                            <label>Tipo de transacción</label>
-                            <label>:</label>
-                        </p>
-                        
-                        {
-                            (active) ?
-                                <select value={pay.tipo_transaccion} onChange={(e)=>{
-                                    setData({
-                                        ...pay,
-                                        tipo_transaccion:e.target.value
-                                    });
-                                    ref.current.value=0;
-                                }}>
-                                    <option value="total">Pago total</option>
-                                    <option value="parcial">Pago parcial</option>
-                                </select>
-                            :
-                                <p>{pay.tipo_transaccion.toUpperCase()}</p>
-                        }
+                        <p><label>Tipo de transacción:</label></p>
+                        {isActive ? (
+                            <select 
+                                value={payment.tipo_transaccion}
+                                onChange={(e) => handleFieldChange('tipo_transaccion', e.target.value)}
+                            >
+                                <option value="total">Pago total</option>
+                                <option value="parcial">Pago parcial</option>
+                            </select>
+                        ) : (
+                            <p>{payment.tipo_transaccion.toUpperCase()}</p>
+                        )}
                     </div>
+
                     <div>
-                        <p>
-                            <label>Forma de pago</label>
-                            <label>:</label>
-                        </p>
-                        
-                        <select value={pay.forma_pago} onChange={(e)=>{
-                            setData({
-                                ...pay,
-                                forma_pago:e.target.value
-                            })
-                        }}> 
-                            <option value="">-- Seleccionar --</option>
-                            <option value="efectivo">Efectivo</option>
-                            <option value="deposito">Depósito</option>
-                            <option value="transferencia">Transferencia</option>
+                        <p><label>Forma de pago:</label></p>
+                        <select 
+                            value={payment.forma_pago}
+                            onChange={(e) => handleFieldChange('forma_pago', e.target.value)}
+                            disabled={!isActive}
+                        >
+                            {PAYMENT_METHODS.map(method => (
+                                <option key={method.value} value={method.value}>
+                                    {method.label}
+                                </option>
+                            ))}
                         </select>
                     </div>
+                    
+                    {payment.forma_pago && payment.forma_pago !== 'efectivo' && (
+                        <div>
+                            <p><label>Institución financiera:</label></p>
+                            <select 
+                                value={payment.institucion_financiera}
+                                onChange={(e) => handleFieldChange('institucion_financiera', e.target.value)}
+                                disabled={!isActive}
+                            >
+                                {FINANCIAL_INSTITUTIONS.map(inst => (
+                                    <option key={inst.value} value={inst.value}>
+                                        {inst.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
-                    {
-                        (pay.forma_pago!=='efectivo' & pay.forma_pago!=="")
-                            ?
-                                <div>
-                                    <p>
-                                        <label>Institución financiera</label>
-                                        <label>:</label>
-                                    </p>
-                                    
-                                    <select value={pay.institucion_financiera} onChange={(e)=>{
-                                        setData({
-                                            ...pay,
-                                            institucion_financiera:e.target.value
-                                        });   
-                                    }}>
-                                        <option value="">-- Seleccionar --</option>
-                                        <option value="Banco de Loja | AHORROS">Banco de Loja | AHORROS</option>
-                                        <option value="Banco de Loja | CORRIENTE">Banco de Loja | CORRIENTE</option>
-                                        <option value="Banco Pichincha | AHORROS">Banco Pichincha | AHORROS</option>
-                                        <option value="SERVIPAGOS_BL">SERVIPAGOS_BL</option>
-                                        <option value="PAGO ÁGIL_BL">PAGO ÁGIL_BL</option>
-                                        <option value="CACPE Loja">CACPE Loja</option>
-                                        <option value="BanEcuador">BanEcuador</option>
-                                    </select>
-                                </div>
-                            :   <></>
-                    }
-
-                    {
-                        (pay.forma_pago!=='efectivo' & pay.forma_pago!=="")
-                            ?
-                                <div>
-                                    <p>
-                                        <label>Código de depósito/transferencia</label>
-                                        <label>:</label>
-                                    </p>
-                                    <input type="text" value={pay.codigo_deposito} onChange={(e)=>{
-                                        setData({
-                                            ...pay,
-                                            codigo_deposito:e.target.value.trim()
-                                        });
-                                    }} />
-                                </div>
-                            :   <></>
-                    }
+                    {payment.forma_pago && payment.forma_pago !== 'efectivo' && (
+                        <div>
+                            <p><label>Código de depósito/transferencia:</label></p>
+                            <input 
+                                type="text"
+                                value={payment.codigo_deposito}
+                                onChange={(e) => handleFieldChange('codigo_deposito', e.target.value.trim())}
+                                disabled={!isActive}
+                            />
+                        </div>
+                    )}
 
                     <div>
-                        <p>
-                            <label>Fecha de depósito</label>
-                            <label>:</label>
-                        </p>
+                        <p><label>Fecha de depósito:</label></p>
                         <input 
-                            type="date" 
-                            value={pay.fecha_pago}
-                            max={new Date(new Date().getTime()-(new Date().getTimezoneOffset() * 60000)).toISOString().split("T")[0]} 
-                            onChange={(e)=>{
-                                setData({
-                                    ...pay,
-                                    fecha_pago:e.target.value
-                                });
-                            }}
+                            type="date"
+                            value={payment.fecha_pago}
+                            max={maxDate}
+                            onChange={(e) => handleFieldChange('fecha_pago', e.target.value)}
+                            disabled={!isActive}
                         />
                     </div>
 
                     <div>
-                        <p>
-                            <label>Nombre</label>
-                            <label>:</label>
-                        </p>
+                        <p><label>Nombre:</label></p>
                         <p>{credit.name}</p>
                     </div>
                     <div>
-                        <p>
-                            <label>Cédula</label>
-                            <label>:</label>
-                        </p>
+                        <p><label>Cédula:</label></p>
                         <p>{credit.ci}</p>
                     </div>
 
-                    <div>
-                        <p>
-                            <label>Capital</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.saldo_capital,currency:'USD'})}</p>
-                    </div>
-
-                    <div>
-                        <p>
-                            <label>Interés</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.interes,currency:'USD'})} $</p>
-                    </div>
-
-                    <div>
-                        <p>
-                            <label>Mora</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.mora,currency:'USD'})} $</p>
-                        
-                    </div>
-                    
-                    <div>
-                        <p>
-                            <label>Seguro desgravamen</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.seguro_desgravamen,currency:'USD'})} $</p>
-                    </div>
-
-                    <div>
-                        <p>
-                            <label>Gastos de cobranza</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.gastos_cobranza,currency:'USD'})}</p>
-                    </div>
-
-                    <div>
-                        <p>
-                            <label>Gastos judiciales</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.gastos_judiciales,currency:'USD'})} $</p>
-                    </div>
-                    
-                    <div>
-                        <p>
-                            <label>Otros valores</label>
-                            <label>:</label>
-                        </p>
-                        <p>{useFormatterNumber({value:pay.detalle.otros_valores,currency:'USD'})}</p>
-                    </div>
-                    
-                    <div>
-                        {
-                            <>
-                                <p>
-                                    <label>Total</label>
-                                    <label>:</label>
-                                </p>
-                                
-                                <p>{useFormatterNumber({
-                                    value:pay.detalle.totalAmount,
-                                    currency:'USD'
-                                })}</p>
-                            </> 
-                        }
-                    </div>
-
-                    {
-                        (pay.forma_pago==='efectivo' | pay.tipo_transaccion==='parcial') ?
-                            <>
-                                <div>
-                                    <p>
-                                        <label>Valor recibido</label>
-                                        <label>:</label>
-                                    </p>
-
-                                    <input 
-                                        type="text" 
-                                        placeholder="0" 
-                                        ref={ref} 
-                                        defaultValue={pay.valor_recibido} 
-                                        onChange={(e)=>{
-                                            if(pay.tipo_transaccion==='parcial'){
-                                                
-                                                setData({
-                                                    ...pay,
-                                                    valor_recibido:Number(e.target.value)
-                                                });
-
-                                                usePrelacion(e.target.value,credit,setPrelacion,updateDetalle,orden_prelacion);
-                                            
-                                            }else{
-                                                if(pay.forma_pago==='efectivo'){
-                                                    setData({
-                                                        ...pay,
-                                                        valor_recibido:e.target.value,
-                                                        valor_devuelto:(Number(e.target.value)>Number(credit.totalAmount)) ? String((Number(e.target.value)-Number(credit.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')) : 0
-                                                    });
-                                                }
-                                            }
-                                        }}
-                                    />
-                                </div>
-                            </>
-                        :   <></>
+                    {Object.entries(payment.detalle)
+                        .filter(([key]) => key in DETAIL_LABELS)
+                        .map(([key, value]) => (
+                            <div key={key}>
+                                <p><label>{DETAIL_LABELS[key]}:</label></p>
+                                <p>{useFormatterNumber({ value, currency: 'USD' })}</p>
+                            </div>
+                        ))
                     }
-                    {
-                        (pay.tipo_transaccion==='total') ?
-                            (pay.forma_pago==='efectivo') 
-                            ?
-                                <div>
-                                    <p>
-                                        <label>Valor devuelto</label>
-                                        <label>:</label>
-                                    </p>
-                                
-                                    <input type="number" value={Number(pay.valor_devuelto).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')} disabled/>
-                                </div>
-                            :
-                                <div>
-                                    <p>
-                                        <label>Diferencia</label>
-                                        <label>:</label>
-                                    </p>
-                                    
-                                    <input 
-                                        type="number" 
-                                        onChange={(e)=>[
-                                            setData({
-                                                ...pay,
-                                                valor_devuelto:Number(e.target.value).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')
-                                            })
-                                        ]}
-                                        value={Number(pay.valor_devuelto).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')}/>
-                                </div>
 
-                        :   <></>
-                    }
+                    {(payment.forma_pago === 'efectivo' || payment.tipo_transaccion === 'parcial') && (
+                        <div>
+                            <p><label>Valor recibido:</label></p>
+                            <input 
+                                type="number"
+                                step="0.01"
+                                placeholder="0"
+                                ref={valueRef}
+                                defaultValue={payment.valor_recibido}
+                                onChange={(e) => handleReceivedValueChange(e.target.value)}
+                                disabled={!isActive}
+                            />
+                        </div>
+                    )}
+
+                    {payment.tipo_transaccion === 'total' && (
+                        <div>
+                            <p><label>{payment.forma_pago === 'efectivo' ? 'Valor devuelto' : 'Diferencia'}:</label></p>
+                            <input 
+                                type="number"
+                                step="0.01"
+                                value={Number(payment.valor_devuelto).toFixed(2)}
+                                disabled={payment.forma_pago === 'efectivo' || !isActive}
+                                onChange={(e) => handleFieldChange('valor_devuelto', e.target.value)}
+                            />
+                        </div>
+                    )}
                 </div>
 
-                {
-                    (active) ?
-                        <button className="CardPay__button" onClick={(e)=>{
-                            e.target.textContent='Registrando pago...';
-
-                            let data_send={
-                                prevDates:{
-                                    mora:credit.mora,
-                                    interes:credit.interes,
-                                    seguro_desgravamen:credit.seguro_desgravamen,
-                                    gastos_judiciales:credit.gastos_judiciales,
-                                    saldo_capital:credit.saldo_capital,
-                                    gastos_cobranza:credit.gastos_cobranza,
-                                    totalAmount:credit.totalAmount,
-                                    otros_valores:credit.otros_valores
-                                },
-                                tipo_transaccion:pay.tipo_transaccion,
-                                forma_pago:pay.forma_pago,
-                                valor_recibido:'',
-                                valor_devuelto:'',
-                                institucion_financiera:pay.institucion_financiera,
-                                codigo_deposito:pay.codigo_deposito,
-                                credito:credit.id,
-                                detalle:{
-                                    totalAmount:0.00,
-                                    saldo_capital:0.00,
-                                    interes:0.00,
-                                    mora:0.00,
-                                    seguro_desgravamen:0.00,
-                                    gastos_cobranza:0.00,
-                                    gastos_judiciales:0.00,
-                                    otros_valores:0.00
-                                }
-                            }
-
-                            if(pay.tipo_transaccion==='parcial'){
-                                data_send.tipo_transaccion=pay.tipo_transaccion;
-                                data_send.mora=String(Number(prelacion.mora).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.interes=String(Number(prelacion.interes).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.seguro_desgravamen=String(Number(prelacion.seguro_desgravamen).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.gastos_judiciales=String(Number(prelacion.gastos_judiciales).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.saldo_capital=String(Number(prelacion.saldo_capital).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.gastos_cobranza=String(Number(prelacion.gastos_cobranza).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.totalAmount=String(Number(prelacion.totalAmount).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.otros_valores=String(Number(prelacion.otros_valores).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-
-                                data_send.detalle.saldo_capital=String((Number(credit.saldo_capital)-Number(prelacion.saldo_capital)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.interes=String((Number(credit.interes)-Number(prelacion.interes)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.mora=String((Number(credit.mora)-Number(prelacion.mora)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.seguro_desgravamen=String((Number(credit.seguro_desgravamen)-Number(prelacion.seguro_desgravamen)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.gastos_cobranza=String((Number(credit.gastos_cobranza)-Number(prelacion.gastos_cobranza)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.gastos_judiciales=String((Number(credit.gastos_judiciales)-Number(prelacion.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.otros_valores=String((Number(credit.otros_valores)-Number(prelacion.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-                                data_send.detalle.totalAmount=String((Number(prelacion.totalAmount)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1'));
-
-                                data_send.valor_recibido=ref.current.value;
-                                data_send.valor_devuelto=0;
-
-                            }else if(pay.forma_pago==='efectivo'){
-                                data_send.valor_recibido=ref.current.value;
-                                data_send.valor_devuelto=pay.valor_devuelto;
-
-                            }else{
-                                data_send.valor_recibido=Number(credit.totalAmount)+Number(pay.valor_devuelto);
-                                data_send.valor_devuelto=pay.valor_devuelto;
-                            }
-
-                            setSend(data_send);
-                            
-                            let data_encode=data_send;
-                            data_encode.prevDates=JSON.stringify(data_encode.prevDates);
-                            data_encode.detalle=JSON.stringify(data_encode.detalle);
-                            data_encode.cartera=cartera;
-                            data_encode.fecha_pago=pay.fecha_pago;
-
-                            // AGREGAR EL SALDO DEL CRÉDITO QUE QUEDA DEBIENDO
-                            if(data_encode.forma_pago===''){
-                                e.target.textContent='Error, falta forma de pago.';
-                            }else if(data_encode.forma_pago!=='efectivo' & data_encode.institucion_financiera===""){
-                                e.target.textContent='Error, falta institución financiera.';
-                            }else if(data_encode.forma_pago!=='efectivo' & data_encode.codigo_deposito===0){
-                                e.target.textContent='Error, falta código de transacción.'
-                            }else if(data_encode.tipo_transaccion==='total' & (Number(data_encode.valor_recibido)<Number(credit.totalAmount))){
-                                e.target.textContent='Error, valor recibido no es correcto, inténtalo de nuevo.';
-                            }else if(data_encode.valor_recibido==='0'){
-                                e.target.textContent='Error, falta valor recibido.';
-                            }else if(data_encode.fecha_pago===''){
-                                e.target.textContent='Error, falta fecha de pago.';
-                            }else{ 
-                                if(data_encode.forma_pago!=='efectivo'){                                    
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/verify?institucion=${data_encode.institucion_financiera}&codigo=${data_encode.codigo_deposito.trim()}`,{
-                                            headers: {
-                                                Accept: 'application/json'
-                                            }
-                                        })
-                                            .then((response) => response.json())  
-                                            .then(async (data) => {
-                                                /*=======EL CÓDIGO DE DEPOSITO ES ÚNICO Y NO EXISTE AÚN EN BASE======*/
-                                                if(data.state===200){
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${credit.id}`,{
-                                                        method:'PUT',
-                                                        headers: {
-                                                            Accept: 'application/json',
-                                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                        },
-                                                        body:new URLSearchParams(data_encode)
-                                                    })
-                                                        .then((response) => response.json())  
-                                                        .then(async (data) => {
-                                                            
-                                                            /*==================PAGO EXITOSO===============*/
-                                                            if(data.status===200){
-
-                                                                if('id' in data.gasto & credit.collection_state!=='Convenio de pago'){
-                                                                    //setPreview(true);
-                                                                    setGastos({
-                                                                        credito:data.gasto.credito,
-                                                                        id:data.gasto.id,
-                                                                        valor_gasto:data.gasto.postDates
-                                                                    });
-                                                                }
-
-                                                                setVouch({
-                                                                    id:data.id,
-                                                                    sync:data.sync
-                                                                });
-
-                                                                e.target.textContent='Pago registrado';
-                                                                title.current.textContent='COMPROBANTE DE PAGO';
-                                                                setActive(false);
-                                                                useUpdateCredit(cartera,credit.id,()=>{});
-                                                            }else{
-                                                                e.target.textContent='Error, inténtalo de nuevo';
-                                                            }
-                                                        });
-                                                }else{
-                                                    e.target.textContent='Código de depósito repetido, inténtalo de nuevo.';
-                                                }
-
-                                            });
-                                }else{
-                                    /*========================PAGO EXITOSO=====================*/
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${credit.id}`,{
-                                            method:'PUT',
-                                            headers: {
-                                                Accept: 'application/json',
-                                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                                            },
-                                            body:new URLSearchParams(data_encode)
-                                        })
-                                            .then((response) => response.json())  
-                                            .then(async (data) => {
-                                                if(data.status===200){
-                                                    if('id' in data.gasto){
-                                                        //setPreview(true);
-                                                        setGastos({
-                                                            credito:credit.id.credito,
-                                                            id:data.gasto.id,
-                                                            valor_gasto:data.gasto.postDates,
-                                                            fecha:'',
-                                                            clave_acceso:''
-                                                        });
-                                                    }
-
-                                                    setVouch({
-                                                        id:data.id,
-                                                        sync:data.sync
-                                                    });
-
-                                                    e.target.textContent='Pago registrado';
-                                                    title.current.textContent='COMPROBANTE DE PAGO';
-                                                    setActive(false);
-                                                    useUpdateCredit(cartera,credit.id,()=>{});
-                                                }else{
-                                                    e.target.textContent='Error, inténtalo de nuevo';
-                                                }
-                                            });
-                                }
-                        
-                            }
-  
-                        }}>Registrar pago</button>
-                    :
-                        <></>
-                }
-
+                {isActive && (
+                    <button 
+                        className="CardPay__button" 
+                        onClick={(e) => processPayment(e.target)}
+                    >
+                        Registrar pago
+                    </button>
+                )}
             </div>
             
-            {
-                (active===false) &&
-                    <PDFViewer 
-                        width={'500px'} 
-                        height={'500px'}
-                        onClick={(e)=>{
-                            
-                        }}
-                    >
-                        <PDF 
-                            nro_voucher={idVouch.id}
-                            type_print={"ORIGINAL"}
-                            tipo_transaccion={send.tipo_transaccion}
-                            forma_pago={send.forma_pago}
-                            insitucion_financiera={send.institucion_financiera}
-                            codigo_deposito={send.codigo_deposito}
-                            name={credit.name}
-                            ci={credit.ci}
-                            credito={idVouch.sync}
-                            
-                            mora={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).mora : JSON.parse(send.prevDates).mora}
-                            interes={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).interes : JSON.parse(send.prevDates).interes}
-                            seguro_desgravamen={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).seguro_desgravamen : JSON.parse(send.prevDates).seguro_desgravamen}
-                            gastos_judiciales={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).gastos_judiciales : JSON.parse(send.prevDates).gastos_judiciales}
-                            saldo_capital={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).saldo_capital : JSON.parse(send.prevDates).saldo_capital}
-                            gastos_cobranza={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).gastos_cobranza : JSON.parse(send.prevDates).gastos_cobranza}
-                            otros_valores={(send.tipo_transaccion==='parcial') ? JSON.parse(send.detalle).otros_valores : JSON.parse(send.prevDates).otros_valores}
-                            
-                            valor_recibido={(send.forma_pago==='efectivo' & send.tipo_transaccion!=='parcial') ? pay.valor_recibido : (send.tipo_transaccion==='total') ? Number(send.valor_recibido) : send.valor_recibido}
-                            valor_devuelto={send.valor_devuelto}
-                            
-                            fecha={new Date().toLocaleDateString()}
-                            agente={localStorage.getItem('name').substring(0,1)+localStorage.getItem('name').split(' ')[1]}
-                        />
-                    </PDFViewer>
-            }
+            {!isActive && voucher && sendData && (
+                <PDFViewer width="500px" height="500px">
+                    <PDF 
+                        nro_voucher={voucher.id}
+                        type_print="ORIGINAL"
+                        tipo_transaccion={sendData.tipo_transaccion}
+                        forma_pago={sendData.forma_pago}
+                        insitucion_financiera={sendData.institucion_financiera}
+                        codigo_deposito={sendData.codigo_deposito}
+                        name={credit.name}
+                        ci={credit.ci}
+                        credito={voucher.sync}
+                        mora={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).mora : JSON.parse(sendData.prevDates).mora}
+                        interes={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).interes : JSON.parse(sendData.prevDates).interes}
+                        seguro_desgravamen={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).seguro_desgravamen : JSON.parse(sendData.prevDates).seguro_desgravamen}
+                        gastos_judiciales={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).gastos_judiciales : JSON.parse(sendData.prevDates).gastos_judiciales}
+                        saldo_capital={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).saldo_capital : JSON.parse(sendData.prevDates).saldo_capital}
+                        gastos_cobranza={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).gastos_cobranza : JSON.parse(sendData.prevDates).gastos_cobranza}
+                        otros_valores={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).otros_valores : JSON.parse(sendData.prevDates).otros_valores}
+                        valor_recibido={sendData.valor_recibido}
+                        valor_devuelto={sendData.valor_devuelto}
+                        fecha={new Date().toLocaleDateString()}
+                        agente={localStorage.getItem('name')?.substring(0,1) + localStorage.getItem('name')?.split(' ')[1]}
+                    />
+                </PDFViewer>
+            )}
         </div>
     );
 }

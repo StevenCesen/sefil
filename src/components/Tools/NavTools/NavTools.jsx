@@ -6,7 +6,6 @@ import { useStoreStructure } from "../../../stores/useStoreStructure";
 import { useStoreCondonation } from "../../../stores/useStoreCondonation";
 import useVerifyStruct from "../../../hooks/useVerifyRestruct";
 import sendpush from "../../../helpers/sendpush";
-import getStruct from "../../../helpers/Credits/getStruct";
 import { useViewStruct } from "../../../stores/useViewStruct";
 
 export default function NavTools(){
@@ -15,7 +14,6 @@ export default function NavTools(){
     const credit=useStoreManagement();
     const store_structure=useStoreStructure();
     const store_condonation=useStoreCondonation();
-    const view_structure=useViewStruct();
 
     return (
         <div className="NavTools">
@@ -26,12 +24,15 @@ export default function NavTools(){
                     <div className="NavTools__menu">
                         <button onClick={()=>{
                             store_condonation.setInfoCredit({
+                                ci:credit.credit.clients[0].ci,
+                                name:credit.credit.clients[0].name,
                                 total:credit.credit.total_amount-credit.credit.gasto_cobranza_sefil,
                                 capital:credit.credit.saldo_capital,
                                 mora:credit.credit.mora,
                                 interes:credit.credit.interes,
                                 seguro_desgravamen:credit.credit.seguro_desgravamen,
                                 gastos_judiciales:credit.credit.gastos_judiciales,
+                                gastos_cobranza_sefil:credit.credit.gasto_cobranza_sefil,
                                 gastos_cobranza:credit.credit.gastos_cobranza,
                                 otros_valores:credit.credit.otros_valores,
                                 id:credit.credit.id,
@@ -56,6 +57,8 @@ export default function NavTools(){
                                     if(check){
                                         store_structure.viewOn(true);
                                         store_structure.setInfoCredit({
+                                            ci:credit.credit.clients[0].ci,
+                                            name:credit.credit.clients[0].name,
                                             total_amount:credit.credit.total_amount,
                                             cartera:credit.cartera,
                                             credit_id:credit.credit.id,

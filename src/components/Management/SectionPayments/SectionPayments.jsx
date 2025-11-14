@@ -16,15 +16,15 @@ export default function SectionPayments({ payments, credit, view_complete_info =
 
     const { headers, detailFields } = useMemo(() => {
         const baseHeaders = ['Comprobante', 'Fecha pago', 'Tipo de pago'];
-        const endHeaders = ['Monto', 'Estado', 'Acciones'];
-        const detailHeaders = view_complete_info 
-            ? ['Capital', 'Interes', 'Mora', 'Seguro', 'Judicial', 'Cobranza', 'Otros valores']
+        const detailHeaders = ['Monto', 'Estado'];
+        const endHeaders = view_complete_info 
+            ? ['Capital', 'Interes', 'Mora', 'Seguro', 'Judicial', 'Cobranza', 'Otros valores','Acciones']
             : [];
         
         return {
             headers: [...baseHeaders, ...detailHeaders, ...endHeaders],
             detailFields: view_complete_info 
-                ? ['saldo_capital', 'interes', 'mora', 'seguro_desgravamen', 'gastos_judiciales', 'gastos_cobranza', 'otros_valores']
+                ? ['saldo_capital', 'interes', 'mora', 'seguro_desgravamen', 'gastos_judiciales', 'gastos_cobranza', 'otros_valores','Acciones']
                 : []
         };
     }, [view_complete_info]);
@@ -50,7 +50,7 @@ export default function SectionPayments({ payments, credit, view_complete_info =
 
         const endCells = [
             useFormatterNumber({ value: payment.valor_recibido, currency: 'USD' }),
-            payment.status === 'guardado' ? 'Guardado' : 'Revertido'
+            (payment.status === 'guardado' || payment.status === 'Facturado') ? 'Guardado' : 'Revertido'
         ];
 
         return [...baseCells, ...detailCells, ...endCells];
@@ -163,16 +163,19 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                             {cells.map((cell, index) => (
                                 <label key={index}>{cell}</label>
                             ))}
-                            <label>
-                                <Printer 
-                                    onClick={() => handlePrintClick(payment)} 
-                                    style={{ cursor: 'pointer', marginRight: '10px' }}
-                                />
-                                <Ban
-                                    onClick={() => handleReverseClick(payment)}
-                                    style={{ cursor: 'pointer' }}
-                                />
-                            </label>
+                            
+                            {
+                                view_complete_info && (
+                                    <div className="SectionPayments__actions">
+                                        <button onClick={() => handlePrintClick(payment)} title="Reimprimir comprobante">
+                                            <Printer size={16} />
+                                        </button>   
+                                        <button onClick={() => handleReverseClick(payment)} title="Anular comprobante">
+                                            <Ban size={16} />
+                                        </button>
+                                    </div>
+                                )
+                            }
                         </div>
                     );
                 })}
