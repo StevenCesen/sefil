@@ -48,6 +48,8 @@ export default function MenuNav({options}){
                             <SectionPayments
                                 payments={store_management.payments}
                                 credit={store_management.credit}
+                                view_complete_info={false}
+                                is_admin={true}
                             />
                         :   (store_management.section==='NOTES')
                             ?

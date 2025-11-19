@@ -20,6 +20,26 @@ export default function FilterCredits(){
     const [nameValue, setNameValue] = useState('');
     const [ciValue, setCiValue] = useState('');
 
+    const hasActiveFilters = () => {
+        return (
+            filter_credits.sync_id.length >= 3 ||
+            filter_credits.client_name.length >= 3 ||
+            filter_credits.client_ci.length >= 3 ||
+            filter_credits.days_past_due_min !== '' ||
+            filter_credits.days_past_due_max !== '' ||
+            filter_credits.agency !== '' ||
+            filter_credits.provincia !== '' ||
+            filter_credits.canton !== '' ||
+            filter_credits.sync_status !== '' ||
+            filter_credits.collection_state !== '' ||
+            filter_credits.agent !== ''
+        );
+    };
+
+    const applyFilters = () => {
+        filter_credits.filterCredits(filter_credits.getFilterString());
+    };
+
     const handlePrimaryFilterChange = (filterType, value) => {
         if (!value || value.length < 3) {
             if (filterType === 'credit') {
@@ -41,7 +61,6 @@ export default function FilterCredits(){
                 filter_credits.setCI('');
                 setNameValue('');
                 setCiValue('');
-                
                 filter_credits.setSyncID(value);
                 setCreditValue(value);
                 setActiveFilter('credit');
@@ -63,6 +82,8 @@ export default function FilterCredits(){
                 setActiveFilter('ci');
             }
         }
+        
+        applyFilters();
     };
     
     const clearAllFilters = () => {
@@ -83,8 +104,6 @@ export default function FilterCredits(){
         setCiValue('');
         setActiveFilter(null);
 
-        filter_credits.filterCredits(filter_credits.getFilterString());
-
         if (minDaysRef.current) minDaysRef.current.value = '';
         if (maxDaysRef.current) maxDaysRef.current.value = '';
         if (carteraSelectRef.current) carteraSelectRef.current.value = '';
@@ -94,6 +113,8 @@ export default function FilterCredits(){
         if (syncStatusSelectRef.current) syncStatusSelectRef.current.value = '';
         if (collectionStateSelectRef.current) collectionStateSelectRef.current.value = '';
         if (agentSelectRef.current) agentSelectRef.current.value = '';
+
+        applyFilters();
     };
 
     useEffect(() => {
@@ -170,8 +191,9 @@ export default function FilterCredits(){
                             type="number"
                             min="0"
                             placeholder="Min"
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 filter_credits.setMinDays(e.target.value);
+                                applyFilters();
                             }}
                         />
                     </label>
@@ -182,8 +204,9 @@ export default function FilterCredits(){
                             type="number"
                             min="0"
                             placeholder="Max"
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 filter_credits.setMaxDays(e.target.value);
+                                applyFilters();
                             }}
                         />
                     </label>
@@ -196,9 +219,10 @@ export default function FilterCredits(){
                     ref={carteraSelectRef}
                     className="FilterCredits__select"
                     defaultValue={''}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_credits.setCartera(e.target.value);
                         filter_credits.getAgents();
+                        applyFilters();
                     }}
                 >
                     <option value={''}>--Todos--</option>
@@ -214,8 +238,9 @@ export default function FilterCredits(){
                     ref={agencySelectRef}
                     className="FilterCredits__select"
                     defaultValue={''}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_credits.setAgency(e.target.value);
+                        applyFilters();
                     }}
                 >
                     <option value={''}>--Todos--</option>
@@ -253,8 +278,9 @@ export default function FilterCredits(){
                 Provincia
                 <input
                     ref={provinciaRef}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_credits.setProvincia(e.target.value);
+                        applyFilters();
                     }}
                     placeholder="Provincia"
                 />
@@ -264,8 +290,9 @@ export default function FilterCredits(){
                 Canton
                 <input
                     ref={cantonRef}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_credits.setCanton(e.target.value);
+                        applyFilters();
                     }}
                     placeholder="Canton"
                 />
@@ -277,8 +304,9 @@ export default function FilterCredits(){
                     ref={syncStatusSelectRef}
                     className="FilterCredits__select"
                     defaultValue={''}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_credits.setSyncStatus(e.target.value);
+                        applyFilters();
                     }}
                 >
                     <option value={''}>--Todos--</option>
@@ -293,8 +321,9 @@ export default function FilterCredits(){
                     ref={collectionStateSelectRef}
                     className="FilterCredits__select"
                     defaultValue={''}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_credits.setCollectionState(e.target.value);
+                        applyFilters();
                     }}
                 >
                     <option value={''}>--Todos--</option>
@@ -313,13 +342,14 @@ export default function FilterCredits(){
                     ref={agentSelectRef}
                     className="FilterCredits__select"
                     defaultValue={''}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_credits.setAgent(e.target.value);
+                        applyFilters();
                     }}
                 >
                     <option value={''}>--Todos--</option>
                     {
-                        filter_credits.agents.map(agent=>(
+                        filter_credits.agents.map(agent => (
                             <option key={agent.name} value={agent.id}>{agent.name}</option>
                         ))
                     }
@@ -347,25 +377,27 @@ export default function FilterCredits(){
                 </div>
             )}
             
-            <button
-                onClick={clearAllFilters}
-                style={{
-                    marginTop: '10px',
-                    padding: '8px 8px',
-                    backgroundColor: '#f44336',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    position: 'absolute',
-                    right: '20px',
-                    bottom: '-10px',
-                    fontWeight: 'bold'
-                }}
-            >
-                Limpiar filtros
-            </button>
+            {hasActiveFilters() && (
+                <button
+                    onClick={clearAllFilters}
+                    style={{
+                        marginTop: '10px',
+                        padding: '8px 8px',
+                        backgroundColor: '#f44336',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        position: 'absolute',
+                        right: '20px',
+                        bottom: '-10px',
+                        fontWeight: 'bold'
+                    }}
+                >
+                    Limpiar filtros
+                </button>
+            )}
         </div>
     );
 }

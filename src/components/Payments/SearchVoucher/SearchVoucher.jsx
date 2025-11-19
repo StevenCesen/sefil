@@ -7,7 +7,7 @@ export default function SearchVoucher(){
     const [view_menu,setViewMenu] = useState(false);
     const [payment,setPayment] = useState(null);
     const [filter,setFilter]=useState({
-        search_by:'REF',
+        search_by:'NRO',
         value:''
     });
     
@@ -22,8 +22,6 @@ export default function SearchVoucher(){
             value,
             search_by
         });
-
-        console.log(payment);
 
         setPayment(payment.data);
         setViewMenu(true);
@@ -67,8 +65,8 @@ export default function SearchVoucher(){
                             });
                         }}
                     >
-                        <option value={"REF"}>Referencia</option>
                         <option value={"NRO"}>Número comprobante</option>
+                        <option value={"REF"}>Referencia</option>
                     </select>
                 </label>
             </div>

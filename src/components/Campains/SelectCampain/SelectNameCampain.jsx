@@ -26,6 +26,7 @@ export default function SelectNameCampain(){
                 <option value={'SEFIL_1'}>SEFIL 1</option>
                 <option value={'SEFIL_2'}>SEFIL 2</option>
                 <option value={'syncs'}>FACES</option>
+                <option value={'legal'}>LEGAL</option>
             </select>
         </label>
     );

@@ -7,7 +7,7 @@ import { PDFViewer } from "@react-pdf/renderer";
 import PDF from "../../PDF";
 import { useStoreLoader } from "../../../stores/useStoreLoader";
 
-export default function SectionPayments({ payments, credit, view_complete_info = false }) {
+export default function SectionPayments({ payments, credit, view_complete_info = false, is_admin = false }) {
     const [showPDF, setShowPDF] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState(null);
     const [showReverseModal, setShowReverseModal] = useState(false);
@@ -16,18 +16,17 @@ export default function SectionPayments({ payments, credit, view_complete_info =
 
     const { headers, detailFields } = useMemo(() => {
         const baseHeaders = ['Comprobante', 'Fecha pago', 'Tipo de pago'];
-        const detailHeaders = ['Monto', 'Estado'];
-        const endHeaders = view_complete_info 
-            ? ['Capital', 'Interes', 'Mora', 'Seguro', 'Judicial', 'Cobranza', 'Otros valores','Acciones']
+        const detailHeaders = view_complete_info ? ['Capital', 'Interes', 'Mora', 'Seguro', 'Judicial', 'Gastos Cobranza', 'Otros valores'] : [];
+        const endHeaders = is_admin
+            ? ['Monto','Estado','Acciones']
             : [];
         
         return {
             headers: [...baseHeaders, ...detailHeaders, ...endHeaders],
-            detailFields: view_complete_info 
-                ? ['saldo_capital', 'interes', 'mora', 'seguro_desgravamen', 'gastos_judiciales', 'gastos_cobranza', 'otros_valores','Acciones']
-                : []
+            detailFields: view_complete_info ? ['saldo_capital', 'interes', 'mora', 'seguro_desgravamen', 'gastos_judiciales', 'gastos_cobranza', 'otros_valores'] : [],
+
         };
-    }, [view_complete_info]);
+    }, [view_complete_info, is_admin]);
 
     const getDetailValue = (payment, field) => {
         try {

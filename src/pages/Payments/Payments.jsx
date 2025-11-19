@@ -59,6 +59,7 @@ export default function Payments(){
                         payments={payments}
                         credit={credit.credit || {}}
                         view_complete_info={true}
+                        is_admin={true}
                     />
                 ) : (
                     <div style={{ 

@@ -4,25 +4,40 @@ import "./FilterManagement.css";
 
 export default function FilterManagement(){
     const filter_management = useStoreFilterManagement();
-    const [activeFilter, setActiveFilter] = useState(null); // 'name', 'ci', o null
+    const [activeFilter, setActiveFilter] = useState(null);
     
-    // Referencias para limpiar todos los inputs
-    const nameInputRef = useRef(null);
-    const ciInputRef = useRef(null);
+    // Referencias para limpiar elementos
     const agencySelectRef = useRef(null);
     const minDaysRef = useRef(null);
     const maxDaysRef = useRef(null);
     const sectorSelectRef = useRef(null);
     const managementStateSelectRef = useRef(null);
     const promiseDateRef = useRef(null);
-    
-    // Estados locales para inputs controlados
+
+    // Estados locales solo para filtros principales (exclusión mutua)
     const [nameValue, setNameValue] = useState('');
     const [ciValue, setCiValue] = useState('');
+
+    // Función para verificar si hay filtros aplicados
+    const hasActiveFilters = () => {
+        return (
+            filter_management.name.length >= 3 ||
+            filter_management.ci.length >= 3 ||
+            filter_management.agency !== '' ||
+            filter_management.days_past_due_min !== '' ||
+            filter_management.days_past_due_max !== '' ||
+            filter_management.sector !== '' ||
+            filter_management.management_state !== '' ||
+            filter_management.promise_date !== ''
+        );
+    };
+
+    // Función helper para aplicar filtros
+    const applyFilters = () => {
+        filter_management.FilteredCredits(filter_management.getFilterString());
+    };
     
-    // Función para manejar el cambio de filtro principal
     const handlePrimaryFilterChange = (filterType, value) => {
-        // Si el campo se está vaciando (menos de 3 caracteres)
         if (!value || value.length < 3) {
             if (filterType === 'name') {
                 filter_management.setName('');
@@ -34,33 +49,26 @@ export default function FilterManagement(){
                 if (activeFilter === 'ci') setActiveFilter(null);
             }
         } else {
-            // Si se está escribiendo un valor válido (3+ caracteres)
             if (filterType === 'name') {
-                // Limpiar cédula del store y del estado local
+                // Limpiar cédula y establecer nombre
                 filter_management.setCi('');
                 setCiValue('');
-                
-                // Establecer nombre y activar filtro
                 filter_management.setName(value);
                 setNameValue(value);
                 setActiveFilter('name');
             } else if (filterType === 'ci') {
-                // Limpiar nombre del store y del estado local
+                // Limpiar nombre y establecer cédula
                 filter_management.setName('');
                 setNameValue('');
-                
-                // Establecer cédula y activar filtro
                 filter_management.setCi(value);
                 setCiValue(value);
                 setActiveFilter('ci');
             }
         }
         
-        // Aplicar filtros
-        filter_management.FilteredCredits(filter_management.getFilterString());
+        applyFilters();
     };
 
-    // Función para limpiar todos los filtros
     const clearAllFilters = () => {
         // Limpiar store
         filter_management.setName('');
@@ -77,7 +85,7 @@ export default function FilterManagement(){
         setCiValue('');
         setActiveFilter(null);
         
-        // Limpiar elementos del DOM usando refs
+        // Limpiar elementos del DOM
         if (agencySelectRef.current) agencySelectRef.current.value = '';
         if (minDaysRef.current) minDaysRef.current.value = '';
         if (maxDaysRef.current) maxDaysRef.current.value = '';
@@ -85,14 +93,12 @@ export default function FilterManagement(){
         if (managementStateSelectRef.current) managementStateSelectRef.current.value = '';
         if (promiseDateRef.current) promiseDateRef.current.value = '';
         
-        // Aplicar filtros limpios
-        filter_management.FilteredCredits(filter_management.getFilterString());
+        applyFilters();
     };
     
     return(
         <div className="FilterManagement">
-            <div>
-            </div>
+            <div></div>
             
             <label className="FilterManagement__label">
                 Nombre/Crédito
@@ -127,9 +133,9 @@ export default function FilterManagement(){
                 <select
                     ref={agencySelectRef}
                     defaultValue={''}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_management.setAgency(e.target.value);
-                        filter_management.FilteredCredits(filter_management.getFilterString());
+                        applyFilters();
                     }}
                 >
                     <option value={''}>--Todos--</option>
@@ -171,9 +177,9 @@ export default function FilterManagement(){
                             type="number"
                             min="0"
                             placeholder="Min"
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 filter_management.setMinDays(e.target.value);
-                                filter_management.FilteredCredits(filter_management.getFilterString());
+                                applyFilters();
                             }}
                         />
                     </label>
@@ -184,9 +190,9 @@ export default function FilterManagement(){
                             type="number"
                             min="0"
                             placeholder="Max"
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 filter_management.setMaxDays(e.target.value);
-                                filter_management.FilteredCredits(filter_management.getFilterString());
+                                applyFilters();
                             }}
                         />
                     </label>
@@ -198,9 +204,9 @@ export default function FilterManagement(){
                 <select
                     ref={sectorSelectRef}
                     defaultValue={''}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_management.setSector(e.target.value);
-                        filter_management.FilteredCredits(filter_management.getFilterString());
+                        applyFilters();
                     }}
                 >
                     <option value={""}>-- Seleccionar --</option>
@@ -222,9 +228,9 @@ export default function FilterManagement(){
                 <select
                     ref={managementStateSelectRef}
                     defaultValue={''}
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_management.setManagementState(e.target.value);
-                        filter_management.FilteredCredits(filter_management.getFilterString());
+                        applyFilters();
                     }}
                 >
                     <option value={""}>-- Seleccionar --</option>
@@ -263,9 +269,9 @@ export default function FilterManagement(){
                 <input
                     ref={promiseDateRef}
                     type="date"
-                    onChange={(e)=>{
+                    onChange={(e) => {
                         filter_management.setPromiseDate(e.target.value);
-                        filter_management.FilteredCredits(filter_management.getFilterString());
+                        applyFilters();
                     }}
                 />
             </label>
@@ -290,25 +296,28 @@ export default function FilterManagement(){
                 </div>
             )}
             
-            <button
-                onClick={clearAllFilters}
-                style={{
-                    marginTop: '10px',
-                    padding: '8px 8px',
-                    backgroundColor: '#f44336',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    position:'absolute',
-                    right:'20px',
-                    bottom:'-10px',
-                    fontWeight:'bold'
-                }}
-            >
-                Limpiar filtros
-            </button>
+            {/* Botón limpiar filtros - Solo visible cuando hay filtros aplicados */}
+            {hasActiveFilters() && (
+                <button
+                    onClick={clearAllFilters}
+                    style={{
+                        marginTop: '10px',
+                        padding: '8px 8px',
+                        backgroundColor: '#f44336',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        position:'absolute',
+                        right:'20px',
+                        bottom:'-10px',
+                        fontWeight:'bold'
+                    }}
+                >
+                    Limpiar filtros
+                </button>
+            )}
         </div>
     );
 }
