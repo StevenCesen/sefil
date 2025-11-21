@@ -216,7 +216,6 @@ export default function StadisticsSync() {
     useEffect(() => {
         const initializeComponent = async () => {
             try {
-                setInput('');
                 setAgent("all");
                 setCredits(INITIAL_CREDITS_STATE);
                 setMessage("");
@@ -224,13 +223,11 @@ export default function StadisticsSync() {
                 setStats(INITIAL_STATS_STATE);
                 
                 localStorage.setItem('cartera', 'syncs');
-                setAux(localStorage.getItem('cartera'));
                 
                 loader.viewOn(true);
 
                 const cartera = localStorage.getItem('cartera');
                 if (cartera && cartera !== '' && cartera !== null && param.ci === undefined) {
-                    setAux(cartera);
 
                     const statsData = await fetchData(
                         `${import.meta.env.VITE_URL_BASE}/campains/stadistics?campain=33`
@@ -472,9 +469,9 @@ export default function StadisticsSync() {
                                 <p>Gestiones no efectivas</p>
                                 
                                 <div>
-                                    <label>Total pagado con gestión</label>
-                                    <div style={{ marginTop: "10px", color: "white", fontSize: "16px" }}>
-                                        Créditos {stats.nroCredits} - {useFormatterNumber({ value: stats.total, currency: 'USD' })}
+                                    <label style={{fontWeight:'bold'}}>Total pagado con gestión</label>
+                                    <div style={{ marginTop: "10px", color: "white", fontSize: "16px", fontWeight: "bold", padding: "5px", borderRadius: "5px" }}>
+                                        Créditos {stats.nroCredits}  {useFormatterNumber({ value: stats.total, currency: 'USD' })}
                                     </div>
                                 </div>
                                 
