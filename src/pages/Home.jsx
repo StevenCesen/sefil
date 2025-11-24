@@ -119,6 +119,7 @@ export default function Home(){
     // const [data,setData]=useState({});
     const [users,setUsers]=useState();
     const [interval_agents,setIntervalAgent]=useState();
+    const [total_value,setTotalValue]=useState();
 
     const [agents,setAgents]=useState();
 
@@ -205,12 +206,23 @@ export default function Home(){
                 setComprobantes(data.data);
             });
 
+        fetch(`${import.meta.env.VITE_URL_BASE}/panel-metrics`,{
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())  
+            .then((data) => {
+                setTotalValue(data[0]);
+            });
         
     },[]);
 
     if(!vouchers) return <></>
     if(!totalMonth) return <></>
     if(!comprobantes) return <></>
+    if(!total_value) return <></>
 
     return(
         <div className="Home">
@@ -218,7 +230,7 @@ export default function Home(){
                 <CardDataShort
                     title="Recuperación FACES"
                     subtitle={new Date().toLocaleDateString()}
-                    data={`120 créditos con $18,531.31`}
+                    data={`${total_value.nro_credits} créditos con ${useFormatterNumber({value:total_value.total,currency:"USD"})}`}
                 />
                 <CardDataShort
                     title="Ingresos diarios"
