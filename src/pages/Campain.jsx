@@ -1,77 +1,139 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { NavLink } from "react-router-dom";
-import CardCreateCampain from "../components/CardCreateCampain/CardCreateCampain";
-import CardAssignCampain from "../components/CardAssignCampain/CardAssignCampain";
-import CardEditCampain from "../components/CardEdirCampain/CardEditCampain";
 import CardSync from "../components/CardSync/CardSync";
+import CardEditCampain from "../components/Campains/CardEdirCampain/CardEditCampain";
+import CardAssignCampain from "../components/Campains/CardAssignCampain/CardAssignCampain";
+import CardCreateCampain from "../components/Campains/CardCreateCampain/CardCreateCampain";
 
-export default function Campain(){
+const MODAL_TYPES = {
+    CREATE: 'create',
+    EDIT: 'edit', 
+    TRANSFER: 'transfer'
+};
 
-    const [create,setCreate]=useState(false);
-    const [edit,setEdit]=useState(false);
-    const [transfer,setTransfer]=useState(false);
-    const [campains,setCampains]=useState();
-    const [data_currently,setData]=useState();
+const CampaignItem = ({ campaign, onEdit, onTransfer, onExport }) => (
+    <div className="Campain__item">
+        <label>{campaign.name}</label>
+        <label>{campaign.state}</label>
+        <label>{campaign.fecha_init}</label>
+        <label>{campaign.fecha_finish}</label>
+        {campaign.state !== 'FINALIZADA' && (
+            <div>
+                <button onClick={() => onEdit(campaign)}>
+                    <img title="Editar campaña" src="./icons/edit.png" alt="Editar"/>
+                </button>
+                <button onClick={() => onTransfer(campaign)}>
+                    <img title="Asignar campaña" src="./icons/transfer.png" alt="Asignar"/>
+                </button>
+                <button onClick={() => onExport(campaign)}>
+                    <img title="Exportar campaña" src="./icons/expor.png" alt="Exportar"/>
+                </button>
+            </div>
+        )}
+    </div>
+);
 
-    const updateCampain=(data)=>{
+const Modal = ({ isOpen, onClose, title, children }) => {
+    if (!isOpen) return null;
+    
+    return (
+        <div className="CardPay">
+            <button 
+                className="CardCondonacion__close" 
+                onClick={onClose}
+            >
+                {title}
+            </button>
+            {children}
+        </div>
+    );
+};
 
-        let prev=campains.data;
+export default function Campain() {
+    const [activeModal, setActiveModal] = useState(null);
+    const [campaigns, setCampaigns] = useState(null);
+    const [selectedCampaign, setSelectedCampaign] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-        prev.push(data);
+    const closeModal = useCallback(() => {
+        setActiveModal(null);
+        setSelectedCampaign(null);
+    }, []);
 
-        setCampains({
-            ...campains,
-            data:prev
-        });
-    }
+    const openModal = useCallback((type, campaign = null) => {
+        setActiveModal(type);
+        setSelectedCampaign(campaign);
+    }, []);
 
-    const updateCreditsCampain=(data)=>{
-        let prev=campains.data;
-        let new_campain=[];
+    const updateCampaign = useCallback((newCampaign) => {
+        setCampaigns(prev => ({
+            ...prev,
+            data: [...prev.data, newCampaign]
+        }));
+        closeModal();
+    }, [closeModal]);
 
-        prev.map((campain)=>{
-            if(campain.id===data.id){
-                campain=data;
-            }
-            new_campain.push(campain);
-        });
+    const updateCreditsCampaign = useCallback((updatedCampaign) => {
+        setCampaigns(prev => ({
+            ...prev,
+            data: prev.data.map(campaign => 
+                campaign.id === updatedCampaign.id ? updatedCampaign : campaign
+            )
+        }));
+    }, []);
 
-        setCampains({
-            ...campains,
-            data:new_campain
-        });
-    }
+    const handleEdit = useCallback((campaign) => {
+        openModal(MODAL_TYPES.EDIT, campaign);
+    }, [openModal]);
 
-    useEffect(()=>{
-        setCreate(false);
-        setEdit(false);
-        setTransfer(false);
-        setData({});
+    const handleTransfer = useCallback((campaign) => {
+        openModal(MODAL_TYPES.TRANSFER, campaign);
+    }, [openModal]);
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-            .then((data) => {
-                setCampains(data);
+    const handleExport = useCallback((campaign) => {
+        console.log('Exportar campaña:', campaign);
+    }, []);
+
+    const fetchCampaigns = useCallback(async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${import.meta.env.VITE_URL_BASE}/campains`, {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
             });
-    },[]);
+            const data = await response.json();
+            setCampaigns(data);
+        } catch (error) {
+            console.error('Error fetching campaigns:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
-    if(!campains) return <></>
+    useEffect(() => {
+        fetchCampaigns();
+    }, [fetchCampaigns]);
+
+    if (loading || !campaigns) {
+        return <div>Cargando...</div>;
+    }
+
+    const activeCampaigns = campaigns.data?.filter(campaign => campaign.state === "ACTIVA") || [];
 
     return (
         <div className="pageConsulta">
             <div className="DetailCredit__head">
                 <NavLink
                     to="" 
-                    onClick={(e)=>{
+                    onClick={(e) => {
                         e.preventDefault();
-                        history.go(-1) 
+                        window.history.go(-1);
                     }}
-                >Regresar</NavLink>
+                >
+                    Regresar
+                </NavLink>
             </div>
 
             <div className="Campain__content">
@@ -87,11 +149,9 @@ export default function Campain(){
                 <div className="Campain__list">
                     <div className="Campain__access">
                         <h4 className="Campain__subtitle">Campañas</h4>
-                        <button
-                            onClick={(e)=>{
-                                setCreate(true);
-                            }}
-                        >Nueva campaña</button>
+                        <button onClick={() => openModal(MODAL_TYPES.CREATE)}>
+                            Nueva campaña
+                        </button>
                     </div>
 
                     <div className="Campain__head">
@@ -103,115 +163,55 @@ export default function Campain(){
                     </div>
 
                     <div className="Campain__items">
-
-                        {
-                            campains.data.map((campain,index)=>(
-                                (campain.state==="ACTIVA")
-                                ?
-                                    <div 
-                                        key={index}
-                                        className="Campain__item"
-                                    >
-                                        <label>{campain.name}</label>
-                                        <label>{campain.state}</label>
-                                        <label>{campain.fecha_init}</label>
-                                        <label>{campain.fecha_finish}</label>
-                                        {
-                                            (campain.state!=='FINALIZADA')
-                                            ?
-                                                <div>
-                                                    <button
-                                                        onClick={()=>{
-                                                            setData(campain);
-                                                            setEdit(true);
-                                                        }}
-                                                    >
-                                                        <img title="Editar campaña" src="./icons/edit.png"/>
-                                                    </button>
-
-                                                    <button
-                                                        onClick={()=>{
-                                                            setData(campain);
-                                                            setTransfer(true);
-                                                        }}
-                                                    >
-                                                        <img title="Asignar campaña" src="./icons/transfer.png"/>
-                                                    </button>
-
-                                                    <button
-                                                        onClick={()=>{
-                                                        
-                                                        }}
-                                                    >
-                                                        <img title="Exportar campaña" src="./icons/expor.png"/>
-                                                    </button>
-                                                    
-                                                </div>
-                                            :   <></>
-                                        }
-                                    </div>
-                                :   <></>
+                        {activeCampaigns.length > 0 ? (
+                            activeCampaigns.map((campaign, index) => (
+                                <CampaignItem
+                                    key={campaign.id || index}
+                                    campaign={campaign}
+                                    onEdit={handleEdit}
+                                    onTransfer={handleTransfer}
+                                    onExport={handleExport}
+                                />
                             ))
-                        }
-
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '20px' }}>
+                                No hay campañas activas
+                            </div>
+                        )}
                     </div>
-
                 </div>
-
             </div>
 
-            {
-                (create)
-                ? 
-                    <div className="CardPay">
-                        <button 
-                            className="CardCondonacion__close" 
-                            onClick={()=>{
-                                setCreate(false);
-                            }}>Volver</button>
+            <Modal 
+                isOpen={activeModal === MODAL_TYPES.CREATE} 
+                onClose={closeModal}
+                title="Volver"
+            >
+                <CardCreateCampain setData={updateCampaign} />
+            </Modal>
 
-                            <CardCreateCampain
-                                setData={updateCampain}
-                            />
-                    </div>
-                : <></>
-            }
+            <Modal 
+                isOpen={activeModal === MODAL_TYPES.EDIT} 
+                onClose={closeModal}
+                title="Volver"
+            >
+                {selectedCampaign && (
+                    <CardEditCampain data_campain={selectedCampaign} />
+                )}
+            </Modal>
 
-            {
-                (edit)
-                ?
-                    <div className="CardPay">
-                        <button 
-                            className="CardCondonacion__close" 
-                            onClick={()=>{
-                                setEdit(false);
-                        }}>Volver</button>
-
-                        <CardEditCampain
-                            data_campain={data_currently}
-                        />
-                    </div>
-                :   <></>
-            }
-
-            {
-                (transfer)
-                ?
-                    <div className="CardPay">
-                        <button 
-                            className="CardCondonacion__close" 
-                            onClick={()=>{
-                                setTransfer(false);
-                        }}>Volver</button>
-
-                            <CardAssignCampain
-                                data={data_currently}
-                                updateCredits={updateCreditsCampain}
-                            />
-                    </div> 
-                :   <></>
-            }
-            
+            <Modal 
+                isOpen={activeModal === MODAL_TYPES.TRANSFER} 
+                onClose={closeModal}
+                title="Volver"
+            >
+                {selectedCampaign && (
+                    <CardAssignCampain
+                        data={selectedCampaign}
+                        updateCredits={updateCreditsCampaign}
+                    />
+                )}
+            </Modal>
         </div>
-    )
+    );
 }

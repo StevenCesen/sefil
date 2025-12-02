@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import Consulta from "./Consulta";
-import Cobranza from "./Cobranza";
 import Usuarios from "./Usuarios";
 import Setting from "./Setting";
-import Comprobantes from "./Comprobantes";
 import Gestion from "./Gestion";
-import Garantes from "./Garantes";
 import Home from "./Home";
 import Reports from "./Reports";
 import Me from "./Me";
@@ -17,7 +13,6 @@ import Template from "./Template";
 import GHistorial from "./Historial";
 import Clist from "./Clist";
 import Directions from "./Directions";
-import Loader from "../components/Loader/loader";
 import Stadistics from "./StadisticsSync";
 import Graficos from "./Graficos";
 import Greports from "./Greports";
@@ -131,26 +126,11 @@ export default function Dashboard({rol}){
     return (
         <div className="Dashboard__currentPage">
             {
-                (page.action==='consulta')
-                ?
-                    <Consulta/>
-                :
-                    (page.action==='recaudacion')
-                    ?
-                        <Cobranza/>
-                    :
+                
                         (page.action==='me')
                         ?
                             <Me/>
                         :
-                            (page.action==='garantes')
-                            ?
-                                <Garantes/>
-                            :
-                                (page.action==='comprobantes')
-                                ?
-                                    <Comprobantes />
-                                :
                                     (page.action==='monitor')
                                     ?
                                         <Monitor/>
@@ -259,7 +239,7 @@ export default function Dashboard({rol}){
 
                                                                                                     (localStorage.getItem('rol')==='cobranza' | localStorage.getItem('rol')==='consulta')
                                                                                                     ?
-                                                                                                        <Consulta/>
+                                                                                                        <></>
                                                                                                     : 
                                                                                                         <Gestion/>
 

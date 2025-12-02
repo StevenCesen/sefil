@@ -173,17 +173,7 @@ export default function NavSlide({actions,permission}){
                     </div>
                 :<></>
             }
-
-            {
-                (options.includes('Comprobantes:all')) ?
-                    <NavLink to="dashboard/comprobantes" className="NavSlide__option">
-                        <img src="./icons/ic_baseline-receipt-long.png"/>
-                        <label>Comprobantes</label>
-                        <span>Comprobantes</span>
-                    </NavLink>
-                :<></>
-            }
-        
+            
             {
                 (    
                     options.includes('pagos_efectivo:all') | 
