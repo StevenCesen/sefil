@@ -43,7 +43,6 @@ export default function FormManagement(){
 
         if(store_management.substate_gestion==='OFERTA DE PAGO'){
             const prev_effective= await store_management.checkManagement();
-            console.log(prev_effective);
 
             if(prev_effective===200){
                 sendpush({

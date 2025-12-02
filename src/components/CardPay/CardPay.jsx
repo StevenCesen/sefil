@@ -122,8 +122,10 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
 
         const numValue = Number(value) || 0;
 
-        if (payment.tipo_transaccion === 'parcial') {
-            setPayment(prev => ({ ...prev, valor_recibido: numValue }));
+        if (payment.tipo_transaccion === 'parcial' || payment.tipo_transaccion === 'total') {
+            const totalAmount = Number(credit.totalAmount);
+            const change = numValue > totalAmount ? (numValue - totalAmount).toFixed(2) : 0;
+            setPayment(prev => ({ ...prev, valor_recibido: numValue ,valor_devuelto:change}));
             if (numValue > 0) {
                 usePrelacion(value, credit, setPrelacion, updateDetalle, ordenPrelacion);
             } else {
@@ -431,33 +433,29 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                         ))
                     }
 
-                    {(payment.forma_pago === 'efectivo' || payment.tipo_transaccion === 'parcial') && (
-                        <div>
-                            <p><label>Valor recibido:</label></p>
-                            <input 
-                                type="number"
-                                step="0.01"
-                                placeholder="0"
-                                ref={valueRef}
-                                defaultValue={payment.valor_recibido}
-                                onChange={(e) => handleReceivedValueChange(e.target.value)}
-                                disabled={!isActive}
-                            />
-                        </div>
-                    )}
+                    <div>
+                        <p><label>Valor recibido:</label></p>
+                        <input 
+                            type="number"
+                            step="0.01"
+                            placeholder="0"
+                            ref={valueRef}
+                            defaultValue={payment.valor_recibido}
+                            onChange={(e) => handleReceivedValueChange(e.target.value)}
+                            disabled={!isActive}
+                        />
+                    </div>
 
-                    {payment.tipo_transaccion === 'total' && (
-                        <div>
-                            <p><label>{payment.forma_pago === 'efectivo' ? 'Valor devuelto' : 'Diferencia'}:</label></p>
-                            <input 
-                                type="number"
-                                step="0.01"
-                                value={Number(payment.valor_devuelto).toFixed(2)}
-                                disabled={payment.forma_pago === 'efectivo' || !isActive}
-                                onChange={(e) => handleFieldChange('valor_devuelto', e.target.value)}
-                            />
-                        </div>
-                    )}
+                    <div>
+                        <p><label>Diferencia</label></p>
+                        <input 
+                            type="number"
+                            step="0.01"
+                            value={Number(payment.valor_devuelto).toFixed(2)}
+                            disabled={true}
+                            onChange={(e) => handleFieldChange('valor_devuelto', e.target.value)}
+                        />
+                    </div>
                 </div>
 
                 {isActive && (

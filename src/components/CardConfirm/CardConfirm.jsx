@@ -170,7 +170,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                     <button
                         onClick={(e)=>{
                             e.textContent='Generando factura';
-
+                            
                             if(dates.formaPago!==""){
                                 if(dates.formaPago==='EFECTIVO' & (dates.metodo==='' | dates.metodo!=='EFECTIVO')){  
                                     e.target.textContent="Error, forma de pago y método no corresponden";

@@ -1,6 +1,6 @@
 export default async function getListManagements({credit_id,cartera}){
     const end_point=`${import.meta.env.VITE_URL_BASE}/managmentall?credit=${credit_id}&cartera=${cartera}`;
-
+    console.log(end_point)
     try {
         const request=await fetch(end_point,{
             headers: {
