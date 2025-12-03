@@ -28,6 +28,10 @@
     gap: 5px;
 }
 
+.Credits__item>label{
+    text-align: center;
+}
+
 .Credits__item>a>svg{
     width: 100%;
     background-color: rgb(114, 191, 241);

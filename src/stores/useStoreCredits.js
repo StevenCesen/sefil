@@ -8,7 +8,7 @@ export const useStoreFilterCredits = create((set,get) => ({
     total_amount:'',
     days_past_due_min:'',
     days_past_due_max:'',
-    cartera:'SEFIL_1',
+    cartera:'',
     total_fees:0,
     agency:'',
     provincia:'',
@@ -35,9 +35,14 @@ export const useStoreFilterCredits = create((set,get) => ({
     },
     getAgents:          async ()=>{
         const { cartera } = get();
+
         const end_point=`${import.meta.env.VITE_URL_BASE}/campains/listAgents?cartera=${cartera}`;
 
         try {
+            if(cartera.trim() === ''){
+                set({ agents:[]});
+                return;
+            }
             const request=await fetch(end_point,{
                 headers: {
                     Accept: 'application/json',
@@ -53,7 +58,7 @@ export const useStoreFilterCredits = create((set,get) => ({
             set({ agents:data});
 
         } catch (error) {
-            console.error('Error al hacer fetchFilteredCredits:', error);
+            set({ agents:[]});
         }
     },
     getFilterString: () => {

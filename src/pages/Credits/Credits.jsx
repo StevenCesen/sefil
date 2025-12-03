@@ -67,10 +67,10 @@ export default function Credits(){
                         <NavLink to={`/credits/${credit.id}?cartera=${credits.cartera}`}><ExternalLink size={30} color="white"/></NavLink>
                         <label>{credit.sync_id}</label>
                         <label>{credit.name}</label>
-                        <label>{credit.ci}</label>
+                        <label>{(credit.ci===credits.client_ci || credit.name===credits.client_name) ? `${credit.ci} TITULAR` : `${credit.ci} GARANTE`}</label>
                         <label>{useFormatterNumber({value:credit.total_amount,currency:'USD'})}</label>
                         <label>{credit.days_past_due}</label>
-                        <label>{credits.cartera}</label>
+                        <label>{(credit.cartera!=='syncs') ? credit.cartera : 'FACES'}</label>
                         <label>{credit.agency}</label>
                         <label>{credit.total_fees}</label>
                         <label>{credit.provincia}</label>
