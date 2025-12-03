@@ -7,7 +7,7 @@
 }
 
 .Credit__sectionClients{
-    width: 100%;
+    width: 70%;
     display: grid;
     grid-template-columns: 60% 40%;
     gap: 10px;

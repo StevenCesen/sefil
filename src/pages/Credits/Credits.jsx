@@ -64,10 +64,10 @@ export default function Credits(){
             {
                 credits.credits.data.map(credit=>(
                     <div key={credit.id} className="Credits__item">
-                        <NavLink to={`/credits/${credit.id}?cartera=${credits.cartera}`}><ExternalLink size={30} color="white"/></NavLink>
+                        <NavLink to={`/credits/${credit.id}?cartera=${credit.cartera}`}><ExternalLink size={30} color="white"/></NavLink>
                         <label>{credit.sync_id}</label>
                         <label>{credit.name}</label>
-                        <label>{(credit.ci===credits.client_ci || credit.name===credits.client_name) ? `${credit.ci} TITULAR` : `${credit.ci} GARANTE`}</label>
+                        <label>{(credit.ci===credits.client_ci || credit.name.toLowerCase()===credits.client_name.toLowerCase()) ? `${credit.ci} TITULAR` : `${credit.ci} GARANTE`}</label>
                         <label>{useFormatterNumber({value:credit.total_amount,currency:'USD'})}</label>
                         <label>{credit.days_past_due}</label>
                         <label>{(credit.cartera!=='syncs') ? credit.cartera : 'FACES'}</label>

@@ -22,3 +22,216 @@
     border: 1px solid rgb(221, 221, 221);
     padding: 10px 0;
 }
+
+.CardStructure__button--anular{
+    margin-top: 10px;
+    background-color: #f87c7c !important;
+    color: white;
+    border: none !important;
+    border-radius: initial !important;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Modal de Anulación */
+.CardStructure__modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.CardStructure__modal {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.CardStructure__modal-header {
+    background: linear-gradient(135deg, #f87c7c 0%, #ff6b6b 100%);
+    color: white;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.CardStructure__modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.CardStructure__modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.CardStructure__modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.CardStructure__modal-body {
+    padding: 24px;
+}
+
+.CardStructure__modal-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.CardStructure__modal-icon {
+    font-size: 16px;
+}
+
+.CardStructure__modal-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.CardStructure__modal-textarea:focus {
+    outline: none;
+    border-color: #f87c7c;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(248, 124, 124, 0.1);
+}
+
+.CardStructure__modal-textarea::placeholder {
+    color: #adb5bd;
+}
+
+.CardStructure__modal-footer {
+    padding: 20px 24px;
+    background: #f8f9fa;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    border-top: 1px solid #e9ecef;
+}
+
+.CardStructure__modal-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.CardStructure__modal-btn span:first-child {
+    font-size: 16px;
+}
+
+.CardStructure__modal-btn--cancel {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.CardStructure__modal-btn--cancel:hover:not(:disabled) {
+    background: #dee2e6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.CardStructure__modal-btn--confirm {
+    background: linear-gradient(135deg, #f87c7c 0%, #ff6b6b 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(248, 124, 124, 0.3);
+}
+
+.CardStructure__modal-btn--confirm:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(248, 124, 124, 0.4);
+}
+
+.CardStructure__modal-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.CardStructure__modal-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .CardStructure__modal {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    .CardStructure__modal-footer {
+        flex-direction: column;
+    }
+    
+    .CardStructure__modal-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

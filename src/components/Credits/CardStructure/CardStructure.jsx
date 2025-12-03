@@ -4,6 +4,7 @@ import CardPay from "../../CardPay/CardPay";
 import CardConfirm from "../../CardConfirm/CardConfirm";
 import { useState } from "react";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
+import sendpush from "../../../helpers/sendpush";
 
 export default function CardStructure({ restruct, is_active }) {
 
@@ -11,6 +12,9 @@ export default function CardStructure({ restruct, is_active }) {
     const [paymentData, setPaymentData] = useState(null);
     const [showGastoCobranzaModal, setShowGastoCobranza] = useState(false);
     const [showDetails, setShowDetails] = useState(restruct.status === 'autorizado');
+    const [showAnularModal, setShowAnularModal] = useState(false);
+    const [motivoAnulacion, setMotivoAnulacion] = useState('');
+    const [isAnulando, setIsAnulando] = useState(false);
     const credit = useStoreManagement();
 
     const adjustDate = (dateString) => {
@@ -53,6 +57,76 @@ export default function CardStructure({ restruct, is_active }) {
         }
     };
 
+    const handleOpenAnularModal = () => {
+        setShowAnularModal(true);
+        setMotivoAnulacion('');
+    };
+
+    const handleCloseAnularModal = () => {
+        setShowAnularModal(false);
+        setMotivoAnulacion('');
+    };
+
+    const handleAnularConvenio = async () => {
+        if (!motivoAnulacion.trim()) {
+            sendpush({
+                title: 'Error',
+                message: 'Debe ingresar un motivo de anulación',
+                type: 'Push--danger',
+                timeout: 3000
+            });
+            return;
+        }
+
+        setIsAnulando(true);
+
+        try {
+            const endpoint = `${import.meta.env.VITE_URL_BASE}/credit/estructurarnull/${restruct.id}`;
+            
+            const response = await fetch(endpoint, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    concept: motivoAnulacion,
+                    status: 'anulado',
+                    cartera: restruct.cartera,
+                    credito: restruct.credito
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al anular el convenio');
+            }
+
+            const data = await response.json();
+
+            sendpush({
+                title: 'Éxito',
+                message: 'Convenio anulado correctamente',
+                type: 'Push--sucessful',
+                timeout: 3000
+            });
+
+            handleCloseAnularModal();
+            window.location.reload();
+
+        } catch (error) {
+            console.error('Error al anular convenio:', error);
+            sendpush({
+                title: 'Error',
+                message: 'No se pudo anular el convenio',
+                type: 'Push--danger',
+                timeout: 5000
+            });
+        } finally {
+            setIsAnulando(false);
+        }
+    };
+
     return (
         <div className="CardStructure">
             <span className="CardStructure__subtitle">{(restruct.status === 'autorizado') ? 'CONVENIO VIGENTE' : `CONVENIO ${restruct.status}`}</span>
@@ -61,6 +135,16 @@ export default function CardStructure({ restruct, is_active }) {
             <span className="CardStructure__subtitle">Realizado: {adjustDate(restruct.created_at)}</span>
             <span className="CardStructure__subtitle">Actualizado: {adjustDate(restruct.updated_at)}</span>
             
+            {
+                (restruct.status === 'autorizado') && (
+                    <button
+                        className="CardStructure__button--anular" 
+                        onClick={handleOpenAnularModal}
+                    >
+                        Anular convenio
+                    </button>
+                )
+            }
             {restruct.status !== 'autorizado' && (
                 <button 
                     onClick={toggleDetails} 
@@ -100,6 +184,64 @@ export default function CardStructure({ restruct, is_active }) {
                             />
                         ))
                     }
+                </div>
+            )}
+
+            {/* Modal de Anulación */}
+            {showAnularModal && (
+                <div className="CardStructure__modal-overlay" onClick={handleCloseAnularModal}>
+                    <div className="CardStructure__modal" onClick={e => e.stopPropagation()}>
+                        <div className="CardStructure__modal-header">
+                            <h3>Anular Convenio</h3>
+                            <button 
+                                className="CardStructure__modal-close"
+                                onClick={handleCloseAnularModal}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        
+                        <div className="CardStructure__modal-body">
+                            <label className="CardStructure__modal-label">
+                                <span className="CardStructure__modal-icon">📝</span>
+                                Motivo de anulación
+                            </label>
+                            <textarea
+                                className="CardStructure__modal-textarea"
+                                placeholder="Ingrese el motivo por el cual se anula el convenio..."
+                                value={motivoAnulacion}
+                                onChange={(e) => setMotivoAnulacion(e.target.value)}
+                                rows={4}
+                                autoFocus
+                            />
+                        </div>
+
+                        <div className="CardStructure__modal-footer">
+                            <button
+                                className="CardStructure__modal-btn CardStructure__modal-btn--cancel"
+                                onClick={handleCloseAnularModal}
+                                disabled={isAnulando}
+                            >
+                                <span>✕</span> Cancelar
+                            </button>
+                            <button
+                                className="CardStructure__modal-btn CardStructure__modal-btn--confirm"
+                                onClick={handleAnularConvenio}
+                                disabled={isAnulando || !motivoAnulacion.trim()}
+                            >
+                                {isAnulando ? (
+                                    <>
+                                        <span className="CardStructure__modal-spinner"></span>
+                                        Anulando...
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>✓</span> Confirmar Anulación
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 

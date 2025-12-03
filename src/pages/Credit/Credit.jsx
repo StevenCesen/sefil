@@ -95,23 +95,6 @@ export default function Credit(){
             <div className="Credit__sections">
                 <div className="Credit__sectionInfo">
                     <div className="Credit__sectionClients">
-                        <InfoCredit
-                            business={credit.cartera}
-                            sync_id={credit.credit.sync_id}
-                            agency={credit.credit.agency}
-                            frequency={credit.credit.frequency}
-                            due_date={credit.credit.due_date}
-                            collection_state={credit.credit.collection_state}
-                            monthly_fee_amount={credit.credit.monthly_fee_amount}
-                            //Información adicional
-                            info_extra={
-                                {
-                                    monthly_fee_amount:credit.credit.monthlyFeeAmount,
-                                    agent:credit.credit.agent,
-                                    sync_status:credit.credit.status
-                                }
-                            }
-                        />
                         <div>
                             {
                                 credit.credit.clients.map((client)=>(
@@ -129,6 +112,23 @@ export default function Credit(){
                                 ))
                             }
                         </div>
+                        <InfoCredit
+                            business={credit.cartera}
+                            sync_id={credit.credit.sync_id}
+                            agency={credit.credit.agency}
+                            frequency={credit.credit.frequency}
+                            due_date={credit.credit.due_date}
+                            collection_state={credit.credit.collection_state}
+                            monthly_fee_amount={credit.credit.monthly_fee_amount}
+                            //Información adicional
+                            info_extra={
+                                {
+                                    monthly_fee_amount:credit.credit.monthlyFeeAmount,
+                                    agent:credit.credit.agent,
+                                    sync_status:credit.credit.status
+                                }
+                            }
+                        />
                     </div>
                     <div className="Credit__sectionPending">
                         <InfoValues
@@ -156,7 +156,16 @@ export default function Credit(){
                     </div>
                 </div>
                 
-                <CardActions isViewOn={(credit.cartera==='syncs' || credit.credit.collection_state.toLowerCase()==='cancelado') ? false : true} setAction={setAction}/>
+                <CardActions 
+                    isViewOn={
+                        (
+                            credit.cartera==='syncs' || 
+                            credit.credit.collection_state.toLowerCase()==='cancelado' ||
+                            credit.credit.collection_state.toLowerCase()==='convenio de pago'
+                        ) ? false : true
+                    } 
+                    setAction={setAction}
+                />
                 
                 <div style={{display:'grid',gridTemplateColumns:'70% 30%',gap:'10px'}}>
                     <MenuNav

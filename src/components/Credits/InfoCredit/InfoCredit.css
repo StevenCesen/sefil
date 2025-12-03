@@ -15,7 +15,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid rgb(223, 223, 223);
     margin-bottom:5px;
+    padding-bottom: 5px;
 }
 
 .InfoCredit>div{
