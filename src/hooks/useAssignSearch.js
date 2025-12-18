@@ -119,6 +119,7 @@ export default function useAssignSearch(data,value,update,filter,mode,mora,cuota
         if(/^[A-Za-z ]+/.test(value) & !/[0-9]+/.test(value)){
             
         }else if(/^[0-9-_A-Za-z ]+/.test(value)){  //Búsqueda masiva de créditos
+            console.log("ENTRE AQUÍ")
             let values=value.split(' ');
             let syncs_id=[];
 

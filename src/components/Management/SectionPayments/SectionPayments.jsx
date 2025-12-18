@@ -284,14 +284,14 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                         >
                             <PDF
                                 nro_voucher={selectedPayment.id}
-                                type_print={(selectedPayment.status==="guardado") ? "COPIA" : selectedPayment.status.toUpperCase()}
+                                type_print={(selectedPayment.status==="guardado") ? "ORIGINAL" : selectedPayment.status.toUpperCase()}
                                 tipo_transaccion={selectedPayment.tipo_transaccion || 'total'}
                                 forma_pago={selectedPayment.forma_pago}
                                 insitucion_financiera={selectedPayment.institucion_financiera || ''}
                                 codigo_deposito={selectedPayment.codigo_deposito || ''}
-                                name={credit.name}
-                                ci={credit.ci}
-                                credito={credit.id}
+                                name={"HERRERA CEVALLOS DELIA DEL ROCIO"}
+                                ci={"1103957732"}
+                                credito={"2022069774"}
                                 
                                 mora={getDetailValue(selectedPayment, 'mora')}
                                 interes={getDetailValue(selectedPayment, 'interes')}
@@ -305,7 +305,7 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                                 valor_devuelto={selectedPayment.valor_devuelto || 0}
                                 
                                 fecha={selectedPayment.fecha}
-                                agente={localStorage.getItem('name')?.substring(0,1) + localStorage.getItem('name')?.split(' ')[1] || 'N/A'}
+                                agente={"MBravo" || 'N/A'}
                             />
                         </PDFViewer>
                     </div>

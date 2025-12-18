@@ -6,7 +6,7 @@ export default async function useLogin(data,tag,btn,setload){
         body:data 
     });
 
-    if(request.status!==401){
+    if(request.status!==401 & request.status!==403){
         const response=await request.json();
 
         if(!response.token){
@@ -34,6 +34,10 @@ export default async function useLogin(data,tag,btn,setload){
                 location.href='./';
             }
         }
+    }else if(request.status===403){
+        tag.current.textContent='No autorizado, IP restringida';
+        btn.current.textContent='Ingresar';
+        setload(false);
     }else{
         tag.current.textContent='Usuario inválido, revisa las credenciales';
         btn.current.textContent='Ingresar';

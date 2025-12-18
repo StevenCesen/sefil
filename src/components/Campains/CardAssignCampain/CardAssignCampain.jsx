@@ -74,22 +74,43 @@ export default function CardAssignCampain({ data, updateCredits }) {
             agents = state.agents_origin.length > 0 ? state.agents_origin : state.agent.id
         } = searchParams;
 
-        useAssignSearch(
-            charge,
-            searchValue,
-            updateCharge,
-            filter,
-            coincidence,
-            mora,
-            cuota,
-            monto,
-            estado,
-            agencies,
-            estado_gestion,
-            agents,
-            data.cartera,
-            (creditos) => updateState({ creditos })
-        );
+        // Si hay búsqueda de texto (créditos o nombres), desactivar filtros
+        if (searchValue.length > 0) {
+            useAssignSearch(
+                charge,
+                searchValue,
+                updateCharge,
+                false, // Siempre false cuando hay búsqueda de texto
+                coincidence,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                data.cartera,
+                (creditos) => updateState({ creditos })
+            );
+        } else {
+            // Solo aplicar filtros cuando NO hay búsqueda de texto
+            useAssignSearch(
+                charge,
+                searchValue,
+                updateCharge,
+                filter,
+                coincidence,
+                mora,
+                cuota,
+                monto,
+                estado,
+                agencies,
+                estado_gestion,
+                agents,
+                data.cartera,
+                (creditos) => updateState({ creditos })
+            );
+        }
     }, [state, updateCharge, updateState, data.cartera]);
 
     const updateRange = useCallback((key, value) => {
@@ -146,20 +167,23 @@ export default function CardAssignCampain({ data, updateCredits }) {
     }, [state.agents_origin, state.agents_dtsn, updateAgentText, updateState, performAssignSearch]);
 
     const handleAgencyFilter = useCallback((agencia, checked) => {
+        const ALL_AGENCIES = [
+            "catacocha", "palanda", "cariamanga", "zamora", "zumba", 
+            "piñas", "celica", "catamayo", "malacatos", "santa rosa",
+            "oficina las pitas", "oficina centro", "oficina norte",
+            "san miguel de los bancos", "milagro", "santo domingo",
+            "el carmen", "cayambe", "pasaje", "tumbaco", "la troncal",
+            "amaguaña", "naranjal", "quinche", "quininde"
+        ];
+        
         if (agencia === "-- Todas --") {
-            const ALL_AGENCIES = [
-                "catacocha", "palanda", "cariamanga", "zamora", "zumba", 
-                "piñas", "celica", "catamayo", "malacatos", "santa rosa",
-                "oficina las pitas", "oficina centro", "oficina norte",
-                "san miguel de los bancos", "milagro", "santo domingo",
-                "el carmen", "cayambe", "pasaje", "tumbaco", "la troncal",
-                "amaguaña", "naranjal", "quinche", "quininde"
-            ];
-            
+            // Si se marca "Todas", seleccionar todas las agencias individuales
+            // Si se desmarca "Todas", limpiar todas las agencias
             const newAgencies = checked ? [...ALL_AGENCIES] : [];
             updateState({ prev_agencies: newAgencies });
             performAssignSearch({ agencies: newAgencies });
         } else {
+            // Toggle de agencia individual
             const newAgencies = checked 
                 ? [...state.prev_agencies, agencia]
                 : state.prev_agencies.filter(agency => agency !== agencia);
@@ -213,7 +237,9 @@ export default function CardAssignCampain({ data, updateCredits }) {
             params.append('limite', state.total_assign);
         }
         if (state.creditos.length > 0) {
-            params.append('creditos', JSON.stringify(state.creditos));
+            // Construir el array con comillas: ["2021045721","2021045722"]
+            const creditosString = `[${state.creditos.map(c => `"${c}"`).join(',')}]`;
+            params.append('creditos', creditosString);
         }
 
         return params.toString();
@@ -242,7 +268,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                 carga: JSON.stringify([]),
                 cartera: data.cartera
             });
-
+            
             const responseData = await transferCampaignLoad(data.id, filters, formData);
 
             if (responseData.errors?.length > 0) {
@@ -306,7 +332,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                     fetchBusinessData(),
                     data.type_assign !== 'api' ? fetchCreditsData(data.cartera) : Promise.resolve(null)
                 ]);
-
+                
                 updateState({ business: businessData.data });
 
                 if (creditsData) {

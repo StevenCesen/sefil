@@ -16,6 +16,7 @@ export const useStoreManagement = create((set,get) => ({
     substate_gestion:'',
     promise_date:'',
     promise_amount:0,
+    nro_notificacion:'',
     campain_id:'',
     id_call:'',
     id_calls_extras:[],
@@ -39,6 +40,7 @@ export const useStoreManagement = create((set,get) => ({
         set({credit_id:credit_id})
     },
     setView:     (value)=>{set({view_panel:value})},
+    setNroNotificacion:     (value)=>{set({nro_notificacion:value})},
     setCredit:     (value)=>{
         
         const { setPhones,setManagements,setPayments,setNotes }=get();

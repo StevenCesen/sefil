@@ -36,7 +36,7 @@ export default function FormManagement(){
             cartera:store_management.cartera,
             monto:store_management.monto,
             monto_pagar:store_management.promise_amount,
-            nro_notificacion:store_management.nro_notificacion
+            nro_notification:store_management.nro_notificacion
         }
 
         button.current.textContent='Guardando...';
@@ -75,6 +75,14 @@ export default function FormManagement(){
                     button.current.textContent='Intentar de nuevo';
                 }
             }
+        }else if((store_management.substate_gestion==='NOTIFICADO' || store_management.substate_gestion==='ENTREGADO AVISO DE COBRANZA') && store_management.nro_notificacion===''){
+            sendpush({
+                title:'Nro. de notificación requerido.',
+                message:'Debe ingresar un Nro. de notificación para este subestado de gestión.',
+                type:'Push--warning',
+                timeout:3000
+            });
+            button.current.textContent='Intentar de nuevo';
         }else{
             const create_management=await createManagement({data_management});
         
@@ -192,6 +200,18 @@ export default function FormManagement(){
                         required
                     />
                 </label>
+                {
+                    (store_management.substate_gestion==='NOTIFICADO' || store_management.substate_gestion==='ENTREGADO AVISO DE COBRANZA')
+                    ?   
+                        <div className="FormManagement__label">
+                            Nro. notificación
+                            <input 
+                                value={store_management.nro_notificacion} 
+                                onChange={(e)=>{store_management.setNroNotificacion(e.target.value)}}
+                            />
+                        </div>
+                    :   <></>
+                }
                 <div className="FormManagement__label">
                     <label>Monto a pagar</label>
                     <div>
