@@ -19,7 +19,7 @@ export default function Login(){
 
     function login(){
         const formdata=new URLSearchParams({
-            "email":user.ci,
+            "username":user.ci,
             "password":user.password
         });
         
@@ -27,7 +27,7 @@ export default function Login(){
     }
 
     if (useSessions()) {
-        location.href="./";
+        location.href="./dashboard";
     }else{
         return (
             <div className="ContentLogin">

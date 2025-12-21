@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import useSessions from './hooks/useSessions'
 import Login from './pages/Login'
 import Header from './components/Header/Header'
@@ -11,85 +11,155 @@ import CardSelectStateCall from './components/Management/CardSelectStateCall/Car
 import CardStructure from './components/CardStructure/CardStructure'
 import CardCondonacion from './components/CardCondonacion/CardCondonacion'
 import Loader from './components/Loader/loader'
+import Home from './pages/Home'
+import Usuarios from './pages/Usuarios'
+import Credits from './pages/Credits/Credits'
+import Credit from './pages/Credit/Credit'
+import Payments from './pages/Payments/Payments'
+import Campain from './pages/Campain'
 
-function App() {
-  
-  const [session,setSession]=useState({});
+function ProtectedRoute({ children }) {
+  const isAuthenticated = useSessions();
 
-  useEffect(()=>{
-    if(localStorage.getItem('temp_uS')!=null){
-      fetch(`${import.meta.env.VITE_URL_BASE}/users/${localStorage.getItem('temp_uS')}`,{
-        headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-        .then((response) => response.json())  
-        .then((data) => {
-
-          if(data.data.state==='FUERA DE LÍNEA'){
-            localStorage.removeItem('token');
-            localStorage.removeItem('rol');
-            localStorage.removeItem('temp_uS');
-            localStorage.removeItem('permission');
-            localStorage.removeItem('name');
-            localStorage.removeItem('extension');
-            
-            setSession({
-              state:true
-            });
-
-          }else{
-            setSession({
-              state:false
-            });
-          }
-
-        });
-    }else{
-      setSession({
-        state:false
-      });
-    }
-    
-  },[]);
-  
-  if(!session) return <></>
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
-      <>
-      <Header/>
-      <Push/>
-      <CardSelectStateCall/>
-      <CardStructure/>
-      <CardCondonacion/>
-      <Loader/>
-      
-      {
-        (!useSessions() & !session.state) 
-        ?
-          <Login/>
-        :
-          (localStorage.getItem('change_ps')==="true")
-          ?
-            <div className="Dashboard">
-              <NavSlide
-                actions={''}
-                permission={''}
-              />
-              <Me/>
-            </div>
-          :
-            <div className="Dashboard">
-              <NavSlide
-                actions={''}
-                permission={''}
-              />
-              <Outlet/>
-            </div>
-      }
-      </>
-  )
+    <div className="Dashboard">
+      <NavSlide />
+      <div className="Dashboard__content">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function PublicRoute({ children }) {
+  const isAuthenticated = useSessions();
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
+function App() {
+
+  const [session, setSession] = useState({});
+
+  useEffect(() => {
+    setSession({
+      state: true
+    });
+  }, []);
+
+  if (!session.state) return <Loader />;
+
+  return (
+    <>
+      <Header />
+      <Push />
+      <CardSelectStateCall />
+      <CardStructure />
+      <CardCondonacion />
+      <Loader />
+
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/me"
+          element={
+            <ProtectedRoute>
+              <Me />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <Usuarios />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/credits"
+          element={
+            <ProtectedRoute>
+              <Credits />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/credits/:id"
+          element={
+            <ProtectedRoute>
+              <Credit />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/credits/payments/:id"
+          element={
+            <ProtectedRoute>
+              <Payments />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <Usuarios />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/campains"
+          element={
+            <ProtectedRoute>
+              <Campain/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/"
+          element={<Navigate to={useSessions() ? "/dashboard" : "/login"} replace />}
+        />
+
+        <Route
+          path="*"
+          element={<Navigate to={useSessions() ? "/dashboard" : "/login"} replace />}
+        />
+      </Routes>
+    </>
+  );
 }
 
 export default App

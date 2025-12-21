@@ -4,6 +4,7 @@ import CardSync from "../components/CardSync/CardSync";
 import CardEditCampain from "../components/Campains/CardEdirCampain/CardEditCampain";
 import CardAssignCampain from "../components/Campains/CardAssignCampain/CardAssignCampain";
 import CardCreateCampain from "../components/Campains/CardCreateCampain/CardCreateCampain";
+import useFetch from "../hooks/useFetch";
 
 const MODAL_TYPES = {
     CREATE: 'create',
@@ -15,9 +16,9 @@ const CampaignItem = ({ campaign, onEdit, onTransfer, onExport }) => (
     <div className="Campain__item">
         <label>{campaign.name}</label>
         <label>{campaign.state}</label>
-        <label>{campaign.fecha_init}</label>
-        <label>{campaign.fecha_finish}</label>
-        {campaign.state !== 'FINALIZADA' && (
+        <label>{campaign.begin_time}</label>
+        <label>{campaign.end_time}</label>
+        {campaign.state !== 'FINISHED' && (
             <div>
                 <button onClick={() => onEdit(campaign)}>
                     <img title="Editar campaña" src="./icons/edit.png" alt="Editar"/>
@@ -50,6 +51,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 };
 
 export default function Campain() {
+    const { fetchWithAuth } = useFetch();
     const [activeModal, setActiveModal] = useState(null);
     const [campaigns, setCampaigns] = useState(null);
     const [selectedCampaign, setSelectedCampaign] = useState(null);
@@ -66,20 +68,14 @@ export default function Campain() {
     }, []);
 
     const updateCampaign = useCallback((newCampaign) => {
-        setCampaigns(prev => ({
-            ...prev,
-            data: [...prev.data, newCampaign]
-        }));
+        setCampaigns(prev => [...prev, newCampaign]);
         closeModal();
     }, [closeModal]);
 
     const updateCreditsCampaign = useCallback((updatedCampaign) => {
-        setCampaigns(prev => ({
-            ...prev,
-            data: prev.data.map(campaign => 
-                campaign.id === updatedCampaign.id ? updatedCampaign : campaign
-            )
-        }));
+        setCampaigns(prev => prev.map(campaign =>
+            campaign.id === updatedCampaign.id ? updatedCampaign : campaign
+        ));
     }, []);
 
     const handleEdit = useCallback((campaign) => {
@@ -97,30 +93,33 @@ export default function Campain() {
     const fetchCampaigns = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${import.meta.env.VITE_URL_BASE}/campains`, {
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
+            const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains`);
             const data = await response.json();
-            setCampaigns(data);
+
+            console.log('Campañas obtenidas:', data);
+
+            if (data.result && data.result.data && Array.isArray(data.result.data)) {
+                setCampaigns(data.result.data);
+            } else {
+                setCampaigns([]);
+            }
         } catch (error) {
             console.error('Error fetching campaigns:', error);
+            setCampaigns([]);
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [fetchWithAuth]);
 
     useEffect(() => {
         fetchCampaigns();
-    }, [fetchCampaigns]);
+    }, []);
 
-    if (loading || !campaigns) {
+    if (loading && !campaigns) {
         return <div>Cargando...</div>;
     }
 
-    const activeCampaigns = campaigns.data?.filter(campaign => campaign.state === "ACTIVA") || [];
+    const activeCampaigns = campaigns.filter(campaign => campaign.state === "ACTIVE") || [];
 
     return (
         <div className="pageConsulta">
@@ -142,7 +141,7 @@ export default function Campain() {
                 <div className="Campain__sincronice">
                     <h4 className="Campain__subtitle">Sincronización</h4>
                     <div>
-                        <CardSync/>
+                        {/* <CardSync/> */}
                     </div>
                 </div>
                     

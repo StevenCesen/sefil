@@ -1,125 +1,100 @@
 import { useEffect, useRef, useState } from "react";
 import CardUsuarios from "../components/CardUsuarios/CardUsuarios";
+import CardEditUser from "../components/CardEditUser/CardEditUser";
 import Loader from "../components/Loader/loader";
+import useFetch from "../hooks/useFetch";
 
 export default function Usuarios(){
 
-    const [users,setUsers]=useState();
+    const { fetchWithAuth } = useFetch();
+    const [users,setUsers]=useState([]);
     const content_users=useRef();
-    const [new_user,setNew]=useState(true);
-    const [new_change,setNewChange]=useState();
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [new_change,setNewChange]=useState(false);
+    const [loading,setLoading]=useState(true);
 
-    const [data,setData]=useState({
-        name:'',
-        email:'',
-        role:'',
-        password:'12345',
-        permission:[]
-    });
+    const loadUsers = () => {
+        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('API Response:', data);
+                // Manejar estructura de respuesta paginada
+                if (data.result && data.result.data && Array.isArray(data.result.data)) {
+                    setUsers(data.result.data);
+                } else if (Array.isArray(data)) {
+                    setUsers(data);
+                } else if (data.data && Array.isArray(data.data)) {
+                    setUsers(data.data);
+                } else {
+                    console.error('Formato de respuesta inesperado:', data);
+                    setUsers([]);
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching users:', error);
+                setUsers([]);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
 
     useEffect(()=>{
-        fetch(`${import.meta.env.VITE_URL_BASE}/users`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
-              .then((data) => {
-                setUsers(data);
-            });
-        setNew(false);
-        setNewChange(false);
+        loadUsers();
     },[]);
 
-    if(!users) return <Loader/>
+    if(loading) return <Loader/>
 
     return (
         <div className="pageUsuarios" ref={content_users}>
-            
+
             <div className="pageUsuarios__access">
-                <button onClick={(e)=>{
-                    setNew(!new_user);
-                    if(new_user){
-                        e.target.textContent='Agregar usuario';
-                    }else{
-                        e.target.textContent='Cancelar';
-                    }
-                }}>Agregar usuario</button>
+                <button onClick={() => setShowCreateModal(true)}>
+                    Agregar usuario
+                </button>
 
                 {
                     (new_change)
                     ?
                         <button
                             className="pageUsuarios__saveChanges"
-                            onClick={(e)=>{
-                                let usuarios=document.getElementsByClassName('CardUsuarios');
-                                usuarios=[].slice.call(usuarios);
-                                let count=0;
+                            onClick={async (e)=>{
+                                e.target.textContent = 'Guardando...';
+                                e.target.disabled = true;
 
-                                usuarios.map(async (usuario)=>{
-                                    const id=usuario.children[0].dataset.id;
-                                    let new_permiss=[];
+                                try {
+                                    const usuarios = document.getElementsByClassName('CardUsuarios');
+                                    const usuariosArray = Array.from(usuarios);
 
-                                    let permiss=usuario.children[4].children;
-                                    permiss=[].slice.call(permiss);
+                                    for (const usuario of usuariosArray) {
+                                        const id = usuario.children[0].dataset.id;
+                                        const roleSelect = usuario.children[3].querySelector('select');
+                                        const newRole = roleSelect ? roleSelect.value : usuario.children[3].textContent;
 
-                                    permiss.map(permiso=>{
-                                        if(permiso.children[0].checked){
-                                            new_permiss.push(permiso.children[0].value);
-                                        }
-                                    });
-
-                                    if(id==2){
-                                        new_permiss.push("User:minimize");
+                                        await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users/edit/${id}`, {
+                                            method: 'PUT',
+                                            body: new URLSearchParams({
+                                                role: newRole
+                                            })
+                                        });
                                     }
-                                
-                                    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/users/edit2/${id}`,{
-                                        method:'PUT',
-                                        body:new URLSearchParams({
-                                            permission:JSON.stringify([{
-                                                permission:new_permiss
-                                            }])
-                                        }),
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        }
-                                    });
-                                    const response=await request.json();
 
-                                    if(response.status!==200){
-                                        count++;
-                                    }
-                                });
-
-                                if(count===0){
-
-                                    Push({
-                                        title:'Éxito',
-                                        message:`Permiso actualizado correctamente.`,
-                                        timeout:5000,
-                                        type:200
-                                    });
-
+                                    alert('Permisos actualizados correctamente');
                                     setNewChange(false);
 
-                                }else{
-                                    sendpush({
-                                        title:'Éxito.',
-                                        message:'No se pudo actualizar permiso.',
-                                        type:'Push--sucessful',
-                                        timeout:5000
-                                    });
+                                } catch (error) {
+                                    alert('Error al actualizar permisos');
+                                } finally {
+                                    e.target.textContent = 'Guardar cambios';
+                                    e.target.disabled = false;
                                 }
-
                             }}
                         >Guardar cambios</button>
                     :   <></>
                 }
 
             </div>
-            
+
             <div className="pageUsuarios__head">
                 <p>ID</p>
                 <p>Nombre</p>
@@ -128,117 +103,40 @@ export default function Usuarios(){
                 <p>Permisos</p>
                 <p>Acciones</p>
             </div>
-            
+
             {
-                (new_user) &&
-                    <div className="CardUsuarios">
-                        <span>#</span>
-                        <span><input type="text" placeholder="Escriba aquí..." value={data.name} onChange={(e)=>{setData({...data,name:e.target.value})}}/></span>
-                        <span><input type="email" placeholder="name@domain.com" value={data.email} onChange={(e)=>{setData({...data,email:e.target.value})}}/></span>
-                        <span>
-                            <select 
-                                value={data.role} 
-                                onChange={(e)=>{
-                                    const permiss=[{
-                                        permission:[]
-                                    }];
-
-                                    if(e.target.value==='super'){
-                                        permiss[0].permission.push('DB:import');
-                                        permiss[0].permission.push('DB:destroy');
-                                        permiss[0].permission.push('DB:update');
-                                        permiss[0].permission.push('DB:recovery');
-                                        permiss[0].permission.push('Backup:show');
-                                        permiss[0].permission.push('Backup:add');
-                                        permiss[0].permission.push('Backup:update');
-                                        
-                                    }else if(e.target.value==='gestor'){
-                                        permiss[0].permission=[];
-                                        permiss[0].permission.push('Gestion:all');
-                                    
-                                    }else if(e.target.value==='campo'){
-                                        permiss[0].permission=[];
-                                        permiss[0].permission.push('Gestion:all');
-                                        permiss[0].permission.push('condonar:set');
-                                        permiss[0].permission.push('convenio:set');
-
-                                    }else if(e.target.value==='administrador'){
-                                        permiss[0].permission=[];
-                                        permiss[0].permission.push('Consulta:all');
-                                        permiss[0].permission.push('Cobranza:all');
-                                        permiss[0].permission.push('Gestion:all');
-                                        permiss[0].permission.push('Monitor:all');
-                                        permiss[0].permission.push('Comprobantes:all');
-                                        permiss[0].permission.push('Reportes:all');
-                                        permiss[0].permission.push('User:minimize');
-                                        
-                                    }else if(e.target.value==='cobranza'){
-                                        permiss[0].permission=[];
-                                        permiss[0].permission.push('Consulta:all');
-                                        permiss[0].permission.push('Cobranza:all');
-                                        permiss[0].permission.push('Comprobantes:all');
-
-                                    }else{
-                                        permiss[0].permission=[];
-                                        permiss[0].permission.push('Consulta:all');
-                                        permiss[0].permission.push('Comprobantes:all');
-                                    }
-
-                                    setData({...data,role:e.target.value,permission:permiss})
-
-                                }}
-                            >
-                                {
-                                    (localStorage.getItem('rol')==='super') &&
-                                        <option value="super">Super usuario</option>
-                                }
-                                <option value="administrador">Administrador</option>
-                                <option value="call">Gestor | Call Center</option>
-                                <option value="call">Gestor | Campo</option>
-                                <option value="campo">Gestor | Judicial</option>
-                                <option value="consulta">Consulta</option>
-                            </select>
-                        </span>
-                        <span className="CardUsuarios__list">.</span>
-                        
-                        <button onClick={(e)=>{
-
-                            const post_data=data;
-                            post_data.permission=JSON.stringify(data.permission);
-                            const new_data=new URLSearchParams(post_data);
-
-                            e.target.textContent='Guardando...';
-
-                            fetch(`${import.meta.env.VITE_URL_BASE}/register`,{
-                                method:'POST',
-                                body:new_data,
-                                headers: {
-                                    Accept: 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                }
-                            })
-                                .then((response) => response.json())  
-                                  .then((data) => setUsers(data.data));
-                            setNew(false);
-
-                        }}>Guardar</button>
+                users.length > 0 ? (
+                    users.map((user, index) => (
+                        <CardUsuarios
+                            key={user.id || index}
+                            id={user.id}
+                            name={user.name}
+                            email={user.username}
+                            rol={user.role}
+                            extension={user.extension}
+                            phone={user.phone}
+                            setChange={setNewChange}
+                            onUserUpdated={loadUsers}
+                        />
+                    ))
+                ) : (
+                    <div style={{ padding: '20px', textAlign: 'center' }}>
+                        No hay usuarios registrados
                     </div>
+                )
             }
 
-            {
-                users.map((user,index)=>(
-                    <CardUsuarios
-                        key={index}
-                        id={user.id}
-                        name={user.name}
-                        email={user.email}
-                        rol={user.role}
-                        permission={JSON.parse(user.permission)[0].permission}
-                        setChange={setNewChange}
-                    />
-                ))
-            }
-            
+            {showCreateModal && (
+                <CardEditUser
+                    user={null}
+                    onClose={() => setShowCreateModal(false)}
+                    onSave={() => {
+                        loadUsers();
+                        setShowCreateModal(false);
+                    }}
+                />
+            )}
+
         </div>
     );
 }

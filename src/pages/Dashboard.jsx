@@ -28,77 +28,385 @@ import ReportRevert from "./ReportRevert";
 import ReportFaces from "./ReportFaces";
 import ReportAssignCampain from "./ReportAssignCampain";
 
-const data=[
+const permission=[
     {
-        rol:'gestor',
-        permission:['DB:import','DB:export','User:create','User:delete','User:update'],
-        actions:[
-            {
-                name:'Configuración y usuarios',
-                hash:'/configuracion'
-            }
-        ]
+        role:'superadmin',
+        permission:{
+            sections: [
+                {
+                    section:'home',
+                    label:'Dashboard'
+                },
+                {
+                    section:'monitor',
+                    label:'Monitoreo'
+                },
+                {
+                    section:'consult',
+                    label:'Consultas'
+                },
+                {
+                    section:'directions',
+                    label:'Direcciones'
+                },
+                {
+                    section:'contacts',
+                    label:'Contactos'
+                },
+                {
+                    section:'management_historial',
+                    label:'Historial de gestiones'
+                },
+                {
+                    section:'management',
+                    label:'Gestión'
+                },
+                {
+                    section:'campains',
+                    label:'Campañas'
+                },
+                {
+                    section:'users',
+                    label:'Usuarios'
+                },
+                {
+                    section:'settings',
+                    label:'Configuración'
+                },
+                {
+                    section:'calls',
+                    label:'Llamadas'
+                },
+                {
+                    section:'payments',
+                    label:'Pagos'
+                }
+            ],
+            abilities: [
+                {
+                    section: 'home',
+                    abilitie: ['home:view']
+                },
+                {
+                    section: 'users',
+                    abilitie: ['users:create','users:edit','users:delete','users:view']
+                },
+                {
+                    section: 'settings',
+                    abilitie: ['settings:edit']
+                },
+                {
+                    section: 'calls',
+                    abilitie: ['calls:create','calls:make','calls:view']
+                },
+                {
+                    section: 'payments',
+                    abilitie: ['payments:create','payments:edit','payments:delete','payments:view']
+                },
+                {
+                    section: 'reports',
+                    abilitie: ['reports:view','reports:export']
+                },
+                {
+                    section: 'db',
+                    abilitie: ['db:import','db:export']
+                },
+                {
+                    section: 'campains',
+                    abilitie: ['campains:create','campains:edit','campains:delete','campains:view']
+                },
+                {
+                    section: 'management',
+                    abilitie: ['management:create','management:edit','management:delete','management:view']
+                },
+                {
+                    section: 'contacts',
+                    abilitie: ['contacts:create','contacts:edit','contacts:delete','contacts:view']
+                },
+                {
+                    section: 'directions',
+                    abilitie: ['directions:create','directions:edit','directions:delete','directions:view']
+                },
+                {
+                    section: 'monitor',
+                    abilitie: ['monitor:view']
+                },
+                {
+                    section: 'consult',
+                    abilitie: ['consult:view']
+                },
+                {
+                    section: 'management_historial',
+                    abilitie: ['management_historial:view']
+                }
+            ]
+        }
     },
     {
-        rol:'admin',
-        permission:['User:create','User:delete','User:update','Cash:crud','Reports:crud','Voucher:crud'],
-        actions:[
-            {
-                name:'Consulta',
-                hash:'/consulta'
-            },
-            {
-                name:'Cobranza',
-                hash:'/cobranza'
-            },
-            {
-                name:'Comprobantes',
-                hash:'/comprobantes'
-            },
-            {
-                name:'Reportes',
-                hash:'/reportes'
-            },
-            {
-                name:'Usuarios',
-                hash:'/configuracion'
-            }
-        ]
+        role:'admin',
+        permission:{
+            sections: [
+                {
+                    section:'home',
+                    label:'Dashboard'
+                },
+                {
+                    section:'monitor',
+                    label:'Monitoreo'
+                },
+                {
+                    section:'consult',
+                    label:'Consultas'
+                },
+                {
+                    section:'directions',
+                    label:'Direcciones'
+                },
+                {
+                    section:'contacts',
+                    label:'Contactos'
+                },
+                {
+                    section:'management_historial',
+                    label:'Historial de gestiones'
+                },
+                {
+                    section:'management',
+                    label:'Gestión'
+                },
+                {
+                    section:'campains',
+                    label:'Campañas'
+                },
+                {
+                    section:'users',
+                    label:'Usuarios'
+                },
+                {
+                    section:'settings',
+                    label:'Configuración'
+                },
+                {
+                    section:'calls',
+                    label:'Llamadas'
+                },
+                {
+                    section:'payments',
+                    label:'Pagos'
+                }
+            ],
+            abilities: [
+                {
+                    section: 'home',
+                    abilitie: ['home:view']
+                },
+                {
+                    section: 'users',
+                    abilitie: ['users:create','users:view']
+                },
+                {
+                    section: 'settings',
+                    abilitie: ['settings:edit']
+                },
+                {
+                    section: 'calls',
+                    abilitie: ['calls:create','calls:make','calls:view']
+                },
+                {
+                    section: 'payments',
+                    abilitie: ['payments:create','payments:view']
+                },
+                {
+                    section: 'reports',
+                    abilitie: ['reports:view','reports:export']
+                },
+                {
+                    section: 'campains',
+                    abilitie: ['campains:create','campains:edit','campains:view']
+                },
+                {
+                    section: 'management',
+                    abilitie: ['management:create','management:view']
+                },
+                {
+                    section: 'contacts',
+                    abilitie: ['contacts:create','contacts:view']
+                },
+                {
+                    section: 'directions',
+                    abilitie: ['directions:create','directions:view']
+                },
+                {
+                    section: 'monitor',
+                    abilitie: ['monitor:view']
+                },
+                {
+                    section: 'consult',
+                    abilitie: ['consult:view']
+                },
+                {
+                    section: 'management_historial',
+                    abilitie: ['management_historial:view']
+                }
+            ]
+        }
     },
     {
-        rol:'consult',
-        permission:['Voucher:crud'],
-        actions:[
-            {
-                name:'Consulta',
-                hash:'/consulta'
-            },
-            {
-                name:'Comprobantes',
-                hash:'/comprobantes'
-            }
-        ]
+        role:'supervisor',
+        permission:{
+            sections: [
+                {
+                    section:'monitor',
+                    label:'Monitoreo'
+                },
+                {
+                    section:'consult',
+                    label:'Consultas'
+                },
+                {
+                    section:'directions',
+                    label:'Direcciones'
+                },
+                {
+                    section:'contacts',
+                    label:'Contactos'
+                },
+                {
+                    section:'management_historial',
+                    label:'Historial de gestiones'
+                },
+                {
+                    section:'management',
+                    label:'Gestión'
+                },
+                {
+                    section:'campains',
+                    label:'Campañas'
+                },
+                {
+                    section:'calls',
+                    label:'Llamadas'
+                },
+                {
+                    section:'payments',
+                    label:'Pagos'
+                }
+            ],
+            abilities: [
+                {
+                    section: 'calls',
+                    abilitie: ['calls:make','calls:receive']
+                },
+                {
+                    section: 'payments',
+                    abilitie: ['payments:create','payments:view']
+                },
+                {
+                    section: 'campains',
+                    abilitie: ['campains:view','campains:transfer']
+                },
+                {
+                    section: 'management',
+                    abilitie: ['management:create','management:view']
+                },
+                {
+                    section: 'contacts',
+                    abilitie: ['contacts:create','contacts:view']
+                },
+                {
+                    section: 'directions',
+                    abilitie: ['directions:create','directions:view']
+                },
+                {
+                    section: 'monitor',
+                    abilitie: ['monitor:view']
+                },
+                {
+                    section: 'consult',
+                    abilitie: ['consult:view']
+                },
+                {
+                    section: 'management_historial',
+                    abilitie: ['management_historial:view']
+                }
+            ]
+        }
     },
     {
-        rol:'cash',
-        permission:['Voucher:crud'],
-        actions:[
-            {
-                name:'Consulta',
-                hash:'/consulta'
-            },
-            {
-                name:'Cobranza',
-                hash:'/cobranza'
-            },
-            {
-                name:'Comprobantes',
-                hash:'/comprobantes'
-            }
-        ]
+        role:'campo',
+        permission:{
+            sections: [
+                {
+                    section:'contacts',
+                    label:'Contactos'
+                },
+                {
+                    section:'management',
+                    label:'Gestión'
+                },
+                {
+                    section:'calls',
+                    label:'Llamadas'
+                },
+                {
+                    section:'payments',
+                    label:'Pagos'
+                }
+            ],
+            abilities: [
+                {
+                    section: 'calls',
+                    abilitie: ['calls:view']
+                },
+                {
+                    section: 'payments',
+                    abilitie: ['payments:view']
+                },
+                {
+                    section: 'management',
+                    abilitie: ['management:create','management:view']
+                },
+                {
+                    section: 'contacts',
+                    abilitie: ['contacts:create','contacts:view']
+                }
+            ]
+        }
+    },
+    {
+        role:'call',
+        permission:{
+            sections: [
+                {
+                    section:'contacts',
+                    label:'Contactos'
+                },
+                {
+                    section:'management',
+                    label:'Gestión'
+                },
+                {
+                    section:'calls',
+                    label:'Llamadas'
+                }
+            ],
+            abilities: [
+                {
+                    section: 'calls',
+                    abilitie: ['calls:view']
+                },
+                {
+                    section: 'management',
+                    abilitie: ['management:create','management:view']
+                },
+                {
+                    section: 'contacts',
+                    abilitie: ['contacts:create','contacts:view']
+                }
+            ]
+        }
     }
-
-]
+];
 
 export default function Dashboard({rol}){
     
@@ -109,7 +417,6 @@ export default function Dashboard({rol}){
     const page=useParams();
 
     useEffect(()=>{
-        //Consulta a API, para setear permisos
         window.addEventListener("load",setLoading(false));
 
         data.map((user)=>{

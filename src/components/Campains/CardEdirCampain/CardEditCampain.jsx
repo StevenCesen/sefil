@@ -1,76 +1,81 @@
 import { useEffect, useState } from "react";
-import "./CardEditCampain.css"
+import "./CardEditCampain.css";
+import useFetch from "../../../hooks/useFetch";
+import sendpush from "../../../helpers/sendpush";
 
 export default function CardEditCampain({data_campain}){
+    const { fetchWithAuth } = useFetch();
 
     const [campain,setCampain]=useState({
         name:"",
         id:"",
         agents:[],
-        fecha_init:"",
-        fecha_finish:"",
+        begin_time:"",
+        end_time:"",
         data:[],
-        cartera:"",
-        distributions:[]
+        business_id:"",
+        type:""
     });
 
     const [agents,setAgents]=useState();
     const [business,setBusiness]=useState();
 
     useEffect(()=>{
+        // Obtener los agentes asignados a la campaña
+        const campaignAgents = data_campain.agents_details || [];
+
         setCampain({
             id:data_campain.id,
             name:data_campain.name,
-            agents:JSON.parse(data_campain.agents),
-            fecha_init:data_campain.fecha_init,
-            fecha_finish:data_campain.fecha_finish,
+            agents:campaignAgents,
+            begin_time:data_campain.begin_time?.split(' ')[0] || '',
+            end_time:data_campain.end_time?.split(' ')[0] || '',
             data:[],
-            cartera:data_campain.cartera,
-            distributions:data_campain.distributions
+            business_id:data_campain.business_id,
+            type:data_campain.type || 'manual'
         });
 
         //Bajamos los agentes
-        fetch(`${import.meta.env.VITE_URL_BASE}/users/agents`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
+        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1`)
+            .then((response) => response.json())
             .then((data) => {
+                const data_prev = Array.isArray(data) ? data : (data.result?.data || []);
 
-                const data_prev=data;
-                data_prev.map(agent=> {
-                    agent.status=false
+                // Marcar todos como no seleccionados inicialmente
+                data_prev.forEach(agent => {
+                    agent.status = false;
                 });
-                
-                JSON.parse(data_campain.agents).map((agent_campain)=>{
-                    data_prev.map(agent=> {
-                        if(agent.id===agent_campain.id){
-                            agent.status=true
+
+                // Marcar como seleccionados los que están en la campaña
+                campaignAgents.forEach((agent_campain) => {
+                    data_prev.forEach(agent => {
+                        if(agent.id === agent_campain.id || agent.id === agent_campain){
+                            agent.status = true;
                         }
                     });
-                })
-            
+                });
+
                 setAgents(data_prev);
+            })
+            .catch(error => {
+                console.error('Error fetching agents:', error);
+                setAgents([]);
             });
-        
+
         //Bajamos las carteras
-        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
+        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/businesses`)
+            .then((response) => response.json())
             .then((data) => {
-                setBusiness(data.data);
+                setBusiness(data.result.data || []);
+            })
+            .catch(error => {
+                console.error('Error fetching business:', error);
+                setBusiness([]);
             });
     },[]);
 
     if(!agents) return <></>
     if(!business) return <></>
-
 
     return (
         <div className="CardCreateCampain">
@@ -130,11 +135,11 @@ export default function CardEditCampain({data_campain}){
                 <label className="CardCreateCampain__select">
                     Empresa
                     <select
-                        value={campain.cartera}
+                        value={campain.business_id}
                         onChange={(e)=>{
                             setCampain({
                                 ...campain,
-                                cartera:e.target.value
+                                business_id:e.target.value
                             });
                         }}
                     >
@@ -142,14 +147,28 @@ export default function CardEditCampain({data_campain}){
                             business.map((bus,index)=>(
                                 (bus.name!=='CARTERA VENDIDA')
                                 ?
-                                    <option key={index} value={bus.name}>{bus.name}</option>
+                                    <option key={index} value={bus.id}>{bus.name}</option>
                                 : <></>
                             ))
                         }
                     </select>
                 </label>
-                
-                <label></label>
+
+                <label className="CardCreateCampain__select">
+                    Tipo de campaña
+                    <select
+                        value={campain.type}
+                        onChange={(e)=>{
+                            setCampain({
+                                ...campain,
+                                type:e.target.value
+                            });
+                        }}
+                    >
+                        <option value={"manual"}>Carga manual</option>
+                        <option value={"api"}>Sincronización | Web Service</option>
+                    </select>
+                </label>
 
                 <label className="CardCreateCampain__input">
                     Fecha de inicio
@@ -157,69 +176,93 @@ export default function CardEditCampain({data_campain}){
                         onChange={(e)=>{
                             setCampain({
                                 ...campain,
-                                fecha_init:e.target.value
+                                begin_time:e.target.value
                             })
                         }}
-                        value={campain.fecha_init} 
+                        value={campain.begin_time}
                         type="date"/>
                 </label>
-                
+
                 <label className="CardCreateCampain__input">
                     Fecha de fin
-                    <input 
+                    <input
                         onChange={(e)=>{
                             setCampain({
                                 ...campain,
-                                fecha_finish:e.target.value
+                                end_time:e.target.value
                             })
                         }}
-                        value={campain.fecha_finish} 
+                        value={campain.end_time}
                         type="date"
                     />
                 </label>
             </div>
 
             <div className="CardCreateCampain__footer">
-                <button 
-                    onClick={(e)=>{
+                <button
+                    onClick={async (e)=>{
+
+                        if(campain.name==='' || campain.begin_time==='' || campain.end_time==='' || campain.business_id===''){
+                            sendpush({
+                                title:'ERR: Datos incompletos.',
+                                message:'Por favor, llene todos los campos.',
+                                type:'Push--danger',
+                                timeout:3000
+                            });
+                            return;
+                        }
 
                         e.target.textContent="Actualizando...";
+                        e.target.disabled = true;
 
                         const agents_select=[];
 
                         agents.map(agent=>{
                             if(agent.status){
-                                agents_select.push({
-                                    id:agent.id,
-                                    name:agent.name
-                                });
+                                agents_select.push(agent.id);
                             }
                         });
 
-                        const agent_found=[];
-                        let agents_new=[];
-
                         const data={
-                            agents:JSON.stringify(agents_select),
                             name:campain.name,
-                            cartera:campain.cartera,
-                            fecha_init:campain.fecha_init,
-                            fecha_finish:campain.fecha_finish,
-                            mode:'dates'
+                            business_id:campain.business_id,
+                            begin_time:campain.begin_time,
+                            end_time:campain.end_time,
+                            type:campain.type,
+                            agents:JSON.stringify(agents_select),
+                            state:'ACTIVE'
                         };
 
-                        fetch(`${import.meta.env.VITE_URL_BASE}/campains/${campain.id}`,{
-                            method:'PUT',
-                            headers: {
-                                Accept: 'application/json',
-                                Authorization: `Bearer ${localStorage.getItem('token')}`
-                            },
-                            body:new URLSearchParams(data)
-                        })
-                            .then((response) => response.json())  
-                            .then((data) => {
-                                e.target.textContent="Actualizado";
+                        try {
+                            const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains/${campain.id}`,{
+                                method:'PUT',
+                                body:new URLSearchParams(data)
                             });
+
+                            await response.json();
+
+                            e.target.textContent="Actualizado";
+
+                            sendpush({
+                                title:'Éxito.',
+                                message:'Campaña actualizada correctamente.',
+                                type:'Push--sucessful',
+                                timeout:3000
+                            });
+
+                        } catch(error) {
+                            console.error('Error updating campaign:', error);
+                            e.target.textContent='Guardar';
+
+                            sendpush({
+                                title:'Error.',
+                                message:'Error al actualizar la campaña.',
+                                type:'Push--danger',
+                                timeout:3000
+                            });
+                        } finally {
+                            e.target.disabled = false;
+                        }
                     }}
 
                     className="CardCreateCampain__button CardCreateCampain__button--save"

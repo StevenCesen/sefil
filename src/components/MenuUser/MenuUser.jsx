@@ -6,7 +6,7 @@ export default function MenuUser(){
 
     useEffect(()=>{
         setUser({
-            shortName:localStorage.getItem('name').substring(0,1)+localStorage.getItem('name').split(' ')[1].substring(0,1)
+            shortName:localStorage.getItem('name').substring(0,1)+localStorage.getItem('name').split('_')[1].substring(0,1)
         });
     },[]);
 

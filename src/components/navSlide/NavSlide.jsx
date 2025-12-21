@@ -4,320 +4,270 @@ import useNav from "../../hooks/useNav.js";
 import { useEffect, useRef, useState } from "react";
 import useMenu from "../../hooks/useMenu.js";
 
-export default function NavSlide({actions,permission}){
+const permissionData = [
+    {
+        role: 'superadmin',
+        permission: {
+            sections: [
+                { section: 'home', label: 'Dashboard' },
+                { section: 'monitor', label: 'Monitoreo' },
+                { section: 'consult', label: 'Consultas' },
+                { section: 'directions', label: 'Direcciones' },
+                { section: 'contacts', label: 'Contactos' },
+                { section: 'management_historial', label: 'Historial de gestiones' },
+                { section: 'management', label: 'Gestión' },
+                { section: 'campains', label: 'Campañas' },
+                { section: 'users', label: 'Usuarios' },
+                { section: 'settings', label: 'Configuración' },
+                { section: 'calls', label: 'Llamadas' },
+                { section: 'payments', label: 'Pagos' }
+            ],
+            abilities: [
+                { section: 'home', abilitie: ['home:view'] },
+                { section: 'users', abilitie: ['users:create', 'users:edit', 'users:delete', 'users:view'] },
+                { section: 'settings', abilitie: ['settings:edit'] },
+                { section: 'calls', abilitie: ['calls:create', 'calls:make', 'calls:view'] },
+                { section: 'payments', abilitie: ['payments:create', 'payments:edit', 'payments:delete', 'payments:view'] },
+                { section: 'reports', abilitie: ['reports:view', 'reports:export'] },
+                { section: 'campains', abilitie: ['campains:create', 'campains:edit', 'campains:delete', 'campains:view'] },
+                { section: 'management', abilitie: ['management:create', 'management:edit', 'management:delete', 'management:view'] },
+                { section: 'contacts', abilitie: ['contacts:create', 'contacts:edit', 'contacts:delete', 'contacts:view'] },
+                { section: 'directions', abilitie: ['directions:create', 'directions:edit', 'directions:delete', 'directions:view'] },
+                { section: 'monitor', abilitie: ['monitor:view'] },
+                { section: 'consult', abilitie: ['consult:view'] },
+                { section: 'management_historial', abilitie: ['management_historial:view'] }
+            ]
+        }
+    },
+    {
+        role: 'admin',
+        permission: {
+            sections: [
+                { section: 'home', label: 'Dashboard' },
+                { section: 'monitor', label: 'Monitoreo' },
+                { section: 'consult', label: 'Consultas' },
+                { section: 'directions', label: 'Direcciones' },
+                { section: 'contacts', label: 'Contactos' },
+                { section: 'management_historial', label: 'Historial de gestiones' },
+                { section: 'management', label: 'Gestión' },
+                { section: 'campains', label: 'Campañas' },
+                { section: 'users', label: 'Usuarios' },
+                { section: 'settings', label: 'Configuración' },
+                { section: 'calls', label: 'Llamadas' },
+                { section: 'payments', label: 'Pagos' }
+            ],
+            abilities: [
+                { section: 'home', abilitie: ['home:view'] },
+                { section: 'users', abilitie: ['users:create', 'users:view'] },
+                { section: 'settings', abilitie: ['settings:edit'] },
+                { section: 'calls', abilitie: ['calls:create', 'calls:make', 'calls:view'] },
+                { section: 'payments', abilitie: ['payments:create', 'payments:view'] },
+                { section: 'reports', abilitie: ['reports:view', 'reports:export'] },
+                { section: 'campains', abilitie: ['campains:create', 'campains:edit', 'campains:view'] },
+                { section: 'management', abilitie: ['management:create', 'management:view'] },
+                { section: 'contacts', abilitie: ['contacts:create', 'contacts:view'] },
+                { section: 'directions', abilitie: ['directions:create', 'directions:view'] },
+                { section: 'monitor', abilitie: ['monitor:view'] },
+                { section: 'consult', abilitie: ['consult:view'] },
+                { section: 'management_historial', abilitie: ['management_historial:view'] }
+            ]
+        }
+    },
+    {
+        role: 'supervisor',
+        permission: {
+            sections: [
+                { section: 'monitor', label: 'Monitoreo' },
+                { section: 'consult', label: 'Consultas' },
+                { section: 'directions', label: 'Direcciones' },
+                { section: 'contacts', label: 'Contactos' },
+                { section: 'management_historial', label: 'Historial de gestiones' },
+                { section: 'management', label: 'Gestión' },
+                { section: 'campains', label: 'Campañas' },
+                { section: 'calls', label: 'Llamadas' },
+                { section: 'payments', label: 'Pagos' }
+            ],
+            abilities: [
+                { section: 'calls', abilitie: ['calls:make', 'calls:receive'] },
+                { section: 'payments', abilitie: ['payments:create', 'payments:view'] },
+                { section: 'campains', abilitie: ['campains:view', 'campains:transfer'] },
+                { section: 'management', abilitie: ['management:create', 'management:view'] },
+                { section: 'contacts', abilitie: ['contacts:create', 'contacts:view'] },
+                { section: 'directions', abilitie: ['directions:create', 'directions:view'] },
+                { section: 'monitor', abilitie: ['monitor:view'] },
+                { section: 'consult', abilitie: ['consult:view'] },
+                { section: 'management_historial', abilitie: ['management_historial:view'] }
+            ]
+        }
+    },
+    {
+        role: 'campo',
+        permission: {
+            sections: [
+                { section: 'contacts', label: 'Contactos' },
+                { section: 'management', label: 'Gestión' },
+                { section: 'calls', label: 'Llamadas' },
+                { section: 'payments', label: 'Pagos' }
+            ],
+            abilities: [
+                { section: 'calls', abilitie: ['calls:view'] },
+                { section: 'payments', abilitie: ['payments:view'] },
+                { section: 'management', abilitie: ['management:create', 'management:view'] },
+                { section: 'contacts', abilitie: ['contacts:create', 'contacts:view'] }
+            ]
+        }
+    },
+    {
+        role: 'call',
+        permission: {
+            sections: [
+                { section: 'contacts', label: 'Contactos' },
+                { section: 'management', label: 'Gestión' },
+                { section: 'calls', label: 'Llamadas' }
+            ],
+            abilities: [
+                { section: 'calls', abilitie: ['calls:view'] },
+                { section: 'management', abilitie: ['management:create', 'management:view'] },
+                { section: 'contacts', abilitie: ['contacts:create', 'contacts:view'] }
+            ]
+        }
+    }
+];
 
-    const menu=useRef();
-    const config=useRef();
-    const icon_menu=useRef();
-    const reports=useRef();
-    const gestion=useRef();
-    const monitoreo=useRef();
+export default function NavSlide() {
+    const menu = useRef();
 
-    const [options,setOptions]=useState([]);
-    const abilities_reports=[
-        "pagos:all",
-        "gestiones_pago:all",
-        "no_efectivos:all",
-        "estado_convenios:all",
-        "estadistica_gestion:all",
-        "historico_condonaciones:all",
-        "gastos_gestion:all",
-        "cierre_caja:all",
-        "estado_cartera:all"
-    ];
+    const [sections, setSections] = useState([]);
 
-    useEffect(()=>{
-        const permission=localStorage.getItem('permission').split(',');
-        setOptions(permission);
-    },[]);
+    useEffect(() => {
+        const role = localStorage.getItem('role');
+        const userPermission = permissionData.find(p => p.role === role);
+
+        if (userPermission) {
+            setSections(userPermission.permission.sections);
+        } else {
+            console.log('⚠️ No permissions found for role:', role);
+        }
+    }, []);
+
+    const hasSection = (sectionName) => {
+        return sections.some(s => s.section === sectionName);
+    };
+
+    const getSectionLabel = (sectionName) => {
+        const section = sections.find(s => s.section === sectionName);
+        return section ? section.label : '';
+    };
 
     return (
         <div className="Dashboard__navSlide">
             <div>
-                <img src="./icons/entypo_menu.png" onClick={(e)=>{useNav(e)}}/>
+                <img src="./icons/entypo_menu.png" onClick={(e) => { useNav(e) }} />
             </div>
-            {
-                (localStorage.getItem('rol')==='administrador') ?
-                    <NavLink to="dashboard/" className="NavSlide__option">
-                        <img src="./icons/mdi_home.png"/>
-                        <label>Inicio</label>
-                        <span>Inicio</span>
-                    </NavLink>
-                : <></>
-            }
 
-            {
-                (options.includes('Monitor:all') | options.includes('estadistica_gestion:all') | options.includes('no_efectivos:all')) ?
-                    <div className="NavSlide__option" onClick={(e)=>{useMenu(e.target,monitoreo,'NavSlide__subOption--active',monitoreo)}}>
-                        <img src="./icons/monitor.png"/>
-                        <label>Monitoreo</label>
-                        <span>Monitoreo</span>
-                        <div className="NavSlide__option--down">
-                            <img src="./icons/arrowDown.png"/>
-                            <div ref={monitoreo}>
-                                {
-                                    (options.includes('Monitor:all')) 
-                                    ?
-                                        <NavLink to={"dashboard/monitor"}>Dashboard monitoreo</NavLink>
-                                    :   <></>
-                                }
-                                {
-                                    (options.includes('estadistica_gestion:all'))
-                                    ?
-                                        <NavLink to={"dashboard/greports"}>Estadísticas de gestiones</NavLink>
-                                    :   <></>
-                                }
-                                {
-                                    (options.includes('no_efectivos:all'))
-                                    ?
-                                        <NavLink to={"dashboard/gcontactabilidad"}>Créditos no efectivos</NavLink>
-                                    :   <></>             
-                                }
-                            </div>
-                        </div>
-                    </div>
-                : <></>
-            }
+            {hasSection('home') && (
+                <NavLink to="/dashboard" className="NavSlide__option">
+                    <img src="./icons/mdi_home.png" />
+                    <label>{getSectionLabel('home')}</label>
+                    <span>{getSectionLabel('home')}</span>
+                </NavLink>
+            )}
 
-            {
-                (options.includes('Consulta:all') || options.includes('Cobranza:all'))
-                ?
-                    <NavLink to="credits" className="NavSlide__option">
-                        <img src="./icons/ic_round-search.png"/>
-                        <label>Créditos</label>
-                        <span>Créditos</span>
-                    </NavLink>
-                :   <></>
-            }
+            {hasSection('monitor') && (
+                <NavLink to="/monitor" className="NavSlide__option">
+                    <img src="./icons/monitor.png" />
+                    <label>{getSectionLabel('monitor')}</label>
+                    <span>{getSectionLabel('monitor')}</span>
+                </NavLink>
+            )}
 
-            {/* {
-                (options.includes('Consulta:all')) ?
-                    <NavLink to="dashboard/consulta" className="NavSlide__option">
-                        <img src="./icons/ic_round-search.png"/>
-                        <label>Consulta</label>
-                        <span>Consulta</span>
-                    </NavLink>
-                : <></>
-            }
-
-            {
-                () ?
-                    <NavLink to="dashboard/recaudacion" className="NavSlide__option">
-                        <img src="./icons/solar_cart-bold.png"/>
-                        <label>Recaudación</label>
-                        <span>Recaudación</span>
-                    </NavLink>
-                : <></>
-            } */}
-
-            {
-                (options.includes('Direcciones:all')) ?
-                    <NavLink to="dashboard/direcciones" className="NavSlide__option">
-                        <img src="./icons/location.png"/>
-                        <label>Direcciones</label>
-                        <span>Direcciones</span>
-                    </NavLink>
-                : <></>
-            }
-
-            {
-                (options.includes('Gestion:all')) ?
-                    <div to="dashboard/cobranza" className="NavSlide__option" onClick={(e)=>{useMenu(e.target,gestion,'NavSlide__subOption--active',gestion)}}>
-                        <img src="./icons/zoiper.png"/>
-                        <label>Cobranza</label>
-                        <span>Cobranza</span>
-                        <div className="NavSlide__option--down">
-                            <img src="./icons/arrowDown.png"/>
-                            <div ref={gestion}>
-                                {
-                                    (options.includes('Gestion:all')) ?
-                                        <>
-                                            {
-                                                (options.includes('User:all') | options.includes('User:minimize'))
-                                                ?
-                                                    <>
-                                                        <NavLink to={"dashboard/glist"}>Historial de gestiones</NavLink>
-                                                        <NavLink to={"dashboard/clist"}>Consulta créditos</NavLink>
-                                                        {
-                                                            (options.includes('Gestion:all'))
-                                                            ?
-                                                                <NavLink to={"dashboard/call"}>Gestión</NavLink>
-                                                            : <></>
-                                                        }
-                                                        
-                                                        <NavLink to={"dashboard/campain"}>Campañas</NavLink>
-                                                        <NavLink to={"dashboard/ccall"}>Configuración de Gestión</NavLink>
-                                                        {/* <NavLink to={"dashboard/graficos"}>Consolidado general</NavLink> */}
-                                                    </>
-
-                                                :   
-                                                    (options.includes('Monitor:all'))
-                                                    ?
-                                                        <>
-                                                            <NavLink to={"dashboard/greports"}>Estadísticas de gestiones</NavLink>
-                                                            <NavLink to={"dashboard/call"}>Gestión</NavLink>
-                                                            <NavLink to={"dashboard/glist"}>Historial de gestiones</NavLink>
-                                                            <NavLink to={"dashboard/clist"}>Consulta créditos</NavLink>
-                                                            <NavLink to={"dashboard/campain"}>Campañas</NavLink>
-                                                            {/* <NavLink to={"dashboard/graficos"}>Consolidado general</NavLink> */}
-                                                        </>
-                                                    :
-                                                        <NavLink to={"dashboard/call"}>Gestión</NavLink>
-                                            }
-                                        </>
-                                    :
-                                        <></>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                :<></>
-            }
+            {hasSection('consult') && (
+                <NavLink to="/credits" className="NavSlide__option">
+                    <img src="./icons/ic_round-search.png" />
+                    <label>{getSectionLabel('consult')}</label>
+                    <span>{getSectionLabel('consult')}</span>
+                </NavLink>
+            )}
             
-            {
-                (    
-                    options.includes('pagos_efectivo:all') | 
-                    options.includes('pagos_revertidos:all') | 
-                    options.includes('gastos_cobranza:all') | 
-                    options.includes('gastos_condonaciones:all') | 
-                    options.includes('pagos:all')
-                ) ?
-                    <div to={"dashboard/reportes"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,icon_menu,'NavSlide__subOption--active',icon_menu)}}>
-                        <img src={"./icons/ion_bar-chart.png"}/>
-                        <label>Reportes cierre de caja</label>
-                        <span>Reportes cierre de caja</span>
-                        <div className="NavSlide__option--down">
-                            <img src="./icons/arrowDown.png"/>
-                            <div ref={icon_menu}>
-                                {
-                                    (options.includes('pagos_efectivo:all')) ?
-                                        <NavLink to={"dashboard/pagosefectivos"}>Pagos en efectivo</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('pagos_revertidos:all')) ?
-                                        <NavLink to={"dashboard/pagosrevertidos"}>Pagos revertidos</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('gastos_cobranza:all')) ?
-                                        <NavLink to={"dashboard/gastoscobranza"}>Facturación gastos de cobranza</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('gastos_cobranza:all')) ?
-                                        <NavLink to={"dashboard/condonaciones"}>Condonaciones</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('pagos:all')) ?
-                                        <NavLink to={"dashboard/cobros"}>Pagos contabilidad</NavLink>
-                                    :
-                                        <></>
-                                }
-                            </div>
+            {hasSection('directions') && (
+                <NavLink to="/directions" className="NavSlide__option">
+                    <img src="./icons/location.png" />
+                    <label>{getSectionLabel('directions')}</label>
+                    <span>{getSectionLabel('directions')}</span>
+                </NavLink>
+            )}
+
+            {hasSection('contacts') && (
+                <NavLink to="/contacts" className="NavSlide__option">
+                    <img src="./icons/ph_user-bold.png" />
+                    <label>{getSectionLabel('contacts')}</label>
+                    <span>{getSectionLabel('contacts')}</span>
+                </NavLink>
+            )}
+
+            {hasSection('management_historial') && (
+                <NavLink to="/managements-historial" className="NavSlide__option">
+                    <img src="./icons/ion_bar-chart.png" />
+                    <label>{getSectionLabel('management_historial')}</label>
+                    <span>{getSectionLabel('management_historial')}</span>
+                </NavLink>
+            )}
+
+            {hasSection('management') && (
+                <NavLink to="/management" className="NavSlide__option">
+                    <img src="./icons/zoiper.png" />
+                    <label>{getSectionLabel('management')}</label>
+                    <span>{getSectionLabel('management')}</span>
+                </NavLink>
+            )}
+
+            {hasSection('campains') && (
+                <NavLink to="/campains" className="NavSlide__option">
+                    <img src="./icons/ion_bar-chart.png" />
+                    <label>{getSectionLabel('campains')}</label>
+                    <span>{getSectionLabel('campains')}</span>
+                </NavLink>
+            )}
+
+            {hasSection('users') && (
+                <NavLink to="/users" className="NavSlide__option">
+                    <img src="./icons/ph_user-bold.png" />
+                    <label>{getSectionLabel('users')}</label>
+                    <span>{getSectionLabel('users')}</span>
+                </NavLink>
+            )}
+
+            {hasSection('settings') && (
+                <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menu, 'NavSlide__subOption--active', menu) }}>
+                    <img src={"./icons/mdi_database-cog.png"} />
+                    <label>{getSectionLabel('settings')}</label>
+                    <span>{getSectionLabel('settings')}</span>
+                    <div className="NavSlide__option--down">
+                        <img src="./icons/arrowDown.png" />
+                        <div ref={menu}>
+                            <NavLink to={"dashboard/configuracion/importdb"}>Carteras</NavLink>
+                            <NavLink to={"dashboard/configuracion/importpays"}>Carga de pagos</NavLink>
                         </div>
                     </div>
-                :<></>
-            }
+                </div>
+            )}
 
-            {
-                (   
-                    options.includes('gastos_judiciales:all') | 
-                    options.includes('estado_convenios:all')  |
-                    options.includes('gestiones_pago:all') |
-                    options.includes('reporte_faces:all') | 
-                    options.includes('estado_cartera:all') |
-                    options.includes('evolucion_creditos:all') |
-                    options.includes('asignacion_campain:all')
-                ) ?
-                    <div to={"dashboard/reportes"} className="NavSlide__option" onClick={(e)=>{useMenu(e.target,reports,'NavSlide__subOption--active',reports)}}>
-                        <img src={"./icons/ion_bar-chart.png"}/>
-                        <label>Reportes estadísticas</label>
-                        <span>Reportes estadísticas</span>
-                        <div className="NavSlide__option--down">
-                            <img src="./icons/arrowDown.png"/>
-                            <div ref={reports}>
-                                {
-                                    (options.includes('gastos_judiciales:all')) ?
-                                        <NavLink to={"dashboard/gastosjudicial"}>Gastos judiciales cargados</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('estado_convenios:all')) ?
-                                        <NavLink to={"dashboard/gconvenios"}>Estado de convenios</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('gestiones_pago:all')) ?
-                                        <NavLink to={"dashboard/stadistics"}>Pagos con gestión</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('reporte_faces:all')) ?
-                                        <NavLink to={"dashboard/cierrefaces"}>Reporte gestión FACES</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('estado_cartera:all')) ?
-                                        <NavLink to={"dashboard/estado"}>Estado de cartera (SEFIL)</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('evolucion_creditos:all')) ?
-                                        <NavLink to={"dashboard/evolucionpagos"}>Evolución créditos y pagos (SEFIL)</NavLink>
-                                    :
-                                        <></>
-                                }
-                                {
-                                    (options.includes('asignacion_campain:all')) ?
-                                        <NavLink to={"dashboard/asignacion"}>Asignación de campaña</NavLink>
-                                    :
-                                        <></>
-                                }
-                                
-                            </div>
-                        </div>
-                    </div>
-                :<></>
-            }
+            {hasSection('calls') && (
+                <NavLink to="/calls" className="NavSlide__option">
+                    <img src="./icons/zoiper.png" />
+                    <label>{getSectionLabel('calls')}</label>
+                    <span>{getSectionLabel('calls')}</span>
+                </NavLink>
+            )}
 
-            {
-                (options.includes('User:all') | options.includes('User:minimize')) ?
-                    <NavLink to="dashboard/usuarios" className="NavSlide__option">
-                        <img src="./icons/ph_user-bold.png"/>
-                        <label>Usuarios</label>
-                        <span>Usuarios</span>
-                    </NavLink>
-                : <></>
-            }
+            {hasSection('payments') && (
+                <NavLink to="/payments" className="NavSlide__option">
+                    <img src="./icons/ion_bar-chart.png" />
+                    <label>{getSectionLabel('payments')}</label>
+                    <span>{getSectionLabel('payments')}</span>
+                </NavLink>
+            )}
 
-            {
-                (options.includes('DB:all')) ?
-                    <div className="NavSlide__option" onClick={(e)=>{useMenu(e.target,menu,'NavSlide__subOption--active',menu)}}>
-                        <img src={"./icons/mdi_database-cog.png"}/>
-                        <label>Configuración</label>
-                        <span>Configuración</span>
-                        <div className="NavSlide__option--down">
-                            <img src="./icons/arrowDown.png"/>
-                            <div ref={menu}>
-                                <NavLink to={"dashboard/configuracion/importdb"}>Carteras</NavLink>
-                                <NavLink to={"dashboard/configuracion/importpays"}>Carga de pagos</NavLink>
-                            </div>
-                        </div>
-                    </div>
-                : <></>
-            }
-            
         </div>
     );
 }

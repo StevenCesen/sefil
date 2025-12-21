@@ -11,6 +11,7 @@ import SelectManagementStates from "../../SelectManagementStates/SelectManagemen
 import SelectAgencies from "../../SelectAgencies/SelectAgencies";
 import CreditDetailsModal from "../../CreditDetailsModal/CreditDetailsModal";
 import ErrorDisplay from "../../ErrorDisplay/ErrorDisplay";
+import useFetch from "../../../hooks/useFetch";
 
 const createInitialState = (distributions = []) => ({
     transfer: false,
@@ -45,6 +46,7 @@ const createInitialState = (distributions = []) => ({
 });
 
 export default function CardAssignCampain({ data, updateCredits }) {
+    const { fetchWithAuth } = useFetch();
     const [state, setState] = useState(() => createInitialState(data?.distributions));
     
     const ref_origin = useRef();
@@ -194,55 +196,76 @@ export default function CardAssignCampain({ data, updateCredits }) {
     }, [state.prev_agencies, updateState, performAssignSearch]);
 
     const buildFilters = useCallback(() => {
-        const params = new URLSearchParams();
+        const filters = {
+            sync_status: 'ACTIVE'
+        };
 
+        // Filtros de mora (días de atraso)
         if (state.item_filter.mora?.min && Number(state.item_filter.mora.min) !== 0) {
-            params.append('mora_min', state.item_filter.mora.min);
+            filters.days_past_due_min = Number(state.item_filter.mora.min);
         }
         if (state.item_filter.mora?.max && Number(state.item_filter.mora.max) !== 0) {
-            params.append('mora_max', state.item_filter.mora.max);
-        }
-        if (state.item_filter.monto?.min && Number(state.item_filter.monto.min) !== 0) {
-            params.append('monto_min', state.item_filter.monto.min);
-        }
-        if (state.item_filter.monto?.max && Number(state.item_filter.monto.max) !== 0) {
-            params.append('monto_max', state.item_filter.monto.max);
-        }
-        if (state.item_filter.cuota?.min && Number(state.item_filter.cuota.min) !== 0) {
-            params.append('cuotas_min', state.item_filter.cuota.min);
-        }
-        if (state.item_filter.cuota?.max && Number(state.item_filter.cuota.max) !== 0) {
-            params.append('cuotas_max', state.item_filter.cuota.max);
-        }
-        if (state.item_filter.estado_gestion) {
-            params.append('management', state.item_filter.estado_gestion);
-        }
-        if (state.item_filter.estado) {
-            params.append('state', state.item_filter.estado);
-        }
-        if (state.prev_agencies.length > 0) {
-            params.append('agencias', JSON.stringify(state.prev_agencies));
-        }
-        if (state.agents_origin.length > 0) {
-            params.append('users', JSON.stringify(state.agents_origin));
-        } else if (state.agent.id) {
-            params.append('user', state.agent.id);
-        }
-        if (state.agents_dtsn.length > 1) {
-            params.append('destinos', JSON.stringify(state.agents_dtsn));
-        } else if (state.agents_dtsn.length === 1) {
-            params.append('destino', state.agents_dtsn[0]);
-        }
-        if (state.total_assign > 0) {
-            params.append('limite', state.total_assign);
-        }
-        if (state.creditos.length > 0) {
-            // Construir el array con comillas: ["2021045721","2021045722"]
-            const creditosString = `[${state.creditos.map(c => `"${c}"`).join(',')}]`;
-            params.append('creditos', creditosString);
+            filters.days_past_due_max = Number(state.item_filter.mora.max);
         }
 
-        return params.toString();
+        // Filtros de monto
+        if (state.item_filter.monto?.min && Number(state.item_filter.monto.min) !== 0) {
+            filters.total_amount_min = Number(state.item_filter.monto.min);
+        }
+        if (state.item_filter.monto?.max && Number(state.item_filter.monto.max) !== 0) {
+            filters.total_amount_max = Number(state.item_filter.monto.max);
+        }
+
+        // Filtros de cuotas
+        if (state.item_filter.cuota?.min && Number(state.item_filter.cuota.min) !== 0) {
+            filters.total_fees_min = Number(state.item_filter.cuota.min);
+        }
+        if (state.item_filter.cuota?.max && Number(state.item_filter.cuota.max) !== 0) {
+            filters.total_fees_max = Number(state.item_filter.cuota.max);
+        }
+
+        // Estados de gestión
+        if (state.item_filter.estado_gestion) {
+            filters.status_management = Array.isArray(state.item_filter.estado_gestion)
+                ? state.item_filter.estado_gestion
+                : [state.item_filter.estado_gestion];
+        }
+
+        // Estados de cobranza
+        if (state.item_filter.estado) {
+            filters.collection_state = Array.isArray(state.item_filter.estado)
+                ? state.item_filter.estado
+                : [state.item_filter.estado];
+        }
+
+        // Agencias
+        if (state.prev_agencies.length > 0) {
+            filters.agencies = state.prev_agencies;
+        }
+
+        // Usuarios origen
+        if (state.agents_origin.length > 0) {
+            filters.user_origin = state.agents_origin;
+        } else if (state.agent.id) {
+            filters.user_origin = [state.agent.id];
+        }
+
+        // Usuarios destino
+        if (state.agents_dtsn.length > 0) {
+            filters.user_dstn = state.agents_dtsn;
+        }
+
+        // Límite de asignación
+        if (state.total_assign > 0) {
+            filters.limit = Number(state.total_assign);
+        }
+
+        // Créditos específicos
+        if (state.creditos.length > 0) {
+            filters.credits = state.creditos;
+        }
+
+        return filters;
     }, [state]);
 
     const handleTransfer = useCallback(async (e) => {
@@ -261,15 +284,9 @@ export default function CardAssignCampain({ data, updateCredits }) {
         updateState({ errors: [], loading: true });
 
         try {
-            const filters = buildFilters();
-            const formData = new URLSearchParams({
-                agent_origin: state.agent.id,
-                agent_destino: state.agent_dtsn.id,
-                carga: JSON.stringify([]),
-                cartera: data.cartera
-            });
-            
-            const responseData = await transferCampaignLoad(data.id, filters, formData);
+            const transferData = buildFilters();
+
+            const responseData = await transferCampaignLoad(data.id, transferData, fetchWithAuth);
 
             if (responseData.errors?.length > 0) {
                 updateState({ errors: responseData.errors });
@@ -329,16 +346,16 @@ export default function CardAssignCampain({ data, updateCredits }) {
         const fetchInitialData = async () => {
             try {
                 const [businessData, creditsData] = await Promise.all([
-                    fetchBusinessData(),
-                    data.type_assign !== 'api' ? fetchCreditsData(data.cartera) : Promise.resolve(null)
+                    fetchBusinessData(fetchWithAuth),
+                    data.type !== 'api' ? fetchCreditsData(data.cartera, fetchWithAuth) : Promise.resolve(null)
                 ]);
-                
+
                 updateState({ business: businessData.data });
 
                 if (creditsData) {
-                    updateState({ 
-                        charge: creditsData, 
-                        mode: 'assoc' 
+                    updateState({
+                        charge: creditsData,
+                        mode: 'assoc'
                     });
                     localStorage.setItem('filt', JSON.stringify(creditsData));
                 }
@@ -354,7 +371,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
         };
 
         fetchInitialData();
-    }, [data, updateState]);
+    }, []);
 
     if (!state.business || !state.charge || !state.distributions) {
         return <div>Cargando...</div>;

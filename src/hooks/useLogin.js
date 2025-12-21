@@ -9,28 +9,27 @@ export default async function useLogin(data,tag,btn,setload){
     if(request.status!==401 & request.status!==403){
         const response=await request.json();
 
-        if(!response.token){
+        if(!response.result.token){
             tag.current.textContent='Usuario inválido, revisa las credenciales';
             btn.current.textContent='Ingresar';
             setload(false);
         }else{
 
-            localStorage.setItem('token',response.token);
-            localStorage.setItem('permission',response.permission);
-            localStorage.setItem('name',response.name);
-            localStorage.setItem('rol',response.rol);
-            localStorage.setItem('temp_uS',response.id);
-            localStorage.setItem('extension',response.extension);
-            localStorage.setItem('phone_number',response.phone_number);
-            localStorage.setItem('timestamp_cc',new Date().getTime());
-            localStorage.setItem('estado','CONECTADO');
-            
+            localStorage.setItem('token', response.result.token);
+            localStorage.setItem('name', response.result.user.username);
+            localStorage.setItem('role', response.result.user.role);
+            localStorage.setItem('temp_uS', response.result.user.id);
+            localStorage.setItem('extension', response.result.user.extension);
+            localStorage.setItem('phone_number', response.result.user.phone);
+            localStorage.setItem('timestamp_cc', new Date().getTime());
+            localStorage.setItem('estado', 'CONECTADO');
+
             if(response.changePassword){
-                localStorage.setItem('change_ps',true);
+                localStorage.setItem('change_ps', true);
                 location.href='#/dashboard/me';
                 location.reload();
             }else{
-                localStorage.setItem('change_ps',false);
+                localStorage.setItem('change_ps', false);
                 location.href='./';
             }
         }

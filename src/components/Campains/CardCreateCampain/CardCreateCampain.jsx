@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import "./CardCreateCampain.css"
+import "./CardCreateCampain.css";
+import useFetch from "../../../hooks/useFetch";
+import sendpush from "../../../helpers/sendpush";
 
 export default function CardCreateCampain({setData}){
+    const { fetchWithAuth } = useFetch();
 
     const [campain,setCampain]=useState({
         name:"",
-        fecha_init:"",
-        fecha_finish:"",
+        begin_time:"",
+        end_time:"",
         data:[],
-        cartera:""
+        business_id:"",
+        type:"manual"
     });
 
     const [agents,setAgents]=useState();
@@ -18,44 +22,39 @@ export default function CardCreateCampain({setData}){
     useEffect(()=>{
         setCampain({
             name:"",
-            fecha_init:"",
-            fecha_finish:"",
+            begin_time:"",
+            end_time:"",
             data:[],
-            cartera:"SEFIL_1",
-            type_assign:'manual'
+            business_id:"",
+            type:'manual'
         });
 
         setNew(false);
-        
+
         //Bajamos los agentes
-        fetch(`${import.meta.env.VITE_URL_BASE}/users/agents`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
+        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1`)
+            .then((response) => response.json())
             .then((data) => {
-
-                const data_prev=data;
-
+                const data_prev = Array.isArray(data) ? data : (data.result?.data || []);
                 data_prev.map(agent=> {
                     agent.status=false
                 });
-
                 setAgents(data_prev);
+            })
+            .catch(error => {
+                console.error('Error fetching agents:', error);
+                setAgents([]);
             });
-        
+
         //Bajamos las carteras
-        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then((response) => response.json())  
+        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/businesses`)
+            .then((response) => response.json())
             .then((data) => {
-                setBusiness(data.data);
+                setBusiness(data.result.data || []);
+            })
+            .catch(error => {
+                console.error('Error fetching business:', error);
+                setBusiness([]);
             });
     },[]);
 
@@ -118,13 +117,13 @@ export default function CardCreateCampain({setData}){
                 <label className="CardCreateCampain__select">
                     Empresa
                     <select
-                        value={campain.cartera}
+                        value={campain.business_id}
                         onChange={(e)=>{
                             setCampain({
                                 ...campain,
-                                cartera:e.target.value
+                                business_id:e.target.value
                             });
-                            
+
                             if(e.target.value==="OTRA"){
                                 setNew(true);
                             }else{
@@ -132,44 +131,26 @@ export default function CardCreateCampain({setData}){
                             }
                         }}
                     >
+                        <option value="">-- Seleccionar --</option>
                         {
                             business.map((bus,index)=>(
                                 (bus.name!=='CARTERA VENDIDA')
                                 ?
-                                    <option key={index} value={bus.name}>{bus.name}</option>
+                                    <option key={index} value={bus.id}>{bus.name}</option>
                                 : <></>
                             ))
                         }
-                        <option value={"OTRA"}>--OTRA EMPRESA--</option>
                     </select>
-                    {
-                        (new_business)
-                        ?   
-                            <label>
-                                Nueva empresa
-                                <input 
-                                    type="text" 
-                                    value={campain.cartera}
-                                    onChange={(e)=>{
-                                        setCampain({
-                                            ...campain,
-                                            cartera:e.target.value
-                                        });
-                                    }}
-                                />
-                            </label>
-                        :   <></>
-                    }
                 </label>
 
                 <label className="CardCreateCampain__select">
-                    Cargar datos
+                    Tipo de campaña
                     <select
-                        value={campain.type_assign}
+                        value={campain.type}
                         onChange={(e)=>{
                             setCampain({
                                 ...campain,
-                                type_assign:e.target.value
+                                type:e.target.value
                             });
                         }}
                     >
@@ -184,90 +165,85 @@ export default function CardCreateCampain({setData}){
                         onChange={(e)=>{
                             setCampain({
                                 ...campain,
-                                fecha_init:e.target.value
+                                begin_time:e.target.value
                             })
                         }}
-                        value={campain.fecha_init} 
+                        value={campain.begin_time}
                         type="date"/>
                 </label>
-                
+
                 <label className="CardCreateCampain__input">
                     Fecha de fin
-                    <input 
+                    <input
                         onChange={(e)=>{
                             setCampain({
                                 ...campain,
-                                fecha_finish:e.target.value
+                                end_time:e.target.value
                             })
                         }}
-                        value={campain.fecha_finish} 
+                        value={campain.end_time}
                         type="date"
                     />
                 </label>
             </div>
 
             <div className="CardCreateCampain__footer">
-                <button 
-                    onClick={(e)=>{
-                        
+                <button
+                    onClick={async (e)=>{
+
+                        if(campain.name==='' || campain.begin_time==='' || campain.end_time==='' || campain.business_id===''){
+                            sendpush({
+                                title:'ERR: Datos incompletos.',
+                                message:'Por favor, llene todos los campos.',
+                                type:'Push--danger',
+                                timeout:3000
+                            });
+                            return;
+                        }
+
                         e.target.textContent='Creando campaña...';
+                        e.target.disabled = true;
+
                         const agents_select=[];
-                        const distributions=[];
 
                         agents.map(agent=>{
                             if(agent.status){
-                                agents_select.push({
-                                    id:agent.id,
-                                    name:agent.name
-                                });
-
-                                distributions.push({
-                                    agent_id:agent.id,
-                                    total:0,
-                                    distribution:[],
-                                    pending:[],
-                                    processed:[],
-                                    inprocess:[]
-                                });
+                                agents_select.push(agent.id);
                             }
                         });
 
                         const data={
-                            agents:JSON.stringify(agents_select),
                             name:campain.name,
-                            cartera:campain.cartera,
-                            fecha_init:campain.fecha_init,
-                            fecha_finish:campain.fecha_finish,
-                            distributions:JSON.stringify(distributions),
-                            charge_inicial:JSON.stringify([]),
-                            type_assign:campain.type_assign
+                            business_id:campain.business_id,
+                            begin_time:campain.begin_time,
+                            end_time:campain.end_time,
+                            type:campain.type,
+                            agents:JSON.stringify(agents_select),
+                            state:'ACTIVE'
                         };
 
-                        if(campain.name!=='' & campain.fecha_init!='' & campain.fecha_finish!=''){
-                            fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
+                        try {
+                            const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains`,{
                                 method:'POST',
-                                headers: {
-                                    Accept: 'application/json',
-                                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                                },
                                 body:new URLSearchParams(data)
-                            })
-                                .then((response) => response.json())  
-                                .then((data) => {
-    
-                                    e.target.textContent='Campaña creada';
-    
-                                    setData(data.data);
-                                    setCampain({
-                                        name:"",
-                                        fecha_init:"",
-                                        fecha_finish:"",
-                                        data:[],
-                                        cartera:"SEFIL_1",
-                                        type_assign:"manual"
-                                    });
-    
-                                });
+                            });
+
+                            const result = await response.json();
+
+                            e.target.textContent='Campaña creada';
+
+                            if(result.result && result.result.data) {
+                                setData(result.result.data);
+                            }
+
+                            setCampain({
+                                name:"",
+                                begin_time:"",
+                                end_time:"",
+                                data:[],
+                                business_id:"",
+                                type:"manual"
+                            });
 
                             sendpush({
                                 title:'Éxito.',
@@ -276,16 +252,18 @@ export default function CardCreateCampain({setData}){
                                 timeout:3000
                             });
 
-                        }else{
+                        } catch(error) {
+                            console.error('Error creating campaign:', error);
                             e.target.textContent='Guardar';
 
                             sendpush({
-                                title:'ERR: Datos incompletos.',
-                                message:'Por favor, llene todos los campos.',
+                                title:'Error.',
+                                message:'Error al crear la campaña.',
                                 type:'Push--danger',
                                 timeout:3000
                             });
-                            
+                        } finally {
+                            e.target.disabled = false;
                         }
                     }}
 

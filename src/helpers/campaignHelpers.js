@@ -1,31 +1,20 @@
-export const fetchBusinessData = async () => {
-    const response = await fetch(`${import.meta.env.VITE_URL_BASE}/bussines`, {
-        headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-    });
+export const fetchBusinessData = async (fetchWithAuth) => {
+    const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/businesses`);
     return response.json();
 };
 
-export const fetchCreditsData = async (cartera) => {
-    const response = await fetch(`${import.meta.env.VITE_URL_BASE}/credit/all?cartera=${cartera}`, {
-        headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-    });
+export const fetchCreditsData = async (business_id, fetchWithAuth) => {
+    const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/credits?business_id=${business_id}`);
     return response.json();
 };
 
-export const transferCampaignLoad = async (campaignId, filters, formData) => {
-    const response = await fetch(`${import.meta.env.VITE_URL_BASE}/campains/${campaignId}?${filters}`, {
-        method: 'PUT',
+export const transferCampaignLoad = async (campaignId, transferData, fetchWithAuth) => {
+    const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains/transfer/${campaignId}`, {
+        method: 'PATCH',
         headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+            'Content-Type': 'application/json'
         },
-        body: formData
+        body: JSON.stringify(transferData)
     });
     return response.json();
 };
