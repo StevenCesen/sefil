@@ -20,43 +20,39 @@ export default function SectionPayments({ payments, credit, view_complete_info =
         const endHeaders = is_admin
             ? ['Monto','Estado','Acciones']
             : [];
-        
+
         return {
             headers: [...baseHeaders, ...detailHeaders, ...endHeaders],
-            detailFields: view_complete_info ? ['saldo_capital', 'interes', 'mora', 'seguro_desgravamen', 'gastos_judiciales', 'gastos_cobranza', 'otros_valores'] : [],
+            detailFields: view_complete_info ? ['capital', 'interest', 'mora', 'safe', 'legal_expenses', 'collection_expenses', 'other_values'] : [],
 
         };
     }, [view_complete_info, is_admin]);
 
     const getDetailValue = (payment, field) => {
-        try {
-            return payment.detalle ? JSON.parse(payment.detalle)[field] || 0 : 0;
-        } catch {
-            return 0;
-        }
+        return payment[field] || 0;
     };
 
     const renderPaymentCells = (payment) => {
         const baseCells = [
-            payment.id,
-            payment.fecha,
-            payment.forma_pago
+            payment.payment_reference || payment.id,
+            payment.payment_date || payment.fecha,
+            payment.payment_type || payment.forma_pago
         ];
 
-        const detailCells = detailFields.map(field => 
+        const detailCells = detailFields.map(field =>
             useFormatterNumber({ value: getDetailValue(payment, field), currency: 'USD' })
         );
 
         const endCells = [
-            useFormatterNumber({ value: payment.valor_recibido, currency: 'USD' }),
-            (payment.status === 'guardado' || payment.status === 'Facturado') ? 'Guardado' : 'Revertido'
+            useFormatterNumber({ value: payment.payment_value || payment.valor_recibido, currency: 'USD' }),
+            (payment.payment_status === 'guardado' || payment.payment_status === 'Facturado' || payment.status === 'guardado' || payment.status === 'Facturado') ? 'Guardado' : 'Revertido'
         ];
 
         return [...baseCells, ...detailCells, ...endCells];
     };
 
     const handlePrintClick = (payment) => {
-        if (payment.id === 'FACES' || payment.id === 'Gasto Cob.') {
+        if (payment.payment_reference === 'FACES' || payment.payment_reference === 'Gasto Cob.' || payment.id === 'FACES' || payment.id === 'Gasto Cob.') {
             sendpush({
                 title: 'No disponible',
                 message: 'No se puede reimprimir este pago, debido a que fue generado por fuente externa.',
@@ -66,7 +62,7 @@ export default function SectionPayments({ payments, credit, view_complete_info =
             return;
         }
 
-        if (payment.status_print >= 2) {
+        if ((payment.payment_prints || payment.status_print) >= 2) {
             sendpush({
                 title: 'Límite superado',
                 message: 'Se ha superado la cantidad de reimpresiones permitidas.',
@@ -86,7 +82,7 @@ export default function SectionPayments({ payments, credit, view_complete_info =
     };
 
     const handleReverseClick = (payment) => {
-        if (payment.id === 'FACES' || payment.id === 'Gasto Cob.') {
+        if (payment.payment_reference === 'FACES' || payment.payment_reference === 'Gasto Cob.' || payment.id === 'FACES' || payment.id === 'Gasto Cob.') {
             sendpush({
                 title: 'No disponible',
                 message: 'No se puede anular un comprobante externo.',
@@ -96,7 +92,7 @@ export default function SectionPayments({ payments, credit, view_complete_info =
             return;
         }
 
-        const hoursDifference = (new Date() - new Date(payment.fecha)) / (1000 * 60 * 60);
+        const hoursDifference = (new Date() - new Date(payment.payment_date || payment.fecha)) / (1000 * 60 * 60);
         if (hoursDifference > 24) {
             sendpush({
                 title: 'Tiempo excedido',
@@ -154,7 +150,7 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                     {headers.map(header => <label key={header}>{header}</label>)}
                 </div>
                 
-                {payments.map((payment, n) => {
+                {payments.data.map((payment, n) => {
                     const cells = renderPaymentCells(payment);
                     
                     return (
@@ -201,9 +197,9 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                         textAlign: 'center'
                     }}>
                         <h3>Confirmar Anulación</h3>
-                        <p>¿Está seguro que desea anular el comprobante #{paymentToReverse.id}?</p>
-                        
-                        {credit.collection_state === 'CONVENIO DE PAGO' && (
+                        <p>¿Está seguro que desea anular el comprobante #{paymentToReverse.payment_reference || paymentToReverse.id}?</p>
+
+                        {credit && credit.collection_state === 'CONVENIO DE PAGO' && (
                             <p style={{ color: 'orange', fontWeight: 'bold', marginTop: '15px' }}>
                                 ADVERTENCIA: Al anular este pago, el pago en el convenio también se revertirá.
                             </p>
@@ -278,33 +274,33 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                             Cerrar
                         </button>
                         
-                        <PDFViewer 
-                            width={'500px'} 
+                        <PDFViewer
+                            width={'500px'}
                             height={'500px'}
                         >
                             <PDF
-                                nro_voucher={selectedPayment.id}
-                                type_print={(selectedPayment.status==="guardado") ? "ORIGINAL" : selectedPayment.status.toUpperCase()}
+                                nro_voucher={selectedPayment.payment_reference || selectedPayment.id}
+                                type_print={(selectedPayment.payment_status==="guardado" || selectedPayment.status==="guardado") ? "ORIGINAL" : (selectedPayment.payment_status || selectedPayment.status).toUpperCase()}
                                 tipo_transaccion={selectedPayment.tipo_transaccion || 'total'}
-                                forma_pago={selectedPayment.forma_pago}
-                                insitucion_financiera={selectedPayment.institucion_financiera || ''}
+                                forma_pago={selectedPayment.payment_type || selectedPayment.forma_pago}
+                                insitucion_financiera={selectedPayment.financial_institution || selectedPayment.institucion_financiera || ''}
                                 codigo_deposito={selectedPayment.codigo_deposito || ''}
                                 name={"HERRERA CEVALLOS DELIA DEL ROCIO"}
                                 ci={"1103957732"}
                                 credito={"2022069774"}
-                                
+
                                 mora={getDetailValue(selectedPayment, 'mora')}
-                                interes={getDetailValue(selectedPayment, 'interes')}
-                                seguro_desgravamen={getDetailValue(selectedPayment, 'seguro_desgravamen')}
-                                gastos_judiciales={getDetailValue(selectedPayment, 'gastos_judiciales')}
-                                saldo_capital={getDetailValue(selectedPayment, 'saldo_capital')}
-                                gastos_cobranza={getDetailValue(selectedPayment, 'gastos_cobranza')}
-                                otros_valores={getDetailValue(selectedPayment, 'otros_valores')}
-                                
-                                valor_recibido={selectedPayment.valor_recibido}
-                                valor_devuelto={selectedPayment.valor_devuelto || 0}
-                                
-                                fecha={selectedPayment.fecha}
+                                interes={getDetailValue(selectedPayment, 'interest')}
+                                seguro_desgravamen={getDetailValue(selectedPayment, 'safe')}
+                                gastos_judiciales={getDetailValue(selectedPayment, 'legal_expenses')}
+                                saldo_capital={getDetailValue(selectedPayment, 'capital')}
+                                gastos_cobranza={getDetailValue(selectedPayment, 'collection_expenses')}
+                                otros_valores={getDetailValue(selectedPayment, 'other_values')}
+
+                                valor_recibido={selectedPayment.payment_value || selectedPayment.valor_recibido}
+                                valor_devuelto={selectedPayment.payment_difference || selectedPayment.valor_devuelto || 0}
+
+                                fecha={selectedPayment.payment_date || selectedPayment.fecha}
                                 agente={"MBravo" || 'N/A'}
                             />
                         </PDFViewer>

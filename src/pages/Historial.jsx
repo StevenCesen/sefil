@@ -6,7 +6,7 @@ import useFilterGestions from "../hooks/useFilterGestions";
 import useReturnFilter from "../hooks/useReturnFilter";
 import Loader from "../components/Loader/loader";
 
-export default function GHistorial(){
+export default function Historial(){
     const [campains,setCampains]=useState();
     const [current,setCurrent]=useState();
     const [agents,setAgents]=useState();
@@ -26,20 +26,31 @@ export default function GHistorial(){
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-            .then((response) => response.json())  
-	        .then((data) => {
+            .then((response) => {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('role');
+                    window.location.href = '/login';
+                    return;
+                }
+                return response.json();
+            })
+	        .then((response) => {
+                if (!response) return;
+
+                const data = response.result;
 
                 if(param.ci){
-                    data.path+=`?credit=${param.ci}&cartera=${params.get('cartera')}`;
+                    data.meta.path+=`?credit=${param.ci}&cartera=${params.get('cartera')}`;
 
-                    if(data.next_page_url!==null){
-                        const page_param_next=data.next_page_url.split('?')[1];
-                        data.next_page_url=`${data.path}&${page_param_next}`;
+                    if(data.links.next!==null){
+                        const page_param_next = data.links.next.split('?')[1];
+                        data.links.next=`${data.meta.path}&${page_param_next}`;
                     }
 
-                    if(data.prev_page_url!==null){
-                        const page_param_prev=data.prev_page_url.split('?')[1];
-                        data.prev_page_url=`${data.path}&${page_param_prev}`;
+                    if(data.links.prev!==null){
+                        const page_param_prev = data.links.prev.split('?')[1];
+                        data.links.prev=`${data.meta.path}&${page_param_prev}`;
                     }
                 }else{
                     const filter=useReturnFilter({
@@ -54,16 +65,16 @@ export default function GHistorial(){
                         agente:filters.agente,
                         gestion_channel_whatsapp:filters.gestion_channel_whatsapp
                     });
-                    
-                    if(data.next_page_url!==null){
-                        data.next_page_url+=`&${filter}`;
+
+                    if(data.links.next!==null){
+                        data.links.next+=`&${filter}`;
                     }
-                    
-                    if(data.prev_page_url!==null){
-                        data.prev_page_url+=`&${filter}`; 
+
+                    if(data.links.prev!==null){
+                        data.links.prev+=`&${filter}`;
                     }
                 }
-                
+
                 setData(data);
                 setLoading(false);
             });
@@ -86,15 +97,24 @@ export default function GHistorial(){
 
         setLoading(false);
         
-        fetch(`${import.meta.env.VITE_URL_BASE}/users/agents`,{
+        fetch(`${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-            .then((response) => response.json())  
+            .then((response) => {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('role');
+                    window.location.href = '/login';
+                    return;
+                }
+                return response.json();
+            })
             .then((data) => {
-                setAgents(data);
+                if (!data) return;
+                setAgents(data.result.data);
             });
 
         fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
@@ -103,47 +123,73 @@ export default function GHistorial(){
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-            .then((response) => response.json())  
-            .then((data) => {
-                setCampains(data.data);
+            .then((response) => {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('role');
+                    window.location.href = '/login';
+                    return;
+                }
+                return response.json();
+            })
+            .then((response) => {
+                if (!response) return;
+                setCampains(response.result.data);
 
                 if(param.ci!==undefined){
-                    fetch(`${import.meta.env.VITE_URL_BASE}/managmentall?credit=${param.ci}&cartera=${params.get('cartera')}`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/managements?credit_id=${param.ci}`,{
                         headers: {
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`
                         }
                     })
-                        .then((response) => response.json())  
-                        .then((data) => {
+                        .then((response) => {
+                            if (response.status === 401) {
+                                localStorage.removeItem('token');
+                                localStorage.removeItem('role');
+                                window.location.href = '/login';
+                                return;
+                            }
+                            return response.json();
+                        })
+                        .then((response) => {
+                            if (!response) return;
 
-                            data.path+=`?credit=${param.ci}&cartera=${params.get('cartera')}`;
+                            const data = response.result;
+                            data.meta.path+=`?credit_id=${param.ci}`;
 
-                            if(data.next_page_url!==null){
-                                const page_param_next=data.next_page_url.split('?')[1];
-                                data.next_page_url=`${data.path}&${page_param_next}`;
+                            if(data.links.next!==null){
+                                const page_param_next = data.links.next.split('?')[1];
+                                data.links.next=`${data.meta.path}&${page_param_next}`;
                             }
 
-                            if(data.prev_page_url!==null){
-                                const page_param_prev=data.prev_page_url.split('?')[1];
-                                data.prev_page_url=`${data.path}&${page_param_prev}`;
+                            if(data.links.prev!==null){
+                                const page_param_prev = data.links.prev.split('?')[1];
+                                data.links.prev=`${data.meta.path}&${page_param_prev}`;
                             }
-                            
+
                             setData(data);
                         });
                 }else{
-
-                    fetch(`${import.meta.env.VITE_URL_BASE}/managmentall`,{
+                    fetch(`${import.meta.env.VITE_URL_BASE}/managements`,{
                         headers: {
-
                             Accept: 'application/json',
                             Authorization: `Bearer ${localStorage.getItem('token')}`
                         }
                     })
-                        .then((response) => response.json())  
-                        .then((data) => {
-                            console.log(data);
-                            setData(data);
+                        .then((response) => {
+                            if (response.status === 401) {
+                                localStorage.removeItem('token');
+                                localStorage.removeItem('role');
+                                window.location.href = '/login';
+                                return;
+                            }
+                            return response.json();
+                        })
+                        .then((response) => {
+                            if (!response) return;
+                            console.log(response);
+                            setData(response.result);
                         });
                 }
             });
@@ -510,47 +556,47 @@ export default function GHistorial(){
 
                 {
                     data.data.map((gestion,index)=>(
-                        <div className={`Historial__item ${(gestion.is_wweb) ? "Historial__item--wweb" : ""}`}>
+                        <div key={index} className={`Historial__item ${(gestion.is_wweb) ? "Historial__item--wweb" : ""}`}>
                             <button
                                 onClick={(e)=>{
                                     setCurrent(gestion)
                                 }}
                             >Ver</button>
-                            <label>{gestion.fecha.split(" ")[0]}</label>
-                            <label>{gestion.campain_name}</label>
+                            <label>{gestion.created_at.split(" ")[0]}</label>
+                            <label>{gestion.campain_id}</label>
                             <label>{gestion.client_name}</label>
                             <label>{gestion.client_ci}</label>
-                            <label>{gestion.type}</label>
-                            <label>{gestion.id_credit}</label>
-                            <label>{gestion.substate_gestion}</label>
-                            <label>{gestion.date_promise}</label>
-                            <label>{gestion.dias_vencidos}</label>
-                            <label>{`${gestion.byUser.split(" ")[0].substring(0,1)}. ${gestion.byUser.split(" ")[1]}`}</label>
+                            <label>{gestion.client?.type || ''}</label>
+                            <label>{gestion.credit_id}</label>
+                            <label>{gestion.substate}</label>
+                            <label>{gestion.promise_date ? gestion.promise_date.split(" ")[0] : ''}</label>
+                            <label>{gestion.days_past_due}</label>
+                            <label>{gestion.created_by}</label>
                             <label>{gestion.observation}</label>
                         </div>
                     ))
                 }
 
                 <div className="DetailCredit__access" style={{margin:"10px 0"}}>
-                    <p>Registros del {data.from}-{data.to} de {data.total}</p>
-                    
+                    <p>Registros del {data.meta.from}-{data.meta.to} de {data.meta.total}</p>
+
                     <div>
                     {
-                        (data.total>10)
-                        ?   
+                        (data.meta.total>10)
+                        ?
                             <>
                                 <button onClick={()=>{
-                                    if(data.prev_page_url!==null){
-                                        updateData(data.prev_page_url)
+                                    if(data.links.prev!==null){
+                                        updateData(data.links.prev)
                                     }
                                 }}>Anterior</button>
                                 <button onClick={()=>{
-                                    if(data.next_page_url!==null){
-                                        updateData(data.next_page_url)
+                                    if(data.links.next!==null){
+                                        updateData(data.links.next)
                                     }
                                 }}>Siguiente</button>
                             </>
-                        : 
+                        :
                             <></>
                     }
                     </div>

@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./pages.css";
-import {useEffect, useState } from "react";
-import Loader from "../components/Loader/loader";
+import {useEffect} from "react";
 import PanelManagement from "../components/Management/PanelManagement/PanelManagement";
 import FilterManagement from "../components/Management/FilterManagement/FilterManagement";
 import { useStoreFilterManagement } from "../stores/useStoreFilterManagement";
@@ -20,8 +19,7 @@ export default function Gestion(){
 
     useEffect(()=>{
         loader.viewOn(true);
-        credits.numberTrays();
-        store_templates.getTemplates();
+        // store_templates.getTemplates();
         loader.viewOn(false);
     },[]);
     
@@ -51,24 +49,24 @@ export default function Gestion(){
             {credits.credits && credits.credits.data.map((credit,n) => (
                 <CardCreditManagement key={credit.id} index={n} credit={credit} />
             ))}
-
+            
             {credits.credits && (
                 <div>
                     <p className="Gestion__subtitle">
-                        Registros del {credits.credits.from} al {credits.credits.to} de un total de {credits.credits.total}
+                        Registros del {credits.credits.meta.from} al {credits.credits.meta.to} de un total de {credits.credits.meta.total}
                     </p>
                     <div className="Gestion__navPagination">
                         <button
                             onClick={async ()=>{
-                                if(credits.credits.prev_page_url!==null){        
-                                    await credits.nextPage({url:credits.credits.prev_page_url});
+                                if(credits.credits.links.prev!==null){        
+                                    await credits.nextPage({url:credits.credits.links.prev});
                                 }
                             }}
                         >Anterior</button>
                         <button
                             onClick={async ()=>{
-                                if(credits.credits.next_page_url!==null){        
-                                    await credits.nextPage({url:credits.credits.next_page_url});
+                                if(credits.credits.links.next!==null){        
+                                    await credits.nextPage({url:credits.credits.links.next});
                                 }
                             }}
                         >Siguiente</button>

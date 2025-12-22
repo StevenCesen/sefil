@@ -15,7 +15,6 @@ import useFetch from "../../../hooks/useFetch";
 
 const createInitialState = (distributions = []) => ({
     transfer: false,
-    mode: 'manual',
     view_agencies: false,
     view_agents: false,
     view_dtns: false,
@@ -33,12 +32,11 @@ const createInitialState = (distributions = []) => ({
     errors: [],
     total_assign: 0,
     loading: false,
+    searchText: '',
     item_filter: {
-        filter: false,
-        mode: '',
-        mora: '',
-        cuota: '',
-        monto: '',
+        mora: { min: '', max: '' },
+        cuota: { min: '', max: '' },
+        monto: { min: '', max: '' },
         estado: '',
         estado_gestion: '',
         agencia: []
@@ -48,11 +46,13 @@ const createInitialState = (distributions = []) => ({
 export default function CardAssignCampain({ data, updateCredits }) {
     const { fetchWithAuth } = useFetch();
     const [state, setState] = useState(() => createInitialState(data?.distributions));
-    
+
+    // ========== REFS ==========
     const ref_origin = useRef();
     const ref_destino = useRef();
     const busc = useRef();
 
+    // ========== UTILITY FUNCTIONS ==========
     const updateState = useCallback((updates) => {
         setState(prevState => ({ ...prevState, ...updates }));
     }, []);
@@ -61,11 +61,12 @@ export default function CardAssignCampain({ data, updateCredits }) {
         updateState({ charge: newCharge });
     }, [updateState]);
 
+    // ========== FILTER & SEARCH ==========
     const performAssignSearch = useCallback((searchParams = {}) => {
         const {
             charge = state.charge,
-            searchValue = '',
-            filter = true,
+            searchValue = state.searchText,
+            filter = searchValue.length === 0,
             coincidence = state.coincidence,
             mora = state.item_filter.mora,
             cuota = state.item_filter.cuota,
@@ -76,43 +77,22 @@ export default function CardAssignCampain({ data, updateCredits }) {
             agents = state.agents_origin.length > 0 ? state.agents_origin : state.agent.id
         } = searchParams;
 
-        // Si hay búsqueda de texto (créditos o nombres), desactivar filtros
-        if (searchValue.length > 0) {
-            useAssignSearch(
-                charge,
-                searchValue,
-                updateCharge,
-                false, // Siempre false cuando hay búsqueda de texto
-                coincidence,
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                data.cartera,
-                (creditos) => updateState({ creditos })
-            );
-        } else {
-            // Solo aplicar filtros cuando NO hay búsqueda de texto
-            useAssignSearch(
-                charge,
-                searchValue,
-                updateCharge,
-                filter,
-                coincidence,
-                mora,
-                cuota,
-                monto,
-                estado,
-                agencies,
-                estado_gestion,
-                agents,
-                data.cartera,
-                (creditos) => updateState({ creditos })
-            );
-        }
+        useAssignSearch(
+            charge,
+            searchValue,
+            updateCharge,
+            filter,
+            coincidence,
+            mora,
+            cuota,
+            monto,
+            estado,
+            agencies,
+            estado_gestion,
+            agents,
+            data.cartera,
+            (creditos) => updateState({ creditos })
+        );
     }, [state, updateCharge, updateState, data.cartera]);
 
     const updateRange = useCallback((key, value) => {
@@ -121,6 +101,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
         performAssignSearch({ [key]: value });
     }, [state.item_filter, updateState, performAssignSearch]);
 
+    // ========== AGENT HANDLERS ==========
     const handleAgentSelect = useCallback((agent) => {
         updateState({
             agent: { id: agent.id, name: agent.name },
@@ -168,6 +149,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
         }
     }, [state.agents_origin, state.agents_dtsn, updateAgentText, updateState, performAssignSearch]);
 
+    // ========== AGENCY HANDLERS ==========
     const handleAgencyFilter = useCallback((agencia, checked) => {
         const ALL_AGENCIES = [
             "catacocha", "palanda", "cariamanga", "zamora", "zumba", 
@@ -195,6 +177,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
         }
     }, [state.prev_agencies, updateState, performAssignSearch]);
 
+    // ========== TRANSFER HANDLERS ==========
     const buildFilters = useCallback(() => {
         const filters = {
             sync_status: 'ACTIVE'
@@ -279,6 +262,24 @@ export default function CardAssignCampain({ data, updateCredits }) {
             return;
         }
 
+        // Validar que los créditos ingresados no estén INACTIVE
+        if (state.creditos.length > 0 && state.charge?.data) {
+            const inactiveCredits = state.charge.data.filter(credit =>
+                state.creditos.includes(credit.credit_number || credit.id) &&
+                credit.sync_status === 'INACTIVE'
+            );
+
+            if (inactiveCredits.length > 0) {
+                sendpush({
+                    title: 'ERR: Créditos inactivos.',
+                    message: `No se puede transferir créditos con estado INACTIVE: ${inactiveCredits.map(c => c.credit_number || c.id).join(', ')}`,
+                    type: 'Push--danger',
+                    timeout: 5000
+                });
+                return;
+            }
+        }
+
         const originalText = e.target.textContent;
         e.target.textContent = "Transfiriendo...";
         updateState({ errors: [], loading: true });
@@ -319,6 +320,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
         }
     }, [state, updateState, buildFilters, data, updateCredits]);
 
+    // ========== OTHER HANDLERS ==========
     const handleCreditSearch = useCallback(async (e) => {
         const creditId = e.target.value.split('-')[1];
         if (creditId?.length > 7) {
@@ -334,15 +336,20 @@ export default function CardAssignCampain({ data, updateCredits }) {
 
     const handleCoincidenceChange = useCallback((e) => {
         if (!e.target.checked) return;
-        
+
         const copy = state.charge.data?.map(item => ({ ...item, search: true })) || [];
         updateState({ charge: { ...state.charge, data: copy }, coincidence: e.target.value });
         performAssignSearch({ coincidence: e.target.value });
     }, [state.charge, updateState, performAssignSearch]);
 
-    useEffect(() => {
-        setState(createInitialState(data.distributions));
+    const handleSearchTextChange = useCallback((e) => {
+        const searchValue = e.target.value;
+        updateState({ searchText: searchValue });
+        performAssignSearch({ searchValue });
+    }, [updateState, performAssignSearch]);
 
+    // ========== EFFECTS ==========
+    useEffect(() => {
         const fetchInitialData = async () => {
             try {
                 const [businessData, creditsData] = await Promise.all([
@@ -350,13 +357,13 @@ export default function CardAssignCampain({ data, updateCredits }) {
                     data.type !== 'api' ? fetchCreditsData(data.cartera, fetchWithAuth) : Promise.resolve(null)
                 ]);
 
-                updateState({ business: businessData.data });
+                setState(prevState => ({
+                    ...prevState,
+                    business: businessData.data,
+                    charge: creditsData || prevState.charge
+                }));
 
                 if (creditsData) {
-                    updateState({
-                        charge: creditsData,
-                        mode: 'assoc'
-                    });
                     localStorage.setItem('filt', JSON.stringify(creditsData));
                 }
             } catch (error) {
@@ -371,27 +378,31 @@ export default function CardAssignCampain({ data, updateCredits }) {
         };
 
         fetchInitialData();
-    }, []);
+    }, [fetchWithAuth, data.type, data.cartera]);
 
-    if (!state.business || !state.charge || !state.distributions) {
+    // ========== RENDER ==========
+    if (!state.business) {
         return <div>Cargando...</div>;
     }
 
     return (
         <div className="CardAssignCampain">
+            {/* Header */}
             <p className="CardAssignCampain__head">
                 Asignación de campaña | {data.name} ({data.totals} CRÉDITOS)
             </p>
 
+            {/* Search Credit */}
             <label className="CardAssignCampain__searchCredit">
                 <strong>Buscar crédito</strong>
-                <input 
+                <input
                     onChange={handleCreditSearch}
-                    type="search" 
+                    type="search"
                     placeholder="Número de crédito"
                 />
             </label>
 
+            {/* Agents Section */}
             <div className="CardAssignCampain__agents">
                 <AgentSelector
                     agents={data.agents}
@@ -406,7 +417,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                     isOrigin={true}
                 />
 
-                {state.transfer && state.mode !== 'assoc' && (
+                {state.transfer && (
                     <>
                         <p>a</p>
                         <AgentSelector
@@ -416,7 +427,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                             isOpen={state.view_dtns}
                             onToggle={() => updateState({ view_dtns: !state.view_dtns })}
                             onAgentSelect={() => {}}
-                            onAgentGroup={handleAgentGroup}
+                            onAgentGroup={(agent) => handleAgentGroup(agent, false)}
                             refElement={ref_destino}
                             title="Agente destino"
                             isOrigin={false}
@@ -424,35 +435,29 @@ export default function CardAssignCampain({ data, updateCredits }) {
                     </>
                 )}
             </div>
-            
+
+            {/* Transfer Mode */}
             <span><strong>Forma de asignación</strong></span>
-            
+
             <div className="CardAssignCampain__radius">
                 <label>
-                    <input 
+                    <input
                         type="checkbox"
-                        name="mode"
-                        value="transfer"
                         checked={state.transfer}
-                        onChange={(e) => {
-                            updateState({
-                                mode: e.target.checked ? e.target.value : 'assoc',
-                                transfer: e.target.checked
-                            });
-                        }}
+                        onChange={(e) => updateState({ transfer: e.target.checked })}
                     />
                     Transferir carga
                 </label>
             </div>
-            
+
+            {/* Load Data */}
             <label className="CardAssignCampain__file">
                 Cargar datos (<strong>{state.charge.total || 0}</strong>)
-                <input 
+                <input
                     ref={busc}
-                    onChange={(e) => {  
-                        performAssignSearch({ searchValue: e.target.value });
-                    }}
-                    type="text" 
+                    onChange={handleSearchTextChange}
+                    value={state.searchText}
+                    type="text"
                     placeholder="Ingrese nombre o creditos"
                 />
                 <button onClick={() => updateState({ view_details: true })}>
@@ -460,13 +465,14 @@ export default function CardAssignCampain({ data, updateCredits }) {
                 </button>
             </label>
 
+            {/* Filter Section */}
             <span style={{marginTop:"10px"}}>
                 <strong>Filtrado de datos</strong>
             </span>
 
             <div className="CardAssignCampain__radius">
                 <label>
-                    <input 
+                    <input
                         type="radio"
                         name="coincidence"
                         value="1"
@@ -477,6 +483,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                 </label>
             </div>
 
+            {/* Filters */}
             <div className="CardAssignCampain__filters">
                 <FilterRangeContainer onFilterChange={updateRange} />
                 
@@ -499,8 +506,10 @@ export default function CardAssignCampain({ data, updateCredits }) {
                 </div>
             </div>
 
+            {/* Errors Display */}
             <ErrorDisplay errors={state.errors} />
 
+            {/* Footer */}
             <div className="CardAssignCampain__footer">
                 {state.transfer ? (
                     <div>
@@ -533,6 +542,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                 )}
             </div>
 
+            {/* Modals */}
             <CreditDetailsModal
                 isOpen={state.view_details}
                 onClose={() => updateState({ view_details: false })}

@@ -30,6 +30,7 @@ export const useStoreManagement = create((set,get) => ({
     phones:null,
     managements:null,
     payments:null,
+    calls:null,
     notes:null,
     section:'MANAGEMENTS',
 
@@ -42,8 +43,8 @@ export const useStoreManagement = create((set,get) => ({
     setView:     (value)=>{set({view_panel:value})},
     setNroNotificacion:     (value)=>{set({nro_notificacion:value})},
     setCredit:     (value)=>{
-        
-        const { setPhones,setManagements,setPayments,setNotes }=get();
+
+        const { setPhones }=get();
 
         set({credit:value}),
         set({credit_id:value.id})
@@ -52,16 +53,17 @@ export const useStoreManagement = create((set,get) => ({
         set({client_type:value.clients[0].type});
         set({dias_vencidos:value.days_past_due});
         set({monto:value.total_amount});
-        
+
         setPhones({
-            identification:value.clients[0].ci,
-            credit_id:value.id
+            client_id: value.clients[0].id,
         });
 
-        setManagements();
-        setPayments();
-        setNotes();
-    
+        // Usar datos que vienen directamente del crédito
+        set({managements: { data: value.collection_managements || [] }});
+        set({payments: { data: value.collection_payments || [] }});
+        set({calls: { data: value.collection_calls || [] }});
+        set({notes: { data: [] }}); // Las notas no vienen en la estructura actual
+
     },
     setState:     (value)=>{set({state_gestion:value})},
     setSubstate:     (value)=>{set({substate_gestion:value})},
@@ -94,14 +96,9 @@ export const useStoreManagement = create((set,get) => ({
         set({managements:null}),
         set({payments:null})
     },
-    setPhones: async ({identification,credit_id}) => {
-        const phones=await getListPhones({credit_id,identification});
-        set({phones:phones});
-    },
-    setManagements: async () => {
-        const {cartera,credit_id}=get();
-        const managements=await getListManagements({credit_id,cartera});
-        set({managements:managements});
+    setPhones: async ({client_id}) => {
+        const phones=await getListPhones({client_id});
+        set({phones:phones.result.data});
     },
     addManagement: async (data) => {
         const {managements}=get();
@@ -109,11 +106,6 @@ export const useStoreManagement = create((set,get) => ({
         const temp=managements.data;
         temp.unshift(data);
         set({managements:{...managements,data:temp}});
-    },
-    setPayments: async () => {
-        const {cartera,credit_id}=get();
-        const payments=await getListPayments({credit_id,cartera});
-        set({payments:payments});
     },
     setNotes: async () =>{
         const {cartera,credit_id}=get();

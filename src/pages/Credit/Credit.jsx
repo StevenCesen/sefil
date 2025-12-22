@@ -20,61 +20,58 @@ import HistorialNav from "../../components/Tools/HistorialNav/HistorialNav";
 import ViewPDFCondonation from "../../components/Credits/ViewPDFCondonation/ViewPDFCondonation";
 import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFStructure";
 import ViewPDFBilling from "../../components/Credits/ViewPDFBilling/ViewPDFBilling";
-import getActivity from "../../helpers/Credits/getActivity";
 
 export default function Credit(){
     const params=useParams();
     const credit=useStoreManagement();
     const store_condonation=useStoreCondonation();
-    const [items,setItems]=useState([]);
     const store_structure=useStoreStructure();
     const [action,setAction]=useState('');
     const loader = useStoreLoader();
-    
+
     const attributes=new URLSearchParams(useLocation().search);
 
-    const handleItems = async ({credit_id,cartera}) =>{
-        const data_items = await getActivity({ credit_id,cartera });
-        setItems(data_items);
-    }
-
-    const helperCredit=async ({credit_id,cartera})=>{
+    const helperCredit=async ({credit_id})=>{
         loader.viewOn(true);
-        credit.setIDCampain(cartera);
-        const data_credit=await getCredit({credit_id,cartera});
-        credit.setCredit(data_credit);
+        const data_credit=await getCredit({credit_id});
+        console.log(data_credit);
+
+        if (data_credit && data_credit.result) {
+            credit.setCredit(data_credit.result);
+        }
         loader.viewOn(false);
     }
 
     useEffect(()=>{
         helperCredit({credit_id:params.id,cartera:attributes.get('cartera')});
-        handleItems({credit_id:params.id,cartera:attributes.get('cartera')});
 
         if(action==='GEN_CONDONATION'){
+            const managementExpenses = credit.credit.management_collection_expenses || 0;
             store_condonation.setInfoCredit({
                 ci:credit.credit.clients[0].ci,
                 name:credit.credit.clients[0].name,
-                total:credit.credit.total_amount-credit.credit.gasto_cobranza_sefil,
-                capital:credit.credit.saldo_capital,
+                total:credit.credit.total_amount - managementExpenses,
+                capital:credit.credit.capital,
                 mora:credit.credit.mora,
-                interes:credit.credit.interes,
-                seguro_desgravamen:credit.credit.seguro_desgravamen,
-                gastos_judiciales:credit.credit.gastos_judiciales,
-                gastos_cobranza_sefil:credit.credit.gasto_cobranza_sefil,
-                gastos_cobranza:credit.credit.gastos_cobranza,
-                otros_valores:credit.credit.otros_valores,
+                interes:credit.credit.interest,
+                seguro_desgravamen:credit.credit.safe,
+                gastos_judiciales:credit.credit.legal_expenses,
+                gastos_cobranza_sefil:managementExpenses,
+                gastos_cobranza:credit.credit.collection_expenses,
+                otros_valores:credit.credit.other_values,
                 id:credit.credit.id,
                 cartera:credit.cartera
             });
         }else if(action==='GEN_CONVENIO'){
             store_structure.viewOn(true);
+            const managementExpenses = credit.credit.management_collection_expenses || 0;
             store_structure.setInfoCredit({
                 ci:credit.credit.clients[0].ci,
                 name:credit.credit.clients[0].name,
                 total_amount:credit.credit.total_amount,
                 cartera:credit.cartera,
                 credit_id:credit.credit.id,
-                gasto_cobranza:credit.credit.gasto_cobranza_sefil
+                gasto_cobranza:managementExpenses
             });
         }else if(action==='GEN_JUDICIAL'){
             //  Ver después
@@ -104,9 +101,9 @@ export default function Credit(){
                                         ci={client.ci}
                                         type={client.type}
                                         sector_economico={client.sector_economico}
-                                        credit_id={credit.id}
-                                        days_past_due={credit.days_past_due}
-                                        total_amount={credit.total_amount}
+                                        credit_id={credit.credit.id}
+                                        days_past_due={credit.credit.days_past_due}
+                                        total_amount={credit.credit.total_amount}
                                         actions={false}
                                     />
                                 ))
@@ -123,29 +120,29 @@ export default function Credit(){
                             //Información adicional
                             info_extra={
                                 {
-                                    monthly_fee_amount:credit.credit.monthlyFeeAmount,
-                                    agent:credit.credit.agent,
-                                    sync_status:credit.credit.status
+                                    monthly_fee_amount:credit.credit.monthly_fee_amount,
+                                    agent:credit.credit.user_id,
+                                    sync_status:credit.credit.sync_status
                                 }
                             }
                         />
                     </div>
                     <div className="Credit__sectionPending">
                         <InfoValues
-                            capital={credit.credit.saldo_capital}
-                            interest={credit.credit.interes}
+                            capital={credit.credit.capital}
+                            interest={credit.credit.interest}
                             mora={credit.credit.mora}
-                            seguro={credit.credit.seguro_desgravamen}
-                            gasto_cobranza_sefil={credit.credit.gasto_cobranza_sefil}
-                            gasto_cobranza={credit.credit.gastos_cobranza}
-                            gastos_judiciales={credit.credit.gastos_judiciales}
-                            otros_valores={credit.credit.otros_valores}
+                            seguro={credit.credit.safe}
+                            gasto_cobranza_sefil={credit.credit.management_collection_expenses}
+                            gasto_cobranza={credit.credit.collection_expenses}
+                            gastos_judiciales={credit.credit.legal_expenses}
+                            otros_valores={credit.credit.other_values}
                         />
                         <div>
                             <InfoPending
                                 days_past_due={credit.credit.days_past_due}
                                 total_amount={credit.credit.total_amount}
-                                payment_date={('payment_date' in credit.credit) ? credit.credit.payment_date : credit.credit.paymentDate}
+                                payment_date={credit.credit.payment_date}
                             />
                             <InfoFees
                                 pending_fees={credit.credit.pending_fees}
@@ -187,15 +184,15 @@ export default function Credit(){
                             }
                         ]}
                     />
-                    <CardActivity items={items} />
+                    {/* <CardActivity items={items} /> */}
                 </div>
 
                 {
                     (action==='PAY_CREDIT')
                     ?
-                        
+
                         <CardPay
-                            setView={setAction} 
+                            setView={setAction}
                             credit={credit.credit}
                             cartera={credit.cartera}
                             updateInfoValues={()=>{}}
@@ -203,14 +200,14 @@ export default function Credit(){
                         />
 
                     :   (action==='PAY_GASTO')
-                        ?   
+                        ?
                             <CardConfirm
                                 id={credit.credit.id}
                                 cartera={credit.cartera}
-                                value={credit.credit.gasto_cobranza_sefil}
+                                value={credit.credit.management_collection_expenses}
                                 email={''}
-                                name={credit.credit.name}
-                                ci={credit.credit.ci}
+                                name={credit.credit.clients[0].name}
+                                ci={credit.credit.clients[0].ci}
                                 direccion={''}
                                 telefono={''}
                                 setGastos={()=>{}}

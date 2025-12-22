@@ -51,12 +51,26 @@ export default function MenuNav({options}){
                                 view_complete_info={false}
                                 is_admin={true}
                             />
-                        :   (store_management.section==='NOTES')
+                        :   (store_management.section==='CALLS')
                             ?
-                                <SectionNotes
-                                    notes={store_management.notes}
-                                />
-                            :   <></>
+                                <div>
+                                    {store_management.calls && store_management.calls.data && store_management.calls.data.length > 0 ? (
+                                        store_management.calls.data.map((call, index) => (
+                                            <div key={index} style={{padding: '10px', borderBottom: '1px solid #eee'}}>
+                                                <p>Llamada #{index + 1}</p>
+                                                {/* Aquí puedes agregar más detalles de la llamada */}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p style={{padding: '20px', textAlign: 'center'}}>No hay llamadas registradas</p>
+                                    )}
+                                </div>
+                            :   (store_management.section==='NOTES')
+                                ?
+                                    <SectionNotes
+                                        notes={store_management.notes}
+                                    />
+                                :   <></>
                 }
             </div>
         </div>

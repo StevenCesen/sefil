@@ -21,7 +21,6 @@ export default function CardEditCampain({data_campain}){
     const [business,setBusiness]=useState();
 
     useEffect(()=>{
-        // Obtener los agentes asignados a la campaña
         const campaignAgents = data_campain.agents_details || [];
 
         setCampain({
@@ -35,21 +34,18 @@ export default function CardEditCampain({data_campain}){
             type:data_campain.type || 'manual'
         });
 
-        //Bajamos los agentes
         fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1`)
             .then((response) => response.json())
             .then((data) => {
                 const data_prev = Array.isArray(data) ? data : (data.result?.data || []);
 
-                // Marcar todos como no seleccionados inicialmente
                 data_prev.forEach(agent => {
                     agent.status = false;
                 });
 
-                // Marcar como seleccionados los que están en la campaña
                 campaignAgents.forEach((agent_campain) => {
                     data_prev.forEach(agent => {
-                        if(agent.id === agent_campain.id || agent.id === agent_campain){
+                        if(agent.id === agent_campain.id){
                             agent.status = true;
                         }
                     });
@@ -62,7 +58,6 @@ export default function CardEditCampain({data_campain}){
                 setAgents([]);
             });
 
-        //Bajamos las carteras
         fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/businesses`)
             .then((response) => response.json())
             .then((data) => {
@@ -108,7 +103,7 @@ export default function CardEditCampain({data_campain}){
                                     key={index}
                                     onChange={(e)=>{
                                         const data_prev=agents;
-                    
+                                        
                                         data_prev.map(agent_actual=> {
                                             if(agent.id===agent_actual.id){
                                                 agent_actual.status=e.target.checked;   

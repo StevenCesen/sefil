@@ -182,7 +182,7 @@ export default function NavSlide() {
             )}
 
             {hasSection('consult') && (
-                <NavLink to="/credits" className="NavSlide__option">
+                <NavLink to="/consult" className="NavSlide__option">
                     <img src="./icons/ic_round-search.png" />
                     <label>{getSectionLabel('consult')}</label>
                     <span>{getSectionLabel('consult')}</span>

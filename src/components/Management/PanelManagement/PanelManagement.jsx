@@ -24,6 +24,8 @@ export default function PanelManagement({}){
     const restruct=useViewStruct();
     const credit=store_management.credit;
 
+    console.log(credit);
+
     useEffect(()=>{
         if(credit!=null && credit.collection_state==='CONVENIO DE PAGO'){
             restruct.getStruct({
@@ -64,14 +66,14 @@ export default function PanelManagement({}){
                             payment_date={credit.payment_date}
                         />
                         <InfoValues
-                            capital={credit.saldo_capital}
-                            interest={credit.interes}
+                            capital={credit.capital}
+                            interest={credit.interest}
                             mora={credit.mora}
-                            seguro={credit.seguro_desgravamen}
-                            gasto_cobranza_sefil={credit.gasto_cobranza_sefil}
-                            gasto_cobranza={credit.gastos_cobranza}
-                            gastos_judiciales={credit.gastos_judiciales}
-                            otros_valores={credit.otros_valores}
+                            seguro={credit.safe}
+                            gasto_cobranza_sefil={credit.management_collection_expenses}
+                            gasto_cobranza={credit.collection_expenses}
+                            gastos_judiciales={credit.legal_expenses}
+                            otros_valores={credit.other_values}
                         />
                         <InfoFees
                             paid_fees={credit.paid_fees}
@@ -102,9 +104,9 @@ export default function PanelManagement({}){
                                 <CardDial
                                     credit_id={credit.id}
                                     campain_id={store_management.campain_id}
-                                    credit_status={credit.status}
+                                    credit_status={credit.sync_status}
                                 />
-                                {
+                                {/* {
                                     (restruct.isViewOn)
                                     ?
                                         <div style={{marginTop:"10px"}}>
@@ -134,7 +136,8 @@ export default function PanelManagement({}){
                                                 }
                                             </div>
                                         </div>
-                                    :   (store_management.notes!=null)
+                                    :   
+                                        (store_management.notes!=null)
                                         ?
                                             <div style={{marginTop:"20px"}}>
                                                 {
@@ -155,7 +158,7 @@ export default function PanelManagement({}){
                                                 }
                                             </div>
                                         :   <></>
-                                }
+                                } */}
                             </div>
                         </div>
                     </div>

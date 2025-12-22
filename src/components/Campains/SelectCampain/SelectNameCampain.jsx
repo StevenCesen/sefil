@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useStoreFilterManagement } from "../../../stores/useStoreFilterManagement";
 import { useStoreLoader } from "../../../stores/useStoreLoader";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
@@ -8,6 +9,14 @@ export default function SelectNameCampain(){
     const filter_management=useStoreFilterManagement();
     const store_management=useStoreManagement();
     const loader = useStoreLoader();
+    
+    useEffect(()=>{
+        loader.viewOn(true);
+        filter_management.getCampains();
+        loader.viewOn(false);
+    },[]);
+
+    if(!filter_management.campains) return <></>
 
     return(
         <label className="SelectCampain">
@@ -23,10 +32,14 @@ export default function SelectNameCampain(){
                 }}
             >
                 <option value={''}>-- Seleccionar --</option>
-                <option value={'SEFIL_1'}>SEFIL 1</option>
-                <option value={'SEFIL_2'}>SEFIL 2</option>
-                <option value={'syncs'}>FACES</option>
-                <option value={'legal'}>LEGAL</option>
+                {filter_management.campains.data.map((campain)=>(
+                    <option 
+                        key={campain.id}
+                        value={campain.business_id}
+                    >
+                        {campain.name}
+                    </option>
+                ))}
             </select>
         </label>
     );

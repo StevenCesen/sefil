@@ -17,6 +17,9 @@ import Credits from './pages/Credits/Credits'
 import Credit from './pages/Credit/Credit'
 import Payments from './pages/Payments/Payments'
 import Campain from './pages/Campain'
+import Consult from './pages/Consult/Consult'
+import Gestion from './pages/Gestion'
+import Historial from './pages/Historial'
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -144,6 +147,33 @@ function App() {
           element={
             <ProtectedRoute>
               <Campain/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/consult"
+          element={
+            <ProtectedRoute>
+              <Consult/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/management"
+          element={
+            <ProtectedRoute>
+              <Gestion/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/managements-historial"
+          element={
+            <ProtectedRoute>
+              <Historial/>
             </ProtectedRoute>
           }
         />
