@@ -37,6 +37,14 @@ export default function Credit(){
         const data_items = await getActivity({ credit_id,cartera });
         setItems(data_items);
     }
+    
+    const handleNewTotalAmount = (total_amount,gastos_judiciales) =>{
+        credit.setCredit({
+            ...credit.credit,
+            total_amount: Number(total_amount),
+            gastos_judiciales: Number(gastos_judiciales)
+        });
+    }
 
     const helperCredit=async ({credit_id,cartera})=>{
         loader.viewOn(true);
@@ -132,14 +140,18 @@ export default function Credit(){
                     </div>
                     <div className="Credit__sectionPending">
                         <InfoValues
-                            capital={credit.credit.saldo_capital}
-                            interest={credit.credit.interes}
-                            mora={credit.credit.mora}
-                            seguro={credit.credit.seguro_desgravamen}
+                            capital={credit.credit.saldo_capital>0 ? credit.credit.saldo_capital : 0}
+                            interest={credit.credit.interes>0 ? credit.credit.interes : 0}
+                            mora={credit.credit.mora>0 ? credit.credit.mora : 0}
+                            seguro={credit.credit.seguro_desgravamen>0 ? credit.credit.seguro_desgravamen : 0}
                             gasto_cobranza_sefil={credit.credit.gasto_cobranza_sefil}
-                            gasto_cobranza={credit.credit.gastos_cobranza}
-                            gastos_judiciales={credit.credit.gastos_judiciales}
-                            otros_valores={credit.credit.otros_valores}
+                            gasto_cobranza={credit.credit.gastos_cobranza>0 ? credit.credit.gastos_cobranza : 0}
+                            gastos_judiciales={credit.credit.gastos_judiciales>0 ? credit.credit.gastos_judiciales : 0}
+                            otros_valores={credit.credit.otros_valores >0 ? credit.credit.otros_valores : 0}
+                            edit_judicial={true}
+                            credit_id={credit.credit.id}
+                            cartera={credit.cartera}
+                            setTotalAmount={handleNewTotalAmount}
                         />
                         <div>
                             <InfoPending

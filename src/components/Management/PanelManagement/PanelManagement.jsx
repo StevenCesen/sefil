@@ -64,14 +64,14 @@ export default function PanelManagement({}){
                             payment_date={credit.payment_date}
                         />
                         <InfoValues
-                            capital={credit.saldo_capital}
-                            interest={credit.interes}
-                            mora={credit.mora}
-                            seguro={credit.seguro_desgravamen}
+                            capital={credit.saldo_capital>0 ? credit.saldo_capital : 0}
+                            interest={credit.interes>0 ? credit.interes : 0}
+                            mora={credit.mora>0 ? credit.mora : 0}
+                            seguro={credit.seguro_desgravamen>0 ? credit.seguro_desgravamen : 0}
                             gasto_cobranza_sefil={credit.gasto_cobranza_sefil}
-                            gasto_cobranza={credit.gastos_cobranza}
-                            gastos_judiciales={credit.gastos_judiciales}
-                            otros_valores={credit.otros_valores}
+                            gasto_cobranza={credit.gastos_cobranza>0 ? credit.gastos_cobranza : 0}
+                            gastos_judiciales={credit.gastos_judiciales>0 ? credit.gastos_judiciales : 0}
+                            otros_valores={credit.otros_valores>0 ? credit.otros_valores : 0}
                         />
                         <InfoFees
                             paid_fees={credit.paid_fees}
