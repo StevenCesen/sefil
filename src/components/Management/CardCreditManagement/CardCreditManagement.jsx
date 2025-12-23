@@ -16,11 +16,11 @@ export default function CardCreditManagement({credit,index}){
                 store_management.setView(true);
                 store_credits.setCurrent(index);
             }} size={30} color="white"/>
-            <label>{credit.name}</label>
-            <label>{credit.ci}</label>
+            <label>{credit.clients[0].name}</label>
+            <label>{credit.clients[0].ci}</label>
             <label>{credit.agency}</label>
             <label>{credit.days_past_due}</label>
-            <label>{credit.sector_economico}</label>
+            <label>{credit.clients[0].economic_activity}</label>
             <label>{useFormatterNumber({value:credit.total_amount,currency:'USD'})}</label>
             <label>{credit.total_fees}</label>
             <label>{credit.status_management}</label>

@@ -110,7 +110,7 @@ export default function Credit(){
                             }
                         </div>
                         <InfoCredit
-                            business={credit.cartera}
+                            business={credit.credit.business_name}
                             sync_id={credit.credit.sync_id}
                             agency={credit.credit.agency}
                             frequency={credit.credit.frequency}
@@ -121,7 +121,7 @@ export default function Credit(){
                             info_extra={
                                 {
                                     monthly_fee_amount:credit.credit.monthly_fee_amount,
-                                    agent:credit.credit.user_id,
+                                    agent:credit.credit.agent_name,
                                     sync_status:credit.credit.sync_status
                                 }
                             }

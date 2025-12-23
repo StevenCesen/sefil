@@ -198,7 +198,7 @@ export default function NavSlide() {
             )}
 
             {hasSection('contacts') && (
-                <NavLink to="/contacts" className="NavSlide__option">
+                <NavLink to="/contacts-consult" className="NavSlide__option">
                     <img src="./icons/ph_user-bold.png" />
                     <label>{getSectionLabel('contacts')}</label>
                     <span>{getSectionLabel('contacts')}</span>

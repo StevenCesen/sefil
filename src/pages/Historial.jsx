@@ -562,16 +562,16 @@ export default function Historial(){
                                     setCurrent(gestion)
                                 }}
                             >Ver</button>
-                            <label>{gestion.created_at.split(" ")[0]}</label>
-                            <label>{gestion.campain_id}</label>
+                            <label>{gestion.created_at}</label>
+                            <label>{gestion.campain_name}</label>
                             <label>{gestion.client_name}</label>
                             <label>{gestion.client_ci}</label>
-                            <label>{gestion.client?.type || ''}</label>
+                            <label>{gestion.client_type}</label>
                             <label>{gestion.credit_id}</label>
                             <label>{gestion.substate}</label>
                             <label>{gestion.promise_date ? gestion.promise_date.split(" ")[0] : ''}</label>
                             <label>{gestion.days_past_due}</label>
-                            <label>{gestion.created_by}</label>
+                            <label>{gestion.created_by_name}</label>
                             <label>{gestion.observation}</label>
                         </div>
                     ))
@@ -610,7 +610,7 @@ export default function Historial(){
                     <div className="CardPay">
                         <button className="CardCondonacion__close" onClick={()=>{setCurrent([])}}>Volver</button>
                         <CardCurrentGestion
-                            data={current}
+                            management_id={current.id}
                         />
                     </div>
                 :   <></>

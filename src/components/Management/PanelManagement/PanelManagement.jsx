@@ -24,8 +24,6 @@ export default function PanelManagement({}){
     const restruct=useViewStruct();
     const credit=store_management.credit;
 
-    console.log(credit);
-
     useEffect(()=>{
         if(credit!=null && credit.collection_state==='CONVENIO DE PAGO'){
             restruct.getStruct({

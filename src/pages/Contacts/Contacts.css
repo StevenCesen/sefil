@@ -1,10 +1,10 @@
-.Consult {
+.Contacts {
     width: 100%;
     min-height: 100vh;
     background-color: #f5f5f5;
 }
 
-.Consult__title {
+.Contacts__title {
     font-size: 32px;
     font-weight: bold;
     margin-bottom: 40px;
@@ -13,7 +13,7 @@
 }
 
 /* Contenedor centrado del buscador */
-.Consult__search-container {
+.Contacts__search-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,26 +22,26 @@
     padding: 20px;
 }
 
-.Consult__search-container.has-results {
+.Contacts__search-container.has-results {
     min-height: auto;
     padding: 40px 20px 20px 20px;
 }
 
 /* Caja de búsqueda con input y botón */
-.Consult__search-box {
+.Contacts__search-box {
     display: flex;
     align-items: center;
     max-width: 700px;
     width: 100%;
     margin-bottom: 30px;
-    border: 3px solid #ff9800;
+    border: 3px solid #2196f3;
     border-radius: 10px;
     overflow: hidden;
     background-color: white;
-    box-shadow: 0 4px 10px rgba(255, 152, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(33, 150, 243, 0.2);
 }
 
-.Consult__search-input {
+.Contacts__search-input {
     flex: 1;
     padding: 18px 30px;
     border: none;
@@ -50,17 +50,17 @@
     background-color: transparent;
 }
 
-.Consult__search-input::placeholder {
+.Contacts__search-input::placeholder {
     color: #ccc;
 }
 
-.Consult__search-input:focus {
+.Contacts__search-input:focus {
     outline: none;
 }
 
-.Consult__search-button {
+.Contacts__search-button {
     padding: 24px 50px;
-    background-color: #ff9800;
+    background-color: #2196f3;
     color: white;
     border: none;
     font-size: 16px;
@@ -70,17 +70,17 @@
     white-space: nowrap;
 }
 
-.Consult__search-button:hover:not(:disabled) {
-    background-color: #f57c00;
+.Contacts__search-button:hover:not(:disabled) {
+    background-color: #1976d2;
 }
 
-.Consult__search-button:disabled {
-    background-color: #ffb74d;
+.Contacts__search-button:disabled {
+    background-color: #64b5f6;
     cursor: not-allowed;
 }
 
 /* Grupo de radio buttons */
-.Consult__radio-group {
+.Contacts__radio-group {
     display: flex;
     gap: 30px;
     align-items: center;
@@ -88,7 +88,7 @@
     flex-wrap: wrap;
 }
 
-.Consult__radio-label {
+.Contacts__radio-label {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -96,7 +96,7 @@
     transition: all 0.2s;
 }
 
-.Consult__radio-label input[type="radio"] {
+.Contacts__radio-label input[type="radio"] {
     appearance: none;
     width: 20px;
     height: 20px;
@@ -107,11 +107,11 @@
     transition: all 0.2s;
 }
 
-.Consult__radio-label input[type="radio"]:checked {
-    border-color: #ff9800;
+.Contacts__radio-label input[type="radio"]:checked {
+    border-color: #2196f3;
 }
 
-.Consult__radio-label input[type="radio"]:checked::before {
+.Contacts__radio-label input[type="radio"]:checked::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -119,23 +119,23 @@
     transform: translate(-50%, -50%);
     width: 10px;
     height: 10px;
-    background-color: #ff9800;
+    background-color: #2196f3;
     border-radius: 50%;
 }
 
-.Consult__radio-text {
+.Contacts__radio-text {
     font-size: 16px;
     font-weight: 600;
     color: #555;
     user-select: none;
 }
 
-.Consult__radio-label.active .Consult__radio-text {
-    color: #ff9800;
+.Contacts__radio-label.active .Contacts__radio-text {
+    color: #2196f3;
 }
 
 /* Resultados */
-.Consult__results {
+.Contacts__results {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -143,28 +143,27 @@
     margin: 0 20px 20px 20px;
 }
 
-.Consult__results-header {
+.Contacts__results-header {
     display: grid;
-    grid-template-columns: 40px repeat(13, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     padding: 15px;
-    background-color: #ff9800;
+    background-color: #2196f3;
     color: white;
     font-weight: 600;
     font-size: 13px;
-    border-bottom: 2px solid #f57c00;
+    border-bottom: 2px solid #1976d2;
 }
 
-.Consult__results-header label {
+.Contacts__results-header label {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    text-align: center;
 }
 
-.Consult__results-item {
+.Contacts__results-item {
     display: grid;
-    grid-template-columns: 40px repeat(13, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     padding: 15px;
     border-bottom: 1px solid #eee;
@@ -172,33 +171,25 @@
     transition: background-color 0.2s;
 }
 
-.Consult__results-item:hover {
+.Contacts__results-item:hover {
     background-color: #f9f9f9;
 }
 
-.Consult__results-item a {
+.Contacts__results-item a {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.Consult__results-item label {
+.Contacts__results-item label {
     font-size: 13px;
     color: #333;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    text-align: center;
 }
 
-.Consult__results-item>:nth-child(3) {
-    font-size: 13px;
-    color: #333;
-    overflow: hidden;
-    white-space: break-spaces;
-}
-
-.Consult__results-footer {
+.Contacts__results-footer {
     padding: 15px;
     text-align: center;
     font-size: 14px;
@@ -207,85 +198,85 @@
     border-top: 1px solid #eee;
 }
 
-.Consult__loading,
-.Consult__no-results {
+.Contacts__loading,
+.Contacts__no-results {
     padding: 40px;
     text-align: center;
     font-size: 16px;
     color: #666;
 }
 
-.Consult__loading {
-    color: #ff9800;
+.Contacts__loading {
+    color: #2196f3;
 }
 
-.Consult__no-results {
+.Contacts__no-results {
     color: #999;
 }
 
 /* Responsive */
 @media (max-width: 1400px) {
-    .Consult__results-header,
-    .Consult__results-item {
-        grid-template-columns: 40px repeat(6, 1fr);
+    .Contacts__results-header,
+    .Contacts__results-item {
+        grid-template-columns: 40px repeat(5, 1fr);
     }
 
-    .Consult__results-header label:nth-child(n+8),
-    .Consult__results-item label:nth-child(n+8) {
+    .Contacts__results-header label:nth-child(n+7),
+    .Contacts__results-item label:nth-child(n+7) {
         display: none;
     }
 }
 
 @media (max-width: 1024px) {
-    .Consult__results-header,
-    .Consult__results-item {
+    .Contacts__results-header,
+    .Contacts__results-item {
         grid-template-columns: 40px repeat(4, 1fr);
     }
 
-    .Consult__results-header label:nth-child(n+6),
-    .Consult__results-item label:nth-child(n+6) {
+    .Contacts__results-header label:nth-child(n+6),
+    .Contacts__results-item label:nth-child(n+6) {
         display: none;
     }
 }
 
 @media (max-width: 768px) {
-    .Consult__title {
+    .Contacts__title {
         font-size: 24px;
         margin-bottom: 30px;
     }
 
-    .Consult__search-box {
+    .Contacts__search-box {
         flex-direction: column;
         border-radius: 12px;
     }
 
-    .Consult__search-input {
+    .Contacts__search-input {
         border-bottom: 1px solid #eee;
     }
 
-    .Consult__search-button {
+    .Contacts__search-button {
         width: 100%;
         border-radius: 0 0 12px 12px;
     }
 
-    .Consult__radio-group {
+    .Contacts__radio-group {
         flex-direction: column;
         gap: 15px;
         align-items: flex-start;
         padding: 0 20px;
     }
 
-    .Consult__results-header,
-    .Consult__results-item {
+    .Contacts__results-header,
+    .Contacts__results-item {
         grid-template-columns: 40px repeat(2, 1fr);
     }
 
-    .Consult__results-header label:nth-child(n+4),
-    .Consult__results-item label:nth-child(n+4) {
+    .Contacts__results-header label:nth-child(n+4),
+    .Contacts__results-item label:nth-child(n+4) {
         display: none;
     }
 
-    .Consult__search-container {
+    .Contacts__search-container {
         padding: 10px;
     }
 }

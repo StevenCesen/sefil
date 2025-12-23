@@ -20,6 +20,7 @@ import Campain from './pages/Campain'
 import Consult from './pages/Consult/Consult'
 import Gestion from './pages/Gestion'
 import Historial from './pages/Historial'
+import Contacts from './pages/Contacts/Contacts'
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -156,6 +157,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Consult/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/contacts-consult"
+          element={
+            <ProtectedRoute>
+              <Contacts/>
             </ProtectedRoute>
           }
         />

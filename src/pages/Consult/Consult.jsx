@@ -22,7 +22,6 @@ export default function Consult() {
         setSearched(true);
 
         try {
-            // Construir parámetros de búsqueda según el tipo
             let queryParam = "";
             switch(searchType) {
                 case "credit_number":
@@ -134,6 +133,7 @@ export default function Consult() {
                     ) : results.length > 0 ? (
                         <>
                             <div className="Consult__results-header">
+                                <label></label>
                                 <label>Crédito</label>
                                 <label>Nombre</label>
                                 <label>Cédula del titular</label>
@@ -155,14 +155,14 @@ export default function Consult() {
                                         <ExternalLink size={20} color="#007bff" />
                                     </NavLink>
                                     <label>{credit.sync_id || credit.credit_number}</label>
-                                    <label>{credit.name}</label>
-                                    <label>{credit.ci}</label>
+                                    <label>{credit.clients[0].name}</label>
+                                    <label>{credit.clients[0].ci}</label>
                                     <label>{useFormatterNumber({ value: credit.total_amount, currency: 'USD' })}</label>
                                     <label>{credit.days_past_due}</label>
-                                    <label>{credit.cartera !== 'syncs' ? credit.cartera : 'FACES'}</label>
+                                    <label>{credit.business_name}</label>
                                     <label>{credit.agency}</label>
                                     <label>{credit.total_fees}</label>
-                                    <label>{credit.provincia}</label>
+                                    <label>{credit.province}</label>
                                     <label>{credit.canton}</label>
                                     <label>{credit.status || credit.sync_status}</label>
                                     <label>{credit.collection_state}</label>

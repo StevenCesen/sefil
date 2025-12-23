@@ -1,41 +1,20 @@
 import { useEffect, useState } from "react";
 import "./CardCurrentGestion.css";
 import { MessageCircle } from "lucide-react";
+import getCallsByManagementID from "../../helpers/Managements/getCallsByManagementID";
 
-export default function CardCurrentGestion({data}){
+export default function CardCurrentGestion({management_id}){
 
-    const [calls,setCalls]=useState();
-    
+    const [calls,setCalls]=useState(null);
+
+    const handleGetCalls = async ({management_id})=>{
+        const calls = await getCallsByManagementID({management_id});
+        console.log(calls)
+        setCalls(calls.result);
+    }
+
     useEffect(()=>{
-        const ids=JSON.parse(data.id_calls_extras);
-        localStorage.removeItem('calls');
-        
-        if(ids.length==0){
-            setCalls([]);
-        }
-
-        ids.map(async (id)=>{
-            await fetch(`${import.meta.env.VITE_URL_BASE}/calls/${id}`,{
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-                .then((response) => response.json())  
-                .then((data) => {
-                    if(localStorage.getItem('calls')){
-                        const calls_s=JSON.parse(localStorage.getItem('calls'));
-                        calls_s.push(data.call);
-                        localStorage.setItem('calls',JSON.stringify(calls_s));
-                    }else{
-                        const calls_s=[];
-                        calls_s.push(data.call);
-                        localStorage.setItem('calls',JSON.stringify(calls_s));
-                    }
-                });
-
-            setCalls(JSON.parse(localStorage.getItem('calls')).sort(function(a,b){return a.id-b.id}));
-        });
+        handleGetCalls({management_id});
     },[]);
 
     if(!calls) return <></>
@@ -54,16 +33,20 @@ export default function CardCurrentGestion({data}){
             </div>
 
             {
-                calls.map((call,index)=>(
-                    <div key={index} className="CardCurrentGestion__item">
-                        <label>{call.fecha}</label>
-                        <label>{call.duration_call} seg.</label>
-                        <label>{data.client_name}</label>
-                        <label>{(call.channel==='WA') ? <MessageCircle color="green" size={16}/> : <></>} {call.phone}</label>
-                        <label>{call.state_call}</label>
-                        <audio controls style={{width:"100%"}} src={`./public/files/audios/${call.id_record}`}></audio>
-                    </div>
-                ))
+                (calls.length > 0) ? (
+                    calls.map((call,index)=>(
+                        <div key={index} className="CardCurrentGestion__item">
+                            <label>{call.created_at}</label>
+                            <label>{call.call_duration} seg.</label>
+                            <label>{call.client_name}</label>
+                            <label>{(call.call_channel==='WA') ? <MessageCircle color="green" size={16}/> : <></>} {call.phone_number}</label>
+                            <label>{call.call_state}</label>
+                            <audio controls style={{width:"100%"}} src={`./public/files/audios/${call.call_media_path}`}></audio>
+                        </div>
+                    ))
+                ) : (
+                    <span className="CardCurrentGestion__span">No hay llamadas registradas para esta gestión.</span>
+                )
             }
         </div>
     );
