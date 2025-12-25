@@ -1,5 +1,5 @@
-export default async function getListPhones({credit_id,identification}){
-    const end_point=`${import.meta.env.VITE_URL_BASE}/contacts?credit_id=${credit_id}&ci=${identification}`;
+export default async function getListPhones({client_id}){
+    const end_point=`${import.meta.env.VITE_URL_BASE}/contacts?client_id=${client_id}`;
     try {
         const request=await fetch(end_point,{
             headers: {
@@ -7,6 +7,12 @@ export default async function getListPhones({credit_id,identification}){
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         });
+
+        if (request.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
 
         if (!request.ok) {
             throw new Error('Error al consultar la API');

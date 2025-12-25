@@ -32,22 +32,21 @@ export default function CardSendSMS(){
 
             // Registramos la gestión
             const data_management={
-                id_campain:store_sms.campain_id,
-                id_call:0,
-                id_calls_extras:"[]",
-                id_credit:store_sms.credit_id,
-                state_gestion:'CONTACTADO EFECTIVO',
-                substate_gestion:'MENSAJE DE TEXTO',
-                date_promise:store_sms.promise_date,
+                campain_id:store_sms.campain_id,
+                call_id:null,
+                call_collection:"[]",
+                credit_id:store_sms.credit_id,
+                client_id:store_sms.client_id,
+                state:'CONTACTADO EFECTIVO',
+                substate:'MENSAJE DE TEXTO',
+                promise_date:store_sms.promise_date,
                 observation:store_sms.message,
-                client_name:store_sms.name,
-                client_ci:store_sms.ci,
-                type:store_sms.type,
-                dias_vencidos:store_sms.days_past_due,
-                cartera:'',
-                monto:store_sms.total_amount,
-                monto_pagar:store_sms.total_amount,
-                nro_notificacion:''
+                days_past_due:store_sms.days_past_due,
+                paid_fees:store_sms.paid_fees || 0,
+                pending_fees:store_sms.pending_fees || 0,
+                managed_amount:store_sms.total_amount,
+                promise_amount:store_sms.total_amount,
+                created_by:localStorage.getItem('user_id')
             }
 
             console.log(data_management);

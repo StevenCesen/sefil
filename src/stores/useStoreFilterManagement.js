@@ -77,7 +77,7 @@ export const useStoreFilterManagement = create((set,get) => ({
         return parts.join('&');
     },
     FilteredCredits: async (filters) => {
-        const end_point=`${import.meta.env.VITE_URL_BASE}/credits?${filters}`;
+        const end_point=`${import.meta.env.VITE_URL_BASE}/credits?${filters}&with_payments=true&with_managements=true`;
         try {
             const request=await fetch(end_point,{
                 headers: {
@@ -109,7 +109,7 @@ export const useStoreFilterManagement = create((set,get) => ({
         const filters=getFilterString();
 
         try {
-            const request=await fetch(`${next_page_url}&${filters}`,{
+            const request=await fetch(`${next_page_url}&${filters}&with_payments=true&with_managements=true`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -141,7 +141,7 @@ export const useStoreFilterManagement = create((set,get) => ({
         const filters=getFilterString();
 
         try {
-            const request=await fetch(`${url}&${filters}`,{
+            const request=await fetch(`${url}&${filters}&with_payments=true&with_managements=true`,{
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`

@@ -21,6 +21,7 @@ import Consult from './pages/Consult/Consult'
 import Gestion from './pages/Gestion'
 import Historial from './pages/Historial'
 import Contacts from './pages/Contacts/Contacts'
+import Templates from './pages/Templates/Templates'
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -184,6 +185,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Historial/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/templates"
+          element={
+            <ProtectedRoute>
+              <Templates/>
             </ProtectedRoute>
           }
         />

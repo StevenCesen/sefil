@@ -20,7 +20,7 @@ export default function Modal({children,view,setView,title}){
                     <NavTools/>
                     <label>
                         <X size={18} color="black" onClick={()=>{
-                            if(store_management.id_calls_extras.length>0){
+                            if(store_management.call_collection.length>0){
                                 sendpush({
                                     title:'Gestión en proceso',
                                     message:'No puede cerrar el panel de gestión, hay llamadas guardadas y no se ha guardado la gestión.',

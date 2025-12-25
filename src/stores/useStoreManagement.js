@@ -1,9 +1,8 @@
 import { create } from 'zustand'
 import getListPhones from '../helpers/Calls/getListPhones';
-import getListManagements from '../helpers/Managements/getListManagements';
-import getListPayments from '../helpers/Payments/getListPayments';
 import getListNotes from '../helpers/Managements/getListNotes';
 import checkManagement from '../helpers/Managements/checkManagement';
+import { useStoreFilterManagement } from './useStoreFilterManagement';
 
 export const useStoreManagement = create((set,get) => ({
     credit:null,
@@ -11,20 +10,24 @@ export const useStoreManagement = create((set,get) => ({
     client_name:'',
     client_ci:'',
     client_type:'',
+    client_id:'',
     credit_id:'',
-    state_gestion:'',
-    substate_gestion:'',
+    state:'',
+    substate:'',
+    observation:'',
     promise_date:'',
     promise_amount:0,
-    nro_notificacion:'',
+    created_by:null,
+    call_id:null,
+    call_collection:[],
+    days_past_due:0,
+    paid_fees:0,
+    pending_fees:0,
+    managed_amount:0,
     campain_id:'',
-    id_call:'',
-    id_calls_extras:[],
-    observation:'',
-    dias_vencidos:0,
+    nro_notificacion:'',
     cartera:'',
     monto:0,
-    nro_notificacion:'',
     message:'No gestionado',
 
     phones:null,
@@ -34,10 +37,11 @@ export const useStoreManagement = create((set,get) => ({
     notes:null,
     section:'MANAGEMENTS',
 
-    setClient:({client_name,client_ci,client_type,credit_id})=>{
+    setClient:({client_name,client_ci,client_type,client_id,credit_id})=>{
         set({client_name:client_name})
         set({client_ci:client_ci})
         set({client_type:client_type})
+        set({client_id:client_id})
         set({credit_id:credit_id})
     },
     setView:     (value)=>{set({view_panel:value})},
@@ -48,30 +52,51 @@ export const useStoreManagement = create((set,get) => ({
 
         set({credit:value}),
         set({credit_id:value.id})
+        set({client_id:value.clients[0].id});
         set({client_name:value.clients[0].name});
         set({client_ci:value.clients[0].ci});
         set({client_type:value.clients[0].type});
-        set({dias_vencidos:value.days_past_due});
+        set({days_past_due:value.days_past_due});
+        set({paid_fees:value.paid_fees || 0});
+        set({pending_fees:value.pending_fees || 0});
         set({monto:value.total_amount});
+        set({managed_amount:value.managed_amount || 0});
+
+        // Buscar el campain_id correcto basado en el business_id del crédito
+        const store_filter = useStoreFilterManagement.getState();
+        if (store_filter.campains && store_filter.campains.data && value.business_id) {
+            const campain = store_filter.campains.data.find(
+                camp => camp.business_id === value.business_id
+            );
+            if (campain) {
+                set({campain_id: campain.id});
+            }
+        }
 
         setPhones({
             client_id: value.clients[0].id,
         });
 
-        // Usar datos que vienen directamente del crédito
         set({managements: { data: value.collection_managements || [] }});
         set({payments: { data: value.collection_payments || [] }});
         set({calls: { data: value.collection_calls || [] }});
-        set({notes: { data: [] }}); // Las notas no vienen en la estructura actual
+        set({notes: { data: [] }});
 
     },
-    setState:     (value)=>{set({state_gestion:value})},
-    setSubstate:     (value)=>{set({substate_gestion:value})},
+    setState:     (value)=>{set({state:value})},
+    setSubstate:     (value)=>{set({substate:value})},
     setPromiseDate:     (value)=>{set({promise_date:value})},
     setPromiseAmount:     (value)=>{set({promise_amount:value})},
     setCampainID:     (value)=>{set({campain_id:value})},
     setObservation:     (value)=>{set({observation:value})},
     setSection:     (value)=>{set({section:value})},
+    setCreatedBy:     (value)=>{set({created_by:value})},
+    setCallId:     (value)=>{set({call_id:value})},
+    setCallCollection:     (value)=>{set({call_collection:value})},
+    setDaysPastDue:     (value)=>{set({days_past_due:value})},
+    setPaidFees:     (value)=>{set({paid_fees:value})},
+    setPendingFees:     (value)=>{set({pending_fees:value})},
+    setManagedAmount:     (value)=>{set({managed_amount:value})},
     setNewPhone:     (value)=>{
         const {phones}=get();
         phones.push(value);
@@ -113,23 +138,24 @@ export const useStoreManagement = create((set,get) => ({
         set({notes:notes});
     },
     setIdCall:(call)=>{
-        const {id_calls_extras}=get();
+        const {call_collection}=get();
 
-        const temp_ids=id_calls_extras;
+        const temp_ids=[...call_collection];
         temp_ids.push(call);
 
-        set({id_call:call}),
-        set({id_calls_extras:temp_ids})
+        set({call_id:call}),
+        set({call_collection:temp_ids})
     },
     clean:()=>{
-        set({state_gestion:''}),
-        set({substate_gestion:''}),
+        set({state:''}),
+        set({substate:''}),
         set({promise_date:''}),
         set({promise_amount:0}),
-        set({id_call:''}),
-        set({id_calls_extras:[]}),
+        set({call_id:null}),
+        set({call_collection:[]}),
         set({observation:''}),
         set({nro_notificacion:''}),
+        set({managed_amount:0}),
         set({message:'No gestionado'})
     },
     checkManagement: async () => {

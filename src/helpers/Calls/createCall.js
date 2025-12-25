@@ -1,6 +1,6 @@
 import sendpush from "../sendpush";
 
-export default async function createCall({e,data_call}){
+export default async function createCall({data_call}){
     try {
         const request=await fetch(`${import.meta.env.VITE_URL_BASE}/calls`,{
             method:'POST',
@@ -8,14 +8,18 @@ export default async function createCall({e,data_call}){
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             },
-            body:data_call
+            body:new URLSearchParams(data_call)
         });
-        
+
+        if (request.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+            return;
+        }
+
         const response=await request.json();
 
-        if(response.state===200){
-            e.target.textContent='Guardar llamada';
-            
+        if(response.code===1){
             sendpush({
                 title:'Estado de llamada.',
                 message:'Se ha guardado la llamada correctamente.',
@@ -23,13 +27,24 @@ export default async function createCall({e,data_call}){
                 timeout:3000
             });
 
-            return response.id_call;
-
+            return response.result.id;
         }else{
-            e.target.textContent="Intentar de nuevo";
+            sendpush({
+                title:'Error al guardar',
+                message:'No se pudo guardar la llamada',
+                type:'Push--error',
+                timeout:3000
+            });
+            return null;
         }
 
     } catch (error) {
-        e.target.textContent=error;
+        sendpush({
+            title:'Error de conexión',
+            message:'No se pudo conectar con el servidor',
+            type:'Push--error',
+            timeout:3000
+        });
+        return null;
     }
 }

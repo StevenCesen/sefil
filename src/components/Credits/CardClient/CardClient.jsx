@@ -5,7 +5,7 @@ import "./CardClient.css";
 import { useStoreEmail } from "../../../stores/useStoreEmail";
 import ClickToCopy from "../../../helpers/ClickToCopy";
 
-export default function CardClient({credit_id,name,email,ci,sector_economico,days_past_due,type,total_amount,actions}){
+export default function CardClient({id,credit_id,name,email,ci,sector_economico,days_past_due,type,total_amount,actions}){
 
     const store_management=useStoreManagement();
     const store_email=useStoreEmail();
@@ -21,12 +21,12 @@ export default function CardClient({credit_id,name,email,ci,sector_economico,day
                     client_name:name,
                     client_ci:ci,
                     client_type:type,
-                    credit_id
+                    credit_id,
+                    client_id:id
                 });
 
                 store_management.setPhones({
-                    credit_id:credit_id,
-                    identification:ci
+                    client_id:id
                 });
                     
                 sendpush({

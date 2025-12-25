@@ -19,7 +19,7 @@ export default function Gestion(){
 
     useEffect(()=>{
         loader.viewOn(true);
-        // store_templates.getTemplates();
+        store_templates.getTemplates();
         loader.viewOn(false);
     },[]);
     
@@ -45,7 +45,7 @@ export default function Gestion(){
             </div>
             
             <FilterManagement/>
-
+            
             {credits.credits && credits.credits.data.map((credit,n) => (
                 <CardCreditManagement key={credit.id} index={n} credit={credit} />
             ))}

@@ -15,33 +15,36 @@ export default function FormManagement(){
     const store_view_struct=useViewStruct();
     const button=useRef();
 
-    const selectedOptions = store_templates.current_template.find(item => item.title === store_management.state_gestion)?.options || [];
+    const selectedParent = store_templates.current_template.find(item => item.name === store_management.state);
+    const selectedOptions = selectedParent?.children || [];
 
     const handleSaveManagement=async(e)=>{
         e.preventDefault();
-        
+
         const data_management={
-            id_campain:store_management.campain_id,
-            id_call:store_management.id_call,
-            id_calls_extras:JSON.stringify(store_management.id_calls_extras),
-            id_credit:store_management.credit_id,
-            state_gestion:store_management.state_gestion,
-            substate_gestion:store_management.substate_gestion,
-            date_promise:store_management.promise_date,
+            campain_id:store_management.campain_id,
+            call_collection:JSON.stringify(store_management.call_collection),
+            credit_id:store_management.credit_id,
+            client_id:store_management.client_id,
+            state:store_management.state,
+            substate:store_management.substate,
+            promise_date:store_management.promise_date,
             observation:store_management.observation,
-            client_name:store_management.client_name,
-            client_ci:store_management.client_ci,
-            type:store_management.client_type,
-            dias_vencidos:store_management.dias_vencidos,
-            cartera:store_management.cartera,
-            monto:store_management.monto,
-            monto_pagar:store_management.promise_amount,
-            nro_notification:store_management.nro_notificacion
+            days_past_due:store_management.days_past_due,
+            paid_fees:store_management.paid_fees,
+            pending_fees:store_management.pending_fees,
+            managed_amount:store_management.monto,
+            promise_amount:store_management.promise_amount,
+            created_by:Number(localStorage.getItem('temp_uS'))
+        }
+
+        if(store_management.call_id){
+            data_management.call_id = store_management.call_id;
         }
 
         button.current.textContent='Guardando...';
 
-        if(store_management.substate_gestion==='OFERTA DE PAGO'){
+        if(store_management.substate==='OFERTA DE PAGO'){
             const prev_effective= await store_management.checkManagement();
 
             if(prev_effective===200){
@@ -75,7 +78,7 @@ export default function FormManagement(){
                     button.current.textContent='Intentar de nuevo';
                 }
             }
-        }else if((store_management.substate_gestion==='NOTIFICADO' || store_management.substate_gestion==='ENTREGADO AVISO DE COBRANZA') && store_management.nro_notificacion===''){
+        }else if((store_management.substate==='NOTIFICADO' || store_management.substate==='ENTREGADO AVISO DE COBRANZA') && store_management.nro_notificacion===''){
             sendpush({
                 title:'Nro. de notificación requerido.',
                 message:'Debe ingresar un Nro. de notificación para este subestado de gestión.',
@@ -127,10 +130,7 @@ export default function FormManagement(){
     }
     
     useEffect(()=>{
-        store_templates.setTemplate({
-            role: localStorage.getItem('rol'),
-            days_past_due:store_management.dias_vencidos
-        });
+        store_templates.setTemplate();
     },[store_management.credit_id]);
 
     return(
@@ -159,17 +159,17 @@ export default function FormManagement(){
                 <label className="FormManagement__label">
                     Estado de gestión
                     <select
-                        value={store_management.state_gestion}
+                        value={store_management.state}
                         onChange={(e) => {
                             const newState = e.target.value;
                             store_management.setState(newState);
-                            store_management.setSubstate(''); // Reset substate on change
+                            store_management.setSubstate('');
                         }}
                         required
                     >
                         <option value="">-- Seleccionar --</option>
                         {store_templates.current_template.map(item => (
-                            <option key={item.title} value={item.title}>{item.title}</option>
+                            <option key={item.id} value={item.name}>{item.name}</option>
                         ))}
                     </select>
                 </label>
@@ -177,14 +177,14 @@ export default function FormManagement(){
                 <label className="FormManagement__label">
                     Subestado de gestión
                     <select
-                        value={store_management.substate_gestion}
+                        value={store_management.substate}
                         onChange={(e) => store_management.setSubstate(e.target.value)}
                         required
                     >
                         <option value="">-- Seleccionar --</option>
                         {
                             selectedOptions.map(option => (
-                                <option key={option} value={option}>{option}</option>
+                                <option key={option.id} value={option.name}>{option.name}</option>
                             ))
                         }
                     </select>
@@ -201,12 +201,12 @@ export default function FormManagement(){
                     />
                 </label>
                 {
-                    (store_management.substate_gestion==='NOTIFICADO' || store_management.substate_gestion==='ENTREGADO AVISO DE COBRANZA')
-                    ?   
+                    (store_management.substate==='NOTIFICADO' || store_management.substate==='ENTREGADO AVISO DE COBRANZA')
+                    ?
                         <div className="FormManagement__label">
                             Nro. notificación
-                            <input 
-                                value={store_management.nro_notificacion} 
+                            <input
+                                value={store_management.nro_notificacion}
                                 onChange={(e)=>{store_management.setNroNotificacion(e.target.value)}}
                             />
                         </div>
@@ -240,13 +240,12 @@ export default function FormManagement(){
                 ></textarea>
             </label>
             {
-                (store_management.credit.status==='ACTIVE')
-                ?   
+                (store_management.credit?.sync_status === 'ACTIVE')
+                &&
                     <button ref={button} type="submit">
                         <Save size={16}/>
                         Guardar gestión
                     </button>
-                :   <></>
             }
         </form>
     );

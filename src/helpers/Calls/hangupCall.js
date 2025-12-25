@@ -1,9 +1,22 @@
-export default async function hangupCall({phone_number}){
-    try {
-        const request=await fetch(`hangup.php?exten=${phone_number}&channel=${localStorage.getItem('extension')}`);
-        const response=await request.json();
-        return true;
-    } catch (error) {
-        return true;
+export default async function hangupCall(){
+    const hangup_request = await fetch(`${import.meta.env.VITE_URL_PBX}/calls/hangup`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        body: new URLSearchParams({
+            channel: localStorage.getItem('extension').split('/')[1]
+        })
+    });
+
+    if (hangup_request.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+        return;
     }
+
+    const response = await hangup_request.json();
+    console.log('hangupCall response', response);
+    return response;
 }

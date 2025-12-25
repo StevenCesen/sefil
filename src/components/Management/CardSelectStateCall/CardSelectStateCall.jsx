@@ -11,9 +11,8 @@ export default function CardSelectStateCall() {
     const store_call = useStoreProgressCall();
     const store_management=useStoreManagement();
 
-    // Estado para controlar qué botón está seleccionado
     const [selectedState, setSelectedState] = useState(store_call.state_call);
-    const button=useRef();
+    const buttonRef=useRef();
 
     const handlerSelect = (value) => {
         setSelectedState(value);
@@ -21,27 +20,7 @@ export default function CardSelectStateCall() {
     };
 
     const handlerSave = async (e) => {
-        const data_call=new FormData();
-        data_call.append('state_call',store_call.state_call);
-        data_call.append('duration_call',Number(store_call.duration));
-        data_call.append('phone',store_call.phone_number);
-        data_call.append('channel',store_call.channel);
-        data_call.append('id_credit',store_call.credit_id);
-        data_call.append('id_campain',store_call.campain_id);
-
-        if(store_call.state_call==='CONTACTADO'){
-            //  Subir la llamada localmente
-            const data_upload=new FormData();
-            data_upload.append('user_id',localStorage.getItem('temp_uS'));
-            data_upload.append('phone_number',store_call.phone_number);
-            data_upload.append('credit_id',store_call.credit_id);
-            data_upload.append('record',store_call.record_audio);
-            data_upload.append('ci',store_management.client_ci);
-            const upload=await uploadFile({data:data_upload});
-            data_call.append('path',upload.path);
-        }
-
-        console.log(data_call);
+        e.preventDefault();
 
         if(store_call.state_call===''){
             sendpush({
@@ -50,34 +29,71 @@ export default function CardSelectStateCall() {
                 type:'Push--warning',
                 timeout:2000
             });
-        }else{
-            e.target.textContent='Guardando...';
-            const id_call=await createCall({e,data_call});
+            return;
+        }
+
+        buttonRef.current.textContent='Guardando...';
+
+        const data_call={
+            state:store_call.state_call,
+            duration:Number(store_call.duration),
+            channel:store_call.channel,
+            phone_number:store_call.phone_number,
+            created_by:localStorage.getItem('temp_uS'),
+            client_id:store_management.client_id,
+            credit_id:store_call.credit_id
+        }
+
+        // const data_upload=new FormData();
+        // data_upload.append('user_id',localStorage.getItem('temp_uS'));
+        // data_upload.append('phone_number',store_call.phone_number);
+        // data_upload.append('credit_id',store_call.credit_id);
+        // data_upload.append('record',store_call.record_audio);
+        // const data_upload=new FormData();
+        // data_upload.append('user_id',localStorage.getItem('temp_uS'));
+        // data_upload.append('phone_number',store_call.phone_number);
+        // data_upload.append('credit_id',store_call.credit_id);
+        // data_upload.append('record',store_call.record_audio);
+        // data_upload.append('ci',store_management.client_ci);
+
+        // const upload=await uploadFile({data:data_upload});
+
+        // if(!upload || !upload.path){
+        //     sendpush({
+        //         title:'Error al subir audio',
+        //         message:'No se pudo subir el archivo de audio',
+        //         type:'Push--error',
+        //         timeout:3000
+        //     });
+        //     buttonRef.current.textContent='Intentar de nuevo';
+        //     return;
+        // }
+        // data_call.append('media_path',upload.path);
+        const id_call=await createCall({data_call});
+
+        if(id_call){
             store_management.setIdCall(id_call);
             store_call.clean();
             setSelectedState('');
+            buttonRef.current.textContent='Guardar llamada';
+        }else{
+            buttonRef.current.textContent='Intentar de nuevo';
         }
-    };
-
-    const handlerAbort = () => {
-        store_call.setViewSelect(false);
-        setSelectedState('');
     };
 
     if (!store_call.view_select) return <></>;
 
-    // Array de estados para mapear los botones
     const buttonStates = [
-        { value: 'NO CONTACTADO', label: 'NO CONTACTADO 🚫' },
-        { value: 'CONTACTADO', label: 'CONTACTADO ✅' },
-        { value: 'SUSPENDIDO POR FALTA DE PAGO', label: 'SUSPENDIDO POR FALTA DE PAGO 🚫' },
-        { value: 'FUERA DE COBERTURA', label: 'FUERA DE COBERTURA 🚫' }
+        { value: 'NO CONTACTADO', label: 'NO CONTACTADO' },
+        { value: 'CONTACTADO', label: 'CONTACTADO' },
+        { value: 'SUSPENDIDO POR FALTA DE PAGO', label: 'SUSPENDIDO POR FALTA DE PAGO' },
+        { value: 'FUERA DE COBERTURA', label: 'FUERA DE COBERTURA' }
     ];
 
     return (
         <div className="CardSelectStateCall__background">
             <div className="CardSelectStateCall">
-                <h3>📞 Estado de la llamada</h3>
+                <h3>Estado de la llamada</h3>
                 <div className="CardSelectStateCall__states">
                     {buttonStates.map((button) => (
                         <button
@@ -90,8 +106,7 @@ export default function CardSelectStateCall() {
                     ))}
                 </div>
                 <div className="CardSelectStateCall__actions">
-                    {/* <button ref={button} onClick={handlerAbort}>No guardar</button> */}
-                    <button onClick={(e)=>{handlerSave(e)}}>
+                    <button ref={buttonRef} onClick={handlerSave}>
                         <Save size={16} /> Guardar llamada
                     </button>
                 </div>

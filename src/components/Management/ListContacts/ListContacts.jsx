@@ -17,10 +17,10 @@ export default function ListContacts(){
                 {
                     store_management.phones.map((phone)=>(
                          <CardContact
-                            key={phone.numero}
-                            phone_number={phone.numero}
-                            nro_fails={'0'}
-                            nro_sucessful={phone.nro_efectivo}
+                            key={phone.phone_number}
+                            phone_number={phone.phone_number}
+                            nro_fails={phone.calls_not_effective}
+                            nro_sucessful={phone.calls_effective}
                             name={store_management.client_name}
                             ci={store_management.client_ci}
                             type={store_management.client_type}

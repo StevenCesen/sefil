@@ -17,16 +17,7 @@ export default function SectionManagement({managements}){
                 managements.data.map(management=>(
                     <CardManagement
                         key={management.id}
-                        management={{
-                            create_date:management.created_at,
-                            user_name:management.created_by,
-                            client_identification:management.client_id,
-                            state_gestion:management.state,
-                            substate_gestion:management.substate,
-                            days_past_due:management.days_past_due,
-                            promise_date:management.promise_date,
-                            observation:management.observation
-                        }}
+                        management={management}
                     />
                 ))
             }
