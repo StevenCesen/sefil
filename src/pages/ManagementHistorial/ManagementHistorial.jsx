@@ -1,23 +1,23 @@
 import { NavLink, useLocation, useParams } from "react-router-dom";
-import "./pages.css";
+import "./ManagementHistorial.css";
 import {useEffect, useState } from "react";
-import CardCurrentGestion from "../components/CardCurrentGestion/CardCurrentGestion";
-import useFilterGestions from "../hooks/useFilterGestions";
-import useReturnFilter from "../hooks/useReturnFilter";
-import Loader from "../components/Loader/loader";
+import CardCurrentGestion from "../../components/CardCurrentGestion/CardCurrentGestion";
+import useFilterGestions from "../../hooks/useFilterGestions";
+import useReturnFilter from "../../hooks/useReturnFilter";
+import Loader from "../../components/Loader/loader";
 
-export default function Historial(){
+export default function ManagementHistorial(){
     const [campains,setCampains]=useState();
     const [current,setCurrent]=useState();
     const [agents,setAgents]=useState();
     const [filters,setFilters]=useState();
     const [loading,setLoading]=useState();
-    
+
     const params=new URLSearchParams(useLocation().search);
     const param=useParams();
 
     const [data,setData]=useState();
-    
+
     const updateData=(url)=>{
         setLoading(true);
         fetch(url,{
@@ -96,7 +96,7 @@ export default function Historial(){
         });
 
         setLoading(false);
-        
+
         fetch(`${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1`,{
             headers: {
                 Accept: 'application/json',
@@ -203,25 +203,25 @@ export default function Historial(){
     if(!agents) return <Loader/>
 
     return (
-        <div className="pageConsulta">
-            <div className="DetailCredit__head">
+        <div className="ManagementHistorial">
+            <div className="ManagementHistorial__head">
                 <NavLink
-                    to="" 
+                    to=""
                     onClick={(e)=>{
                         e.preventDefault();
-                        history.go(-1) 
+                        history.go(-1)
                     }}
                 >Regresar</NavLink>
             </div>
 
             <div style={{paddingBottom:"20px"}}>
                 <h3 style={{color:"var(--color-1)"}}>Historial de gestiones</h3>
-                
-                <div className="Historial__head">
+
+                <div className="ManagementHistorial__filters">
                     <label></label>
                     <label>
                         Fecha gestión
-                        <input 
+                        <input
                             value={filters.fecha_gestion}
                             type="date"
                             onChange={(e)=>{
@@ -281,11 +281,11 @@ export default function Historial(){
                                     <option value={campain.id} key={index}>{campain.name}</option>
                                 ))
                             }
-                        </select>    
+                        </select>
                     </label>
                     <label>
                         Nombre
-                        <input 
+                        <input
                             value={filters.name}
                             type="value"
                             onChange={(e)=>{
@@ -313,7 +313,7 @@ export default function Historial(){
                     </label>
                     <label>
                         Cédula
-                        <input 
+                        <input
                             value={filters.ci}
                             type="value"
                             placeholder="Cédula"
@@ -374,7 +374,7 @@ export default function Historial(){
                     </label>
                     <label>
                         Crédito
-                        <input 
+                        <input
                             value={filters.credito}
                             type="value"
                             onChange={(e)=>{
@@ -460,7 +460,7 @@ export default function Historial(){
                     </label>
                     <label>
                         Acuerdo
-                        <input 
+                        <input
                             value={filters.date_promise}
                             type="date"
                             onChange={(e)=>{
@@ -519,7 +519,7 @@ export default function Historial(){
                                     <option value={agent.name}>{agent.name}</option>
                                 ))
                             }
-                            
+
                         </select>
                     </label>
                     <label>
@@ -556,7 +556,7 @@ export default function Historial(){
 
                 {
                     data.data.map((gestion,index)=>(
-                        <div key={index} className={`Historial__item ${(gestion.is_wweb) ? "Historial__item--wweb" : ""}`}>
+                        <div key={index} className={`ManagementHistorial__item ${(gestion.is_wweb) ? "ManagementHistorial__item--wweb" : ""}`}>
                             <button
                                 onClick={(e)=>{
                                     setCurrent(gestion)
@@ -577,7 +577,7 @@ export default function Historial(){
                     ))
                 }
 
-                <div className="DetailCredit__access" style={{margin:"10px 0"}}>
+                <div className="ManagementHistorial__pagination">
                     <p>Registros del {data.meta.from}-{data.meta.to} de {data.meta.total}</p>
 
                     <div>
@@ -601,7 +601,7 @@ export default function Historial(){
                     }
                     </div>
                 </div>
-                
+
             </div>
 
             {

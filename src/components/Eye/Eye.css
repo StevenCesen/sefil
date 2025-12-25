@@ -1,14 +1,27 @@
 .Eye{
-    display: block;
-    background-color: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
     border: none;
     cursor: pointer;
-    width: 25px;
+    width: 24px;
+    height: 24px;
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
+    padding: 0;
+    transition: opacity 0.2s;
 }
+
 .Eye>img{
-    width: 100%;
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.Eye:hover>img{
+    opacity: 1;
 }

@@ -5,23 +5,24 @@ import Header from './components/Header/Header'
 import NavSlide from './components/navSlide/NavSlide'
 import { useEffect, useState } from 'react'
 import "./index.css";
-import Me from './pages/Me'
+import Me from './pages/Me/Me'
 import Push from './components/Push/Push'
 import CardSelectStateCall from './components/Management/CardSelectStateCall/CardSelectStateCall'
 import CardStructure from './components/CardStructure/CardStructure'
 import CardCondonacion from './components/CardCondonacion/CardCondonacion'
 import Loader from './components/Loader/loader'
 import Home from './pages/Home'
-import Usuarios from './pages/Usuarios'
+import Usuarios from './pages/Users/Users'
 import Credits from './pages/Credits/Credits'
 import Credit from './pages/Credit/Credit'
 import Payments from './pages/Payments/Payments'
-import Campain from './pages/Campain'
+import Campain from './pages/Campains/Campains'
 import Consult from './pages/Consult/Consult'
-import Gestion from './pages/Gestion'
-import Historial from './pages/Historial'
+import Gestion from './pages/Management/Management'
+import Historial from './pages/ManagementHistorial/ManagementHistorial'
 import Contacts from './pages/Contacts/Contacts'
 import Templates from './pages/Templates/Templates'
+import Monitor from './pages/Monitor/Monitor'
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -194,6 +195,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Templates/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/monitor"
+          element={
+            <ProtectedRoute>
+              <Monitor/>
             </ProtectedRoute>
           }
         />

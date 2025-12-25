@@ -1,19 +1,20 @@
 import { useEffect, useState, useCallback } from "react";
 import { NavLink } from "react-router-dom";
-import CardSync from "../components/CardSync/CardSync";
-import CardEditCampain from "../components/Campains/CardEdirCampain/CardEditCampain";
-import CardAssignCampain from "../components/Campains/CardAssignCampain/CardAssignCampain";
-import CardCreateCampain from "../components/Campains/CardCreateCampain/CardCreateCampain";
-import useFetch from "../hooks/useFetch";
+import CardSync from "../../components/CardSync/CardSync";
+import CardEditCampain from "../../components/Campains/CardEdirCampain/CardEditCampain";
+import CardAssignCampain from "../../components/Campains/CardAssignCampain/CardAssignCampain";
+import CardCreateCampain from "../../components/Campains/CardCreateCampain/CardCreateCampain";
+import useFetch from "../../hooks/useFetch";
+import "./Campains.css";
 
 const MODAL_TYPES = {
     CREATE: 'create',
-    EDIT: 'edit', 
+    EDIT: 'edit',
     TRANSFER: 'transfer'
 };
 
 const CampaignItem = ({ campaign, onEdit, onTransfer, onExport }) => (
-    <div className="Campain__item">
+    <div className="Campains__item">
         <label>{campaign.name}</label>
         <label>{campaign.state}</label>
         <label>{campaign.begin_time}</label>
@@ -36,11 +37,11 @@ const CampaignItem = ({ campaign, onEdit, onTransfer, onExport }) => (
 
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
-    
+
     return (
         <div className="CardPay">
-            <button 
-                className="CardCondonacion__close" 
+            <button
+                className="CardCondonacion__close"
                 onClick={onClose}
             >
                 {title}
@@ -50,7 +51,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     );
 };
 
-export default function Campain() {
+export default function Campains() {
     const { fetchWithAuth } = useFetch();
     const [activeModal, setActiveModal] = useState(null);
     const [campaigns, setCampaigns] = useState(null);
@@ -122,10 +123,10 @@ export default function Campain() {
     const activeCampaigns = campaigns.filter(campaign => campaign.state === "ACTIVE") || [];
 
     return (
-        <div className="pageConsulta">
-            <div className="DetailCredit__head">
+        <div className="Campains">
+            <div className="Campains__head">
                 <NavLink
-                    to="" 
+                    to=""
                     onClick={(e) => {
                         e.preventDefault();
                         window.history.go(-1);
@@ -135,25 +136,25 @@ export default function Campain() {
                 </NavLink>
             </div>
 
-            <div className="Campain__content">
-                <h3 className="Campain__title">Creación y asignación de campaña</h3>
-                
-                <div className="Campain__sincronice">
-                    <h4 className="Campain__subtitle">Sincronización</h4>
+            <div className="Campains__content">
+                <h3 className="Campains__title">Creación y asignación de campaña</h3>
+
+                <div className="Campains__sincronice">
+                    <h4 className="Campains__subtitle">Sincronización</h4>
                     <div>
                         {/* <CardSync/> */}
                     </div>
                 </div>
-                    
-                <div className="Campain__list">
-                    <div className="Campain__access">
-                        <h4 className="Campain__subtitle">Campañas</h4>
+
+                <div className="Campains__list">
+                    <div className="Campains__access">
+                        <h4 className="Campains__subtitle">Campañas</h4>
                         <button onClick={() => openModal(MODAL_TYPES.CREATE)}>
                             Nueva campaña
                         </button>
                     </div>
 
-                    <div className="Campain__head">
+                    <div className="Campains__header">
                         <label>Nombre</label>
                         <label>Estado</label>
                         <label>Fecha de inicio</label>
@@ -161,7 +162,7 @@ export default function Campain() {
                         <label>Acciones</label>
                     </div>
 
-                    <div className="Campain__items">
+                    <div className="Campains__items">
                         {activeCampaigns.length > 0 ? (
                             activeCampaigns.map((campaign, index) => (
                                 <CampaignItem
@@ -181,16 +182,16 @@ export default function Campain() {
                 </div>
             </div>
 
-            <Modal 
-                isOpen={activeModal === MODAL_TYPES.CREATE} 
+            <Modal
+                isOpen={activeModal === MODAL_TYPES.CREATE}
                 onClose={closeModal}
                 title="Volver"
             >
                 <CardCreateCampain setData={updateCampaign} />
             </Modal>
 
-            <Modal 
-                isOpen={activeModal === MODAL_TYPES.EDIT} 
+            <Modal
+                isOpen={activeModal === MODAL_TYPES.EDIT}
                 onClose={closeModal}
                 title="Volver"
             >
@@ -199,8 +200,8 @@ export default function Campain() {
                 )}
             </Modal>
 
-            <Modal 
-                isOpen={activeModal === MODAL_TYPES.TRANSFER} 
+            <Modal
+                isOpen={activeModal === MODAL_TYPES.TRANSFER}
                 onClose={closeModal}
                 title="Volver"
             >

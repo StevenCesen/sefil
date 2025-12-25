@@ -1,0 +1,55 @@
+.Users {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.Users__access {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.Users__access button {
+    padding: 10px 20px;
+    background-color: var(--bg-alert-successful, #10b981);
+    color: var(--color-3, #fff);
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.Users__access button:hover {
+    background-color: #0d9f6e;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.Users__saveChanges {
+    background-color: #3b82f6 !important;
+}
+
+.Users__saveChanges:hover {
+    background-color: #2563eb !important;
+}
+
+.Users__head {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 150px 150px 150px;
+    gap: 10px;
+    padding: 20px 10px;
+    background-color: var(--bg-alert-error);
+    color: #000;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-weight: bold;
+    font-size: 13px;
+    text-align: center;
+}
+
+.Users__head p {
+    margin: 0;
+}

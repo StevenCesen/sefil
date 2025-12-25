@@ -111,7 +111,7 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
     return (
         <div className={`CardUserState ${(mode==='complete') ? "CardUserState__complete" : ""}`}>
             <p>{name}</p>
-
+            
             <p 
                 className={`
                     CardUserState__state
@@ -130,28 +130,20 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
             <p>{`${(state!=='FUERA DE LÍNEA') ? times.hour+":"+times.minutes+":"+times.second : " - "}`}</p>
             {/* <p>{name_campain}</p> */}
             {
-                (mode==='complete') 
+                (mode==='complete')
                 ?
                     <>
-                        <p style={{fontSize:"16px"}}>{data.nro_credits}</p>
-                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
-                            <label>{data.nro_gestions}</label>
-                            <label>{data.nro_gestions_dia}</label>
-                        </p>
-                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderRight:"1px solid grey"}}>
-                            <label>{data.nro_gestions_efec}</label>
-                            <label>{data.nro_gestions_efec_dia}</label>
-                        </p>
-                        <p style={{fontSize:"16px"}}>{data.nro_pendientes}</p>
-                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr",borderLeft:"1px solid grey",borderRight:"1px solid grey"}}>
-                            <label>{data.nro_proceso}</label>
-                        </p>
-                        <p style={{fontSize:"16px",display:"grid",gridTemplateColumns:"1fr 1fr",borderRight:"1px solid grey"}}>
-                            <label>{data.nro_calls_acum}</label>
-                            <label>{data.nro_calls}</label>
-                        </p>
+                        <p>{data.nro_credits}</p>
+                        <p>{data.nro_gestions}</p>
+                        <p>{data.nro_gestions_dia}</p>
+                        <p>{data.nro_gestions_efec}</p>
+                        <p>{data.nro_gestions_efec_dia}</p>
+                        <p>{data.nro_pendientes}</p>
+                        <p>{data.nro_proceso}</p>
+                        <p>{data.nro_calls_acum}</p>
+                        <p>{data.nro_calls}</p>
                     </>
-                : 
+                :
                     <></>
             }
         </div>

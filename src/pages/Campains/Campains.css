@@ -1,0 +1,147 @@
+.Campains {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.Campains__head {
+    margin-bottom: 20px;
+}
+
+.Campains__head a {
+    color: var(--bg-alert-successful, #10b981);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.Campains__head a:hover {
+    text-decoration: underline;
+}
+
+.Campains__content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.Campains__title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.Campains__sincronice {
+    margin-bottom: 40px;
+}
+
+.Campains__subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.Campains__list {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.Campains__access {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.Campains__access button {
+    padding: 10px 24px;
+    background-color: var(--bg-alert-successful, #10b981);
+    color: var(--color-3, #fff);
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.Campains__access button:hover {
+    background-color: #0d9f6e;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.Campains__header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 150px;
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--bg-buttons, #333);
+    color: var(--color-3, #fff);
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.Campains__header label {
+    margin: 0;
+}
+
+.Campains__items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.Campains__item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 150px;
+    gap: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.Campains__item:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.Campains__item label {
+    font-size: 14px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.Campains__item div {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+.Campains__item button {
+    padding: 6px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.Campains__item button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.Campains__item button img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}

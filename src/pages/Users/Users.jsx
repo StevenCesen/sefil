@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import CardUsuarios from "../components/CardUsuarios/CardUsuarios";
-import CardEditUser from "../components/CardEditUser/CardEditUser";
-import Loader from "../components/Loader/loader";
-import useFetch from "../hooks/useFetch";
+import CardUsuarios from "../../components/CardUsuarios/CardUsuarios";
+import CardEditUser from "../../components/CardEditUser/CardEditUser";
+import Loader from "../../components/Loader/loader";
+import useFetch from "../../hooks/useFetch";
+import "./Users.css";
 
-export default function Usuarios(){
+export default function Users(){
 
     const { fetchWithAuth } = useFetch();
     const [users,setUsers]=useState([]);
@@ -17,8 +18,6 @@ export default function Usuarios(){
         fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users`)
             .then((response) => response.json())
             .then((data) => {
-                console.log('API Response:', data);
-                // Manejar estructura de respuesta paginada
                 if (data.result && data.result.data && Array.isArray(data.result.data)) {
                     setUsers(data.result.data);
                 } else if (Array.isArray(data)) {
@@ -26,7 +25,6 @@ export default function Usuarios(){
                 } else if (data.data && Array.isArray(data.data)) {
                     setUsers(data.data);
                 } else {
-                    console.error('Formato de respuesta inesperado:', data);
                     setUsers([]);
                 }
             })
@@ -46,9 +44,9 @@ export default function Usuarios(){
     if(loading) return <Loader/>
 
     return (
-        <div className="pageUsuarios" ref={content_users}>
+        <div className="Users" ref={content_users}>
 
-            <div className="pageUsuarios__access">
+            <div className="Users__access">
                 <button onClick={() => setShowCreateModal(true)}>
                     Agregar usuario
                 </button>
@@ -57,7 +55,7 @@ export default function Usuarios(){
                     (new_change)
                     ?
                         <button
-                            className="pageUsuarios__saveChanges"
+                            className="Users__saveChanges"
                             onClick={async (e)=>{
                                 e.target.textContent = 'Guardando...';
                                 e.target.disabled = true;
@@ -95,7 +93,7 @@ export default function Usuarios(){
 
             </div>
 
-            <div className="pageUsuarios__head">
+            <div className="Users__head">
                 <p>ID</p>
                 <p>Nombre</p>
                 <p>Correo electrónico</p>

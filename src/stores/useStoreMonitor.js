@@ -2,25 +2,15 @@ import { create } from 'zustand'
 import getAgents from '../helpers/Monitor/getAgents';
 
 export const useStoreMonitor = create((set,get) => ({
-    cartera:'syncs',
     agents:[],
-    campain_id:33,
+    campain_id: "",
     setAgents: async ()=>{
-        const {cartera,campain_id}=get();
-        const agents=await getAgents({cartera,campain_id});
+        const {campain_id}=get();
+        const agents=await getAgents({campain_id});
         set({agents:agents})
     },
-    setIDCampain: (cartera) => {
-        set({cartera:cartera});
-
-        if(cartera=='SEFIL_1'){
-            set({campain_id:16});
-        }else if(cartera==='SEFIL_2'){
-            set({campain_id:17});
-        }else{
-            set({campain_id:33});
-        }
-
+    setIDCampain: (campain_id) => {
+        set({campain_id: campain_id});
     },
     updateAgent: async ({data}) =>{
         const {campain_id,agents}=get();
