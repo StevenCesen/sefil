@@ -6,20 +6,31 @@ import MenuNotifier from "../MenuNotifier/MenuNotifier.jsx";
 import CardSelectState from "../CardSelectState/CardSelectState.jsx";
 
 export default function Header(){
+
+    const handleLogout = (e) => {
+        useLogout(e);
+    };
+
     return(
         <header className="header">
             <img src={'./icons/logo.png'}/>
             {
-                (useSessions()) && 
+                (useSessions()) &&
                     <>
                         {
-                            (localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='legal' | localStorage.getItem('rol')==='gestor' | localStorage.getItem('rol')==='administrador' | localStorage.getItem('rol')==='call' | localStorage.getItem('rol')==='campo') 
+                            (
+                                localStorage.getItem('rol')==='gestor' ||
+                                localStorage.getItem('rol')==='legal' || 
+                                localStorage.getItem('rol')==='gestor' || 
+                                localStorage.getItem('rol')==='administrador' || 
+                                localStorage.getItem('rol')==='call' || 
+                                localStorage.getItem('rol')==='campo')
                             ?
                                 <CardSelectState
                                     mode={"select"}
                                     current_option={"CONECTADO"}
                                 />
-                                
+
                             :   <div></div>
                         }
                         {
@@ -27,10 +38,10 @@ export default function Header(){
                                 <MenuNotifier/>
                         }
                         <MenuUser/>
-                        <button onClick={e=>{useLogout(e)}}>Cerrar sesión</button>
+                        <button onClick={handleLogout}>Cerrar sesión</button>
                     </>
             }
-            
+
         </header>
     );
 }
