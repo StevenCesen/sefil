@@ -252,21 +252,21 @@ export default function NavSlide() {
                 </div>
             )}
 
-            {hasSection('calls') && (
+            {/* {hasSection('calls') && (
                 <NavLink to="/calls" className="NavSlide__option">
                     <img src="./icons/zoiper.png" />
                     <label>{getSectionLabel('calls')}</label>
                     <span>{getSectionLabel('calls')}</span>
                 </NavLink>
-            )}
+            )} */}
 
-            {hasSection('payments') && (
+            {/* {hasSection('payments') && (
                 <NavLink to="/payments" className="NavSlide__option">
                     <img src="./icons/ion_bar-chart.png" />
                     <label>{getSectionLabel('payments')}</label>
                     <span>{getSectionLabel('payments')}</span>
                 </NavLink>
-            )}
+            )} */}
 
         </div>
     );
