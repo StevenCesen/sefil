@@ -136,7 +136,7 @@ export default function CardStructure({ restruct, is_active }) {
             <span className="CardStructure__subtitle">Actualizado: {adjustDate(restruct.updated_at)}</span>
             
             {
-                (restruct.status === 'autorizado') && (
+                (restruct.status === 'autorizado' && is_active) && (
                     <button
                         className="CardStructure__button--anular" 
                         onClick={handleOpenAnularModal}

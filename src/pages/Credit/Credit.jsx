@@ -145,7 +145,7 @@ export default function Credit(){
                             interest={credit.credit.interes>0 ? credit.credit.interes : 0}
                             mora={credit.credit.mora>0 ? credit.credit.mora : 0}
                             seguro={credit.credit.seguro_desgravamen>0 ? credit.credit.seguro_desgravamen : 0}
-                            gasto_cobranza_sefil={credit.credit.gasto_cobranza_sefil}
+                            gasto_cobranza_sefil={(credit.credit.status==='ACTIVE') ? credit.credit.gasto_cobranza_sefil : 0}
                             gasto_cobranza={credit.credit.gastos_cobranza>0 ? credit.credit.gastos_cobranza : 0}
                             gastos_judiciales={credit.credit.gastos_judiciales>0 ? credit.credit.gastos_judiciales : 0}
                             otros_valores={credit.credit.otros_valores >0 ? credit.credit.otros_valores : 0}
@@ -157,7 +157,7 @@ export default function Credit(){
                         <div>
                             <InfoPending
                                 days_past_due={credit.credit.days_past_due}
-                                total_amount={credit.credit.total_amount}
+                                total_amount={(credit.credit.status==='ACTIVE') ? credit.credit.total_amount : 0}
                                 payment_date={('payment_date' in credit.credit) ? credit.credit.payment_date : credit.credit.paymentDate}
                             />
                             <InfoFees
@@ -201,7 +201,7 @@ export default function Credit(){
                         ]}
                         view_complete_info={true}
                     />
-                    <CardActivity items={items} />
+                    <CardActivity is_active={(credit.credit.status==='ACTIVE') ? true : false} items={items} />
                 </div>
 
                 {
