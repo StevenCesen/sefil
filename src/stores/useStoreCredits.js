@@ -124,5 +124,24 @@ export const useStoreFilterCredits = create((set,get) => ({
         } catch (error) {
             console.error('Error al hacer fetchFilteredCredits:', error);
         }
+    },
+    clearFilters: () => {
+        set({
+            sync_id: '',
+            client_name: '',
+            client_ci: '',
+            total_amount: '',
+            days_past_due_min: '',
+            days_past_due_max: '',
+            cartera: '',
+            total_fees: 0,
+            agency: '',
+            provincia: '',
+            canton: '',
+            sync_status: '',
+            collection_state: '',
+            agent: '',
+            agents: []
+        });
     }
 }));

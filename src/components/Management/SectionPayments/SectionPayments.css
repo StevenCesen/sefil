@@ -9,7 +9,7 @@
 
 .SectionPayments__header {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     background: linear-gradient(135deg, var(--color-1, #2563eb), var(--color-2, #1d4ed8));
     color: white;
     font-weight: 600;
@@ -33,7 +33,7 @@
 
 .SectionPayments__item {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     padding: 15px 10px;
     border-bottom: 1px solid #e5e7eb;
     align-items: center;
@@ -65,6 +65,13 @@
     justify-content: center;
     align-items: center;
     gap: 8px;
+}
+
+.SectionPayments__item>:nth-child(2),.SectionPayments__item>:nth-child(3){
+    text-align: center;
+    white-space: break-spaces;
+    word-break: break-all;
+    overflow: hidden;
 }
 
 /* Iconos de acciones */

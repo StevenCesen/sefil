@@ -5,7 +5,7 @@ import SectionManagement from "../../Management/SectionManagement/SectionManagem
 import SectionPayments from "../../Management/SectionPayments/SectionPayments";
 import SectionNotes from "../../Management/SectionNotes/SectionNotes";
 
-export default function MenuNav({options}){
+export default function MenuNav({options,view_complete_info=false}) {
 
     const store_management=useStoreManagement();
 
@@ -48,7 +48,7 @@ export default function MenuNav({options}){
                             <SectionPayments
                                 payments={store_management.payments}
                                 credit={store_management.credit}
-                                view_complete_info={false}
+                                view_complete_info={view_complete_info}
                                 is_admin={true}
                             />
                         :   (store_management.section==='NOTES')

@@ -44,6 +44,12 @@ export default function Credits(){
         credits.agent
     ]);
 
+    useEffect(()=>{
+        return () => {
+            credits.clearFilters();
+        };
+    },[]);
+
     return (
         <div className="Credits">
             <h2 className="Credits__title">Créditos</h2>

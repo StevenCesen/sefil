@@ -112,10 +112,11 @@ export default function Credit(){
                                         ci={client.ci}
                                         type={client.type}
                                         sector_economico={client.sector_economico}
-                                        credit_id={credit.id}
-                                        days_past_due={credit.days_past_due}
-                                        total_amount={credit.total_amount}
+                                        credit_id={credit.credit.id}
+                                        days_past_due={credit.credit.days_past_due}
+                                        total_amount={credit.credit.total_amount}
                                         actions={false}
+                                        view_contacts={true}
                                     />
                                 ))
                             }
@@ -198,6 +199,7 @@ export default function Credit(){
                                 end_point:`PAYMENTS`
                             }
                         ]}
+                        view_complete_info={true}
                     />
                     <CardActivity items={items} />
                 </div>

@@ -7,19 +7,21 @@ import { useStoreTemplate } from "../../../stores/useStoreTemplates";
 import createManagement from "../../../helpers/Managements/createManagement";
 import sendpush from "../../../helpers/sendpush";
 import { useViewStruct } from "../../../stores/useViewStruct";
+import { useStoreLoader } from "../../../stores/useStoreLoader";
 
 export default function FormManagement(){
     const store_management=useStoreManagement();
     const store_credits=useStoreFilterManagement();
     const store_templates=useStoreTemplate();
     const store_view_struct=useViewStruct();
+    const store_loader=useStoreLoader();
     const button=useRef();
 
     const selectedOptions = store_templates.current_template.find(item => item.title === store_management.state_gestion)?.options || [];
 
     const handleSaveManagement=async(e)=>{
         e.preventDefault();
-        
+
         const data_management={
             id_campain:store_management.campain_id,
             id_call:store_management.id_call,
@@ -39,70 +41,31 @@ export default function FormManagement(){
             nro_notification:store_management.nro_notificacion
         }
 
-        button.current.textContent='Guardando...';
+        store_loader.viewOn(true);
 
-        if(store_management.substate_gestion==='OFERTA DE PAGO'){
-            const prev_effective= await store_management.checkManagement();
+        const create_management=await createManagement({data_management});
 
-            if(prev_effective===200){
-                sendpush({
-                    title:'Oferta registrada.',
-                    message:'Este crédito ya tiene una OFERTA DE PAGO registrada en esta campaña.',
-                    type:'Push--warning',
-                    timeout:3000
-                });
+        store_loader.viewOn(false);
 
-                button.current.textContent='Intentar de nuevo';
-
-            }else{
-                const create_management=await createManagement({data_management});
-        
-                if(create_management.status===200){
-                    button.current.textContent='Guardar gestión';
-                    
-                    sendpush({
-                        title:'Estado de gestión.',
-                        message:'Se ha guardado la gestión correctamente.',
-                        type:'Push--sucessful',
-                        timeout:3000
-                    });
-                    
-                    store_management.clean();
-                    store_management.addManagement(create_management.management);
-                    store_management.setMessage('Gestionado recién');
-                    
-                }else{
-                    button.current.textContent='Intentar de nuevo';
-                }
-            }
-        }else if((store_management.substate_gestion==='NOTIFICADO' || store_management.substate_gestion==='ENTREGADO AVISO DE COBRANZA') && store_management.nro_notificacion===''){
+        if(create_management.status===200){
             sendpush({
-                title:'Nro. de notificación requerido.',
-                message:'Debe ingresar un Nro. de notificación para este subestado de gestión.',
+                title:'Estado de gestión.',
+                message:'Se ha guardado la gestión correctamente.',
+                type:'Push--sucessful',
+                timeout:3000
+            });
+
+            store_management.clean();
+            store_management.addManagement(create_management.management);
+            store_management.setMessage('Gestionado recién');
+
+        }else{
+            sendpush({
+                title:'Estado de gestión.',
+                message:create_management.message,
                 type:'Push--warning',
                 timeout:3000
             });
-            button.current.textContent='Intentar de nuevo';
-        }else{
-            const create_management=await createManagement({data_management});
-        
-            if(create_management.status===200){
-                button.current.textContent='Guardar gestión';
-                
-                sendpush({
-                    title:'Estado de gestión.',
-                    message:'Se ha guardado la gestión correctamente.',
-                    type:'Push--sucessful',
-                    timeout:3000
-                });
-                
-                store_management.clean();
-                store_management.addManagement(create_management.management);
-                store_management.setMessage('Gestionado recién');
-                
-            }else{
-                button.current.textContent='Intentar de nuevo';
-            }
         }
     }
 

@@ -34,16 +34,22 @@ export const useStoreSMS = create((set,get) => ({
         }
     ],  
     setContact:({phone_number,name,type,view,days_past_due,total_amount,ci,campain_id,credit_id})=>{
-        set({phone_number:phone_number})
-        set({name:name})
-        set({type:type})
-        set({view:view})
-        set({days_past_due:days_past_due})
-        set({total_amount:Math.round(total_amount,2)})
-        set({phone_contact:localStorage.getItem('phone_number')})
-        set({campain_id:campain_id})
-        set({credit_id:credit_id})
-        set({ci:ci})
+        set({
+            phone_number:phone_number,
+            name:name,
+            type:type,
+            view:view,
+            days_past_due:days_past_due,
+            total_amount:Number(total_amount).toFixed(2),
+            phone_contact:localStorage.getItem('phone_number'),
+            campain_id:campain_id,
+            credit_id:credit_id,
+            ci:ci,
+            message:'',
+            promise_date:'',
+            cod_sms:'',
+            payment_date:''
+        })
     },
     setView:(value)=>{set({view:value})},
     setPromiseDate:(value)=>{set({promise_date:value})},

@@ -142,7 +142,6 @@ export default function GHistorial(){
                     })
                         .then((response) => response.json())  
                         .then((data) => {
-                            console.log(data);
                             setData(data);
                         });
                 }
@@ -387,6 +386,10 @@ export default function GHistorial(){
                             <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
                             <option value={"OFERTA DE PAGO"}>OFERTA DE PAGO</option>
                             <option value={"VOLVER A LLAMAR"}>VOLVER A LLAMAR</option>
+                            <option value={"REGESTION DE OFERTA"}>REGESTION DE OFERTA</option>
+                            <option value={"NOTIFICADO"}>NOTIFICADO</option>
+                            <option value={"ENTREGADO AVISO DE COBRANZA"}>ENTREGADO AVISO DE COBRANZA</option>
+                            <option value={"NO NOTIFICADO"}>NO NOTIFICADO</option>
                             <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>
                             <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
                             <option value={"YA PAGÓ"}>YA PAGÓ</option>
@@ -522,7 +525,7 @@ export default function GHistorial(){
                             <label>{gestion.client_ci}</label>
                             <label>{gestion.type}</label>
                             <label>{gestion.id_credit}</label>
-                            <label>{gestion.substate_gestion}</label>
+                            <label>{(gestion.substate_gestion==='ENTREGADO AVISO DE COBRANZA' || gestion.substate_gestion==='NOTIFICADO') ? `${gestion.substate_gestion} - Nro. Not.: ${gestion.nro_notification}` : gestion.substate_gestion}</label>
                             <label>{gestion.date_promise}</label>
                             <label>{gestion.dias_vencidos}</label>
                             <label>{`${gestion.byUser.split(" ")[0].substring(0,1)}. ${gestion.byUser.split(" ")[1]}`}</label>

@@ -179,6 +179,7 @@ export default function PanelManagement({}){
                                     end_point:`NOTES`
                                 }
                             ]}
+                            view_complete_info={false}
                         />
                     </div>
                 </div>
