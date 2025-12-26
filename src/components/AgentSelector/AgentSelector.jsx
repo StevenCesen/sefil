@@ -32,11 +32,13 @@ export default function AgentSelector({
                 </div>
                 {isOpen && (
                     <div className="CardAssignCampain__agentsOptions">
-                        {parsedAgents.map((agent) => (
+                        {parsedAgents.map((agent) => {
+                            const nameParts = agent.name ? agent.name.split(" ") : ['', ''];
+                            return (
                             <div key={agent.id} className={selectedAgents.includes(agent.id) ? "CardAssign--agentchoose" : ""}>
                                 <label>
-                                    {agent.name.split(" ")[0]?.substring(0,1) || ''}.{" "}
-                                    {agent.name.split(" ")[1] || ''}
+                                    {nameParts[0]?.substring(0,1) || ''}.{" "}
+                                    {nameParts[1] || ''}
                                 </label>
                                 {isOrigin && (
                                     <button
@@ -47,14 +49,15 @@ export default function AgentSelector({
                                     </button>
                                 )}
                                 <button title="Agrupar">
-                                    <img 
+                                    <img
                                         src="/icons/grou.png"
                                         onClick={() => onAgentGroup(agent, isOrigin)}
                                         alt="Agrupar"
                                     />
                                 </button>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>

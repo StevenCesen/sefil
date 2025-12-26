@@ -9,7 +9,6 @@ export default function CardCurrentGestion({management_id}){
 
     const handleGetCalls = async ({management_id})=>{
         const calls = await getCallsByManagementID({management_id});
-        console.log(calls)
         setCalls(calls.result);
     }
 

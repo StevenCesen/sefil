@@ -1,45 +1,21 @@
 import { useEffect, useState } from "react";
-
-const agencias = [
-  "-- Todas --",
-  "catacocha",
-  "palanda",
-  "cariamanga",
-  "zamora",
-  "zumba",
-  "piñas",
-  "celica",
-  "catamayo",
-  "malacatos",
-  "santa rosa",
-  "oficina las pitas",
-  "oficina centro",
-  "oficina norte",
-  "san miguel de los bancos",
-  "milagro",
-  "santo domingo",
-  "el carmen",
-  "cayambe",
-  "pasaje",
-  "tumbaco",
-  "la troncal",
-  "amaguaña",
-  "naranjal",
-  "quinche",
-  "quininde"
-];
+import useAgencies from "../../../hooks/useAgencies";
 
 const SelectAgency = ({setOptions}) => {
     const [seleccionadas, setSeleccionadas] = useState([]);
+    const { agencies: agenciasFromAPI, loading } = useAgencies();
+
+    // Build agencies list with "-- Todas --" at the beginning
+    const agencias = ["-- Todas --", ...agenciasFromAPI];
 
     const handleCheckboxChange = (agencia) => {
         if (agencia === "-- Todas --") {
-            if (seleccionadas.length === agencias.length - 1) {
+            if (seleccionadas.length === agenciasFromAPI.length) {
                 setSeleccionadas([]);
                 setOptions([]);
             } else {
-                setSeleccionadas(agencias.slice(1));
-                setOptions(agencias.slice(1));
+                setSeleccionadas(agenciasFromAPI);
+                setOptions(agenciasFromAPI);
             }
         } else {
             if (seleccionadas.includes(agencia)) {
@@ -52,13 +28,24 @@ const SelectAgency = ({setOptions}) => {
         }
     };
 
-    const isAllSelected = seleccionadas.length === agencias.length - 1;
+    const isAllSelected = seleccionadas.length === agenciasFromAPI.length && agenciasFromAPI.length > 0;
 
     useEffect(() => {
         if (isAllSelected && !seleccionadas.includes("-- Todas --")) {
             setSeleccionadas(prev => [...prev]);
         }
     }, []);
+
+    if (loading) {
+        return (
+            <div style={{ fontFamily: 'Arial, sans-serif' }}>
+                <label>Selecciona agencias: </label>
+                <div style={{ padding: '10px' }}>
+                    Cargando agencias...
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div style={{ fontFamily: 'Arial, sans-serif' }}>

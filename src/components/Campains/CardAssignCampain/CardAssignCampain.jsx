@@ -1,9 +1,17 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef } from "react";
 import "./CardAssignCampain.css";
-import useAssignSearch from "../../../hooks/useAssignSearch";
+import useFetch from "../../../hooks/useFetch";
 import useSearchCreditInDistribution from "../../../hooks/useSearchCreditInDistribution";
-import sendpush from "../../../helpers/sendpush";
-import { fetchBusinessData, fetchCreditsData, transferCampaignLoad } from "../../../helpers/campaignHelpers";
+
+// Custom hooks
+import { useCampaignData } from "../../../helpers/Campains/useCampaignData";
+import { useAssignmentState } from "../../../helpers/Campains/useAssignmentState";
+import { useSearchHandlers } from "../../../helpers/Campains/useSearchHandlers";
+import { useAgentHandlers } from "../../../helpers/Campains/useAgentHandlers";
+import { useFilterHandlers } from "../../../helpers/Campains/useFilterHandlers";
+import { useTransferHandler } from "../../../helpers/Campains/useTransferHandler";
+
+// Components
 import AgentSelector from "../../AgentSelector/AgentSelector";
 import FilterRangeContainer from "../../FilterRangeContainer/FilterRangeContainer";
 import SelectCollectionState from "../../SelectCollectionState/SelectCollectionState";
@@ -11,377 +19,80 @@ import SelectManagementStates from "../../SelectManagementStates/SelectManagemen
 import SelectAgencies from "../../SelectAgencies/SelectAgencies";
 import CreditDetailsModal from "../../CreditDetailsModal/CreditDetailsModal";
 import ErrorDisplay from "../../ErrorDisplay/ErrorDisplay";
-import useFetch from "../../../hooks/useFetch";
 
-const createInitialState = (distributions = []) => ({
-    transfer: false,
-    view_agencies: false,
-    view_agents: false,
-    view_dtns: false,
-    view_details: false,
-    business: null,
-    charge: { data: [], total: 0 },
-    agent: { id: '', name: '-- Seleccionar --' },
-    agents_origin: [],
-    agent_dtsn: { id: '', name: '-- Seleccionar --' },
-    agents_dtsn: [],
-    creditos: [],
-    distributions,
-    coincidence: '1',
-    prev_agencies: [],
-    errors: [],
-    total_assign: 0,
-    loading: false,
-    searchText: '',
-    item_filter: {
-        mora: { min: '', max: '' },
-        cuota: { min: '', max: '' },
-        monto: { min: '', max: '' },
-        estado: '',
-        estado_gestion: '',
-        agencia: []
-    }
-});
-
-export default function CardAssignCampain({ data, updateCredits }) {
+export default function CardAssignCampain({ campain_id }) {
     const { fetchWithAuth } = useFetch();
-    const [state, setState] = useState(() => createInitialState(data?.distributions));
 
-    // ========== REFS ==========
+    // Refs
     const ref_origin = useRef();
     const ref_destino = useRef();
-    const busc = useRef();
 
-    // ========== UTILITY FUNCTIONS ==========
-    const updateState = useCallback((updates) => {
-        setState(prevState => ({ ...prevState, ...updates }));
-    }, []);
+    // Campaign data
+    const { data, credits, setCredits, businessIdRef } = useCampaignData(campain_id, fetchWithAuth);
 
-    const updateCharge = useCallback((newCharge) => {
-        updateState({ charge: newCharge });
-    }, [updateState]);
+    // Assignment state
+    const { state, setState, updateState, updateFilter } = useAssignmentState();
 
-    // ========== FILTER & SEARCH ==========
-    const performAssignSearch = useCallback((searchParams = {}) => {
-        const {
-            charge = state.charge,
-            searchValue = state.searchText,
-            filter = searchValue.length === 0,
-            coincidence = state.coincidence,
-            mora = state.item_filter.mora,
-            cuota = state.item_filter.cuota,
-            monto = state.item_filter.monto,
-            estado = state.item_filter.estado,
-            agencies = state.prev_agencies,
-            estado_gestion = state.item_filter.estado_gestion,
-            agents = state.agents_origin.length > 0 ? state.agents_origin : state.agent.id
-        } = searchParams;
+    // Search handlers
+    const { performSearch, handleSearchTextChange, handleCoincidenceChange } = useSearchHandlers(
+        state,
+        credits,
+        setCredits,
+        updateState,
+        businessIdRef,
+        campain_id
+    );
 
-        useAssignSearch(
-            charge,
-            searchValue,
-            updateCharge,
-            filter,
-            coincidence,
-            mora,
-            cuota,
-            monto,
-            estado,
-            agencies,
-            estado_gestion,
-            agents,
-            data.cartera,
-            (creditos) => updateState({ creditos })
-        );
-    }, [state, updateCharge, updateState, data.cartera]);
+    // Agent handlers
+    const { handleAgentSelect, handleAgentGroup } = useAgentHandlers(
+        updateState,
+        setCredits,
+        performSearch,
+        fetchWithAuth
+    );
 
-    const updateRange = useCallback((key, value) => {
-        const updatedFilter = { ...state.item_filter, [key]: value };
-        updateState({ item_filter: updatedFilter });
-        performAssignSearch({ [key]: value });
-    }, [state.item_filter, updateState, performAssignSearch]);
+    // Filter handlers
+    const { handleRangeUpdate, handleAgencyFilter } = useFilterHandlers(
+        updateState,
+        updateFilter,
+        performSearch
+    );
 
-    // ========== AGENT HANDLERS ==========
-    const handleAgentSelect = useCallback((agent) => {
-        updateState({
-            agent: { id: agent.id, name: agent.name },
-            view_agents: false
-        });
+    // Transfer handler
+    const { handleTransfer } = useTransferHandler(
+        state,
+        updateState,
+        data,
+        campain_id,
+        fetchWithAuth,
+        setCredits,
+        credits
+    );
 
-        const agentDistribution = data.distributions.find(
-            agente => Number(agente.agent_id) === Number(agent.id)
-        );
-
-        if (agentDistribution) {
-            performAssignSearch({ agents: agent.id });
-        }
-    }, [updateState, data.distributions, performAssignSearch]);
-
-    const updateAgentText = useCallback((refElement, agents, agentName, isOrigin) => {
-        let texto = refElement.current.textContent;
-        const placeholder = isOrigin ? '-- Seleccionar --' : '-- Seleccionar--';
-        
-        if (agents.length === 0) {
-            refElement.current.textContent = placeholder;
-        } else {
-            texto = texto.includes(agentName) 
-                ? texto.replace(agentName, '').replace(/,+/g, ',').replace(/^,|,$/g, '')
-                : `${texto},${agentName}`;
-            
-            refElement.current.textContent = texto.replace(`${placeholder},`, '');
-        }
-    }, []);
-
-    const handleAgentGroup = useCallback((agent, isOrigin = true) => {
-        const currentAgents = isOrigin ? state.agents_origin : state.agents_dtsn;
-        const refElement = isOrigin ? ref_origin : ref_destino;
-        const updateKey = isOrigin ? 'agents_origin' : 'agents_dtsn';
-        
-        const newAgents = currentAgents.includes(agent.id)
-            ? currentAgents.filter(id => Number(id) !== Number(agent.id))
-            : [...currentAgents, agent.id];
-
-        updateAgentText(refElement, newAgents, agent.name, isOrigin);
-        updateState({ [updateKey]: newAgents });
-
-        if (isOrigin) {
-            performAssignSearch({ agents: newAgents.length > 0 ? newAgents : agent.id });
-        }
-    }, [state.agents_origin, state.agents_dtsn, updateAgentText, updateState, performAssignSearch]);
-
-    // ========== AGENCY HANDLERS ==========
-    const handleAgencyFilter = useCallback((agencia, checked) => {
-        const ALL_AGENCIES = [
-            "catacocha", "palanda", "cariamanga", "zamora", "zumba", 
-            "piñas", "celica", "catamayo", "malacatos", "santa rosa",
-            "oficina las pitas", "oficina centro", "oficina norte",
-            "san miguel de los bancos", "milagro", "santo domingo",
-            "el carmen", "cayambe", "pasaje", "tumbaco", "la troncal",
-            "amaguaña", "naranjal", "quinche", "quininde"
-        ];
-        
-        if (agencia === "-- Todas --") {
-            // Si se marca "Todas", seleccionar todas las agencias individuales
-            // Si se desmarca "Todas", limpiar todas las agencias
-            const newAgencies = checked ? [...ALL_AGENCIES] : [];
-            updateState({ prev_agencies: newAgencies });
-            performAssignSearch({ agencies: newAgencies });
-        } else {
-            // Toggle de agencia individual
-            const newAgencies = checked 
-                ? [...state.prev_agencies, agencia]
-                : state.prev_agencies.filter(agency => agency !== agencia);
-
-            updateState({ prev_agencies: newAgencies });
-            performAssignSearch({ agencies: newAgencies });
-        }
-    }, [state.prev_agencies, updateState, performAssignSearch]);
-
-    // ========== TRANSFER HANDLERS ==========
-    const buildFilters = useCallback(() => {
-        const filters = {
-            sync_status: 'ACTIVE'
-        };
-
-        // Filtros de mora (días de atraso)
-        if (state.item_filter.mora?.min && Number(state.item_filter.mora.min) !== 0) {
-            filters.days_past_due_min = Number(state.item_filter.mora.min);
-        }
-        if (state.item_filter.mora?.max && Number(state.item_filter.mora.max) !== 0) {
-            filters.days_past_due_max = Number(state.item_filter.mora.max);
-        }
-
-        // Filtros de monto
-        if (state.item_filter.monto?.min && Number(state.item_filter.monto.min) !== 0) {
-            filters.total_amount_min = Number(state.item_filter.monto.min);
-        }
-        if (state.item_filter.monto?.max && Number(state.item_filter.monto.max) !== 0) {
-            filters.total_amount_max = Number(state.item_filter.monto.max);
-        }
-
-        // Filtros de cuotas
-        if (state.item_filter.cuota?.min && Number(state.item_filter.cuota.min) !== 0) {
-            filters.total_fees_min = Number(state.item_filter.cuota.min);
-        }
-        if (state.item_filter.cuota?.max && Number(state.item_filter.cuota.max) !== 0) {
-            filters.total_fees_max = Number(state.item_filter.cuota.max);
-        }
-
-        // Estados de gestión
-        if (state.item_filter.estado_gestion) {
-            filters.status_management = Array.isArray(state.item_filter.estado_gestion)
-                ? state.item_filter.estado_gestion
-                : [state.item_filter.estado_gestion];
-        }
-
-        // Estados de cobranza
-        if (state.item_filter.estado) {
-            filters.collection_state = Array.isArray(state.item_filter.estado)
-                ? state.item_filter.estado
-                : [state.item_filter.estado];
-        }
-
-        // Agencias
-        if (state.prev_agencies.length > 0) {
-            filters.agencies = state.prev_agencies;
-        }
-
-        // Usuarios origen
-        if (state.agents_origin.length > 0) {
-            filters.user_origin = state.agents_origin;
-        } else if (state.agent.id) {
-            filters.user_origin = [state.agent.id];
-        }
-
-        // Usuarios destino
-        if (state.agents_dtsn.length > 0) {
-            filters.user_dstn = state.agents_dtsn;
-        }
-
-        // Límite de asignación
-        if (state.total_assign > 0) {
-            filters.limit = Number(state.total_assign);
-        }
-
-        // Créditos específicos
-        if (state.creditos.length > 0) {
-            filters.credits = state.creditos;
-        }
-
-        return filters;
-    }, [state]);
-
-    const handleTransfer = useCallback(async (e) => {
-        if (state.agents_dtsn.length === 0) {
-            sendpush({
-                title: 'ERR: Sin agente destino.',
-                message: 'No hay un agente de destino para transferir la carga.',
-                type: 'Push--danger',
-                timeout: 5000
-            });
-            return;
-        }
-
-        // Validar que los créditos ingresados no estén INACTIVE
-        if (state.creditos.length > 0 && state.charge?.data) {
-            const inactiveCredits = state.charge.data.filter(credit =>
-                state.creditos.includes(credit.credit_number || credit.id) &&
-                credit.sync_status === 'INACTIVE'
-            );
-
-            if (inactiveCredits.length > 0) {
-                sendpush({
-                    title: 'ERR: Créditos inactivos.',
-                    message: `No se puede transferir créditos con estado INACTIVE: ${inactiveCredits.map(c => c.credit_number || c.id).join(', ')}`,
-                    type: 'Push--danger',
-                    timeout: 5000
-                });
-                return;
-            }
-        }
-
-        const originalText = e.target.textContent;
-        e.target.textContent = "Transfiriendo...";
-        updateState({ errors: [], loading: true });
-
-        try {
-            const transferData = buildFilters();
-
-            const responseData = await transferCampaignLoad(data.id, transferData, fetchWithAuth);
-
-            if (responseData.errors?.length > 0) {
-                updateState({ errors: responseData.errors });
-                sendpush({
-                    title: 'ERR: Cruce.',
-                    message: 'Existen créditos ya asignados a otro agente.',
-                    type: 'Push--danger',
-                    timeout: 5000
-                });
-            } else {
-                sendpush({
-                    title: 'Éxito.',
-                    message: 'Carga transferida correctamente.',
-                    type: 'Push--sucessful',
-                    timeout: 3000
-                });
-                updateCredits(responseData);
-            }
-        } catch (error) {
-            console.error('Error al transferir:', error);
-            sendpush({
-                title: 'Error.',
-                message: 'Error al transferir la carga.',
-                type: 'Push--danger',
-                timeout: 5000
-            });
-        } finally {
-            e.target.textContent = originalText;
-            updateState({ loading: false });
-        }
-    }, [state, updateState, buildFilters, data, updateCredits]);
-
-    // ========== OTHER HANDLERS ==========
-    const handleCreditSearch = useCallback(async (e) => {
+    // Credit search handler
+    const handleCreditSearch = async (e) => {
         const creditId = e.target.value.split('-')[1];
-        if (creditId?.length > 7) {
+        if (creditId?.length > 7 && data) {
             await useSearchCreditInDistribution({
                 value: creditId,
                 distribution: data,
-                cartera: data.cartera,
                 setAgent: (agent) => updateState({ agent }),
-                setCredit: updateCharge
+                setCredit: setCredits
             });
         }
-    }, [data, updateState, updateCharge]);
+    };
 
-    const handleCoincidenceChange = useCallback((e) => {
-        if (!e.target.checked) return;
+    // Agent group wrapper to pass refs
+    const onAgentGroup = (agent, isOrigin) => {
+        const refElement = isOrigin ? ref_origin : ref_destino;
+        setState(currentState => ({
+            ...currentState,
+            ...handleAgentGroup(agent, isOrigin, currentState, refElement)
+        }));
+    };
 
-        const copy = state.charge.data?.map(item => ({ ...item, search: true })) || [];
-        updateState({ charge: { ...state.charge, data: copy }, coincidence: e.target.value });
-        performAssignSearch({ coincidence: e.target.value });
-    }, [state.charge, updateState, performAssignSearch]);
-
-    const handleSearchTextChange = useCallback((e) => {
-        const searchValue = e.target.value;
-        updateState({ searchText: searchValue });
-        performAssignSearch({ searchValue });
-    }, [updateState, performAssignSearch]);
-
-    // ========== EFFECTS ==========
-    useEffect(() => {
-        const fetchInitialData = async () => {
-            try {
-                const [businessData, creditsData] = await Promise.all([
-                    fetchBusinessData(fetchWithAuth),
-                    data.type !== 'api' ? fetchCreditsData(data.cartera, fetchWithAuth) : Promise.resolve(null)
-                ]);
-
-                setState(prevState => ({
-                    ...prevState,
-                    business: businessData.data,
-                    charge: creditsData || prevState.charge
-                }));
-
-                if (creditsData) {
-                    localStorage.setItem('filt', JSON.stringify(creditsData));
-                }
-            } catch (error) {
-                console.error('Error fetching initial data:', error);
-                sendpush({
-                    title: 'Error.',
-                    message: 'Error al cargar datos iniciales.',
-                    type: 'Push--danger',
-                    timeout: 5000
-                });
-            }
-        };
-
-        fetchInitialData();
-    }, [fetchWithAuth, data.type, data.cartera]);
-
-    // ========== RENDER ==========
-    if (!state.business) {
+    // Loading state
+    if (!data) {
         return <div>Cargando...</div>;
     }
 
@@ -411,7 +122,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                     isOpen={state.view_agents}
                     onToggle={() => updateState({ view_agents: !state.view_agents })}
                     onAgentSelect={handleAgentSelect}
-                    onAgentGroup={handleAgentGroup}
+                    onAgentGroup={onAgentGroup}
                     refElement={ref_origin}
                     title="Agente origen"
                     isOrigin={true}
@@ -427,7 +138,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                             isOpen={state.view_dtns}
                             onToggle={() => updateState({ view_dtns: !state.view_dtns })}
                             onAgentSelect={() => {}}
-                            onAgentGroup={(agent) => handleAgentGroup(agent, false)}
+                            onAgentGroup={(agent) => onAgentGroup(agent, false)}
                             refElement={ref_destino}
                             title="Agente destino"
                             isOrigin={false}
@@ -452,9 +163,8 @@ export default function CardAssignCampain({ data, updateCredits }) {
 
             {/* Load Data */}
             <label className="CardAssignCampain__file">
-                Cargar datos (<strong>{state.charge.total || 0}</strong>)
+                Cargar datos (<strong>{credits.total || 0}</strong>)
                 <input
-                    ref={busc}
                     onChange={handleSearchTextChange}
                     value={state.searchText}
                     type="text"
@@ -485,18 +195,18 @@ export default function CardAssignCampain({ data, updateCredits }) {
 
             {/* Filters */}
             <div className="CardAssignCampain__filters">
-                <FilterRangeContainer onFilterChange={updateRange} />
-                
+                <FilterRangeContainer onFilterChange={handleRangeUpdate} />
+
                 <div className="CardAssignCampain__selects">
                     <SelectCollectionState
                         value={state.item_filter.estado}
-                        onChange={updateRange}
+                        onChange={handleRangeUpdate}
                         typeAssign={data.type_assign}
                     />
 
                     <SelectManagementStates
                         value={state.item_filter.estado_gestion}
-                        onChange={updateRange}
+                        onChange={handleRangeUpdate}
                     />
 
                     <SelectAgencies
@@ -514,21 +224,21 @@ export default function CardAssignCampain({ data, updateCredits }) {
                 {state.transfer ? (
                     <div>
                         <label>
-                            Total (<strong>{state.charge.total || 0}</strong>)
-                            <input 
+                            Total (<strong>{credits.total || 0}</strong>)
+                            <input
                                 type="number"
                                 min="0"
-                                max={state.charge.total || 0}
+                                max={credits.total || 0}
                                 value={state.total_assign}
                                 onChange={(e) => {
                                     const value = Number(e.target.value);
-                                    if (value >= 0 && value <= (state.charge.total || 0)) {
+                                    if (value >= 0 && value <= (credits.total || 0)) {
                                         updateState({ total_assign: value });
                                     }
                                 }}
                             />
                         </label>
-                        <button 
+                        <button
                             onClick={handleTransfer}
                             disabled={state.loading || state.agents_dtsn.length === 0}
                         >
@@ -537,7 +247,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
                     </div>
                 ) : (
                     <label>
-                        Total (<strong>{state.charge.total || 0}</strong>)
+                        Total (<strong>{credits.total || 0}</strong>)
                     </label>
                 )}
             </div>
@@ -546,7 +256,7 @@ export default function CardAssignCampain({ data, updateCredits }) {
             <CreditDetailsModal
                 isOpen={state.view_details}
                 onClose={() => updateState({ view_details: false })}
-                credits={state.charge.data}
+                credits={credits.data}
             />
         </div>
     );

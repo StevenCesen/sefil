@@ -1,41 +1,80 @@
-export default function useReturnFilter({fecha_gestion,campain,name,ci,type,state_gestion,date_promise,agente,gestion_channel_whatsapp}){
-    let filters="";
+export default function useReturnFilter({
+    state,
+    substate,
+    observation,
+    promise_date,
+    created_by,
+    days_past_due,
+    paid_fees,
+    pending_fees,
+    client_id,
+    client_name,
+    client_ci,
+    credit_id,
+    campain_id,
+    created_at,
+    client_type
+}) {
+    let filters = "";
 
-    if(fecha_gestion!==""){
-        const fecha=`${fecha_gestion.split('-')[0]}/${fecha_gestion.split('-')[1]}/${fecha_gestion.split('-')[2]}`;
-        filters+=`&fecha=${fecha}`;
+    if (state !== "") {
+        filters += `&state=${state}`;
     }
 
-    if(campain!==""){
-        filters+=`&campain=${campain}`;
+    if (substate !== "") {
+        filters += `&substate=${substate}`;
     }
 
-    if(name!==""){
-        filters+=`&name=${name}`;
+    if (observation !== "") {
+        filters += `&observation=${observation}`;
     }
 
-    if(ci!==""){
-        filters+=`&ci=${ci}`;
+    if (promise_date !== "") {
+        filters += `&promise_date=${promise_date}`;
     }
 
-    if(type!==""){
-        filters+=`&type=${type}`;
+    if (created_by !== "") {
+        filters += `&created_by=${created_by}`;
     }
 
-    if(state_gestion!==""){
-        filters+=`&campo=substate_gestion&value=${state_gestion}`;
+    if (days_past_due !== "") {
+        filters += `&days_past_due=${days_past_due}`;
     }
 
-    if(date_promise!==""){
-        filters+=`&promise=${date_promise}`;
+    if (paid_fees !== "") {
+        filters += `&paid_fees=${paid_fees}`;
     }
 
-    if(agente!==""){
-        filters+=`&agent=${agente}`;
+    if (pending_fees !== "") {
+        filters += `&pending_fees=${pending_fees}`;
     }
 
-    if(gestion_channel_whatsapp!==""){
-        filters+=`&channel=whatsapp`;
+    if (client_id !== "") {
+        filters += `&client_id=${client_id}`;
+    }
+
+    if (client_name !== "") {
+        filters += `&client_name=${client_name}`;
+    }
+
+    if (client_ci !== "") {
+        filters += `&client_ci=${client_ci}`;
+    }
+
+    if (credit_id !== "" && credit_id !== undefined) {
+        filters += `&credit_id=${credit_id}`;
+    }
+
+    if (campain_id !== "") {
+        filters += `&campain_id=${campain_id}`;
+    }
+
+    if (created_at !== "") {
+        filters += `&created_at=${created_at}`;
+    }
+
+    if (client_type !== "") {
+        filters += `&client_type=${client_type}`;
     }
 
     return filters;

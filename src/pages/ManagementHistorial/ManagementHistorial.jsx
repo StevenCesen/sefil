@@ -4,7 +4,9 @@ import {useEffect, useState } from "react";
 import CardCurrentGestion from "../../components/CardCurrentGestion/CardCurrentGestion";
 import useFilterGestions from "../../hooks/useFilterGestions";
 import useReturnFilter from "../../hooks/useReturnFilter";
+import useFetch from "../../hooks/useFetch";
 import Loader from "../../components/Loader/loader";
+import SelectManagementStates from "../../components/SelectManagementStates/SelectManagementStates";
 
 export default function ManagementHistorial(){
     const [campains,setCampains]=useState();
@@ -12,6 +14,7 @@ export default function ManagementHistorial(){
     const [agents,setAgents]=useState();
     const [filters,setFilters]=useState();
     const [loading,setLoading]=useState();
+    const { fetchWithAuth } = useFetch();
 
     const params=new URLSearchParams(useLocation().search);
     const param=useParams();
@@ -54,16 +57,21 @@ export default function ManagementHistorial(){
                     }
                 }else{
                     const filter=useReturnFilter({
-                        fecha_gestion:filters.fecha_gestion,
-                        campain:filters.campain,
-                        name:filters.name,
-                        ci:filters.ci,
-                        type:filters.type,
-                        state_gestion:filters.state_gestion,
-                        date_promise:filters.date_promise,
-                        credito:filters.credito,
-                        agente:filters.agente,
-                        gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                        state: filters.state,
+                        substate: filters.substate,
+                        observation: filters.observation,
+                        promise_date: filters.promise_date,
+                        created_by: filters.created_by,
+                        days_past_due: filters.days_past_due,
+                        paid_fees: filters.paid_fees,
+                        pending_fees: filters.pending_fees,
+                        client_id: filters.client_id,
+                        client_name: filters.client_name,
+                        client_ci: filters.client_ci,
+                        credit_id: filters.credit_id,
+                        campain_id: filters.campain_id,
+                        created_at: filters.created_at,
+                        client_type: filters.client_type
                     });
 
                     if(data.links.next!==null){
@@ -83,16 +91,21 @@ export default function ManagementHistorial(){
     useEffect(()=>{
 
         setFilters({
-            fecha_gestion:"",
-            campain:"",
-            name:"",
-            ci:"",
-            type:"",
-            state_gestion:"",
-            date_promise:"",
-            agente:"",
-            credito:"",
-            gestion_channel_whatsapp:""
+            state: "",
+            substate: "",
+            observation: "",
+            promise_date: "",
+            created_by: "",
+            days_past_due: "",
+            paid_fees: "",
+            pending_fees: "",
+            client_id: "",
+            client_name: "",
+            client_ci: "",
+            credit_id: "",
+            campain_id: "",
+            created_at: "",
+            client_type: ""
         });
 
         setLoading(false);
@@ -188,7 +201,6 @@ export default function ManagementHistorial(){
                         })
                         .then((response) => {
                             if (!response) return;
-                            console.log(response);
                             setData(response.result);
                         });
                 }
@@ -219,63 +231,49 @@ export default function ManagementHistorial(){
 
                 <div className="ManagementHistorial__filters">
                     <label></label>
+
                     <label>
                         Fecha gestión
                         <input
-                            value={filters.fecha_gestion}
+                            value={filters.created_at}
                             type="date"
                             onChange={(e)=>{
-
                                 setFilters({
                                     ...filters,
-                                    fecha_gestion:e.target.value
+                                    created_at: e.target.value
                                 });
 
                                 useFilterGestions({
-                                    fecha_gestion:e.target.value,
-                                    campain:filters.campain,
-                                    name:filters.name,
-                                    ci:filters.ci,
-                                    type:filters.type,
-                                    state_gestion:filters.state_gestion,
-                                    date_promise:filters.date_promise,
-                                    agente:filters.agente,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading,
-                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                                    ...filters,
+                                    created_at: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
                                 });
-
                             }}
                         />
                     </label>
+
                     <label>
                         Campaña
                         <select
-                            value={filters.campain}
+                            value={filters.campain_id}
                             onChange={(e)=>{
                                 setFilters({
                                     ...filters,
-                                    campain:e.target.value
+                                    campain_id:e.target.value
                                 });
 
                                 useFilterGestions({
-                                    fecha_gestion:filters.fecha_gestion,
-                                    campain:e.target.value,
-                                    name:filters.name,
-                                    ci:filters.ci,
-                                    type:filters.type,
-                                    state_gestion:filters.state_gestion,
-                                    date_promise:filters.date_promise,
-                                    agente:filters.agente,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading,
-                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                                    ...filters,
+                                    campain_id: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
                                 });
                             }}
                         >
-                            <option>-- Seleccionar --</option>
+                            <option value="">-- Seleccionar --</option>
                             {
                                 campains.map((campain,index)=>(
                                     <option value={campain.id} key={index}>{campain.name}</option>
@@ -283,274 +281,211 @@ export default function ManagementHistorial(){
                             }
                         </select>
                     </label>
+
                     <label>
                         Nombre
                         <input
-                            value={filters.name}
-                            type="value"
+                            value={filters.client_name}
+                            type="text"
                             onChange={(e)=>{
                                 setFilters({
                                     ...filters,
-                                    name:e.target.value
+                                    client_name: e.target.value
                                 });
 
                                 useFilterGestions({
-                                    fecha_gestion:filters.fecha_gestion,
-                                    campain:filters.campain,
-                                    name:e.target.value,
-                                    ci:filters.ci,
-                                    type:filters.type,
-                                    state_gestion:filters.state_gestion,
-                                    date_promise:filters.date_promise,
-                                    agente:filters.agente,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading,
-                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                                    ...filters,
+                                    client_name: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
                                 });
                             }}
                         />
                     </label>
+
                     <label>
                         Cédula
                         <input
-                            value={filters.ci}
-                            type="value"
+                            value={filters.client_ci}
+                            type="text"
                             placeholder="Cédula"
                             onChange={(e)=>{
                                 setFilters({
                                     ...filters,
-                                    ci:e.target.value
+                                    client_ci: e.target.value
                                 });
 
                                 useFilterGestions({
-                                    fecha_gestion:filters.fecha_gestion,
-                                    campain:filters.campain,
-                                    name:filters.name,
-                                    ci:e.target.value,
-                                    type:filters.type,
-                                    state_gestion:filters.state_gestion,
-                                    date_promise:filters.date_promise,
-                                    agente:filters.agente,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading,
-                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                                    ...filters,
+                                    client_ci: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
                                 });
                             }}
                         />
-
                     </label>
+
                     <label>
                         Tipo
                         <select
-                            value={filters.type}
+                            value={filters.client_type}
                             onChange={(e)=>{
                                 setFilters({
                                     ...filters,
-                                    type:e.target.value
+                                    client_type: e.target.value
                                 });
 
                                 useFilterGestions({
-                                    fecha_gestion:filters.fecha_gestion,
-                                    campain:filters.campain,
-                                    name:filters.name,
-                                    ci:filters.ci,
-                                    type:e.target.value,
-                                    state_gestion:filters.state_gestion,
-                                    date_promise:filters.date_promise,
-                                    agente:filters.agente,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading,
-                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                                    ...filters,
+                                    client_type: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
                                 });
                             }}
                         >
-                            <option value={""}>-- Seleccionar --</option>
-                            <option value={"TITULAR"}>TITULAR</option>
-                            <option value={"GARANTE"}>GARANTE</option>
+                            <option value="">-- Seleccionar --</option>
+                            <option value="TITULAR">TITULAR</option>
+                            <option value="GARANTE">GARANTE</option>
                         </select>
                     </label>
+
                     <label>
                         Crédito
                         <input
-                            value={filters.credito}
-                            type="value"
+                            value={filters.credit_id}
+                            type="text"
                             onChange={(e)=>{
-
                                 setFilters({
                                     ...filters,
-                                    credito:e.target.value
+                                    credit_id: e.target.value
                                 });
 
-                                if(e.target.value.length>8){
+                                if(e.target.value.length > 0){
                                     useFilterGestions({
-                                        fecha_gestion:filters.fecha_gestion,
-                                        campain:filters.campain,
-                                        name:filters.name,
-                                        ci:filters.ci,
-                                        type:filters.type,
-                                        state_gestion:filters.state_gestion,
-                                        date_promise:filters.date_promise,
-                                        agente:filters.agente,
-                                        credito:e.target.value,
-                                        setData:setData,
-                                        loader:setLoading,
-                                        gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                                        ...filters,
+                                        credit_id: e.target.value,
+                                        setData,
+                                        loader: setLoading,
+                                        fetchWithAuth
                                     });
                                 }
                             }}
                         />
                     </label>
 
-                    <label>
-                        Estado gestión
-                        <select
-                            value={filters.state_gestion}
-                            onChange={(e)=>{
-                                setFilters({
-                                    ...filters,
-                                    state_gestion:e.target.value
-                                });
+                    <SelectManagementStates
+                        value={filters.substate}
+                        onChange={(_, value) => {
+                            setFilters({
+                                ...filters,
+                                substate: value
+                            });
 
-                                useFilterGestions({
-                                    fecha_gestion:filters.fecha_gestion,
-                                    campain:filters.campain,
-                                    name:filters.name,
-                                    ci:filters.ci,
-                                    type:filters.type,
-                                    state_gestion:e.target.value,
-                                    date_promise:filters.date_promise,
-                                    agente:filters.agente,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading
-                                });
-                            }}
-                        >
-                            <option>-- Seleccionar --</option>
-                            <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
-                            <option value={"OFERTA DE PAGO"}>OFERTA DE PAGO</option>
-                            <option value={"VOLVER A LLAMAR"}>VOLVER A LLAMAR</option>
-                            <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>
-                            <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
-                            <option value={"YA PAGÓ"}>YA PAGÓ</option>
-                            <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>
-                            <option value={"CLIENTE SE NIEGA A PAGAR"}>CLIENTE SE NIEGA A PAGAR</option>
-                            <option value="CLIENTE INDICA QUE NO ES SU DEUDA">CLIENTE INDICA QUE NO ES SU DEUDA</option>
-                            <option value="CONVENIO DE PAGO">CONVENIO DE PAGO</option>
-                            <option value="CONTACTO INDICA QUE ESTA EQUIVOCADO">CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
-                            <option value="CLIENTE ESCUCHA Y NO HABLA">CLIENTE ESCUCHA Y NO HABLA</option>
-                            <option value="CLIENTE ESTA OCUPADO">CLIENTE ESTA OCUPADO</option>
-                            <option value="CONTESTA MENOR DE EDAD">CONTESTA MENOR DE EDAD</option>
-                            <option value="CORTA LA LLAMADA">CORTA LA LLAMADA</option>
-                            <option value="INUBICABLE">INUBICABLE</option>
-                            <option value="NO VIVE EN LA MISMA DIRECCIÓN">NO VIVE EN LA MISMA DIRECCIÓN</option>
-                            <option value="Recopilación de Información">Recopilación de Información</option>
-                            <option value="Documentación para demanda">Documentación para demanda</option>
-                            <option value="Presentación demanda">Presentación demanda</option>
-                            <option value="Citación judicial">Citación judicial</option>
-                            <option value="Ejecución">Ejecución</option>
-                            <option value="Peritaje">Peritaje</option>
-                            <option value="Embargo">Embargo</option>
-                            <option value="Sentencia">Sentencia</option>
-                            <option value="Archivo demanda">Archivo demanda</option>
-                        </select>
-                    </label>
+                            useFilterGestions({
+                                ...filters,
+                                substate: value,
+                                setData,
+                                loader: setLoading,
+                                fetchWithAuth
+                            });
+                        }}
+                    />
+
                     <label>
-                        Acuerdo
+                        Fecha Acuerdo
                         <input
-                            value={filters.date_promise}
+                            value={filters.promise_date}
                             type="date"
                             onChange={(e)=>{
                                 setFilters({
                                     ...filters,
-                                    date_promise:e.target.value
+                                    promise_date: e.target.value
                                 });
 
                                 useFilterGestions({
-                                    fecha_gestion:filters.fecha_gestion,
-                                    campain:filters.campain,
-                                    name:filters.name,
-                                    ci:filters.ci,
-                                    type:filters.type,
-                                    state_gestion:filters.state_gestion,
-                                    date_promise:e.target.value,
-                                    agente:filters.agente,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading,
-                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
+                                    ...filters,
+                                    promise_date: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
                                 });
                             }}
                         />
                     </label>
-                    <label>Días mora</label>
+
+                    <label>
+                        Días mora
+                        <input
+                            value={filters.days_past_due}
+                            type="number"
+                            onChange={(e)=>{
+                                setFilters({
+                                    ...filters,
+                                    days_past_due: e.target.value
+                                });
+
+                                useFilterGestions({
+                                    ...filters,
+                                    days_past_due: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
+                                });
+                            }}
+                        />
+                    </label>
+
                     <label>
                         Agente
                         <select
-                            value={filters.agent}
+                            value={filters.created_by}
                             onChange={(e)=>{
                                 setFilters({
                                     ...filters,
-                                    agente:e.target.value
+                                    created_by: e.target.value
                                 });
 
                                 useFilterGestions({
-                                    fecha_gestion:filters.fecha_gestion,
-                                    campain:filters.campain,
-                                    name:filters.name,
-                                    ci:filters.ci,
-                                    type:filters.type,
-                                    state_gestion:filters.state_gestion,
-                                    date_promise:filters.date_promise,
-                                    agente:e.target.value,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading,
-                                    gestion_channel_whatsapp:filters.gestion_channel_whatsapp
-                                });
-                            }}
-                        >
-                            <option>-- Seleccionar --</option>
-                            {
-                                agents.map((agent)=>(
-                                    <option value={agent.name}>{agent.name}</option>
-                                ))
-                            }
-
-                        </select>
-                    </label>
-                    <label>
-                        Observación
-                        <select
-                            value={filters.gestion_channel_whatsapp}
-                            onChange={(e)=>{
-                                setFilters({
                                     ...filters,
-                                    gestion_channel_whatsapp:e.target.value
-                                });
-
-                                useFilterGestions({
-                                    fecha_gestion:filters.fecha_gestion,
-                                    campain:filters.campain,
-                                    name:filters.name,
-                                    ci:filters.ci,
-                                    type:filters.type,
-                                    state_gestion:filters.state_gestion,
-                                    date_promise:filters.date_promise,
-                                    agente:filters.agente,
-                                    credito:filters.credito,
-                                    setData:setData,
-                                    loader:setLoading,
-                                    gestion_channel_whatsapp:e.target.value
+                                    created_by: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
                                 });
                             }}
                         >
                             <option value="">-- Seleccionar --</option>
-                            <option value="whatsapp">Gestión whatsapp</option>
+                            {
+                                agents.map((agent)=>(
+                                    <option key={agent.id} value={agent.id}>{agent.name}</option>
+                                ))
+                            }
                         </select>
+                    </label>
+
+                    <label>
+                        Observación
+                        <input
+                            value={filters.observation}
+                            type="text"
+                            onChange={(e)=>{
+                                setFilters({
+                                    ...filters,
+                                    observation: e.target.value
+                                });
+
+                                useFilterGestions({
+                                    ...filters,
+                                    observation: e.target.value,
+                                    setData,
+                                    loader: setLoading,
+                                    fetchWithAuth
+                                });
+                            }}
+                        />
                     </label>
                 </div>
 
@@ -567,7 +502,7 @@ export default function ManagementHistorial(){
                             <label>{gestion.client_name}</label>
                             <label>{gestion.client_ci}</label>
                             <label>{gestion.client_type}</label>
-                            <label>{gestion.credit_id}</label>
+                            <label>{gestion.credit.sync_id}</label>
                             <label>{gestion.substate}</label>
                             <label>{gestion.promise_date ? gestion.promise_date.split(" ")[0] : ''}</label>
                             <label>{gestion.days_past_due}</label>
@@ -603,7 +538,7 @@ export default function ManagementHistorial(){
                 </div>
 
             </div>
-
+            
             {
                 ('client_name' in current)
                 ?

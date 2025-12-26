@@ -73,12 +73,6 @@ export default function Campains() {
         closeModal();
     }, [closeModal]);
 
-    const updateCreditsCampaign = useCallback((updatedCampaign) => {
-        setCampaigns(prev => prev.map(campaign =>
-            campaign.id === updatedCampaign.id ? updatedCampaign : campaign
-        ));
-    }, []);
-
     const handleEdit = useCallback((campaign) => {
         openModal(MODAL_TYPES.EDIT, campaign);
     }, [openModal]);
@@ -140,9 +134,8 @@ export default function Campains() {
                 <h3 className="Campains__title">Creación y asignación de campaña</h3>
 
                 <div className="Campains__sincronice">
-                    <h4 className="Campains__subtitle">Sincronización</h4>
                     <div>
-                        {/* <CardSync/> */}
+                        <CardSync/>
                     </div>
                 </div>
 
@@ -207,8 +200,7 @@ export default function Campains() {
             >
                 {selectedCampaign && (
                     <CardAssignCampain
-                        data={selectedCampaign}
-                        updateCredits={updateCreditsCampaign}
+                        campain_id={selectedCampaign.id}
                     />
                 )}
             </Modal>

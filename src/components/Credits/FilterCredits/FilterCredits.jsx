@@ -1,11 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { useStoreFilterCredits } from "../../../stores/useStoreCredits";
+import useAgencies from "../../../hooks/useAgencies";
 import "./FilterCredits.css";
 
 export default function FilterCredits(){
     const filter_credits = useStoreFilterCredits();
     const [activeFilter, setActiveFilter] = useState(null);
-    
+    const { agencies, loading: loadingAgencies } = useAgencies();
+
     const minDaysRef = useRef(null);
     const maxDaysRef = useRef(null);
     const carteraSelectRef = useRef(null);
@@ -15,7 +17,7 @@ export default function FilterCredits(){
     const syncStatusSelectRef = useRef(null);
     const collectionStateSelectRef = useRef(null);
     const agentSelectRef = useRef(null);
-    
+
     const [creditValue, setCreditValue] = useState('');
     const [nameValue, setNameValue] = useState('');
     const [ciValue, setCiValue] = useState('');
@@ -82,10 +84,10 @@ export default function FilterCredits(){
                 setActiveFilter('ci');
             }
         }
-        
+
         applyFilters();
     };
-    
+
     const clearAllFilters = () => {
         filter_credits.setSyncID('');
         filter_credits.setName('');
@@ -98,7 +100,7 @@ export default function FilterCredits(){
         filter_credits.setSyncStatus('');
         filter_credits.setCollectionState('');
         filter_credits.setAgent('');
-        
+
         setCreditValue('');
         setNameValue('');
         setCiValue('');
@@ -120,11 +122,11 @@ export default function FilterCredits(){
     useEffect(() => {
         filter_credits.getAgents();
     }, []);
-    
+
     return(
         <div className="FilterCredits">
             <div></div>
-            
+
             <label className="FilterCredits__label">
                 Crédito
                 <input
@@ -180,13 +182,13 @@ export default function FilterCredits(){
             </label>
 
             <label className="FilterCredits__label">Monto</label>
-            
+
             <div className="FilterCredits__range">
                 <label>Días de mora</label>
                 <div>
                     <label>
                         Min
-                        <input 
+                        <input
                             ref={minDaysRef}
                             type="number"
                             min="0"
@@ -199,7 +201,7 @@ export default function FilterCredits(){
                     </label>
                     <label>
                         Max
-                        <input 
+                        <input
                             ref={maxDaysRef}
                             type="number"
                             min="0"
@@ -212,7 +214,7 @@ export default function FilterCredits(){
                     </label>
                 </div>
             </div>
-            
+
             <label className="FilterCredits__label">
                 Cartera
                 <select
@@ -231,7 +233,7 @@ export default function FilterCredits(){
                     <option value={"syncs"}>FACES</option>
                 </select>
             </label>
-                            
+
             <label>
                 Agencia
                 <select
@@ -242,33 +244,16 @@ export default function FilterCredits(){
                         filter_credits.setAgency(e.target.value);
                         applyFilters();
                     }}
+                    disabled={loadingAgencies}
                 >
-                    <option value={''}>--Todos--</option>
-                    <option value={"catacocha"}>CATACOCHA</option>
-                    <option value={"palanda"}>PALANDA</option>
-                    <option value={"cariamanga"}>CARIAMANGA</option>
-                    <option value={"zamora"}>ZAMORA</option>
-                    <option value={"zumba"}>ZUMBA</option>
-                    <option value={"piñas"}>PIÑAS</option>
-                    <option value={"celica"}>CELICA</option>
-                    <option value={"catamayo"}>CATAMAYO</option>
-                    <option value={"malacatos"}>MALACATOS</option>
-                    <option value={"santa rosa"}>SANTA ROSA</option>
-                    <option value={"oficina las pitas"}>OFICINA LAS PITAS</option>
-                    <option value={"oficina centro"}>OFICINA CENTRO</option>
-                    <option value={"oficina norte"}>OFICINA NORTE</option>
-                    <option value={"san miguel de los bancos"}>SAN MIGUEL DE LOS BANCOS</option>
-                    <option value={"milagro"}>MILAGRO</option>
-                    <option value={"santo domingo"}>SANTO DOMINGO</option>
-                    <option value={"el carmen"}>EL CARMEN</option>
-                    <option value={"cayambe"}>CAYAMBE</option>
-                    <option value={"pasaje"}>PASAJE</option>
-                    <option value={"tumbaco"}>TUMBACO</option>
-                    <option value={"la troncal"}>LA TRONCAL</option>
-                    <option value={"amaguaña"}>AMAGUAÑA</option>
-                    <option value={"naranjal"}>NARANJAL</option>
-                    <option value={"quinche"}>QUINCHE</option>
-                    <option value={"quininde"}>QUININDE</option>
+                    <option value={''}>
+                        {loadingAgencies ? '--Cargando--' : '--Todos--'}
+                    </option>
+                    {agencies.map(agency => (
+                        <option key={agency} value={agency}>
+                            {agency.toUpperCase()}
+                        </option>
+                    ))}
                 </select>
             </label>
 
@@ -355,7 +340,7 @@ export default function FilterCredits(){
                     }
                 </select>
             </label>
-            
+
             {activeFilter && (
                 <div style={{
                     padding: '4px 8px',
@@ -376,7 +361,7 @@ export default function FilterCredits(){
                     }
                 </div>
             )}
-            
+
             {hasActiveFilters() && (
                 <button
                     onClick={clearAllFilters}

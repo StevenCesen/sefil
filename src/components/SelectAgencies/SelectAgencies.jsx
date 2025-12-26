@@ -1,44 +1,31 @@
 import { useState } from "react";
+import useAgencies from "../../hooks/useAgencies";
 
-const AGENCIES = [
-    "-- Todas --",
-    "catacocha",
-    "palanda", 
-    "cariamanga",
-    "zamora",
-    "zumba",
-    "piñas",
-    "celica",
-    "catamayo",
-    "malacatos",
-    "santa rosa",
-    "oficina las pitas",
-    "oficina centro",
-    "oficina norte",
-    "san miguel de los bancos",
-    "milagro",
-    "santo domingo",
-    "el carmen",
-    "cayambe",
-    "pasaje",
-    "tumbaco",
-    "la troncal",
-    "amaguaña",
-    "naranjal",
-    "quinche",
-    "quininde"
-];
-
-// Export the agencies list without "-- Todas --" for use in other components
-export const ALL_AGENCIES = AGENCIES.slice(1);
+export const ALL_AGENCIES = [];
 
 export default function SelectAgencies({ selectedAgencies, onAgencyChange }) {
     const [isOpen, setIsOpen] = useState(false);
+    const { agencies: agenciesFromAPI, loading } = useAgencies();
 
-    // "Todas" is checked when all individual agencies are selected
-    const allAgenciesSelected = ALL_AGENCIES.every(agency => 
+    const AGENCIES = ["-- Todas --", ...agenciesFromAPI];
+
+    ALL_AGENCIES.length = 0;
+    ALL_AGENCIES.push(...agenciesFromAPI);
+
+    const allAgenciesSelected = agenciesFromAPI.every(agency =>
         selectedAgencies.includes(agency)
     );
+    
+    if (loading) {
+        return (
+            <label>
+                Agencias
+                <div>
+                    <button disabled>Cargando...</button>
+                </div>
+            </label>
+        );
+    }
 
     return (
         <label>
@@ -50,10 +37,10 @@ export default function SelectAgencies({ selectedAgencies, onAgencyChange }) {
                 {isOpen && (
                     <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                         {AGENCIES.map((agencia, index) => {
-                            const isChecked = agencia === "-- Todas --" 
+                            const isChecked = agencia === "-- Todas --"
                                 ? allAgenciesSelected
                                 : selectedAgencies.includes(agencia);
-                            
+
                             return (
                                 <label key={index}>
                                     <input
@@ -65,7 +52,7 @@ export default function SelectAgencies({ selectedAgencies, onAgencyChange }) {
                                     {agencia.toUpperCase()}
                                 </label>
                             );
-                        })}          
+                        })}
                     </div>
                 )}
             </div>

@@ -44,7 +44,7 @@ export default function PanelManagement(){
                 <div className="PanelManagement">
                     <div className="PanelManagement__credit">
                         <InfoCredit
-                            business={store_management.cartera}
+                            business={credit.business_name}
                             sync_id={credit.sync_id}
                             agency={credit.agency}
                             frequency={credit.frequency}

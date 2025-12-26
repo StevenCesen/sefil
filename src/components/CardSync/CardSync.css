@@ -1,24 +1,128 @@
 .CardSync{
     width: 100%;
-    padding: 10px 10px;
+    padding: 20px 0;
 }
 
-.CardSync>h3{
-    font-size: 16px;
+.CardSync__container{
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.CardSync__container>h3{
+    font-size: 18px;
     color: var(--color-2);
+    margin: 0 0 20px 0;
+    font-weight: 600;
 }
 
-.CardSync>p{
-    font-weight: 100;
+.CardSync__empty{
+    padding: 20px;
+    text-align: center;
+}
+
+.CardSync__empty>p{
+    font-size: 14px;
+    color: #666;
+    margin: 0;
 }
 
 .CardSync__detail{
     width: 100%;
     margin: 10px 0;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.CardSync__detail:last-child{
+    border-bottom: none;
+}
+
+.CardSync__detail>h4{
+    font-size: 16px;
+    color: var(--color-2);
+    margin: 0 0 10px 0;
+    font-weight: 500;
 }
 
 .CardSync__detail>p{
     margin: 0 0 10px;
     font-size: 14px;
-    font-weight: 100;
+    font-weight: 400;
+    color: #555;
+}
+
+.CardSync__progress{
+    margin-top: 15px;
+}
+
+.CardSync__progress>p{
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: #666;
+}
+
+.CardSync__pastSection{
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.CardSync__toggleButton{
+    background: none;
+    border: none;
+    color: var(--color-2);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+
+.CardSync__toggleButton:hover{
+    color: var(--color-1);
+}
+
+.CardSync__pastList{
+    margin-top: 15px;
+}
+
+.CardSync__detail--past{
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 10px 0;
+    border-bottom: none;
+}
+
+.CardSync__pastInfo{
+    margin-top: 10px;
+}
+
+.CardSync__state{
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.CardSync__state--completed{
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.CardSync__state--failed{
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.CardSync__state--cancelled{
+    background-color: #fff3cd;
+    color: #856404;
 }

@@ -5,6 +5,8 @@
     border-radius: 20px;
     color: var(--color-3);
     font-weight: bold;
+    overflow: hidden;
+    position: relative;
 }
 
 .ProgressBar>span{
@@ -14,4 +16,23 @@
     border-radius: inherit;
     transition: all 0.5s ease-in-out;
     background-color: var(--bg-alert-successful);
+}
+
+.ProgressBar__infinite{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 30%;
+    background-color: var(--bg-alert-successful);
+    animation: slide 1.5s infinite ease-in-out;
+}
+
+@keyframes slide {
+    0% {
+        left: -30%;
+    }
+    100% {
+        left: 100%;
+    }
 }

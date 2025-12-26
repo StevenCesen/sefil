@@ -2,7 +2,7 @@ import { Save } from "lucide-react";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import "./FormManagement.css";
 import { useStoreFilterManagement } from "../../../stores/useStoreFilterManagement";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStoreTemplate } from "../../../stores/useStoreTemplates";
 import createManagement from "../../../helpers/Managements/createManagement";
 import sendpush from "../../../helpers/sendpush";
@@ -14,6 +14,7 @@ export default function FormManagement(){
     const store_templates=useStoreTemplate();
     const store_view_struct=useViewStruct();
     const button=useRef();
+    const [isSaving, setIsSaving] = useState(false);
 
     const selectedParent = store_templates.current_template.find(item => item.name === store_management.state);
     const selectedOptions = selectedParent?.children || [];
@@ -35,77 +36,45 @@ export default function FormManagement(){
             pending_fees:store_management.pending_fees,
             managed_amount:store_management.monto,
             promise_amount:store_management.promise_amount,
-            created_by:Number(localStorage.getItem('temp_uS'))
+            created_by:Number(localStorage.getItem('temp_uS')),
+            nro_notification:store_management.nro_notification
         }
 
         if(store_management.call_id){
             data_management.call_id = store_management.call_id;
         }
 
+        setIsSaving(true);
         button.current.textContent='Guardando...';
 
-        if(store_management.substate==='OFERTA DE PAGO'){
-            const prev_effective= await store_management.checkManagement();
+        const create_management=await createManagement({data_management});
 
-            if(prev_effective===200){
-                sendpush({
-                    title:'Oferta registrada.',
-                    message:'Este crédito ya tiene una OFERTA DE PAGO registrada en esta campaña.',
-                    type:'Push--warning',
-                    timeout:3000
-                });
+        if(create_management.code===1){
+            button.current.textContent='Guardar gestión';
+            setIsSaving(false);
 
-                button.current.textContent='Intentar de nuevo';
-
-            }else{
-                const create_management=await createManagement({data_management});
-        
-                if(create_management.status===200){
-                    button.current.textContent='Guardar gestión';
-                    
-                    sendpush({
-                        title:'Estado de gestión.',
-                        message:'Se ha guardado la gestión correctamente.',
-                        type:'Push--sucessful',
-                        timeout:3000
-                    });
-                    
-                    store_management.clean();
-                    store_management.addManagement(create_management.management);
-                    store_management.setMessage('Gestionado recién');
-                    
-                }else{
-                    button.current.textContent='Intentar de nuevo';
-                }
-            }
-        }else if((store_management.substate==='NOTIFICADO' || store_management.substate==='ENTREGADO AVISO DE COBRANZA') && store_management.nro_notificacion===''){
             sendpush({
-                title:'Nro. de notificación requerido.',
-                message:'Debe ingresar un Nro. de notificación para este subestado de gestión.',
+                title:'Estado de gestión.',
+                message:'Se ha guardado la gestión correctamente.',
+                type:'Push--sucessful',
+                timeout:3000
+            });
+
+            store_management.clean();
+            store_management.addManagement(create_management.result);
+            store_management.setMessage('Gestionado recién');
+
+        }else{
+
+            sendpush({
+                title:'Error en validaciones',
+                message:create_management.message,
                 type:'Push--warning',
                 timeout:3000
             });
+
             button.current.textContent='Intentar de nuevo';
-        }else{
-            const create_management=await createManagement({data_management});
-        
-            if(create_management.status===200){
-                button.current.textContent='Guardar gestión';
-                
-                sendpush({
-                    title:'Estado de gestión.',
-                    message:'Se ha guardado la gestión correctamente.',
-                    type:'Push--sucessful',
-                    timeout:3000
-                });
-                
-                store_management.clean();
-                store_management.addManagement(create_management.management);
-                store_management.setMessage('Gestionado recién');
-                
-            }else{
-                button.current.textContent='Intentar de nuevo';
-            }
+            setIsSaving(false);
         }
     }
 
@@ -206,8 +175,8 @@ export default function FormManagement(){
                         <div className="FormManagement__label">
                             Nro. notificación
                             <input
-                                value={store_management.nro_notificacion}
-                                onChange={(e)=>{store_management.setNroNotificacion(e.target.value)}}
+                                value={store_management.nro_notification}
+                                onChange={(e)=>{store_management.setNroNotification(e.target.value)}}
                             />
                         </div>
                     :   <></>
@@ -242,7 +211,7 @@ export default function FormManagement(){
             {
                 (store_management.credit?.sync_status === 'ACTIVE')
                 &&
-                    <button ref={button} type="submit">
+                    <button ref={button} type="submit" disabled={isSaving}>
                         <Save size={16}/>
                         Guardar gestión
                     </button>

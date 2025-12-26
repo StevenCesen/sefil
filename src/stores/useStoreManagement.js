@@ -25,7 +25,7 @@ export const useStoreManagement = create((set,get) => ({
     pending_fees:0,
     managed_amount:0,
     campain_id:'',
-    nro_notificacion:'',
+    nro_notification:'',
     cartera:'',
     monto:0,
     message:'No gestionado',
@@ -45,7 +45,7 @@ export const useStoreManagement = create((set,get) => ({
         set({credit_id:credit_id})
     },
     setView:     (value)=>{set({view_panel:value})},
-    setNroNotificacion:     (value)=>{set({nro_notificacion:value})},
+    setNroNotification:     (value)=>{set({nro_notification:value})},
     setCredit:     (value)=>{
 
         const { setPhones }=get();
@@ -62,7 +62,6 @@ export const useStoreManagement = create((set,get) => ({
         set({monto:value.total_amount});
         set({managed_amount:value.managed_amount || 0});
 
-        // Buscar el campain_id correcto basado en el business_id del crédito
         const store_filter = useStoreFilterManagement.getState();
         if (store_filter.campains && store_filter.campains.data && value.business_id) {
             const campain = store_filter.campains.data.find(
@@ -126,11 +125,15 @@ export const useStoreManagement = create((set,get) => ({
         set({phones:phones.result.data});
     },
     addManagement: async (data) => {
-        const {managements}=get();
-        
-        const temp=managements.data;
+        const { managements }=get();
+
+        if (!managements || !managements.data) {
+            return;
+        }
+
+        const temp = managements.data || [];
         temp.unshift(data);
-        set({managements:{...managements,data:temp}});
+        set({managements:{...managements, data:temp}});
     },
     setNotes: async () =>{
         const {cartera,credit_id}=get();
@@ -154,7 +157,7 @@ export const useStoreManagement = create((set,get) => ({
         set({call_id:null}),
         set({call_collection:[]}),
         set({observation:''}),
-        set({nro_notificacion:''}),
+        set({nro_notification:''}),
         set({managed_amount:0}),
         set({message:'No gestionado'})
     },
