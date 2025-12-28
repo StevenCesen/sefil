@@ -8,30 +8,6 @@
     box-shadow: var(--box-shadow);
 }
 
-.CardAssignCampain__searchCredit{
-    width: 100%;
-    font-weight: 100;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 10px 10px;
-}
-
-.CardAssignCampain__searchCredit>div{
-    margin-top: 10px;
-}
-
-.CardAssign--agentchoose{
-    background-color: var(--bg-choosed);
-}
-
-.CardAssignCampain__searchCredit>input{
-    width: 100%;
-    height: 40px;
-    margin-top: 10px;
-}
-
 .CardAssignCampain>span{
     display: block;
     margin-left: 10px;
@@ -58,54 +34,20 @@
     z-index: 99;
 }
 
-.CardAssignCampain__footer{
+.CardAssignCampain__searchCredit{
     width: 100%;
-    height: 50px;
-    background-color: var(--bg-alert-successful);
+    font-weight: 100;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
     padding: 10px 10px;
-    display: flex;
-    justify-content: flex-end;
-    color: var(--color-3);
-    font-weight: bold;
-    font-size: 14px;
-    border-bottom-left-radius: inherit;
-    border-bottom-right-radius: inherit;
-    align-items: center;
-    margin-top: 10px;
-    position: sticky;
-    bottom: 0;
 }
 
-.CardAssignCampain__footer>div{
+.CardAssignCampain__searchCredit>input{
     width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-}
-
-.CardAssignCampain__footer>div>button{
-    width: 100px;
-    color: var(--color-3);
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    height: 35px;
-    border-radius:2px;
-    background-color: #008682;
-}
-
-.CardAssignCampain__footer>div>label{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.CardAssignCampain__footer>div>label>input{
-    width: 80px;
-    height: 35px;
-    text-align: center;
-    margin-left: 10px;
+    height: 40px;
+    margin-top: 10px;
 }
 
 .CardAssignCampain__agents{
@@ -116,6 +58,87 @@
     align-items: center;
 }
 
+.CardAssignCampain__agents>label{
+    width: 33.33%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-weight: 100;
+    flex-direction: column;
+}
+
+.CardAssignCampain__agents>p{
+    width: 33.33%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.CardAssignCampain__transferLabel{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px;
+    font-weight: 100;
+}
+
+.CardAssignCampain__transferLabel>input{
+    margin-right: 10px;
+}
+
+.CardAssignCampain__file{
+    width: 100%;
+    font-weight: 100;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 10px 10px;
+    gap: 10px;
+}
+
+.CardAssignCampain__file>span{
+    margin-left: 0;
+    margin-bottom: 0;
+}
+
+.CardAssignCampain__fileRow{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.CardAssignCampain__fileRow>input{
+    flex: 1;
+    height: 40px;
+    padding: 0 10px;
+}
+
+.CardAssignCampain__fileRow>button{
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.CardAssignCampain__fileRow>button:hover{
+    opacity: 0.9;
+}
+
+.CardAssignCampain__fileRow>button:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Estilos para AgentSelector */
 .CardAssignCampain__agentsSelect{
     width: 100%;
     border: 1px solid grey;
@@ -134,14 +157,6 @@
     cursor: pointer;
 }
 
-.CardAssignCampain__agents>label{
-    width: 33.33%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    font-weight: 100;
-    flex-direction: column;
-}
 .CardAssignCampain__agentsOptions{
     width: 100%;
     margin-top: 20px;
@@ -150,248 +165,212 @@
     top: 20px;
     left: 0;
     box-shadow: var(--box-shadow);
+    z-index: 100;
 }
 
 .CardAssignCampain__agentsOptions>div{
     width: 100%;
-    display: grid;
-    grid-template-columns: 50% 25% 25%;
-    justify-content: space-between;
+    display: flex;
+    justify-content: flex-start;
     align-items: center;
     border-bottom: 1px solid rgb(176, 176, 176);
+    padding: 10px;
+    cursor: pointer;
 }
 
-.CardAssignCampain__agentsOptions>div>button{
-    width: 30px;
-    height: 30px;
-    margin: 0 auto;
-    background-color: inherit;
-    border: none;
-    cursor: pointer;
+.CardAssignCampain__agentsOptions>div:hover{
+    background-color: rgb(240, 240, 240);
 }
 
 .CardAssignCampain__agentsOptions>div>label{
     width: 100%;
     font-size: 14px;
-    padding-left: 10px;
+    cursor: pointer;
 }
 
-.CardAssignCampain__agents>p{
-    width: 33.33%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.CardAssign--agentchoose{
+    background-color: var(--bg-choosed);
+}
+
+.CardAssign--clear{
     font-weight: bold;
+    color: var(--color-error);
 }
 
-.CardAssignCampain__agents>label>select{
+.CardAssignCampain__headCharge{
     width: 100%;
-    height: 40px;
-    margin-top: 5px;
-    border: 1px solid rgb(188, 188, 188);
-    border-radius: 2px;
-    font-weight: 100;
-}
-
-.CardAssignCampain__radius{
-    width: 100%;
-    padding: 10px 10px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 30px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 10px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    font-weight: bold;
+    border-radius: 5px;
     margin-bottom: 10px;
 }
 
-.CardAssignCampain__radius>label{
-    width: 50%;
+.CardAssignCampain__headCharge>label{
     text-align: center;
-    font-weight: 100;
 }
 
-.CardAssignCampain__radius>label>input{
-    margin-right: 10px;
-}
-
-.CardAssignCampain__file{
-    width: 100%;
-    padding: 0 10px;
-    font-weight: 100;
-}
-
-.CardAssignCampain__file>input{
-    /* display: none; */
-    margin-left: 10px;
-    border: none;
-    padding-left: 10px;
-    background-color: rgb(237, 237, 237);
-    height: 35px;
-}
-
-.CardAssignCampain__file>button{
-    margin-left:10px;
-    height: 35px;
-    padding: 0 10px;
-    cursor: pointer;
-    border: none;
-    font-weight: bold;
-    border: 1px solid rgb(194, 194, 194);
-}
-
-.CardAssignCampain__file>input:focus{
-    outline: none;
-}
-
-.CardAssignCampain__file--buttonReset{
-    background-color: var(--color-error);
-    color: var(--color-3);
-    border: none !important;
-}
-
-.CardAssignCampain__file>div{
-    height: 200px;
-    overflow-y: auto;
-    cursor: pointer;
-    padding: 10px 10px;
-    border-radius: 2px;
-    margin: 5px 10px;
-    border: 1px solid rgb(188, 188, 188);
-}
-
-.CardAssignCampain__filters{
-    width: 100%;
-    padding: 0 10px;
-}
-
-.CardAssignCampain__selects{
+.CardAssignCampain__itemCharge{
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 30px 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+    background-color: var(--bg-1);
+    transition: background-color 0.2s;
 }
 
-.CardAssignCampain__selects>label{
+.CardAssignCampain__itemCharge:hover{
+    background-color: var(--bg-3);
+}
+
+.CardAssignCampain__itemCharge>label{
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-1);
+}
+
+/* Estilos para filtros */
+.CardAssignCampain__filters{
     width: 100%;
+    padding: 10px 10px;
     display: flex;
-    font-weight: 100;
-    justify-content: center;
-    align-items: flex-start;
     flex-direction: column;
-}
-
-.CardAssignCampain__selects>label>select{
-    width: 100%;
-    height: 40px;
-    margin-top: 5px;
-    border: 1px solid rgb(188, 188, 188);
-    border-radius: 2px;
-    font-weight: 100;
-}
-
-.CardAssignCampain__selects>label>div{
-    width: 100%;
-    margin-top: 5px;
-    position: relative;
+    gap: 15px;
 }
 
 .CardAssignCampain__ranges{
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
+}
+
+.CardAssignCampain__selects{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.CardAssignCampain__selects>label{
+    display: flex;
+    flex-direction: column;
+    font-weight: 100;
+}
+
+.CardAssignCampain__selects>label>select{
+    margin-top: 5px;
+    height: 35px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.CardAssignCampain__selects>label>div{
+    position: relative;
 }
 
 .CardAssignCampain__selects>label>div>button{
     width: 100%;
-    height: 40px;
-    border: 1px solid rgb(188, 188, 188);
-    border-radius: 2px;
-    font-weight: 100;
+    height: 35px;
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: var(--bg-1);
+    cursor: pointer;
+    text-align: left;
+}
+
+.CardAssignCampain__selects>label>div>button:hover{
+    background-color: var(--bg-3);
 }
 
 .CardAssignCampain__selects>label>div>div{
     position: absolute;
-    width: 100%;
-    height: 200px;
-    overflow-y: auto;
     bottom: 100%;
-    left: 0px;
-    background-color: rgb(241, 241, 241);
-    border-radius: 2px;
-    box-shadow: var(--box-shadow);
-    padding: 10px 10px 0;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-direction: column;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-1);
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    margin-bottom: 5px;
 }
 
 .CardAssignCampain__selects>label>div>div>label{
-    width: 100%;
-    font-weight: 100;
-    font-size: 14px;
-    padding: 5px 5px;
-    cursor: 2px;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-weight: normal;
 }
 
 .CardAssignCampain__selects>label>div>div>label:hover{
-    background-color: rgb(212, 212, 212);
+    background-color: var(--bg-3);
 }
 
 .CardAssignCampain__selects>label>div>div>label>input{
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
-.CardAssignCampain__headCharge{
+/* Estilos para footer de transferencia */
+.CardAssignCampain__footer{
     width: 100%;
-    height: 40px;
-    background-color: var(--bg-alert-error);
-    display: grid;
-    grid-template-columns: 5% 25% 11.66% 11.66% 11.66% 11.66% 11.66% 11.66%;
-}
-
-.CardAssignCampain__itemCharge{
-    width: 100%;
-    height: 40px;
-    background-color: var(--bg-2);
-    display: grid;
-    grid-template-columns: 5% 25% 11.66% 11.66% 11.66% 11.66% 11.66% 11.66%;
-}
-
-.CardAssignCampain__headCharge>label,.CardAssignCampain__itemCharge>label{
-    font-size: 12px;
-    color: var(--color-6);
+    padding: 20px 10px;
     display: flex;
     justify-content: center;
-    align-items:center;
-    text-align: center;
+    align-items: center;
 }
 
-.CardAssignCampain__headCharge>label{
-    font-weight: bold;
+.CardAssignCampain__footer>div{
+    display: flex;
+    gap: 15px;
+    align-items: center;
 }
 
-.CardAssignCampain__itemCharge>label{
+.CardAssignCampain__footer>div>label{
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 100;
 }
 
-.CardAssignCampain__headCharge>input,.CardAssignCampain__itemCharge>input{
-    margin: 0 auto;
+.CardAssignCampain__footer>div>label>input{
+    width: 100px;
+    height: 35px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
 
-.CardAssignCampain__errors{
-    width: 100%;
-    height: 200px;
-    border-radius: 2px;
-    padding: 0 10px;
-    background-color: var(--bg-1);
-    overflow-y: auto;
-    margin-top: 20px;
+.CardAssignCampain__footer>div>button{
+    padding: 10px 20px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-.CardAssignCampain__errors>h4,.CardAssignCampain__errors>p{
-    margin-bottom: 10px;
+.CardAssignCampain__footer>div>button:hover:not(:disabled){
+    opacity: 0.9;
 }
 
-.CardAssignCampain__errors>p{
+.CardAssignCampain__footer>div>button:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.CardAssignCampain__footer>label{
     font-weight: 100;
 }

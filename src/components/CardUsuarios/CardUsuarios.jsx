@@ -49,7 +49,7 @@ export default function CardUsuarios({ id, name, email, rol, extension, phone, s
                     {isEditing ? 'Editando rol...' : 'Basado en rol'}
                 </span>
 
-                <button>
+                <div className="CardUsuarios__menu">
                     <img src="./icons/options.png" onClick={(e) => { useMenu(e.target, menu, 'CardUsuarios__actions--active', null) }} />
                     <div ref={menu} className="CardUsuarios__actions">
                         <button
@@ -67,7 +67,7 @@ export default function CardUsuarios({ id, name, email, rol, extension, phone, s
                             {isEditing ? 'Cancelar edición' : 'Editar rol'}
                         </button>
                     </div>
-                </button>
+                </div>
             </div>
 
             {showEditModal && (

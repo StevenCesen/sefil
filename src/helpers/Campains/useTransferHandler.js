@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { transferCampaignLoad, fetchCreditsData } from '../campaignHelpers';
+import { transferCampaignLoad, fetchCreditsData } from './index';
 import sendpush from '../sendpush';
 
 const buildTransferFilters = (state) => {

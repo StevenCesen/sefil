@@ -1,8 +1,9 @@
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import getListPayments from "../../helpers/Payments/getListPayments";
 import { useStoreManagement } from "../../stores/useStoreManagement";
 import SectionPayments from "../../components/Management/SectionPayments/SectionPayments";
+import BackButton from "../../components/BackButton/BackButton";
 import './Payments.css';
 
 export default function Payments(){
@@ -17,7 +18,7 @@ export default function Payments(){
     const credit = useStoreManagement();
 
     const handlePayments = async () =>{
-        const credit_id = params.id;    
+        const credit_id = params.id;
         if(credit_id && cartera){
             const paymentsData = await getListPayments({
                 credit_id,
@@ -27,8 +28,6 @@ export default function Payments(){
         }
     }
 
-    const history = window.history;
-
     useEffect(() => {
         handlePayments();
     },[]);
@@ -37,17 +36,7 @@ export default function Payments(){
 
     return (
         <div className="Payments">
-            <div className="DetailCredit__head">
-                <NavLink 
-                    to="" 
-                    onClick={(e) => {
-                        e.preventDefault();
-                        history.go(-1);
-                    }}
-                >
-                    Regresar
-                </NavLink>
-            </div>
+            <BackButton />
 
             <p className="Payments__text"><strong>CARTERA: </strong> {cartera} </p>
             <p className="Payments__text"><strong>TITULAR: </strong> {name} </p>

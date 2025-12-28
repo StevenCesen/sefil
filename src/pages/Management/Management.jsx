@@ -1,4 +1,3 @@
-import { NavLink } from "react-router-dom";
 import "./Management.css";
 import {useEffect} from "react";
 import PanelManagement from "../../components/Management/PanelManagement/PanelManagement";
@@ -11,6 +10,7 @@ import { useStoreTemplate } from "../../stores/useStoreTemplates";
 import CardSendSMS from "../../components/Contacts/CardSendSMS/CardSendSMS";
 import CardSendMail from "../../components/Credits/CardSendMail/CardSendMail";
 import { useStoreLoader } from "../../stores/useStoreLoader";
+import BackButton from "../../components/BackButton/BackButton";
 
 export default function Management(){
     const credits=useStoreFilterManagement();
@@ -30,13 +30,7 @@ export default function Management(){
             <CardSendMail/>
 
             <div className="Management__header">
-                <NavLink
-                    to=""
-                    onClick={(e)=>{
-                        e.preventDefault();
-                        history.go(-1)
-                    }}
-                >Regresar</NavLink>
+                <BackButton />
                 <div className="Management__nav">
                     <h4 className="Management__navtray">Bandeja actual - {credits.tray}</h4>
                     <TraysManagement/>

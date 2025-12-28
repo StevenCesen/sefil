@@ -11,7 +11,7 @@ import CardSelectStateCall from './components/Management/CardSelectStateCall/Car
 import CardStructure from './components/CardStructure/CardStructure'
 import CardCondonacion from './components/CardCondonacion/CardCondonacion'
 import Loader from './components/Loader/loader'
-import Home from './pages/Home'
+import Home from './pages/Home/Home'
 import Usuarios from './pages/Users/Users'
 import Credits from './pages/Credits/Credits'
 import Credit from './pages/Credit/Credit'
@@ -23,6 +23,7 @@ import Historial from './pages/ManagementHistorial/ManagementHistorial'
 import Contacts from './pages/Contacts/Contacts'
 import Templates from './pages/Templates/Templates'
 import Monitor from './pages/Monitor/Monitor'
+import Directions from './pages/Directions/Directions'
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -204,6 +205,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Monitor/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/directions"
+          element={
+            <ProtectedRoute>
+              <Directions/>
             </ProtectedRoute>
           }
         />

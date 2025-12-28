@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import CardUsuarios from "../../components/CardUsuarios/CardUsuarios";
 import CardEditUser from "../../components/CardEditUser/CardEditUser";
 import Loader from "../../components/Loader/loader";
+import BackButton from "../../components/BackButton/BackButton";
 import useFetch from "../../hooks/useFetch";
 import "./Users.css";
+import sendpush from "../../helpers/sendpush";
 
 export default function Users(){
 
@@ -45,11 +47,13 @@ export default function Users(){
 
     return (
         <div className="Users" ref={content_users}>
-
-            <div className="Users__access">
-                <button onClick={() => setShowCreateModal(true)}>
+            <BackButton>
+                <button className="Users__addButton" onClick={() => setShowCreateModal(true)}>
                     Agregar usuario
                 </button>
+            </BackButton>
+
+            <div className="Users__access">
 
                 {
                     (new_change)
@@ -77,7 +81,13 @@ export default function Users(){
                                         });
                                     }
 
-                                    alert('Permisos actualizados correctamente');
+                                    sendpush({
+                                        title: 'Éxito',
+                                        message: 'Permisos actualizados correctamente',
+                                        type: 'Push--sucessful',
+                                        timeout: 5000
+                                    });
+                                    
                                     setNewChange(false);
 
                                 } catch (error) {

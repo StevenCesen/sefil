@@ -1,10 +1,10 @@
-import { NavLink } from "react-router-dom";
 import "./Monitor.css";
 import { useEffect, useRef, useState } from "react";
 import CardUserState from "../../components/CardUserState/CardUserState.jsx";
 import { useStoreMonitor } from "../../stores/useStoreMonitor.js";
 import { useStoreLoader } from "../../stores/useStoreLoader.js";
 import useFetch from "../../hooks/useFetch";
+import BackButton from "../../components/BackButton/BackButton";
 
 export default function Monitor(){
     const store_monitor = useStoreMonitor();
@@ -59,15 +59,7 @@ export default function Monitor(){
 
     return (
         <div className="Monitor">
-            <div className="Monitor__head">
-                <NavLink
-                    to=""
-                    onClick={(e) => {
-                        e.preventDefault();
-                        history.go(-1);
-                    }}
-                >Regresar</NavLink>
-            </div>
+            <BackButton />
 
             <div className="Monitor__search">
                 <h4 className="Monitor__title">Monitoreo</h4>

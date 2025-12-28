@@ -22,12 +22,10 @@ export const useTemplates = () => {
 
                 if (!isMounted) return;
 
-                console.log('Templates API response:', data);
 
                 if (data.code === 1 && data.result?.data) {
                     // Extract the template names/states from the response
                     const templateStates = data.result.data.map(template => template.name);
-                    console.log('Template states extracted:', templateStates);
                     setTemplates(templateStates);
                     setError(null);
                 } else {

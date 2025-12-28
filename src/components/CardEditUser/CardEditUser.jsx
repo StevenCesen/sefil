@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import "./CardEditUser.css";
 import useFetch from "../../hooks/useFetch";
+import sendpush from "../../helpers/sendpush";
 
 const permissionData = [
     {
@@ -226,7 +227,7 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
                 ? selectedSections.map(section => ({
                     section: section,
                     abilities: selectedAbilities[section] || []
-                  }))
+                    }))
                 : [];
 
             const requestData = {
@@ -237,6 +238,8 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
                 phone: userData.phone || '',
                 permission: JSON.stringify(permissionsArray)
             };
+
+            console.log(requestData)
 
             // Si es creación, agregar password
             if (isCreating) {
@@ -259,20 +262,40 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
             // Verificar si hay errores de validación
             if (data.code === -1 && data.result) {
                 setErrors(data.result);
-                alert(data.message || 'Errores de validación');
+                sendpush({
+                    title: 'Errores de validación',
+                    message: 'Por favor corrige los errores en el formulario.',
+                    type: 'Push--warning',
+                    timeout: 5000
+                });
                 return;
             }
 
             if (data.code === 1) {
-                alert(isCreating ? 'Usuario creado correctamente' : 'Usuario actualizado correctamente');
+                sendpush({
+                    title: isCreating ? 'Usuario creado' : 'Usuario actualizado',
+                    message: isCreating ? 'El usuario ha sido creado correctamente.' : 'El usuario ha sido actualizado correctamente.',
+                    type: 'Push--sucessful',
+                    timeout: 5000
+                });
                 onSave();
                 onClose();
             } else {
-                alert(data.message || 'Error al guardar usuario');
+                sendpush({
+                    title: 'Error',
+                    message: data.message || 'Error al guardar usuario',
+                    type: 'Push--error',
+                    timeout: 5000
+                });
             }
         } catch (error) {
             console.error('Error saving user:', error);
-            alert('Error al guardar usuario');
+            sendpush({
+                title: 'Error',
+                message: 'Error al guardar usuario',
+                type: 'Push--error',
+                timeout: 5000
+            });
         } finally {
             setSaving(false);
         }
@@ -341,7 +364,7 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
                                 type="text"
                                 value={userData.extension}
                                 onChange={(e) => setUserData({ ...userData, extension: e.target.value })}
-                                placeholder="Ej: 1001"
+                                placeholder="Ej: SIP/1001"
                                 className={errors.extension ? 'error' : ''}
                             />
                             {errors.extension && (

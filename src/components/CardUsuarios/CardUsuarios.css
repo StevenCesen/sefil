@@ -37,16 +37,15 @@
     border-color: var(--bg-alert-successful, #10b981);
 }
 
-.CardUsuarios>button{
+.CardUsuarios__menu{
     width: 40px;
     margin: 0 auto;
     background-color: inherit;
-    border: none;
     cursor: pointer;
     position: relative;
 }
 
-.CardUsuarios>button>img{
+.CardUsuarios__menu>img{
     width: 100%;
 }
 

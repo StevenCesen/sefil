@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import "./ManagementHistorial.css";
 import {useEffect, useState } from "react";
 import CardCurrentGestion from "../../components/CardCurrentGestion/CardCurrentGestion";
@@ -7,6 +7,7 @@ import useReturnFilter from "../../hooks/useReturnFilter";
 import useFetch from "../../hooks/useFetch";
 import Loader from "../../components/Loader/loader";
 import SelectManagementStates from "../../components/SelectManagementStates/SelectManagementStates";
+import BackButton from "../../components/BackButton/BackButton";
 
 export default function ManagementHistorial(){
     const [campains,setCampains]=useState();
@@ -216,15 +217,7 @@ export default function ManagementHistorial(){
 
     return (
         <div className="ManagementHistorial">
-            <div className="ManagementHistorial__head">
-                <NavLink
-                    to=""
-                    onClick={(e)=>{
-                        e.preventDefault();
-                        history.go(-1)
-                    }}
-                >Regresar</NavLink>
-            </div>
+            <BackButton />
 
             <div style={{paddingBottom:"20px"}}>
                 <h3 style={{color:"var(--color-1)"}}>Historial de gestiones</h3>

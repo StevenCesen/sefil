@@ -1,8 +1,9 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./Me.css";
 import { useEffect, useRef, useState } from "react";
 import Eye from "../../components/Eye/Eye";
 import sendpush from "../../helpers/sendpush";
+import BackButton from "../../components/BackButton/BackButton";
 
 export default function Me(){
     const navigate = useNavigate();
@@ -162,17 +163,7 @@ export default function Me(){
 
     return (
         <div className="Me">
-            <div className="Me__head">
-                <NavLink
-                    to=""
-                    onClick={(e) => {
-                        e.preventDefault();
-                        navigate(-1);
-                    }}
-                >
-                    Regresar
-                </NavLink>
-            </div>
+            <BackButton />
 
             <div className="Me__content">
                 <h1 className="Me__avatar">

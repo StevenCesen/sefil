@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import { NavLink } from "react-router-dom";
 import CardSync from "../../components/CardSync/CardSync";
 import CardEditCampain from "../../components/Campains/CardEdirCampain/CardEditCampain";
 import CardAssignCampain from "../../components/Campains/CardAssignCampain/CardAssignCampain";
 import CardCreateCampain from "../../components/Campains/CardCreateCampain/CardCreateCampain";
+import BackButton from "../../components/BackButton/BackButton";
 import useFetch from "../../hooks/useFetch";
 import "./Campains.css";
 
@@ -118,17 +118,7 @@ export default function Campains() {
 
     return (
         <div className="Campains">
-            <div className="Campains__head">
-                <NavLink
-                    to=""
-                    onClick={(e) => {
-                        e.preventDefault();
-                        window.history.go(-1);
-                    }}
-                >
-                    Regresar
-                </NavLink>
-            </div>
+            <BackButton />
 
             <div className="Campains__content">
                 <h3 className="Campains__title">Creación y asignación de campaña</h3>

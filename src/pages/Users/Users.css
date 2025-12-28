@@ -11,6 +11,7 @@
     align-items: center;
 }
 
+.Users__addButton,
 .Users__access button {
     padding: 10px 20px;
     background-color: var(--bg-alert-successful, #10b981);
@@ -23,6 +24,7 @@
     transition: all 0.2s;
 }
 
+.Users__addButton:hover,
 .Users__access button:hover {
     background-color: #0d9f6e;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);

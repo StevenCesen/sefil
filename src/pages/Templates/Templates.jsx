@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-import { NavLink } from "react-router-dom";
 import Loader from "../../components/Loader/loader";
 import CardTemplate from "../../components/Templates/CardTemplate/CardTemplate";
 import CardEditTemplate from "../../components/Templates/CardEditTemplate/CardEditTemplate";
+import BackButton from "../../components/BackButton/BackButton";
 import useFetch from "../../hooks/useFetch";
 import "./Templates.css";
 
@@ -103,17 +103,7 @@ export default function Templates() {
 
     return (
         <div className="pageTemplates">
-            <div className="pageTemplates__head">
-                <NavLink
-                    to=""
-                    onClick={(e) => {
-                        e.preventDefault();
-                        window.history.go(-1);
-                    }}
-                >
-                    Regresar
-                </NavLink>
-            </div>
+            <BackButton />
 
             <div className="pageTemplates__content">
                 <h3 className="pageTemplates__title">Gestión de Estados y Subestados</h3>

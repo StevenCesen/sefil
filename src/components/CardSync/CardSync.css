@@ -126,3 +126,10 @@
     background-color: #fff3cd;
     color: #856404;
 }
+
+.CardSync__date{
+    font-size: 13px;
+    color: #888;
+    font-style: italic;
+    margin: 5px 0 10px 0;
+}

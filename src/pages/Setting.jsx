@@ -1,10 +1,11 @@
-import { NavLink, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "./pages.css";
 import { useEffect, useRef, useState } from "react";
 import CardCreateCartera from "../components/CardCreateCartera/CardCreateCartera";
 import CardListCarteras from "../components/CardListCarteras/CardListCarteras";
 import CardUpdatePay from "../components/CardUpdatePay/CardUpdatePay";
 import CardPrelacion from "../components/CardPrelacion/CardPrelacion";
+import BackButton from "../components/BackButton/BackButton";
 
 export default function Setting(){
     const param = useParams();
@@ -32,9 +33,7 @@ export default function Setting(){
 
     return (
         <div className="pageConsulta">
-            <div className="DetailCredit__head">
-                <NavLink to="" onClick={()=>history.back()}>Regresar</NavLink>
-            </div>
+            <BackButton />
 
             {
                 (param.ci!==undefined) 

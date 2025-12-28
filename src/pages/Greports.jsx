@@ -1,8 +1,9 @@
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import "./pages.css";
 import {useEffect, useState } from "react";
 import useFormatterNumber from "../hooks/useFormatterNumber";
 import Loader from "../components/Loader/loader";
+import BackButton from "../components/BackButton/BackButton";
 import { Line, Bar,Doughnut} from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -271,15 +272,7 @@ export default function Greports(){
 
     return (
         <div className="pageConsulta">
-            <div className="DetailCredit__head">
-                <NavLink
-                    to="" 
-                    onClick={(e)=>{
-                        e.preventDefault();
-                        history.go(-1) 
-                    }}
-                >Regresar</NavLink>
-            </div>
+            <BackButton />
 
             <div style={{paddingBottom:"20px"}}>
                 <h3 style={{color:"var(--color-1)"}}>Reporte de gestiones</h3>

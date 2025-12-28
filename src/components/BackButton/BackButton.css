@@ -1,0 +1,28 @@
+.BackButton__container {
+    width: 100%;
+    padding: 10px 0;
+}
+
+.BackButton__container--flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.BackButton {
+    padding: 10px 20px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    transition: opacity 0.2s;
+}
+
+.BackButton:hover {
+    opacity: 0.9;
+}

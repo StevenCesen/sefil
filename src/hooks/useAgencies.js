@@ -21,13 +21,9 @@ export const useAgencies = () => {
                 const data = await response.json();
 
                 if (!isMounted) return;
-
-                console.log('Agencies API response:', data);
-
                 if (data.code === 1 && data.result?.data) {
                     // Extract only the names from the agency objects
                     const agencyNames = data.result.data.map(agency => agency.name);
-                    console.log('Agency names extracted:', agencyNames);
                     setAgencies(agencyNames);
                     setError(null);
                 } else {

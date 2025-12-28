@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink} from "react-router-dom";
 import Loader from "../components/Loader/loader";
+import BackButton from "../components/BackButton/BackButton";
 
 export default function Gconvenios(){
 
@@ -146,15 +147,7 @@ export default function Gconvenios(){
 
     return (
         <div className="pageConsulta">
-            <div className="DetailCredit__head">
-                <NavLink
-                    to="" 
-                    onClick={(e)=>{
-                        e.preventDefault();
-                        history.go(-1) 
-                    }}
-                >Regresar</NavLink>
-            </div>
+            <BackButton />
 
             <div className="Convenios">
                 <div className="Templates__init">
