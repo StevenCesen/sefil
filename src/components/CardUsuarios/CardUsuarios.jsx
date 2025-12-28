@@ -11,11 +11,15 @@ const roleLabels = {
     'campo': 'Gestor | Campo'
 };
 
-export default function CardUsuarios({ id, name, email, rol, extension, phone, setChange, onUserUpdated }) {
+export default function CardUsuarios({ id, name, email, rol, extension, phone, permission, setChange, onUserUpdated }) {
     const menu = useRef();
     const [currentRole, setCurrentRole] = useState(rol);
     const [isEditing, setIsEditing] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+
+    // Determinar si el usuario tiene permisos personalizados
+    const hasCustomPermissions = permission && permission !== '[]';
+    const permissionLabel = hasCustomPermissions ? 'Personalizados' : 'Basado en rol';
 
     return (
         <>
@@ -46,7 +50,7 @@ export default function CardUsuarios({ id, name, email, rol, extension, phone, s
                     )}
                 </span>
                 <span className="CardUsuarios__list">
-                    {isEditing ? 'Editando rol...' : 'Basado en rol'}
+                    {isEditing ? 'Editando rol...' : permissionLabel}
                 </span>
 
                 <div className="CardUsuarios__menu">
@@ -78,7 +82,8 @@ export default function CardUsuarios({ id, name, email, rol, extension, phone, s
                         username: email,
                         role: currentRole,
                         extension: extension,
-                        phone: phone
+                        phone: phone,
+                        permission: permission
                     }}
                     onClose={() => setShowEditModal(false)}
                     onSave={() => {

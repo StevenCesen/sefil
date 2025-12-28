@@ -123,6 +123,7 @@ export default function Users(){
                             rol={user.role}
                             extension={user.extension}
                             phone={user.phone}
+                            permission={user.permission}
                             setChange={setNewChange}
                             onUserUpdated={loadUsers}
                         />

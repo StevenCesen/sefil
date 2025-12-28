@@ -4,24 +4,27 @@ import useNav from "../../hooks/useNav.js";
 import { useEffect, useRef, useState } from "react";
 import useMenu from "../../hooks/useMenu.js";
 
+// Todas las secciones disponibles en el sistema
+const allSections = [
+    { section: 'home', label: 'Dashboard' },
+    { section: 'monitor', label: 'Monitoreo' },
+    { section: 'consult', label: 'Consultas' },
+    { section: 'directions', label: 'Direcciones' },
+    { section: 'contacts', label: 'Contactos' },
+    { section: 'management_historial', label: 'Historial de gestiones' },
+    { section: 'management', label: 'Gestión' },
+    { section: 'campains', label: 'Campañas' },
+    { section: 'users', label: 'Usuarios' },
+    { section: 'settings', label: 'Configuración' },
+    { section: 'calls', label: 'Llamadas' },
+    { section: 'payments', label: 'Pagos' }
+];
+
 const permissionData = [
     {
         role: 'superadmin',
         permission: {
-            sections: [
-                { section: 'home', label: 'Dashboard' },
-                { section: 'monitor', label: 'Monitoreo' },
-                { section: 'consult', label: 'Consultas' },
-                { section: 'directions', label: 'Direcciones' },
-                { section: 'contacts', label: 'Contactos' },
-                { section: 'management_historial', label: 'Historial de gestiones' },
-                { section: 'management', label: 'Gestión' },
-                { section: 'campains', label: 'Campañas' },
-                { section: 'users', label: 'Usuarios' },
-                { section: 'settings', label: 'Configuración' },
-                { section: 'calls', label: 'Llamadas' },
-                { section: 'payments', label: 'Pagos' }
-            ],
+            sections: allSections,
             abilities: [
                 { section: 'home', abilitie: ['home:view'] },
                 { section: 'users', abilitie: ['users:create', 'users:edit', 'users:delete', 'users:view'] },
@@ -141,14 +144,42 @@ export default function NavSlide() {
 
     useEffect(() => {
         const role = localStorage.getItem('role');
+        const userCustomPermissions = localStorage.getItem('user_permissions');
+
+        // Priorizar permisos personalizados del usuario
+        if (userCustomPermissions && userCustomPermissions !== '[]') {
+            try {
+                const customPermissions = JSON.parse(userCustomPermissions);
+
+                // Convertir formato de permisos a formato de secciones
+                const userSections = customPermissions.map(perm => ({
+                    section: perm.section,
+                    label: allSections.find(s => s.section === perm.section)?.label || perm.section
+                }));
+
+                setSections(userSections);
+                console.log('✅ Using custom user permissions');
+            } catch (error) {
+                console.error('Error parsing user permissions:', error);
+                // Fallback a permisos del rol
+                loadRolePermissions(role);
+            }
+        } else {
+            // Usar permisos del rol
+            loadRolePermissions(role);
+        }
+    }, []);
+
+    const loadRolePermissions = (role) => {
         const userPermission = permissionData.find(p => p.role === role);
 
         if (userPermission) {
             setSections(userPermission.permission.sections);
+            console.log('✅ Using role permissions for:', role);
         } else {
             console.log('⚠️ No permissions found for role:', role);
         }
-    }, []);
+    };
 
     const hasSection = (sectionName) => {
         return sections.some(s => s.section === sectionName);

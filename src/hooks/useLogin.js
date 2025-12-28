@@ -24,6 +24,18 @@ export default async function useLogin(data,tag,btn,setload){
             localStorage.setItem('timestamp_cc', new Date().getTime());
             localStorage.setItem('estado', 'CONECTADO');
 
+            // Guardar permisos personalizados si existen
+            if (response.result.user.permission && response.result.user.permission !== '[]') {
+                // Asegurar que se guarde como string JSON
+                const permissionString = typeof response.result.user.permission === 'string'
+                    ? response.result.user.permission
+                    : JSON.stringify(response.result.user.permission);
+
+                localStorage.setItem('user_permissions', permissionString);
+            } else {
+                localStorage.removeItem('user_permissions');
+            }
+
             if(response.changePassword){
                 localStorage.setItem('change_ps', true);
                 location.href='#/dashboard/me';

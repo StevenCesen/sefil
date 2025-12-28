@@ -149,7 +149,36 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        // Cargar permisos actuales del usuario
+        // Priorizar permisos personalizados del usuario si existen
+        if (user && user.permission && user.permission !== '[]') {
+            try {
+                const customPermissions = typeof user.permission === 'string'
+                    ? JSON.parse(user.permission)
+                    : user.permission;
+
+                if (Array.isArray(customPermissions) && customPermissions.length > 0) {
+                    // Cargar secciones personalizadas
+                    const customSections = customPermissions.map(perm => perm.section);
+                    setSelectedSections(customSections);
+
+                    // Cargar abilities personalizadas
+                    const customAbilities = {};
+                    customPermissions.forEach(perm => {
+                        if (perm.abilities && Array.isArray(perm.abilities)) {
+                            customAbilities[perm.section] = perm.abilities;
+                        }
+                    });
+                    setSelectedAbilities(customAbilities);
+                    setUseCustomPermissions(true);
+                    console.log('✅ Loaded custom permissions for user:', user.id);
+                    return;
+                }
+            } catch (error) {
+                console.error('Error parsing user permissions:', error);
+            }
+        }
+
+        // Fallback: Cargar permisos del rol
         const rolePermission = permissionData.find(p => p.role === (user?.role || 'call'));
         if (rolePermission) {
             setSelectedSections(rolePermission.permission.sections.map(s => s.section));
@@ -162,8 +191,10 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
                 });
             }
             setSelectedAbilities(abilities);
+            setUseCustomPermissions(false);
+            console.log('✅ Loaded role permissions for:', user?.role || 'call');
         }
-    }, [user?.role]);
+    }, [user?.role, user?.permission]);
 
     const handleRoleChange = (newRole) => {
         setUserData({ ...userData, role: newRole });
