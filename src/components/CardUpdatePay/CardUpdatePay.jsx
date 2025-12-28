@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import "./CardUpdatePay.css";
 import { useEffect, useRef, useState } from "react";
 import CardManualPay from "../CardManualPay/CardManualPay";
+import sendpush from "../../helpers/sendpush";
 
 export default function CardUpdatePay({name,fecha_carga,state}){
     

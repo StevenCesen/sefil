@@ -24,6 +24,8 @@ import Contacts from './pages/Contacts/Contacts'
 import Templates from './pages/Templates/Templates'
 import Monitor from './pages/Monitor/Monitor'
 import Directions from './pages/Directions/Directions'
+import Businesses from './pages/Businesses/Businesses'
+import ImportPayments from './pages/ImportPayments/ImportPayments'
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -214,6 +216,24 @@ function App() {
           element={
             <ProtectedRoute>
               <Directions/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/businesses"
+          element={
+            <ProtectedRoute>
+              <Businesses/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/import-payments"
+          element={
+            <ProtectedRoute>
+              <ImportPayments/>
             </ProtectedRoute>
           }
         />

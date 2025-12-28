@@ -27,43 +27,47 @@
 }
 
 .CardEditUser__header {
+    width: 100%;
+    height: 50px;
+    background-color: var(--bg-alert-successful);
+    padding: 10px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 28px;
-    border-bottom: 2px solid #e0e0e0;
-    background: linear-gradient(135deg, #00838f 0%, #006064 100%);
     border-radius: 12px 12px 0 0;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 99;
 }
 
 .CardEditUser__header h2 {
     margin: 0;
-    font-size: 22px;
-    font-weight: 700;
-    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--color-3);
 }
 
 .CardEditUser__close {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    font-size: 28px;
-    color: white;
+    width: 30px;
+    height: 30px;
+    background-color: var(--color-3);
+    color: var(--bg-alert-successful);
+    border: none;
+    border-radius: 3px;
+    font-size: 18px;
+    font-weight: bold;
     cursor: pointer;
-    padding: 0;
-    width: 40px;
-    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .CardEditUser__close:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: white;
-    transform: rotate(90deg);
+    opacity: 0.8;
+    transform: scale(1.05);
 }
 
 .CardEditUser__content {
@@ -81,11 +85,11 @@
 }
 
 .CardEditUser__section h3 {
-    margin: 0 0 20px 0;
-    font-size: 18px;
-    font-weight: 700;
-    color: #00838f;
-    padding-bottom: 10px;
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--bg-alert-successful);
+    padding-bottom: 8px;
     border-bottom: 2px solid #e0e0e0;
 }
 
@@ -116,100 +120,71 @@
 .CardEditUser__field input:focus,
 .CardEditUser__field select:focus {
     outline: none;
-    border-color: #00838f;
+    border-color: var(--bg-alert-successful);
     background-color: white;
-    box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.1);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
 }
 
 .CardEditUser__permissions-info {
     margin-bottom: 20px;
-    padding: 14px 16px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
-    border-left: 4px solid #00838f;
+    padding: 12px 14px;
+    border-radius: 6px;
+    background-color: #e8f5e9;
+    border-left: 3px solid var(--bg-alert-successful);
 }
 
 .CardEditUser__permissions-info p {
     margin: 0;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .CardEditUser__permissions-info .info-role {
-    color: #00695c;
+    color: #2e7d32;
 }
 
 .CardEditUser__permissions-info .info-role strong {
-    color: #00838f;
+    color: var(--bg-alert-successful);
     text-transform: uppercase;
 }
 
 .CardEditUser__permissions-info .info-custom {
     color: #e65100;
-    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-    padding: 14px 16px;
-    border-radius: 8px;
-    border-left: 4px solid #ff8c00;
+    background-color: #fff3e0;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border-left: 3px solid #ff8c00;
 }
 
 .CardEditUser__permissions-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
 }
 
 .CardEditUser__permission-item {
-    padding: 16px 18px;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    transition: all 0.3s;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    transition: all 0.2s;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
-}
-
-.CardEditUser__permission-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(180deg, #00838f 0%, #006064 100%);
-    opacity: 0;
-    transition: opacity 0.3s;
+    background-color: #fff;
 }
 
 .CardEditUser__permission-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    transform: translateY(-3px);
-    border-color: #00838f;
-}
-
-.CardEditUser__permission-item:hover::before {
-    opacity: 1;
+    border-color: var(--bg-alert-successful);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .CardEditUser__permission-item.enabled {
-    background: linear-gradient(135deg, #e8f5e9 0%, #d7f0db 100%);
-    border-color: #66bb6a;
-    box-shadow: 0 3px 10px rgba(76, 175, 80, 0.25);
-}
-
-.CardEditUser__permission-item.enabled::before {
-    background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%);
-    opacity: 1;
+    background-color: #f1f8f4;
+    border-color: var(--bg-alert-successful);
 }
 
 .CardEditUser__permission-item.disabled {
-    background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+    background-color: #fafafa;
     border-color: #e0e0e0;
-    opacity: 0.65;
-}
-
-.CardEditUser__permission-item.disabled:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    opacity: 0.7;
 }
 
 .CardEditUser__permission-header {
@@ -222,10 +197,10 @@
 .CardEditUser__permission-header label {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
     margin: 0;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     flex: 1;
 }
@@ -234,23 +209,22 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 12px;
-    padding: 4px 8px;
-    color: #00838f;
+    font-size: 11px;
+    padding: 3px 6px;
+    color: var(--bg-alert-successful);
     transition: all 0.2s;
     font-weight: bold;
 }
 
 .CardEditUser__expand-btn:hover {
-    color: #006064;
-    transform: scale(1.2);
+    color: #0d9f6e;
 }
 
 .CardEditUser__permission-item input[type="checkbox"] {
     cursor: pointer;
-    width: 20px;
-    height: 20px;
-    accent-color: #4caf50;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--bg-alert-successful);
 }
 
 .CardEditUser__permission-item span {
@@ -260,77 +234,75 @@
 
 .CardEditUser__permission-item.enabled span {
     color: #2e7d32;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .CardEditUser__permission-item .role-badge {
-    font-size: 10px;
-    padding: 4px 8px;
-    background: linear-gradient(135deg, #00838f 0%, #006064 100%);
-    color: white;
-    border-radius: 12px;
+    font-size: 9px;
+    padding: 3px 6px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border-radius: 3px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .CardEditUser__abilities {
-    margin-top: 12px;
-    padding: 12px;
-    background-color: rgba(0, 131, 143, 0.05);
-    border-radius: 6px;
-    border-left: 3px solid #00838f;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: rgba(16, 185, 129, 0.05);
+    border-radius: 4px;
+    border-left: 2px solid var(--bg-alert-successful);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .CardEditUser__ability-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 8px;
+    gap: 6px;
+    padding: 5px 7px;
     background-color: white;
-    border-radius: 4px;
-    font-size: 13px;
+    border-radius: 3px;
+    font-size: 12px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .CardEditUser__ability-item:hover {
-    background-color: #e0f7fa;
+    background-color: #f1f8f4;
 }
 
 .CardEditUser__ability-item input[type="checkbox"] {
     cursor: pointer;
-    width: 16px;
-    height: 16px;
-    accent-color: #00838f;
+    width: 15px;
+    height: 15px;
+    accent-color: var(--bg-alert-successful);
 }
 
 .CardEditUser__ability-item span {
     color: #555;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 .CardEditUser__reset-permissions {
-    margin-top: 20px;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #ff8c00 0%, #e67e00 100%);
+    margin-top: 16px;
+    padding: 10px 18px;
+    background-color: #ff8c00;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
 }
 
 .CardEditUser__reset-permissions:hover {
-    background: linear-gradient(135deg, #e67e00 0%, #cc7000 100%);
-    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
-    transform: translateY(-2px);
+    background-color: #e67e00;
+    opacity: 0.9;
 }
 
 .CardEditUser__footer {
@@ -365,15 +337,13 @@
 }
 
 .CardEditUser__save {
-    background: linear-gradient(135deg, #00838f 0%, #006064 100%);
+    background-color: var(--bg-alert-successful);
     color: white;
-    box-shadow: 0 2px 8px rgba(0, 131, 143, 0.3);
 }
 
 .CardEditUser__save:hover:not(:disabled) {
-    background: linear-gradient(135deg, #006064 0%, #004d40 100%);
-    box-shadow: 0 4px 12px rgba(0, 131, 143, 0.4);
-    transform: translateY(-2px);
+    background-color: #0d9f6e;
+    opacity: 0.95;
 }
 
 .CardEditUser__save:disabled {

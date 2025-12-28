@@ -276,8 +276,8 @@ export default function NavSlide() {
                     <div className="NavSlide__option--down">
                         <img src="./icons/arrowDown.png" />
                         <div ref={menu}>
-                            <NavLink to={"dashboard/configuracion/importdb"}>Carteras</NavLink>
-                            <NavLink to={"dashboard/configuracion/importpays"}>Carga de pagos</NavLink>
+                            <NavLink to={"/businesses"}>Carteras</NavLink>
+                            <NavLink to={"/import-payments"}>Carga de pagos</NavLink>
                         </div>
                     </div>
                 </div>
