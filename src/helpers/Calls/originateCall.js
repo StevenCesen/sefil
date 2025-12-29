@@ -1,4 +1,4 @@
-export default async function originateCall({phone_number}){
+export default async function originateCall({phone_number,campain_id=null}) {
 
     phone_number=phone_number.replace(/\s+/g, '');
 
@@ -14,7 +14,8 @@ export default async function originateCall({phone_number}){
             context:'from-internal',
             priority:1,
             callerid:localStorage.getItem('extension'),
-            timeout:30000
+            timeout:30000,
+            campain_id: campain_id ? campain_id : ''
         })
     });
 

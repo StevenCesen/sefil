@@ -11,7 +11,8 @@ export default function CardSelectState({mode,current_option}){
         'CONECTADO',
         'EN RECESO',
         'EN ALMUERZO',
-        'EN REUNIÓN'
+        'EN REUNIÓN',
+        'EN REVISIÓN'
     ];
     
     useEffect(()=>{
@@ -43,13 +44,18 @@ export default function CardSelectState({mode,current_option}){
 
                                                     setView(!view);
                                                     setCurrent(option);
-                                                    fetch(`${import.meta.env.VITE_URL_BASE}/users/broadcast/${localStorage.getItem('temp_uS')}?state=${option}`,{
+                                                    fetch(`${import.meta.env.VITE_URL_BASE}/users/${localStorage.getItem('temp_uS')}`,{
+                                                        method: 'PUT',
                                                         headers: {
+                                                            'Content-Type': 'application/json',
                                                             Accept: 'application/json',
                                                             Authorization: `Bearer ${localStorage.getItem('token')}`
-                                                        }
+                                                        },
+                                                        body: JSON.stringify({
+                                                            status: option
+                                                        })
                                                     })
-                                                        .then((response) => response.json())  
+                                                        .then((response) => response.json())
                                                         .then((data) => {
                                                             sendpush({
                                                                 title:'Estado',

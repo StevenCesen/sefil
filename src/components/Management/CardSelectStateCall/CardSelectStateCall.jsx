@@ -41,7 +41,8 @@ export default function CardSelectStateCall() {
             phone_number:store_call.phone_number,
             created_by:localStorage.getItem('temp_uS'),
             client_id:store_management.client_id,
-            credit_id:store_call.credit_id
+            credit_id:store_call.credit_id,
+            campain_id:store_call.campain_id
         }
 
         // const data_upload=new FormData();

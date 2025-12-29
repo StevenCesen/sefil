@@ -7,11 +7,6 @@ export const useStoreMonitor = create((set,get) => ({
     setAgents: async ()=>{
         const {campain_id}=get();
         const agents=await getAgents({campain_id});
-        console.log('🔍 Agents loaded from API:', agents);
-        if (agents.length > 0) {
-            console.log('🔍 First agent structure:', agents[0]);
-            console.log('🔍 First agent keys:', Object.keys(agents[0]));
-        }
         set({agents:agents})
     },
     setIDCampain: (campain_id) => {
@@ -19,19 +14,20 @@ export const useStoreMonitor = create((set,get) => ({
     },
     updateAgent: async ({data}) =>{
         const {campain_id,agents}=get();
-        console.log('WebSocket data received:', data);
-        console.log('Current agents:', agents);
-        console.log('Looking for user_id:', data.user_id);
 
-        // La nueva estructura tiene los datos directamente en data, no en data.data
         if(Number(data.campain_id)===Number(campain_id) || data.campain_id==='ALL' || campain_id===''){
             let agentFound = false;
             const updatedAgents = agents.map(agent => {
-                console.log(`Comparing agent.user_id (${agent.user_id}) with data.user_id (${data.user_id})`);
                 if (Number(agent.user_id) === Number(data.user_id)) {
                     agentFound = true;
-                    console.log('✅ Agent found! Updating:', agent.name);
-                    // Actualizar con la nueva estructura de datos
+                    if (data.campain_id === 'ALL') {
+                        return {
+                            ...agent,
+                            user_state: data.user_state,
+                            time_state: data.time_state
+                        };
+                    }  
+
                     return {
                         ...agent,
                         user_state: data.user_state,

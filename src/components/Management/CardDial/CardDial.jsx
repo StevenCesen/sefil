@@ -6,6 +6,7 @@ import sendpush from "../../../helpers/sendpush";
 import { HandleBlobToFile } from "../../../helpers/Calls/HandleBlobToFile";
 import originateCall from "../../../helpers/Calls/originateCall";
 import hangupCall from "../../../helpers/Calls/hangupCall";
+import updateUser from "../../../helpers/Users/updateUser";
 
 export default function CardDial({credit_id,campain_id}){
     const store_call=useStoreProgressCall();
@@ -32,6 +33,13 @@ export default function CardDial({credit_id,campain_id}){
         }
 
         try {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
+
+            setCounter(0);
+
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             streamerRef.current = stream;
             recorderRef.current = new MediaRecorder(streamerRef.current);
@@ -51,14 +59,14 @@ export default function CardDial({credit_id,campain_id}){
             });
 
             if (channel === 'PBX') {
-                await originateCall({ phone_number: store_call.phone_number });
+                await originateCall({ phone_number: store_call.phone_number, campain_id });
+            } else {
+                await updateUser(localStorage.getItem('temp_uS'), { status: 'EN LLAMADA POR WS' ,campain_id});
             }
 
-            if (!intervalRef.current) {
-                intervalRef.current = setInterval(() => {
-                    setCounter((prev) => prev + 1);
-                }, 1000);
-            }
+            intervalRef.current = setInterval(() => {
+                setCounter((prev) => prev + 1);
+            }, 1000);
 
         } catch (error) {
             sendpush({

@@ -122,7 +122,13 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
                             ?   "CardUserState__state--connect"
                             :   (state==='EN PAUSA'  | state==='EN RECESO' | state==='EN ALMUERZO' | state==='EN REUNIÓN')
                                 ?   "CardUserState__state--pause"
-                                :   "CardUserState__state--active"
+                                    :   (state==='EN LLAMADA')
+                                        ?   
+                                            "CardUserState__state--active"
+                                        :   (state==='EN LLAMADA POR WS')
+                                            ?
+                                                "CardUserState__state--activeWS"
+                                            :   "CardUserState__state--other"
                     }
                 `}
             >{state}</p>

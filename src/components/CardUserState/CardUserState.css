@@ -42,6 +42,10 @@
     background-color: #009793;
 }
 
+.CardUserState__state--activeWS{
+    background-color: #005F73;
+}
+
 .CardUserState__state--connect{
     background-color: #009FE3;
 }
@@ -52,4 +56,8 @@
 
 .CardUserState__state--disconnect{
     background-color: #D2006E;
+}
+
+.CardUserState__state--other{
+    background-color: #6B7280;
 }

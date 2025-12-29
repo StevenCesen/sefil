@@ -17,22 +17,10 @@ export default function Header(){
             {
                 (useSessions()) &&
                     <>
-                        {
-                            (
-                                localStorage.getItem('rol')==='gestor' ||
-                                localStorage.getItem('rol')==='legal' || 
-                                localStorage.getItem('rol')==='gestor' || 
-                                localStorage.getItem('rol')==='administrador' || 
-                                localStorage.getItem('rol')==='call' || 
-                                localStorage.getItem('rol')==='campo')
-                            ?
-                                <CardSelectState
-                                    mode={"select"}
-                                    current_option={"CONECTADO"}
-                                />
-
-                            :   <div></div>
-                        }
+                        <CardSelectState
+                            mode={"select"}
+                            current_option={"CONECTADO"}
+                        />
                         {
                             (localStorage.getItem('rol')==='administrador') &&
                                 <MenuNotifier/>
