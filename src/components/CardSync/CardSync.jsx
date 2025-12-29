@@ -97,6 +97,10 @@ export default function CardSync(){
                                                 {sync.state}
                                             </span>
 
+                                            {sync.nro_syncs && (
+                                                <p>{(sync.sync_type==='SYNC-CREDITS') ? 'Créditos sincronizados' : 'Pagos nuevos' }: {sync.nro_syncs}</p>
+                                            )}
+
                                             {sync.updated_at && (
                                                 <p className="CardSync__date">
                                                     Actualizado: {new Date(sync.updated_at).toLocaleString('es-ES', {
@@ -107,18 +111,6 @@ export default function CardSync(){
                                                         minute: '2-digit'
                                                     })}
                                                 </p>
-                                            )}
-
-                                            {sync.nro_syncs && (
-                                                <p>Sincronizaciones: {sync.nro_syncs}</p>
-                                            )}
-
-                                            {sync.nro_credits && (
-                                                <p>Créditos: {sync.nro_credits}</p>
-                                            )}
-
-                                            {sync.new_credits && (
-                                                <p>Nuevos créditos: {sync.new_credits}</p>
                                             )}
                                         </div>
                                     </div>

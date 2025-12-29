@@ -7,7 +7,7 @@ import useFetch from "../../hooks/useFetch";
 import BackButton from "../../components/BackButton/BackButton";
 
 export default function Monitor(){
-    const store_monitor = useStoreMonitor();
+    const { agents, setAgents, setIDCampain, updateAgent } = useStoreMonitor();
     const connection = useRef();
     const loader = useStoreLoader();
     const { fetchWithAuth } = useFetch();
@@ -35,19 +35,20 @@ export default function Monitor(){
 
         conn.onopen = function(e) {
             console.log("WSS: Connection established!");
-            store_monitor.setAgents();
+            setAgents();
             loader.viewOn(false);
         };
 
         conn.onmessage = async function(e) {
             const data = JSON.parse(e.data);
-            await store_monitor.updateAgent({data});
+            console.log(data);
+            await updateAgent({data});
         };
 
         connection.current = conn;
 
         document.addEventListener("visibilitychange", async function(e) {
-            await store_monitor.setAgents();
+            await setAgents();
         });
 
         if (connection.current) {
@@ -70,8 +71,8 @@ export default function Monitor(){
                         onChange={async (e) => {
                             loader.viewOn(true);
                             setSelectedCampain(e.target.value);
-                            store_monitor.setIDCampain(e.target.value);
-                            await store_monitor.setAgents();
+                            setIDCampain(e.target.value);
+                            await setAgents();
                             loader.viewOn(false);
                         }}
                     >
@@ -101,7 +102,7 @@ export default function Monitor(){
                     <label>Nro. llamadas<br/>Día.</label>
                 </div>
                 {
-                    Array.isArray(store_monitor.agents) && store_monitor.agents.map((agent, index) => (
+                    Array.isArray(agents) && agents.map((agent, index) => (
                         <CardUserState
                             key={index}
                             name={agent.name}

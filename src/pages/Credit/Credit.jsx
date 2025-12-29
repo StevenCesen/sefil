@@ -20,6 +20,7 @@ import HistorialNav from "../../components/Tools/HistorialNav/HistorialNav";
 import ViewPDFCondonation from "../../components/Credits/ViewPDFCondonation/ViewPDFCondonation";
 import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFStructure";
 import ViewPDFBilling from "../../components/Credits/ViewPDFBilling/ViewPDFBilling";
+import BackButton from "../../components/BackButton/BackButton";
 
 export default function Credit(){
     const params=useParams();
@@ -34,8 +35,6 @@ export default function Credit(){
     const helperCredit=async ({credit_id})=>{
         loader.viewOn(true);
         const data_credit=await getCredit({credit_id});
-        console.log(data_credit);
-
         if (data_credit && data_credit.result) {
             credit.setCredit(data_credit.result);
         }
@@ -86,6 +85,7 @@ export default function Credit(){
             <ViewPDFStructure/>
             <ViewPDFBilling/>
             <HistorialNav/>
+            <BackButton />
 
             <h2>Consulta de crédito</h2>
 

@@ -2066,6 +2066,84 @@
     .Login{
         width: 90%;
     }
+
+    .Dashboard{
+        grid-template-columns: 100%;
+        position: relative;
+    }
+
+    .Dashboard__navSlide{
+        position: fixed;
+        left: -100%;
+        top: var(--height-header);
+        width: 70%;
+        height: calc(100vh - var(--height-header));
+        z-index: 999;
+        transition: left 0.3s ease-in-out;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .Dashboard__navSlide.active{
+        left: 0;
+    }
+
+    .Dashboard__navSlide.active::before{
+        content: '';
+        position: fixed;
+        top: var(--height-header);
+        left: 70%;
+        width: 30%;
+        height: calc(100vh - var(--height-header));
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+
+    .Dashboard__navSlide>div:first-child{
+        position: fixed;
+        left: 10px;
+        top: calc(var(--height-header) + 10px);
+        z-index: 1000;
+        background-color: var(--bg-buttons);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        padding: 0;
+    }
+
+    .Dashboard__navSlide>div:first-child>img{
+        width: 30px;
+        margin: 0;
+    }
+
+    .Dashboard__navSlide.active>div:first-child{
+        left: calc(70% + 10px);
+    }
+
+    .Dashboard__navSlide>a>label,
+    .Dashboard__navSlide>div>label{
+        display: block;
+    }
+
+    .Dashboard__navSlide>a,
+    .Dashboard__navSlide>div{
+        justify-content: flex-start;
+        padding-left: 15px;
+    }
+
+    .Dashboard__navSlide>a>img,
+    .Dashboard__navSlide>div>img{
+        width: 20px;
+        margin-right: 15px;
+    }
+
+    .Dashboard__content{
+        width: 100%;
+        padding: 10px;
+    }
 }
 
 @media screen and (min-width:541px) and (max-width:1000px) {
