@@ -30,22 +30,22 @@ export default function CardPrelacion({ cartera, onClose }) {
     useEffect(() => {
         if (cartera) {
             // Si no hay orden de prelación o está vacío, usar orden por defecto
-            if (!cartera.orden_prelacion || cartera.orden_prelacion === '[]' ||
-                (Array.isArray(cartera.orden_prelacion) && cartera.orden_prelacion.length === 0)) {
+            if (!cartera.prelation_order || cartera.prelation_order === '[]' ||
+                (Array.isArray(cartera.prelation_order) && cartera.prelation_order.length === 0)) {
                 // Orden por defecto: todos los campos disponibles
                 const defaultOrder = Object.values(PRELATION_LABELS);
                 setPrelationOrder(defaultOrder);
             } else {
                 try {
-                    const order = typeof cartera.orden_prelacion === 'string'
-                        ? JSON.parse(cartera.orden_prelacion)
-                        : cartera.orden_prelacion;
+                    const order = typeof cartera.prelation_order === 'string'
+                        ? JSON.parse(cartera.prelation_order)
+                        : cartera.prelation_order;
 
                     // Convertir valores del backend a labels
                     const labels = order.map(item => PRELATION_LABELS[item] || item);
                     setPrelationOrder(labels);
                 } catch (error) {
-                    console.error('Error parsing orden_prelacion:', error);
+                    console.error('Error parsing prelation_order:', error);
                     // En caso de error, usar orden por defecto
                     const defaultOrder = Object.values(PRELATION_LABELS);
                     setPrelationOrder(defaultOrder);
@@ -111,6 +111,8 @@ export default function CardPrelacion({ cartera, onClose }) {
         try {
             // Convertir labels a valores del backend
             const backendOrder = prelationOrder.map(label => PRELATION_VALUES[label] || label);
+
+            console.log('Saving prelation order:', backendOrder);
 
             const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/businesses/${cartera.id}/prelation`, {
                 method: 'PATCH',

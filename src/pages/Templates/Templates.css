@@ -1,105 +1,53 @@
 .pageTemplates {
     width: 100%;
     min-height: 100vh;
-    background-color: #f5f5f5;
     padding: 20px;
-}
-
-.pageTemplates__head {
-    margin-bottom: 20px;
-}
-
-.pageTemplates__head a {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-.pageTemplates__head a:hover {
-    background-color: #f0f0f0;
-    border-color: #bbb;
-}
-
-.pageTemplates__content {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.pageTemplates__title {
-    font-size: 28px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #2196F3;
-}
-
-.pageTemplates__list {
-    margin-top: 20px;
 }
 
 .pageTemplates__access {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 15px;
     margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.pageTemplates__subtitle {
-    font-size: 20px;
-    font-weight: 500;
-    color: #555;
-    margin: 0;
+    align-items: center;
 }
 
 .pageTemplates__access button {
     padding: 10px 20px;
-    background-color: #2196F3;
-    color: white;
+    background-color: var(--bg-alert-successful, #10b981);
+    color: var(--color-3, #fff);
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
 }
 
 .pageTemplates__access button:hover {
-    background-color: #1976D2;
+    background-color: #0d9f6e;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .pageTemplates__tableHead {
     display: grid;
-    grid-template-columns: 80px 1fr 1.5fr 200px 150px;
+    grid-template-columns: 80px 1fr 150px 200px 150px;
     gap: 10px;
-    padding: 15px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    color: #555;
+    padding: 10px 15px;
+    background-color: var(--bg-alert-error);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #000;
+    text-align: center;
 }
 
 .pageTemplates__tableHead p {
     margin: 0;
+    font-weight: bold;
 }
 
 .pageTemplates__items {
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
     overflow: hidden;
 }
 

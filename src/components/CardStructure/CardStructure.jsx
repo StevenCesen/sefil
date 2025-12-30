@@ -33,7 +33,7 @@ export default function CardStructure(){
             valor_cuota:store_structure.amount_fee,
             cuotas_pendientes:0,
             cuota:0,
-            fecha:null,
+            fecha:'',
             credito:store_structure.credit_id,
             cartera:store_structure.cartera,
             cobranza:store_structure.gasto_cobranza,

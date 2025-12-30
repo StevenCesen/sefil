@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import Loader from "../../components/Loader/loader";
 import CardTemplate from "../../components/Templates/CardTemplate/CardTemplate";
 import CardEditTemplate from "../../components/Templates/CardEditTemplate/CardEditTemplate";
+import CardAddChild from "../../components/Templates/CardAddChild/CardAddChild";
 import BackButton from "../../components/BackButton/BackButton";
 import useFetch from "../../hooks/useFetch";
 import "./Templates.css";
@@ -9,7 +10,7 @@ import "./Templates.css";
 const MODAL_TYPES = {
     CREATE_STATE: 'create_state',
     EDIT_STATE: 'edit_state',
-    CREATE_SUBSTATE: 'create_substate',
+    ADD_CHILD: 'add_child',
     EDIT_SUBSTATE: 'edit_substate'
 };
 
@@ -52,12 +53,14 @@ export default function Templates() {
     const fetchStates = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/management-states`);
+            const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/templates?group=hierarchical`);
             const data = await response.json();
 
             console.log('Estados obtenidos:', data);
 
-            if (data.result && data.result.data && Array.isArray(data.result.data)) {
+            if (data.code === 1 && data.result && Array.isArray(data.result)) {
+                setStates(data.result);
+            } else if (data.result && data.result.data && Array.isArray(data.result.data)) {
                 setStates(data.result.data);
             } else if (Array.isArray(data)) {
                 setStates(data);
@@ -86,8 +89,8 @@ export default function Templates() {
         openModal(MODAL_TYPES.EDIT_STATE, state);
     };
 
-    const handleCreateSubstate = (state) => {
-        openModal(MODAL_TYPES.CREATE_SUBSTATE, state);
+    const handleAddChild = (state) => {
+        openModal(MODAL_TYPES.ADD_CHILD, state);
     };
 
     const handleEditSubstate = (state, substate) => {
@@ -105,44 +108,37 @@ export default function Templates() {
         <div className="pageTemplates">
             <BackButton />
 
-            <div className="pageTemplates__content">
-                <h3 className="pageTemplates__title">Gestión de Estados y Subestados</h3>
+            <div className="pageTemplates__access">
+                <button onClick={handleCreateState}>
+                    Nuevo Estado
+                </button>
+            </div>
 
-                <div className="pageTemplates__list">
-                    <div className="pageTemplates__access">
-                        <h4 className="pageTemplates__subtitle">Estados de Gestión</h4>
-                        <button onClick={handleCreateState}>
-                            Nuevo Estado
-                        </button>
-                    </div>
+            <div className="pageTemplates__tableHead">
+                <p>ID</p>
+                <p>Nombre del Estado</p>
+                <p>Estado</p>
+                <p>Hijos</p>
+                <p>Acciones</p>
+            </div>
 
-                    <div className="pageTemplates__tableHead">
-                        <p>ID</p>
-                        <p>Nombre del Estado</p>
-                        <p>Descripción</p>
-                        <p>Subestados</p>
-                        <p>Acciones</p>
+            <div className="pageTemplates__items">
+                {states.length > 0 ? (
+                    states.map((state, index) => (
+                        <CardTemplate
+                            key={state.id || index}
+                            state={state}
+                            onEdit={handleEditState}
+                            onCreateSubstate={handleAddChild}
+                            onEditSubstate={handleEditSubstate}
+                            onRefresh={fetchStates}
+                        />
+                    ))
+                ) : (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                        No hay estados registrados
                     </div>
-
-                    <div className="pageTemplates__items">
-                        {states.length > 0 ? (
-                            states.map((state, index) => (
-                                <CardTemplate
-                                    key={state.id || index}
-                                    state={state}
-                                    onEdit={handleEditState}
-                                    onCreateSubstate={handleCreateSubstate}
-                                    onEditSubstate={handleEditSubstate}
-                                    onRefresh={fetchStates}
-                                />
-                            ))
-                        ) : (
-                            <div style={{ textAlign: 'center', padding: '20px' }}>
-                                No hay estados registrados
-                            </div>
-                        )}
-                    </div>
-                </div>
+                )}
             </div>
 
             <Modal
@@ -175,15 +171,13 @@ export default function Templates() {
             </Modal>
 
             <Modal
-                isOpen={activeModal === MODAL_TYPES.CREATE_SUBSTATE}
+                isOpen={activeModal === MODAL_TYPES.ADD_CHILD}
                 onClose={closeModal}
                 title="Volver"
             >
                 {selectedState && (
-                    <CardEditTemplate
-                        type="substate"
-                        mode="create"
-                        stateId={selectedState.id}
+                    <CardAddChild
+                        parentState={selectedState}
                         onSave={handleSave}
                         onClose={closeModal}
                     />

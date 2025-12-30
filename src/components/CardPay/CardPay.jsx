@@ -295,7 +295,7 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
             
             try {
                 const response = await fetch(
-                    `${import.meta.env.VITE_URL_BASE}/bussines/prelacion?cartera=${cartera}`,
+                    `${import.meta.env.VITE_URL_BASE}/businesses/${cartera}`,
                     {
                         headers: {
                             'Accept': 'application/json',
@@ -303,11 +303,36 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                         }
                     }
                 );
-                const prelacionData = await response.json();
-                setOrdenPrelacion(prelacionData);
-                
+                const businessData = await response.json();
+                const backendPrelacionOrder = businessData?.result?.prelation_order || businessData?.prelation_order;
+
+                // Mapear los nombres del backend a los nombres del frontend
+                const BACKEND_TO_FRONTEND_MAP = {
+                    'mora': 'mora',
+                    'interest': 'interes',
+                    'safe': 'seguro_desgravamen',
+                    'legal_expenses': 'gastos_judiciales',
+                    'other_values': 'otros_valores',
+                    'capital': 'saldo_capital',
+                    'collection_expenses': 'gastos_cobranza'
+                };
+
+                // Transformar el orden de prelación
+                let prelacionOrder;
+                if (backendPrelacionOrder && Array.isArray(backendPrelacionOrder)) {
+                    prelacionOrder = backendPrelacionOrder.map(field => BACKEND_TO_FRONTEND_MAP[field] || field);
+                } else if (typeof backendPrelacionOrder === 'string') {
+                    const parsed = JSON.parse(backendPrelacionOrder);
+                    prelacionOrder = parsed.map(field => BACKEND_TO_FRONTEND_MAP[field] || field);
+                } else {
+                    // Orden por defecto si no hay prelación configurada
+                    prelacionOrder = ['mora', 'interes', 'seguro_desgravamen', 'gastos_judiciales', 'otros_valores', 'saldo_capital', 'gastos_cobranza'];
+                }
+
+                setOrdenPrelacion(prelacionOrder);
+
                 if (isPresetAmount && amount > 0) {
-                    usePrelacion(amount, credit, setPrelacion, updateDetalle, prelacionData);
+                    usePrelacion(amount, credit, setPrelacion, updateDetalle, prelacionOrder);
                 }
                 
                 setIsInitialized(true);

@@ -15,6 +15,12 @@
     gap:10px;
 }
 
+.CardClient--wrapper.contacts-open .CardClient{
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
+}
+
 .CardClient--active{
     background-color: rgb(104, 172, 199);
 }
@@ -87,4 +93,119 @@
     background-color: #FEFCE8;
     color: #7F4123;
     border: 1px solid #FEF3A1;
+}
+
+.CardClient--wrapper{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.CardClient__toggle-btn{
+    background-color: rgb(158, 158, 158);
+    color: var(--color-3);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    margin-top: 5px;
+}
+
+.CardClient__toggle-btn:hover{
+    background-color: rgb(130, 130, 130);
+}
+
+.CardClient__contacts-list{
+    width: 100%;
+    padding: 15px;
+    background-color: #1a2332;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    box-shadow: var(--box-shadow);
+}
+
+.CardClient__contact-item{
+    width: 100%;
+    padding: 12px;
+    background-color: #101828;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #364153;
+}
+
+.CardClient__contact-info{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.CardClient__contact-phone{
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    color: var(--color-3);
+}
+
+.CardClient__contact-type{
+    font-size: 12px;
+    padding: 4px 10px;
+    background-color: #364153;
+    border-radius: 4px;
+    color: var(--color-3);
+}
+
+.CardClient__contact-status{
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.CardClient__contact-status.active{
+    background-color: rgb(34, 197, 94);
+    color: white;
+}
+
+.CardClient__contact-status.inactive{
+    background-color: rgb(239, 68, 68);
+    color: white;
+}
+
+.CardClient__contact-actions{
+    display: flex;
+    gap: 8px;
+}
+
+.CardClient__contact-actions button{
+    background-color: #364153;
+    color: var(--color-3);
+    padding: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+}
+
+.CardClient__contact-actions button:hover{
+    background-color: #4a5568;
+}
+
+.CardClient__contacts-empty{
+    text-align: center;
+    color: rgb(160, 160, 160);
+    font-size: 14px;
+    padding: 15px;
+    margin: 0;
 }

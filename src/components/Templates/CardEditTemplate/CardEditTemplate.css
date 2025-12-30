@@ -1,24 +1,38 @@
 .CardEditTemplate {
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    max-width: 600px;
-    width: 100%;
-    margin: 0 auto;
+    width: 600px;
+    max-height: 600px;
+    overflow-y: auto;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    position: relative;
+    box-shadow: var(--box-shadow);
 }
 
 .CardEditTemplate__title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 25px;
-    text-align: center;
+    width: 100%;
+    height: 50px;
+    background-color: var(--bg-alert-successful);
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+    color: var(--color-3);
+    font-weight: bold;
+    font-size: 18px;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    align-items: center;
+    margin-bottom: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    margin: 0;
 }
 
 .CardEditTemplate__form {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    padding: 20px;
 }
 
 .CardEditTemplate__field {
@@ -29,8 +43,8 @@
 
 .CardEditTemplate__field label {
     font-size: 14px;
-    font-weight: 500;
-    color: #555;
+    font-weight: bold;
+    color: var(--color-1);
 }
 
 .CardEditTemplate__field input,
@@ -41,12 +55,13 @@
     font-size: 14px;
     font-family: inherit;
     transition: border-color 0.2s;
+    background-color: var(--bg-1);
 }
 
 .CardEditTemplate__field input:focus,
 .CardEditTemplate__field textarea:focus {
     outline: none;
-    border-color: #2196F3;
+    border-color: var(--bg-alert-successful);
 }
 
 .CardEditTemplate__field textarea {
@@ -82,16 +97,105 @@
 }
 
 .CardEditTemplate__btnSave {
-    background-color: #2196F3;
-    color: white;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
 }
 
 .CardEditTemplate__btnSave:hover:not(:disabled) {
-    background-color: #1976D2;
+    opacity: 0.9;
 }
 
 .CardEditTemplate__btnCancel:disabled,
 .CardEditTemplate__btnSave:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.CardEditTemplate__checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: normal !important;
+}
+
+.CardEditTemplate__checkboxLabel input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.CardEditTemplate__checkboxLabel span {
+    font-weight: normal;
+}
+
+.CardEditTemplate__parentSelect {
+    position: relative;
+}
+
+.CardEditTemplate__parentBtn {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: var(--bg-1);
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.CardEditTemplate__parentBtn:hover {
+    border-color: var(--bg-alert-successful);
+}
+
+.CardEditTemplate__parentOptions {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-1);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    margin-bottom: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.CardEditTemplate__parentOption {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-weight: normal !important;
+    gap: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.CardEditTemplate__parentOption:hover {
+    background-color: #f5f5f5;
+}
+
+.CardEditTemplate__parentOption:last-child {
+    border-bottom: none;
+}
+
+.CardEditTemplate__parentOption input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.CardEditTemplate__parentOption span {
+    flex: 1;
+    font-weight: normal;
+}
+
+.CardEditTemplate__noParents {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
 }

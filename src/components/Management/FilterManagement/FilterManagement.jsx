@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useStoreFilterManagement } from "../../../stores/useStoreFilterManagement";
 import useAgencies from "../../../hooks/useAgencies";
+import SelectManagementStates from "../../SelectManagementStates/SelectManagementStates";
 import "./FilterManagement.css";
 
 export default function FilterManagement(){
@@ -208,46 +209,14 @@ export default function FilterManagement(){
 
             <label className="FilterManagement__label">Cuotas</label>
 
-            <label className="FilterManagement__label">
-                Estado gestión
-                <select
-                    ref={managementStateSelectRef}
-                    defaultValue={''}
-                    onChange={(e) => {
-                        filter_management.setManagementState(e.target.value);
-                        applyFilters();
-                    }}
-                >
-                    <option value={""}>-- Seleccionar --</option>
-                    <option value={"PENDIENTE"}>PENDIENTE</option>
-                    <option value={"OFERTA DE PAGO"}>OFERTA DE PAGO</option>
-                    <option value={"REGESTION DE OFERTA"}>REGESTION DE OFERTA</option>
-                    <option value={"VISITA CAMPO"}>VISITA CAMPO</option>
-                    <option value={"COMPROMISO DE PAGO"}>COMPROMISO DE PAGO</option>
-                    <option value={"MENSAJE A TERCEROS"}>MENSAJE A TERCEROS</option>
-                    <option value={"MENSAJE DE WHATSAPP"}>MENSAJE DE WHATSAPP</option>
-                    <option value={"MENSAJE EN BUZÓN DEL CLIENTE"}>MENSAJE EN BUZÓN DEL CLIENTE</option>
-                    <option value={"YA PAGÓ"}>YA PAGÓ</option>
-                    <option value={"MENSAJE DE TEXTO"}>MENSAJE DE TEXTO</option>
-                    <option value={"NO CONTESTA"}>NO CONTESTA</option>
-                    <option value={"SOLICITA REFINANCIAMIENTO"}>SOLICITA REFINANCIAMIENTO</option>
-                    <option value={"NUMERO INCORRECTO"}>NUMERO INCORRECTO</option>
-                    <option value={"FUERA DEL AREA DE COBERTURA"}>FUERA DEL AREA DE COBERTURA</option>
-                    <option value={"SUSPENDIDO POR FALTA DE PAGO"}>SUSPENDIDO POR FALTA DE PAGO</option>
-                    <option value={"CLIENTE SE NIEGA A PAGAR"}>CLIENTE SE NIEGA A PAGAR</option>
-                    <option value="CLIENTE INDICA QUE NO ES SU DEUDA">CLIENTE INDICA QUE NO ES SU DEUDA</option>
-                    <option value="PASAR A TRAMITE LEGAL">PASAR A TRAMITE LEGAL</option>
-                    <option value="VOLVER A LLAMAR">VOLVER A LLAMAR</option>
-                    <option value="CONVENIO DE PAGO">CONVENIO DE PAGO</option>
-                    <option value="CONTACTO INDICA QUE ESTA EQUIVOCADO">CONTACTO INDICA QUE ESTA EQUIVOCADO</option>
-                    <option value="CLIENTE ESCUCHA Y NO HABLA">CLIENTE ESCUCHA Y NO HABLA</option>
-                    <option value="CLIENTE ESTA OCUPADO">CLIENTE ESTA OCUPADO</option>
-                    <option value="CONTESTA MENOR DE EDAD">CONTESTA MENOR DE EDAD</option>
-                    <option value="CORTA LA LLAMADA">CORTA LA LLAMADA</option>
-                    <option value="INUBICABLE">INUBICABLE</option>
-                    <option value="NO VIVE EN LA MISMA DIRECCIÓN">NO VIVE EN LA MISMA DIRECCIÓN</option>
-                </select>
-            </label>
+            <SelectManagementStates
+                className="FilterManagement__label"
+                value={filter_management.management_state}
+                onChange={(_, value) => {
+                    filter_management.setManagementState(value);
+                    applyFilters();
+                }}
+            />
 
             <label className="FilterManagement__label">
                 Compromiso

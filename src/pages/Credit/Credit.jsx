@@ -12,6 +12,8 @@ import InfoFees from "../../components/Credits/InfoFees/InfoFees";
 import CardClient from "../../components/Credits/CardClient/CardClient";
 import CardPay from "../../components/CardPay/CardPay";
 import CardConfirm from "../../components/CardConfirm/CardConfirm";
+import CardCondonacion from "../../components/CardCondonacion/CardCondonacion";
+import CardStructure from "../../components/CardStructure/CardStructure";
 import { useStoreCondonation } from "../../stores/useStoreCondonation";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import { useStoreStructure } from "../../stores/useStoreStructure";
@@ -46,6 +48,7 @@ export default function Credit(){
 
         if(action==='GEN_CONDONATION'){
             const managementExpenses = credit.credit.management_collection_expenses || 0;
+            store_condonation.viewOn(true);
             store_condonation.setInfoCredit({
                 ci:credit.credit.clients[0].ci,
                 name:credit.credit.clients[0].name,
@@ -62,8 +65,8 @@ export default function Credit(){
                 cartera:credit.cartera
             });
         }else if(action==='GEN_CONVENIO'){
-            store_structure.viewOn(true);
             const managementExpenses = credit.credit.management_collection_expenses || 0;
+            store_structure.viewOn(true);
             store_structure.setInfoCredit({
                 ci:credit.credit.clients[0].ci,
                 name:credit.credit.clients[0].name,
@@ -84,7 +87,6 @@ export default function Credit(){
             <ViewPDFCondonation/>
             <ViewPDFStructure/>
             <ViewPDFBilling/>
-            <HistorialNav/>
             <BackButton />
 
             <h2>Consulta de crédito</h2>
@@ -97,6 +99,7 @@ export default function Credit(){
                                 credit.credit.clients.map((client)=>(
                                     <CardClient
                                         key={client.ci}
+                                        id={client.id}
                                         name={client.name}
                                         ci={client.ci}
                                         type={client.type}
@@ -105,6 +108,7 @@ export default function Credit(){
                                         days_past_due={credit.credit.days_past_due}
                                         total_amount={credit.credit.total_amount}
                                         actions={false}
+                                        showContactsButton={true}
                                     />
                                 ))
                             }
@@ -187,14 +191,26 @@ export default function Credit(){
                     {/* <CardActivity items={items} /> */}
                 </div>
 
+                <CardCondonacion />
+                <CardStructure />
+
                 {
                     (action==='PAY_CREDIT')
                     ?
 
                         <CardPay
                             setView={setAction}
-                            credit={credit.credit}
-                            cartera={credit.cartera}
+                            credit={{
+                                ...credit.credit,
+                                totalAmount: credit.credit.total_amount,
+                                saldo_capital: credit.credit.capital,
+                                interes: credit.credit.interest,
+                                seguro_desgravamen: credit.credit.safe,
+                                gastos_cobranza: credit.credit.collection_expenses,
+                                gastos_judiciales: credit.credit.legal_expenses,
+                                otros_valores: credit.credit.other_values
+                            }}
+                            cartera={credit.credit.business_id}
                             updateInfoValues={()=>{}}
                             amount={null}
                         />

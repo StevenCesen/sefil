@@ -19,14 +19,21 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-            .then((response) => response.json())  
+            .then((response) => response.json())
             .then((data) => {
-                const cuentas=data.contribuyentes.contrib[0].cuentasBancarias.cuenta;
-                const formas_pago=data.formasPago.formaPago;
+                const cuentas = data?.contribuyentes?.contrib?.[0]?.cuentasBancarias?.cuenta || [];
+                const formas_pago = data?.formasPago?.formaPago || [];
                 const metodos_pago=['ANTICIPO', 'CHEQUE', 'EFECTIVO', 'OTROS', 'TARJETA_CREDITO', 'TRANSFERENCIA', 'DEPOSITO'];
                 setCuentas(cuentas);
                 setFormas(formas_pago);
                 setMetodos(metodos_pago);
+            })
+            .catch((error) => {
+                console.error('Error loading sofiaconfig:', error);
+                // Valores por defecto en caso de error
+                setCuentas([]);
+                setFormas([]);
+                setMetodos(['ANTICIPO', 'CHEQUE', 'EFECTIVO', 'OTROS', 'TARJETA_CREDITO', 'TRANSFERENCIA', 'DEPOSITO']);
             });
 
         if(id){
@@ -36,7 +43,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 direccion:direccion,
                 telefono:telefono,
                 email:email,
-                value:value.toFixed(2),
+                value:(value || 0).toFixed(2),
                 id:id,
                 cartera:cartera,
                 formaPago:"",

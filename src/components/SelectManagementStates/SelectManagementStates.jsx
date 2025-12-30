@@ -1,10 +1,10 @@
 import useTemplates from '../../hooks/useTemplates';
 
-export default function SelectManagementStates({ value, onChange }) {
+export default function SelectManagementStates({ value, onChange, className }) {
     const { templates, loading, error } = useTemplates();
 
     return (
-        <label>
+        <label className={className}>
             Estado gestión
             <select
                 value={value}
