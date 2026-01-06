@@ -23,8 +23,8 @@ export default function CardCreditManagement({credit,index}){
             <label>{credit.clients[0].economic_activity}</label>
             <label>{useFormatterNumber({value:credit.total_amount,currency:'USD'})}</label>
             <label>{credit.total_fees}</label>
-            <label>{credit.status_management}</label>
-            <label>{credit.promise}</label>
+            <label>{credit.management_status}</label>
+            <label>{credit.management_promise}</label>
         </div>
     );
 }

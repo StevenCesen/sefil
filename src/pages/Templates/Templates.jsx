@@ -58,17 +58,19 @@ export default function Templates() {
 
             console.log('Estados obtenidos:', data);
 
+            let statesData = [];
+
             if (data.code === 1 && data.result && Array.isArray(data.result)) {
-                setStates(data.result);
+                statesData = data.result;
             } else if (data.result && data.result.data && Array.isArray(data.result.data)) {
-                setStates(data.result.data);
+                statesData = data.result.data;
             } else if (Array.isArray(data)) {
-                setStates(data);
+                statesData = data;
             } else if (data.data && Array.isArray(data.data)) {
-                setStates(data.data);
-            } else {
-                setStates([]);
+                statesData = data.data;
             }
+
+            setStates(statesData);
         } catch (error) {
             console.error('Error fetching states:', error);
             setStates([]);

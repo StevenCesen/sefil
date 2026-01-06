@@ -11,7 +11,9 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
         name: '',
         description: '',
         is_active: true,
-        parent_ids: []
+        parent_ids: [],
+        roles: [],
+        days_past_due_min: null
     });
     const [loading, setLoading] = useState(false);
     const [showParentSelect, setShowParentSelect] = useState(false);
@@ -59,11 +61,26 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
 
     useEffect(() => {
         if (mode === 'edit' && data) {
+            // Parsear roles si viene como string JSON
+            let parsedRoles = [];
+            if (data.roles) {
+                try {
+                    parsedRoles = typeof data.roles === 'string'
+                        ? JSON.parse(data.roles)
+                        : data.roles;
+                } catch (e) {
+                    console.error('Error parsing roles:', e);
+                    parsedRoles = [];
+                }
+            }
+
             setFormData({
                 name: data.name || '',
                 description: data.description || '',
                 is_active: data.is_active !== undefined ? data.is_active : true,
-                parent_ids: data.parent_ids || []
+                parent_ids: data.parent_ids || [],
+                roles: parsedRoles,
+                days_past_due_min: data.days_past_due_min !== undefined && data.days_past_due_min !== null ? data.days_past_due_min : null
             });
         } else if (mode === 'create' && type === 'substate' && stateId) {
             // Al crear subestado, preseleccionar el estado padre
@@ -94,6 +111,18 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
         });
     };
 
+    const handleRoleToggle = (role) => {
+        setFormData(prev => {
+            const isSelected = prev.roles.includes(role);
+            return {
+                ...prev,
+                roles: isSelected
+                    ? prev.roles.filter(r => r !== role)
+                    : [...prev.roles, role]
+            };
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -115,6 +144,16 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
 
             if (formData.description) {
                 body.description = formData.description;
+            }
+
+            // Solo incluir roles y days_past_due_min para estados padre (type === 'state')
+            if (type === 'state') {
+                if (formData.roles && formData.roles.length > 0) {
+                    body.roles = formData.roles;
+                }
+                if (formData.days_past_due_min !== null && formData.days_past_due_min !== '') {
+                    body.days_past_due_min = parseInt(formData.days_past_due_min);
+                }
             }
 
             if (mode === 'create') {
@@ -194,6 +233,39 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
                             <span>Estado activo</span>
                         </label>
                     </div>
+                )}
+
+                {mode === 'edit' && type === 'state' && (
+                    <>
+                        <div className="CardEditTemplate__field">
+                            <label>Roles permitidos</label>
+                            <div className="CardEditTemplate__rolesContainer">
+                                {['admin', 'supervisor', 'campo', 'call'].map((role) => (
+                                    <label key={role} className="CardEditTemplate__roleOption">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.roles.includes(role)}
+                                            onChange={() => handleRoleToggle(role)}
+                                        />
+                                        <span>{role.charAt(0).toUpperCase() + role.slice(1)}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="CardEditTemplate__field">
+                            <label htmlFor="days_past_due_min">Días de mora mínimos</label>
+                            <input
+                                type="number"
+                                id="days_past_due_min"
+                                name="days_past_due_min"
+                                value={formData.days_past_due_min || ''}
+                                onChange={handleChange}
+                                placeholder="Ej: 30"
+                                min="0"
+                            />
+                        </div>
+                    </>
                 )}
 
                 {mode === 'create' && (

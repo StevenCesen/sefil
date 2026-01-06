@@ -6,6 +6,7 @@ import CardCreateCampain from "../../components/Campains/CardCreateCampain/CardC
 import BackButton from "../../components/BackButton/BackButton";
 import useFetch from "../../hooks/useFetch";
 import "./Campains.css";
+import exportCampaign from "../../helpers/Campaigns/exportCampaign";
 
 const MODAL_TYPES = {
     CREATE: 'create',
@@ -81,8 +82,23 @@ export default function Campains() {
         openModal(MODAL_TYPES.TRANSFER, campaign);
     }, [openModal]);
 
-    const handleExport = useCallback((campaign) => {
-        console.log('Exportar campaña:', campaign);
+    const handleExport = useCallback(async (campaign) => {
+        const blob = await exportCampaign({ campain_id: campaign.id });
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+
+        const campain_name = campaign.name || 'Campaña';
+        const today = new Date();
+        const monthNames = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
+                            'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
+        const month = monthNames[today.getMonth()];
+
+        link.download = `Campaña-${month}-${campain_name}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(downloadUrl);
     }, []);
 
     const fetchCampaigns = useCallback(async () => {
@@ -90,8 +106,6 @@ export default function Campains() {
             setLoading(true);
             const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains`);
             const data = await response.json();
-
-            console.log('Campañas obtenidas:', data);
 
             if (data.result && data.result.data && Array.isArray(data.result.data)) {
                 setCampaigns(data.result.data);

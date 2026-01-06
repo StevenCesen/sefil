@@ -1,0 +1,93 @@
+.CampaignAssignment {
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: var(--bg-1);
+}
+
+.CampaignAssignment__container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--bg-2);
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: var(--box-shadow);
+}
+
+.CampaignAssignment__title {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--color-1);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.CampaignAssignment__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.CampaignAssignment__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.CampaignAssignment__field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-1);
+}
+
+.CampaignAssignment__field select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: var(--bg-1);
+    color: var(--color-1);
+    transition: border-color 0.2s;
+}
+
+.CampaignAssignment__field select:focus {
+    outline: none;
+    border-color: var(--bg-alert-successful);
+}
+
+.CampaignAssignment__field select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.CampaignAssignment__button {
+    margin-top: 10px;
+    padding: 14px 24px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.CampaignAssignment__button:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.CampaignAssignment__button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .CampaignAssignment__container {
+        padding: 20px;
+    }
+
+    .CampaignAssignment__title {
+        font-size: 24px;
+    }
+}

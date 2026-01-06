@@ -1,0 +1,32 @@
+.ReportProgressBar {
+    margin-top: 10px;
+}
+
+.ReportProgressBar__container {
+    width: 100%;
+    height: 30px;
+    background-color: #f5be7a;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.ReportProgressBar__fill {
+    height: 100%;
+    width: 0%;
+    background-color: #FF9619;
+    transition: width 0.5s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 15px 0 0 15px;
+}
+
+.ReportProgressBar__text {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-1);
+}

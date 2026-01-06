@@ -199,3 +199,34 @@
     color: #999;
     font-size: 14px;
 }
+
+.CardEditTemplate__rolesContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+    background-color: var(--bg-1);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.CardEditTemplate__roleOption {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: normal !important;
+    padding: 5px;
+}
+
+.CardEditTemplate__roleOption input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.CardEditTemplate__roleOption span {
+    font-weight: normal;
+    font-size: 14px;
+    color: var(--color-1);
+}

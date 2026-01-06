@@ -26,6 +26,8 @@ import Monitor from './pages/Monitor/Monitor'
 import Directions from './pages/Directions/Directions'
 import Businesses from './pages/Businesses/Businesses'
 import ImportPayments from './pages/ImportPayments/ImportPayments'
+import AccountingPayments from './pages/Reports/AccountingPayments/AccountingPayments'
+import CampaignAssignment from './pages/Reports/CampaignAssignment/CampaignAssignment'
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -234,6 +236,24 @@ function App() {
           element={
             <ProtectedRoute>
               <ImportPayments/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports/accounting-payments"
+          element={
+            <ProtectedRoute>
+              <AccountingPayments/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports/campaign-assignment"
+          element={
+            <ProtectedRoute>
+              <CampaignAssignment/>
             </ProtectedRoute>
           }
         />

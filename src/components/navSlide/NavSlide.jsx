@@ -17,7 +17,8 @@ const allSections = [
     { section: 'users', label: 'Usuarios' },
     { section: 'settings', label: 'Configuración' },
     { section: 'calls', label: 'Llamadas' },
-    { section: 'payments', label: 'Pagos' }
+    { section: 'payments', label: 'Pagos' },
+    { section: 'reports', label: 'Reportes'}
 ];
 
 const permissionData = [
@@ -57,7 +58,8 @@ const permissionData = [
                 { section: 'users', label: 'Usuarios' },
                 { section: 'settings', label: 'Configuración' },
                 { section: 'calls', label: 'Llamadas' },
-                { section: 'payments', label: 'Pagos' }
+                { section: 'payments', label: 'Pagos' },
+                { section: 'reports', label: 'Reportes' }
             ],
             abilities: [
                 { section: 'home', abilitie: ['home:view'] },
@@ -138,7 +140,9 @@ const permissionData = [
 ];
 
 export default function NavSlide() {
-    const menu = useRef();
+    const menuSettings = useRef();
+    const menuCashReports = useRef();
+    const menuStatisticsReports = useRef();
 
     const [sections, setSections] = useState([]);
 
@@ -146,12 +150,9 @@ export default function NavSlide() {
         const role = localStorage.getItem('role');
         const userCustomPermissions = localStorage.getItem('user_permissions');
 
-        // Priorizar permisos personalizados del usuario
         if (userCustomPermissions && userCustomPermissions !== '[]') {
             try {
                 const customPermissions = JSON.parse(userCustomPermissions);
-
-                // Convertir formato de permisos a formato de secciones
                 const userSections = customPermissions.map(perm => ({
                     section: perm.section,
                     label: allSections.find(s => s.section === perm.section)?.label || perm.section
@@ -161,11 +162,9 @@ export default function NavSlide() {
                 console.log('✅ Using custom user permissions');
             } catch (error) {
                 console.error('Error parsing user permissions:', error);
-                // Fallback a permisos del rol
                 loadRolePermissions(role);
             }
         } else {
-            // Usar permisos del rol
             loadRolePermissions(role);
         }
     }, []);
@@ -268,14 +267,53 @@ export default function NavSlide() {
                 </NavLink>
             )}
 
+            {hasSection('reports') && (
+                <>
+                    <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuCashReports, 'NavSlide__subOption--active', menuCashReports) }}>
+                        <img src={"./icons/ion_bar-chart.png"} />
+                        <label>Reportes cierre de caja</label>
+                        <span>Reportes cierre de caja</span>
+                        <div className="NavSlide__option--down">
+                            <img src="./icons/arrowDown.png" />
+                            <div ref={menuCashReports}>
+                                <NavLink to={"/reports/cash-payments"}>Pagos en efectivo</NavLink>
+                                <NavLink to={"/reports/reversed-payments"}>Pagos revertidos</NavLink>
+                                <NavLink to={"/reports/collection-expenses-billing"}>Facturación gastos de cobranza</NavLink>
+                                <NavLink to={"/reports/condonations"}>Condonaciones</NavLink>
+                                <NavLink to={"/reports/accounting-payments"}>Pagos contabilidad</NavLink>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuStatisticsReports, 'NavSlide__subOption--active', menuStatisticsReports) }}>
+                        <img src={"./icons/ion_bar-chart.png"} />
+                        <label>Reportes estadísticas</label>
+                        <span>Reportes estadísticas</span>
+                        <div className="NavSlide__option--down">
+                            <img src="./icons/arrowDown.png" />
+                            <div ref={menuStatisticsReports}>
+                                <NavLink to={"/reports/judicial-expenses"}>Gastos judiciales cargados</NavLink>
+                                <NavLink to={"/reports/agreement-status"}>Estado de convenios</NavLink>
+                                <NavLink to={"/reports/payments-with-management"}>Pagos con gestión</NavLink>
+                                <NavLink to={"/reports/faces-management"}>Reporte gestión FACES</NavLink>
+                                <NavLink to={"/reports/portfolio-status"}>Estado de cartera (SEFIL)</NavLink>
+                                <NavLink to={"/reports/credits-payments-evolution"}>Evolución créditos y pagos (SEFIL)</NavLink>
+                                <NavLink to={"/reports/campaign-assignment"}>Asignación de campaña</NavLink>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
             {hasSection('settings') && (
-                <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menu, 'NavSlide__subOption--active', menu) }}>
+                <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuSettings, 'NavSlide__subOption--active', menuSettings) }}>
                     <img src={"./icons/mdi_database-cog.png"} />
                     <label>{getSectionLabel('settings')}</label>
                     <span>{getSectionLabel('settings')}</span>
                     <div className="NavSlide__option--down">
                         <img src="./icons/arrowDown.png" />
-                        <div ref={menu}>
+                        <div ref={menuSettings}>
+                            <NavLink to={"/templates"}>Control de estados de gestión</NavLink>
                             <NavLink to={"/businesses"}>Carteras</NavLink>
                             <NavLink to={"/import-payments"}>Carga de pagos</NavLink>
                         </div>

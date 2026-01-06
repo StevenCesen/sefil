@@ -20,7 +20,8 @@ const permissionData = [
                 { section: 'users', label: 'Usuarios' },
                 { section: 'settings', label: 'Configuración' },
                 { section: 'calls', label: 'Llamadas' },
-                { section: 'payments', label: 'Pagos' }
+                { section: 'payments', label: 'Pagos' },
+                { section: 'reports', label: 'Reportes' }
             ]
         }
     },
@@ -39,7 +40,8 @@ const permissionData = [
                 { section: 'users', label: 'Usuarios' },
                 { section: 'settings', label: 'Configuración' },
                 { section: 'calls', label: 'Llamadas' },
-                { section: 'payments', label: 'Pagos' }
+                { section: 'payments', label: 'Pagos' },
+                { section: 'reports', label: 'Reportes' }
             ]
         }
     },
@@ -95,7 +97,8 @@ const allSections = [
     { section: 'users', label: 'Usuarios' },
     { section: 'settings', label: 'Configuración' },
     { section: 'calls', label: 'Llamadas' },
-    { section: 'payments', label: 'Pagos' }
+    { section: 'payments', label: 'Pagos' },
+    { section: 'reports', label: 'Reportes' }
 ];
 
 // Todas las habilidades disponibles por sección
