@@ -17,7 +17,7 @@ export default function ListContacts(){
                 {
                     store_management.phones.map((phone)=>(
                          <CardContact
-                            key={phone.phone_number}
+                            key={phone.id}
                             phone_number={phone.phone_number}
                             nro_fails={phone.calls_not_effective}
                             nro_sucessful={phone.calls_effective}
@@ -27,6 +27,7 @@ export default function ListContacts(){
                             total_amount={store_management.monto}
                             days_past_due={store_management.dias_vencidos}
                             channel={phone.channel}
+                            client_id={store_management.client_id}
                         />
                     ))
                 }

@@ -168,7 +168,7 @@ export default function Credit(){
                     setAction={setAction}
                 />
                 
-                <div style={{display:'grid',gridTemplateColumns:'70% 30%',gap:'10px'}}>
+                <div style={{display:'grid',gridTemplateColumns:'80% 20%',gap:'10px'}}>
                     <MenuNav
                         options={[
                             {
@@ -187,6 +187,7 @@ export default function Credit(){
                                 end_point:`PAYMENTS`
                             }
                         ]}
+
                     />
                     {/* <CardActivity items={items} /> */}
                 </div>

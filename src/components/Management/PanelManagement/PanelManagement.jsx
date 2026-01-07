@@ -29,6 +29,7 @@ export default function PanelManagement(){
 
     const handleClosePanel = () => {
         credits.numberTrays();
+        credits.removeCreditFromList(credit.id);
         store_management.setView(false);
     };
 

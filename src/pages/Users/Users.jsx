@@ -1,27 +1,42 @@
 import { useEffect, useRef, useState } from "react";
 import CardUsuarios from "../../components/CardUsuarios/CardUsuarios";
 import CardEditUser from "../../components/CardEditUser/CardEditUser";
-import Loader from "../../components/Loader/loader";
 import BackButton from "../../components/BackButton/BackButton";
 import useFetch from "../../hooks/useFetch";
 import "./Users.css";
 import sendpush from "../../helpers/sendpush";
+import { useStoreLoader } from "../../stores/useStoreLoader";
 
 export default function Users(){
 
     const { fetchWithAuth } = useFetch();
+    const loader = useStoreLoader();
     const [users,setUsers]=useState([]);
     const content_users=useRef();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [new_change,setNewChange]=useState(false);
-    const [loading,setLoading]=useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [paginationData, setPaginationData] = useState({
+        last_page: 1,
+        total: 0,
+        per_page: 15,
+        links: []
+    });
 
-    const loadUsers = () => {
-        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users`)
+    const loadUsers = (page = 1) => {
+        loader.viewOn(true);
+        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users?page=${page}`)
             .then((response) => response.json())
             .then((data) => {
                 if (data.result && data.result.data && Array.isArray(data.result.data)) {
                     setUsers(data.result.data);
+                    setPaginationData({
+                        last_page: data.result.last_page,
+                        total: data.result.total,
+                        per_page: data.result.per_page,
+                        links: data.result.links || []
+                    });
+                    setCurrentPage(data.result.current_page);
                 } else if (Array.isArray(data)) {
                     setUsers(data);
                 } else if (data.data && Array.isArray(data.data)) {
@@ -35,15 +50,13 @@ export default function Users(){
                 setUsers([]);
             })
             .finally(() => {
-                setLoading(false);
+                loader.viewOn(false);
             });
     };
 
     useEffect(()=>{
         loadUsers();
     },[]);
-
-    if(loading) return <Loader/>
 
     return (
         <div className="Users" ref={content_users}>
@@ -125,7 +138,7 @@ export default function Users(){
                             phone={user.phone}
                             permission={user.permission}
                             setChange={setNewChange}
-                            onUserUpdated={loadUsers}
+                            onUserUpdated={() => loadUsers(currentPage)}
                         />
                     ))
                 ) : (
@@ -140,10 +153,52 @@ export default function Users(){
                     user={null}
                     onClose={() => setShowCreateModal(false)}
                     onSave={() => {
-                        loadUsers();
+                        loadUsers(currentPage);
                         setShowCreateModal(false);
                     }}
                 />
+            )}
+
+            {paginationData.last_page > 1 && (
+                <>
+                    <div className="Users__pagination">
+                        <button
+                            onClick={() => loadUsers(1)}
+                            disabled={currentPage === 1}
+                        >
+                            Primera
+                        </button>
+
+                        <button
+                            onClick={() => loadUsers(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Anterior
+                        </button>
+
+                        <span>
+                            Página {currentPage} de {paginationData.last_page}
+                        </span>
+
+                        <button
+                            onClick={() => loadUsers(currentPage + 1)}
+                            disabled={currentPage === paginationData.last_page}
+                        >
+                            Siguiente
+                        </button>
+
+                        <button
+                            onClick={() => loadUsers(paginationData.last_page)}
+                            disabled={currentPage === paginationData.last_page}
+                        >
+                            Última
+                        </button>
+                    </div>
+
+                    <div className="Users__pagination--info">
+                        Registros del {((currentPage - 1) * paginationData.per_page) + 1}-{Math.min(currentPage * paginationData.per_page, paginationData.total)} de {paginationData.total}
+                    </div>
+                </>
             )}
 
         </div>

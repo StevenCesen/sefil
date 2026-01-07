@@ -141,7 +141,8 @@ export default function CardClient({id,credit_id,name,email,ci,sector_economico,
                                                 total_amount,
                                                 days_past_due,
                                                 campain_id:store_call.campain_id,
-                                                credit_id:store_call.credit_id
+                                                credit_id:store_call.credit_id,
+                                                client_id:id
                                             });
                                         }else{
                                             sendpush({

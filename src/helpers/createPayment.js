@@ -1,12 +1,13 @@
-export default async function createManagement({data_management}){
+export default async function createPayment({ data }) {
     try {
-        const request=await fetch(`${import.meta.env.VITE_URL_BASE}/managements`,{
-            method:'POST',
+        const request = await fetch(`${import.meta.env.VITE_URL_BASE}/payments`, {
+            method: 'POST',
             headers: {
                 Accept: 'application/json',
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             },
-            body:new URLSearchParams(data_management)
+            body: JSON.stringify(data)
         });
 
         if (request.status === 401) {
@@ -15,14 +16,14 @@ export default async function createManagement({data_management}){
             return;
         }
 
-        const response=await request.json();
+        const response = await request.json();
 
         return response;
 
     } catch (error) {
         return {
-            state:400,
-            error:error
+            state: 400,
+            error: error
         };
     }
 }

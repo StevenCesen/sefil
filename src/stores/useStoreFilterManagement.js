@@ -64,7 +64,7 @@ export const useStoreFilterManagement = create((set,get) => ({
         const {name,business_id,ci,days_past_due_max,days_past_due_min,agency,sector,management_state,promise_date,tray} = get();
         const parts = [];
         if (name.trim() !== '') parts.push(`client_name=${name.trim()}`);
-        if (business_id.trim() !== '') parts.push(`business_id=${business_id.trim()}`);
+        if (business_id !== 0 && business_id !== '') parts.push(`business_id=${business_id}`);
         if (agency.trim() !== '') parts.push(`agency=${agency.trim()}`);
         if (ci.trim() !== '') parts.push(`client_ci=${ci.trim()}`);
         if (days_past_due_max.trim() !== '') parts.push(`days_past_due_max=${days_past_due_max.trim()}`);
@@ -204,6 +204,22 @@ export const useStoreFilterManagement = create((set,get) => ({
         if((current_index + 1) < credits.data.length){
             set({current_index:current_index+1});
             return credits.data[current_index+1];
+        }
+    },
+    removeCreditFromList:(credit_id)=>{
+        const {credits}=get();
+        if(credits && credits.data){
+            const updatedData = credits.data.filter(credit => credit.id !== credit_id);
+            const updatedCredits = {
+                ...credits,
+                data: updatedData,
+                meta: {
+                    ...credits.meta,
+                    total: credits.meta.total - 1,
+                    to: credits.meta.to > updatedData.length ? updatedData.length : credits.meta.to
+                }
+            };
+            set({credits: updatedCredits});
         }
     }
 }));

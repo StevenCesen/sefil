@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import "./CardPay.css";
-import { PDFViewer } from "@react-pdf/renderer";
-import PDF from "../PDF";
 import usePrelacion from "../../hooks/usePrelacion";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useUpdateCredit from "../../hooks/useUpdateCredit";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import sendpush from "../../helpers/sendpush";
+import createPayment from "../../helpers/createPayment";
+import PaymentVoucherModal from "../PaymentVoucherModal/PaymentVoucherModal";
 
 const INITIAL_DETAIL = {
     totalAmount: 0,
@@ -183,100 +183,115 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
         }
 
         button.textContent = 'Registrando pago...';
-        
+
         try {
-            const paymentData = {
-                ...payment,
-                cartera,
-                prevDates: JSON.stringify({
-                    mora: credit.mora,
-                    interes: credit.interes,
-                    seguro_desgravamen: credit.seguro_desgravamen,
-                    gastos_judiciales: credit.gastos_judiciales,
-                    saldo_capital: credit.saldo_capital,
-                    gastos_cobranza: credit.gastos_cobranza,
-                    totalAmount: credit.totalAmount,
-                    otros_valores: credit.otros_valores
-                })
-            };
+            // Verificar código de depósito si no es efectivo
+            // if (payment.forma_pago !== 'efectivo') {
+            //     const verifyResponse = await fetch(
+            //         `${import.meta.env.VITE_URL_BASE}/vouchers/verify?institucion=${payment.institucion_financiera}&codigo=${payment.codigo_deposito.trim()}`
+            //     );
+            //     const verifyData = await verifyResponse.json();
+
+            //     if (verifyData.state !== 200) {
+            //         throw new Error('Código de depósito repetido');
+            //     }
+            // }
+
+            const valorRecibido = valueRef.current?.value || payment.valor_recibido;
+
+            let capitalPagado, interesPagado, moraPagado, seguroPagado, gastosCobranzaPagado, gastosJudicialesPagado, otrosValoresPagado;
 
             if (payment.tipo_transaccion === 'parcial') {
-                const valorRecibido = valueRef.current?.value || payment.valor_recibido;
-                Object.assign(paymentData, {
-                    valor_recibido: valorRecibido,
-                    valor_devuelto: 0,
-                    detalle: JSON.stringify({
-                        ...INITIAL_DETAIL,
-                        saldo_capital: Math.max(0, (credit.saldo_capital - prelacion.saldo_capital)).toFixed(2),
-                        interes: Math.max(0, (credit.interes - prelacion.interes)).toFixed(2),
-                        mora: Math.max(0, (credit.mora - prelacion.mora)).toFixed(2),
-                        seguro_desgravamen: Math.max(0, (credit.seguro_desgravamen - prelacion.seguro_desgravamen)).toFixed(2),
-                        gastos_cobranza: Math.max(0, (credit.gastos_cobranza - prelacion.gastos_cobranza)).toFixed(2),
-                        gastos_judiciales: Math.max(0, (credit.gastos_judiciales - prelacion.gastos_judiciales)).toFixed(2),
-                        otros_valores: Math.max(0, (credit.otros_valores - prelacion.otros_valores)).toFixed(2),
-                        totalAmount: Math.max(0, (credit.totalAmount - prelacion.totalAmount)).toFixed(2)
-                    }),
-                    saldo_capital: Math.max(0, (prelacion.saldo_capital)).toFixed(2),
-                    interes: Math.max(0, (prelacion.interes)).toFixed(2),
-                    mora: Math.max(0, (prelacion.mora)).toFixed(2),
-                    seguro_desgravamen: Math.max(0, (prelacion.seguro_desgravamen)).toFixed(2),
-                    gastos_cobranza: Math.max(0, (prelacion.gastos_cobranza)).toFixed(2),
-                    gastos_judiciales: Math.max(0, (prelacion.gastos_judiciales)).toFixed(2),
-                    otros_valores: Math.max(0, (prelacion.otros_valores)).toFixed(2),
-                    totalAmount: Math.max(0, (prelacion.totalAmount)).toFixed(2)
-                });
+                capitalPagado = Math.max(0, Number(credit.saldo_capital) - Number(prelacion.saldo_capital));
+                interesPagado = Math.max(0, Number(credit.interes) - Number(prelacion.interes));
+                moraPagado = Math.max(0, Number(credit.mora) - Number(prelacion.mora));
+                seguroPagado = Math.max(0, Number(credit.seguro_desgravamen) - Number(prelacion.seguro_desgravamen));
+                gastosCobranzaPagado = Math.max(0, Number(credit.gastos_cobranza) - Number(prelacion.gastos_cobranza));
+                gastosJudicialesPagado = Math.max(0, Number(credit.gastos_judiciales) - Number(prelacion.gastos_judiciales));
+                otrosValoresPagado = Math.max(0, Number(credit.otros_valores) - Number(prelacion.otros_valores));
             } else {
-                paymentData.detalle = JSON.stringify(INITIAL_DETAIL);
-                if (payment.forma_pago === 'efectivo') {
-                    paymentData.valor_recibido = valueRef.current?.value || payment.valor_recibido;
-                } else {
-                    paymentData.valor_recibido = Number(credit.totalAmount) + Number(payment.valor_devuelto);
-                }
+                // Pago total - se pagan todos los valores completos
+                capitalPagado = Number(credit.saldo_capital);
+                interesPagado = Number(credit.interes);
+                moraPagado = Number(credit.mora);
+                seguroPagado = Number(credit.seguro_desgravamen);
+                gastosCobranzaPagado = Number(credit.gastos_cobranza);
+                gastosJudicialesPagado = Number(credit.gastos_judiciales);
+                otrosValoresPagado = Number(credit.otros_valores);
             }
 
-            if (payment.forma_pago !== 'efectivo') {
-                const verifyResponse = await fetch(
-                    `${import.meta.env.VITE_URL_BASE}/vouchers/verify?institucion=${paymentData.institucion_financiera}&codigo=${paymentData.codigo_deposito.trim()}`
-                );
-                const verifyData = await verifyResponse.json();
-                
-                if (verifyData.state !== 200) {
-                    throw new Error('Código de depósito repetido');
-                }
-            }
+            // Mapear al formato del nuevo endpoint
+            const paymentData = {
+                payment_deposit_date: payment.fecha_pago,
+                payment_value: Number(valorRecibido),
+                payment_difference: Number(payment.valor_devuelto),
+                payment_way: payment.tipo_transaccion.toUpperCase(),
+                payment_type: payment.forma_pago.toUpperCase(),
+                financial_institution: payment.institucion_financiera || "",
+                payment_reference: payment.codigo_deposito || "",
+                fee: quoteNumber || 0,
+                capital: parseFloat(capitalPagado),
+                interest: parseFloat(interesPagado),
+                mora: parseFloat(moraPagado),
+                safe: parseFloat(seguroPagado),
+                management_collection_expenses: 0.00,
+                collection_expenses: parseFloat(gastosCobranzaPagado),
+                legal_expenses: parseFloat(gastosJudicialesPagado),
+                other_values: parseFloat(otrosValoresPagado),
+                credit_id: credit.id,
+                business_id: cartera
+            };
 
-            const response = await fetch(`${import.meta.env.VITE_URL_BASE}/credit/pay/${credit.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: new URLSearchParams(paymentData)
-            });
+            const result = await createPayment({ data: paymentData });
+            console.log(result);
+            if (result.code === 1 && result.result) {
+                // Usar los datos que vienen del backend
+                const backendPayment = result.result;
 
-            const result = await response.json();
-            
-            if (result.status === 200) {
-                setVoucher({ id: result.id, sync: result.sync });
-                setSendData(paymentData);
+                setVoucher({
+                    id: backendPayment.payment_reference || backendPayment.id,
+                    sync: backendPayment.sync_id
+                });
+
+                // Preparar datos para el PDF usando la respuesta del backend
+                const pdfData = {
+                    tipo_transaccion: payment.tipo_transaccion?.toLowerCase() || 'total',
+                    forma_pago: payment.forma_pago?.toLowerCase() || 'efectivo',
+                    institucion_financiera: backendPayment.financial_institution || '',
+                    codigo_deposito: backendPayment.payment_reference || '',
+                    valor_recibido: backendPayment.payment_value || 0,
+                    valor_devuelto: payment.valor_devuelto || 0,
+                    mora: backendPayment.mora || 0,
+                    interes: backendPayment.interest || 0,
+                    seguro_desgravamen: backendPayment.safe || 0,
+                    gastos_judiciales: backendPayment.legal_expenses || 0,
+                    saldo_capital: backendPayment.capital || 0,
+                    gastos_cobranza: backendPayment.collection_expenses || 0,
+                    otros_valores: backendPayment.other_values || 0,
+                    client_name: backendPayment.client_name || credit.name,
+                    client_ci: backendPayment.client_ci || credit.ci,
+                    sync_id: backendPayment.sync_id || credit.sync
+                };
+
+                setSendData(pdfData);
                 button.textContent = 'Pago registrado';
                 titleRef.current.textContent = 'COMPROBANTE DE PAGO';
                 setIsActive(false);
                 useUpdateCredit(cartera, credit.id, () => {});
-                
+
                 sendpush({
                     title: 'Pago registrado',
                     message: 'El pago se ha registrado correctamente',
-                    type: 'Push--successful',
+                    type: 'Push--sucessful',
                     timeout: 3000
                 });
             } else {
-                throw new Error('Error al procesar el pago');
+                throw new Error(result.message || 'Error al procesar el pago');
             }
         } catch (error) {
             button.textContent = error.message || 'Error, inténtalo de nuevo';
             setTimeout(() => button.textContent = 'Registrar pago', 3000);
-            
+
             sendpush({
                 title: 'Error en el pago',
                 message: error.message || 'No se pudo procesar el pago',
@@ -494,30 +509,45 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
             </div>
             
             {!isActive && voucher && sendData && (
-                <PDFViewer width="500px" height="500px">
-                    <PDF 
-                        nro_voucher={voucher.id}
-                        type_print="ORIGINAL"
-                        tipo_transaccion={sendData.tipo_transaccion}
-                        forma_pago={sendData.forma_pago}
-                        insitucion_financiera={sendData.institucion_financiera}
-                        codigo_deposito={sendData.codigo_deposito}
-                        name={credit.name}
-                        ci={credit.ci}
-                        credito={voucher.sync}
-                        mora={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).mora : JSON.parse(sendData.prevDates).mora}
-                        interes={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).interes : JSON.parse(sendData.prevDates).interes}
-                        seguro_desgravamen={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).seguro_desgravamen : JSON.parse(sendData.prevDates).seguro_desgravamen}
-                        gastos_judiciales={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).gastos_judiciales : JSON.parse(sendData.prevDates).gastos_judiciales}
-                        saldo_capital={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).saldo_capital : JSON.parse(sendData.prevDates).saldo_capital}
-                        gastos_cobranza={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).gastos_cobranza : JSON.parse(sendData.prevDates).gastos_cobranza}
-                        otros_valores={sendData.tipo_transaccion === 'parcial' ? JSON.parse(sendData.detalle).otros_valores : JSON.parse(sendData.prevDates).otros_valores}
-                        valor_recibido={sendData.valor_recibido}
-                        valor_devuelto={sendData.valor_devuelto}
-                        fecha={new Date().toLocaleDateString()}
-                        agente={localStorage.getItem('name')?.substring(0,1) + localStorage.getItem('name')?.split(' ')[1]}
-                    />
-                </PDFViewer>
+                <PaymentVoucherModal
+                    isOpen={true}
+                    onClose={() => {
+                        setView('');
+                        updateInfoValues();
+                    }}
+                    payment={{
+                        id: voucher.id,
+                        payment_reference: voucher.id,
+                        status: "GUARDADO",
+                        tipo_transaccion: sendData.tipo_transaccion,
+                        forma_pago: sendData.forma_pago,
+                        institucion_financiera: sendData.institucion_financiera,
+                        codigo_deposito: sendData.codigo_deposito,
+                        mora: sendData.mora || 0,
+                        interes: sendData.interes || 0,
+                        seguro_desgravamen: sendData.seguro_desgravamen || 0,
+                        gastos_judiciales: sendData.gastos_judiciales || 0,
+                        saldo_capital: sendData.saldo_capital || 0,
+                        gastos_cobranza: sendData.gastos_cobranza || 0,
+                        otros_valores: sendData.otros_valores || 0,
+                        valor_recibido: sendData.valor_recibido || 0,
+                        valor_devuelto: sendData.valor_devuelto || 0,
+                        fecha: new Date().toLocaleString('es-EC', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        })
+                    }}
+                    creditInfo={{
+                        name: sendData.client_name,
+                        ci: sendData.client_ci,
+                        sync: sendData.sync_id
+                    }}
+                    reprint={false}
+                />
             )}
         </div>
     );

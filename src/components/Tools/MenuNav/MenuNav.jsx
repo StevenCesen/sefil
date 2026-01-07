@@ -8,6 +8,8 @@ import SectionNotes from "../../Management/SectionNotes/SectionNotes";
 export default function MenuNav({options}){
 
     const store_management=useStoreManagement();
+    const userRole = localStorage.getItem('role');
+    const isAdmin = userRole === 'superadmin' || userRole === 'admin';
 
     if(!store_management.managements) return <></>
 
@@ -48,8 +50,8 @@ export default function MenuNav({options}){
                             <SectionPayments
                                 payments={store_management.payments}
                                 credit={store_management.credit}
-                                view_complete_info={false}
-                                is_admin={true}
+                                view_complete_info={true}
+                                is_admin={isAdmin}
                             />
                         :   (store_management.section==='CALLS')
                             ?

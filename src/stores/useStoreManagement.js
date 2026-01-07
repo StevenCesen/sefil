@@ -98,8 +98,8 @@ export const useStoreManagement = create((set,get) => ({
     setManagedAmount:     (value)=>{set({managed_amount:value})},
     setNewPhone:     (value)=>{
         const {phones}=get();
-        phones.push(value);
-        set({phones:phones});
+        const newPhones = [...phones, value];
+        set({phones:newPhones});
     },
     setMessage:     (value)=>{set({message:value})},
     setIDCampain: (cartera) => {
@@ -122,7 +122,10 @@ export const useStoreManagement = create((set,get) => ({
     },
     setPhones: async ({client_id}) => {
         const phones=await getListPhones({client_id});
-        set({phones:phones.result.data});
+        console.log('setPhones llamado con client_id:', client_id, 'resultado:', phones);
+        if(phones && phones.result && phones.result.data) {
+            set({phones:phones.result.data});
+        }
     },
     addManagement: async (data) => {
         const { managements }=get();

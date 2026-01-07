@@ -4,7 +4,7 @@ import { useStoreProgressCall } from "../../../stores/useStoreProgessCall";
 import { useStoreSMS } from "../../../stores/useStoreSMS";
 import sendpush from "../../../helpers/sendpush";
 
-export default function CardContact({phone_number,nro_sucessful,nro_fails,name,ci,type,total_amount,days_past_due,channel}){
+export default function CardContact({phone_number,nro_sucessful,nro_fails,name,ci,type,total_amount,days_past_due,channel,client_id}){
     const store_call=useStoreProgressCall();
     const store_sms=useStoreSMS();
 
@@ -54,7 +54,8 @@ export default function CardContact({phone_number,nro_sucessful,nro_fails,name,c
                                 total_amount,
                                 days_past_due,
                                 campain_id:store_call.campain_id,
-                                credit_id:store_call.credit_id
+                                credit_id:store_call.credit_id,
+                                client_id:client_id
                             });
                         }else{
                             sendpush({

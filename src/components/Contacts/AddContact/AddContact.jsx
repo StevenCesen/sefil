@@ -22,56 +22,66 @@ export default function AddContact(){
                 timeout:2000,
                 type:'Push--danger'
             });
-        }else{
-            const data_phone={
-                credito:store_management.credit_id,
-                tipo:contact.type,
-                nombre:store_management.client_name,
-                parentesco:store_management.client_type,
-                numero:contact.phone_number,
-                nro_efectivo:1,
-                cartera:store_management.cartera,
-                ci:store_management.client_ci,
-                byUserCreate:localStorage.getItem('temp_uS'),
-                byUserDelete:'N/D',
-                byUserUpdate:'N/D',
-                estado:'ACTIVE'
-            };
+            e.target.textContent='Guardar contacto';
+            return;
+        }
 
-            fetch(`${import.meta.env.VITE_URL_BASE}/contacts`,{
+        const data_phone={
+            phone_number: contact.phone_number,
+            phone_type: contact.type,
+            phone_status: 'ACTIVE',
+            calls_effective: 0,
+            calls_not_effective: 0,
+            client_id: store_management.client_id
+        };
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_URL_BASE}/contacts`,{
                 method:'POST',
                 headers: {
                     Accept: 'application/json',
+                    'Content-Type': 'application/json',
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 },
-                body:new URLSearchParams(data_phone)
-            })
-                .then((response) => response.json())  
-                .then((data) => {
-                    setContact({
-                        type:'',
-                        phone_number:''
-                    });
+                body: JSON.stringify(data_phone)
+            });
 
-                    if(data.status===200){                        
-                        sendpush({
-                            title:'Contacto guardado.',
-                            message:data.message,
-                            timeout:2000,
-                            type:'Push--sucessful'
-                        });
-                        store_management.setNewPhone(data_phone);
-                    }else{
-                        sendpush({
-                            title:'Contacto ya existe.',
-                            message:data.message,
-                            timeout:2000,
-                            type:'Push--warning'
-                        });
-                    }
-
-                    e.target.textContent='Guardar contacto';
+            const data = await response.json();
+            
+            if(data.code === 1){                        
+                sendpush({
+                    title:'Contacto guardado.',
+                    message: data.message || 'Contacto creado exitosamente.',
+                    timeout:2000,
+                    type:'Push--sucessful'
                 });
+                
+                // Limpiar el formulario
+                setContact({
+                    type:'',
+                    phone_number:''
+                });
+                
+                // Agregar el nuevo contacto al listado actual (no recargar desde servidor)
+                if(data.result) {
+                    store_management.setNewPhone(data.result);
+                }
+            }else{
+                sendpush({
+                    title: data.code === -1 ? 'Errores de validación.' : 'Error al guardar.',
+                    message: data.message || 'No se pudo guardar el contacto.',
+                    timeout:3000,
+                    type:'Push--danger'
+                });
+            }
+        } catch (error) {
+            console.error('Error al guardar contacto:', error);
+            sendpush({
+                title:'Error de conexión.',
+                message:'No se pudo conectar con el servidor.',
+                timeout:3000,
+                type:'Push--danger'
+            });
         }
 
         e.target.textContent='Guardar contacto';

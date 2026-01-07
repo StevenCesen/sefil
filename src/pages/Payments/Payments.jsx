@@ -13,9 +13,12 @@ export default function Payments(){
     const cartera = searchParams.get('cartera');
     const name = searchParams.get('name');
     const ci = searchParams.get('ci');
-    
+
     const [payments, setPayments] = useState(null);
     const credit = useStoreManagement();
+
+    const userRole = localStorage.getItem('role');
+    const isAdmin = userRole === 'superadmin' || userRole === 'admin';
 
     const handlePayments = async () =>{
         const credit_id = params.id;
@@ -48,7 +51,7 @@ export default function Payments(){
                         payments={payments}
                         credit={credit.credit || {}}
                         view_complete_info={true}
-                        is_admin={true}
+                        is_admin={isAdmin}
                     />
                 ) : (
                     <div style={{ 

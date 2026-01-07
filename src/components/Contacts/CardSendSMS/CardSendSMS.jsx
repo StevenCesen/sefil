@@ -1,7 +1,7 @@
 import "./CardSendSMS.css";
 import sendpush from "../../../helpers/sendpush";
 import { useStoreSMS } from "../../../stores/useStoreSMS";
-import { Send, X } from "lucide-react";
+import { X } from "lucide-react";
 import createManagement from "../../../helpers/Managements/createManagement";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 
@@ -28,12 +28,9 @@ export default function CardSendSMS(){
 
         const send_sms=await store_sms.sendSMS();
 
-        if(Number(send_sms.cod_respuesta)===100){
-
-            // Registramos la gestión
+        if(send_sms.code === 1 && send_sms.result && send_sms.result.respuesta && Number(send_sms.result.respuesta.cod_respuesta)===100){
             const data_management={
                 campain_id:store_sms.campain_id,
-                call_id:null,
                 call_collection:"[]",
                 credit_id:store_sms.credit_id,
                 client_id:store_sms.client_id,
@@ -41,21 +38,27 @@ export default function CardSendSMS(){
                 substate:'MENSAJE DE TEXTO',
                 promise_date:store_sms.promise_date,
                 observation:store_sms.message,
-                days_past_due:store_sms.days_past_due,
+                days_past_due:parseInt(store_sms.days_past_due) || 0,
                 paid_fees:store_sms.paid_fees || 0,
                 pending_fees:store_sms.pending_fees || 0,
-                managed_amount:store_sms.total_amount,
-                promise_amount:store_sms.total_amount,
-                created_by:localStorage.getItem('user_id')
+                managed_amount:parseFloat(store_sms.total_amount) || 0,
+                promise_amount:parseFloat(store_sms.total_amount) || 0,
+                created_by:Number(localStorage.getItem('temp_uS'))
             }
 
-            console.log(data_management);
+            const userId = parseInt(localStorage.getItem('user_id'));
+            if(userId) {
+                data_management.created_by = userId;
+            }
+            
+            if(store_sms.call_id) {
+                data_management.call_id = parseInt(store_sms.call_id);
+            }
 
             const create_management=await createManagement({data_management});
-            
-            if(create_management.status===200){
-                console.log(create_management);
-                store_management.addManagement(create_management.management);
+
+            if(create_management.code===1 && create_management.result){
+                store_management.addManagement(create_management.result);
                 sendpush({
                     title:'Envío completado.',
                     message:'Se completo el envío del SMS correctamente y se ha registrado una gestión.',
