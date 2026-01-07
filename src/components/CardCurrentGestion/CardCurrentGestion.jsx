@@ -61,7 +61,7 @@ export default function CardCurrentGestion({data}){
                         <label>{data.client_name}</label>
                         <label>{(call.channel==='WA') ? <MessageCircle color="green" size={16}/> : <></>} {call.phone}</label>
                         <label>{call.state_call}</label>
-                        <audio controls style={{width:"100%"}} src={`./api/public/files/audios/${call.id_record}`}></audio>
+                        <audio controls style={{width:"100%"}} src={`./public/files/audios/${call.id_record}`}></audio>
                     </div>
                 ))
             }

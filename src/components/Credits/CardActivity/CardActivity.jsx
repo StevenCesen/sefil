@@ -9,7 +9,7 @@ export default function CardActivity({items,is_active}) {
             {
                 items.map((item)=>(
                     (item.type==='RESTRUCT')
-                    ?   <CardStructure restruct={item}/>
+                    ?   <CardStructure restruct={item} is_active={is_active}/>
                     :   <ResumeCondonation condonation={item}/>
                 ))
             }

@@ -4,6 +4,7 @@ import { useStoreProgressCall } from "../../../stores/useStoreProgessCall";
 import { useStoreSMS } from "../../../stores/useStoreSMS";
 import { useEffect } from "react";
 import sendpush from "../../../helpers/sendpush";
+import checkSMS from "../../../helpers/SMS/checkSMS";
 
 export default function CardContact({phone_number,nro_sucessful,nro_fails,name,ci,type,total_amount,days_past_due,channel}){
     const store_call=useStoreProgressCall();
@@ -44,8 +45,26 @@ export default function CardContact({phone_number,nro_sucessful,nro_fails,name,c
                 <label
                     title="Enviar SMS a este número"
                     className="CardContact__item CardContact__item--sms"
-                    onClick={()=>{
+                    onClick={async ()=>{
                         if(phone_number.length==10){
+                            // Validar si se puede enviar SMS
+                            const validation = await checkSMS({
+                                client_ci: ci,
+                                id_credit: store_call.credit_id,
+                                id_campain: store_call.campain_id
+                            });
+
+                            if (!validation.puede_enviar) {
+                                sendpush({
+                                    title: 'No se puede enviar SMS',
+                                    message: validation.message,
+                                    type: 'Push--danger',
+                                    timeout: 5000
+                                });
+                                return;
+                            }
+
+                            // Abrir modal si pasa la validación
                             store_sms.setContact({
                                 phone_number,
                                 name,
