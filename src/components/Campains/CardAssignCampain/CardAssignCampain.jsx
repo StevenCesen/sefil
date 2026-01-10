@@ -14,6 +14,7 @@ export default function CardAssignCampain({ campain_id }) {
     const [is_transfer, setIsTransfer] = useState(false);
     const [agents_origin, setAgentsOrigin] = useState([]);
     const [agents_destino, setAgentsDestino] = useState([]);
+    const [all_agents, setAllAgents] = useState([]);
     const [credits, setCredits] = useState({ total: 0, data: [] });
     const [filters, setFilters] = useState({});
     const [errors, setErrors] = useState([]);
@@ -238,6 +239,23 @@ export default function CardAssignCampain({ campain_id }) {
 
     useEffect(() => {
         handleGetDataCampain(campain_id);
+        
+        // Fetch all active users
+        fetch(`${import.meta.env.VITE_URL_BASE}/users?per_page=100&agents=true&is_active=1`, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const agents = data.result?.data || [];
+            setAllAgents(agents);
+        })
+        .catch(error => {
+            console.error('Error fetching agents:', error);
+            setAllAgents([]);
+        });
     }, [campain_id]);
 
     useEffect(() => {
@@ -268,7 +286,7 @@ export default function CardAssignCampain({ campain_id }) {
 
             <div className="CardAssignCampain__agents">
                 <AgentSelector
-                    agents_details={data_campain.agents_details || []}
+                    agents_details={all_agents}
                     onChange={handleAgentsOriginChange}
                     title="Agente origen"
                     multiSelect={true}
@@ -278,7 +296,7 @@ export default function CardAssignCampain({ campain_id }) {
                     <>
                         <p>a</p>
                         <AgentSelector
-                            agents_details={data_campain.agents_details || []}
+                            agents_details={all_agents}
                             onChange={handleAgentsDestinoChange}
                             title="Agente destino"
                             multiSelect={true}

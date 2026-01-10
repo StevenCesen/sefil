@@ -74,6 +74,7 @@ export const useStoreFilterManagement = create((set,get) => ({
         if (sector.trim() !== '') parts.push(`sector=${sector.trim()}`);
         if (tray.trim() !== '') parts.push(`management_tray=${tray.trim()}`);
         parts.push(`user_id=${localStorage.getItem('temp_uS')}`);
+        parts.push('sync_status=ACTIVE');
         return parts.join('&');
     },
     FilteredCredits: async (filters) => {

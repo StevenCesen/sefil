@@ -104,10 +104,11 @@ export default function Campains() {
     const fetchCampaigns = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains`);
+            const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains?state=ACTIVE`);
             const data = await response.json();
 
             if (data.result && data.result.data && Array.isArray(data.result.data)) {
+                console.log('Fetched campaigns:', data.result.data);
                 setCampaigns(data.result.data);
             } else {
                 setCampaigns([]);
@@ -128,7 +129,7 @@ export default function Campains() {
         return <div>Cargando...</div>;
     }
 
-    const activeCampaigns = campaigns.filter(campaign => campaign.state === "ACTIVE") || [];
+    const activeCampaigns = campaigns?.filter(campaign => campaign.state === "ACTIVE") || [];
 
     return (
         <div className="Campains">

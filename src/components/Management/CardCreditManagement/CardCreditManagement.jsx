@@ -7,6 +7,8 @@ import useFormatterNumber from "../../../hooks/useFormatterNumber";
 export default function CardCreditManagement({credit,index}){
     const store_management=useStoreManagement();
     const store_credits=useStoreFilterManagement();
+
+    console.log('Rendering CardCreditManagement for credit:', credit);
     
     return(
         <div className="CardCreditManagement">

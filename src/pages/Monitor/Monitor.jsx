@@ -15,7 +15,7 @@ export default function Monitor(){
     const [selectedCampain, setSelectedCampain] = useState("");
 
     useEffect(() => {
-        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains`)
+        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains?state=ACTIVE`)
             .then((response) => response.json())
             .then((data) => {
                 if (data.result && data.result.data) {
@@ -92,14 +92,14 @@ export default function Monitor(){
                     <label>Estado</label>
                     <label>Tiempo</label>
                     <label>Nro. créditos asignados</label>
-                    <label>Nro. créditos gestionados<br/>Acum.</label>
-                    <label>Nro. créditos gestionados<br/>Día.</label>
-                    <label>Nro. créditos gestion efec.<br/>Acum.</label>
-                    <label>Nro. créditos gestion efec.<br/>Día.</label>
+                    <label>Nro. créditos gestionados<br/>MES.</label>
+                    <label>Nro. créditos gestionados<br/>HOY.</label>
+                    <label>Nro. créditos gestion efec.<br/>MES.</label>
+                    <label>Nro. créditos gestion efec.<br/>HOY.</label>
                     <label>Nro. créditos pendientes</label>
                     <label>Nro. créditos en proceso</label>
-                    <label>Nro. llamadas<br/>Acum.</label>
-                    <label>Nro. llamadas<br/>Día.</label>
+                    <label>Nro. llamadas<br/>MES.</label>
+                    <label>Nro. llamadas<br/>HOY.</label>
                 </div>
                 {
                     Array.isArray(agents) && agents.map((agent, index) => (

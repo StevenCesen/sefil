@@ -40,7 +40,7 @@ export default function CardCurrentGestion({management_id}){
                             <label>{call.client_name}</label>
                             <label>{(call.call_channel==='WA') ? <MessageCircle color="green" size={16}/> : <></>} {call.phone_number}</label>
                             <label>{call.call_state}</label>
-                            <audio controls style={{width:"100%"}} src={`./public/files/audios/${call.call_media_path}`}></audio>
+                            <audio controls style={{width:"100%"}} src={`https://core.sefil.com.ec/api/public/files/audios/${call.call_media_path}`}></audio>
                         </div>
                     ))
                 ) : (

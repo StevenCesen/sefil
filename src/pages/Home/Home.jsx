@@ -24,6 +24,7 @@ export default function Home() {
             const data = await response.json();
 
             if (data.code === 1 && data.result) {
+                console.log('Fetched payments summary:', data.result);
                 setPaymentsSummary(data.result);
             }
         } catch (error) {
@@ -33,12 +34,9 @@ export default function Home() {
         }
     };
 
-    if (!paymentsSummary) return <></>
-
-    // Calcular totales
-    const totalCreditsWithPayment = paymentsSummary.reduce((sum, item) => sum + item.nro_credits_with_payment, 0);
-    const totalAmountMonth = paymentsSummary.reduce((sum, item) => sum + item.total_amount_by_month, 0);
-    const totalAmountDay = paymentsSummary.reduce((sum, item) => sum + item.total_amount_by_day, 0);
+    const totalCreditsWithPayment = paymentsSummary?.reduce((sum, item) => sum + item.nro_credits_with_payment, 0) || 0;
+    const totalAmountMonth = paymentsSummary?.reduce((sum, item) => sum + item.total_amount_by_month, 0) || 0;
+    const totalAmountDay = paymentsSummary?.reduce((sum, item) => sum + item.total_amount_by_day, 0) || 0;
 
     return (
         <div className="Home">
@@ -54,7 +52,7 @@ export default function Home() {
                     data={`${useFormatterNumber({ value: totalAmountDay, currency: "USD" })}`}
                 />
                 {
-                    paymentsSummary.map((business) => (
+                    paymentsSummary && paymentsSummary.map((business) => (
                         <CardDataShort
                             key={business.business_id}
                             title={`Ingresos | ${business.business_name}`}

@@ -34,7 +34,7 @@ export default function CardEditCampain({data_campain}){
             type:data_campain.type || 'manual'
         });
 
-        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1`)
+        fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/users?per_page=100&agents=true&is_active=1`)
             .then((response) => response.json())
             .then((data) => {
                 const data_prev = Array.isArray(data) ? data : (data.result?.data || []);

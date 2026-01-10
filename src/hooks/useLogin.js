@@ -46,11 +46,11 @@ export default async function useLogin(data,tag,btn,setload){
             }
         }
     }else if(request.status===403){
-        tag.current.textContent='No autorizado, IP restringida';
+        tag.current.textContent='Acceso denegado fuera del horario permitido';
         btn.current.textContent='Ingresar';
         setload(false);
     }else{
-        tag.current.textContent='Usuario inválido, revisa las credenciales';
+        tag.current.textContent=request.message || 'Error en el servidor, intente más tarde.';
         btn.current.textContent='Ingresar';
         setload(false);
     }

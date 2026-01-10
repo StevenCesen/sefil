@@ -48,6 +48,7 @@ export default function Credit(){
 
         if(action==='GEN_CONDONATION'){
             const managementExpenses = credit.credit.management_collection_expenses || 0;
+            store_structure.viewOn(false);
             store_condonation.viewOn(true);
             store_condonation.setInfoCredit({
                 ci:credit.credit.clients[0].ci,
@@ -66,6 +67,7 @@ export default function Credit(){
             });
         }else if(action==='GEN_CONVENIO'){
             const managementExpenses = credit.credit.management_collection_expenses || 0;
+            store_condonation.viewOn(false);
             store_structure.viewOn(true);
             store_structure.setInfoCredit({
                 ci:credit.credit.clients[0].ci,
@@ -77,6 +79,10 @@ export default function Credit(){
             });
         }else if(action==='GEN_JUDICIAL'){
             //  Ver después
+        }else{
+            // Cerrar ambos modales cuando la acción no sea ninguna de las anteriores
+            store_condonation.viewOn(false);
+            store_structure.viewOn(false);
         }
     },[action]);
 

@@ -152,7 +152,7 @@ export default function CardEditAgreement(){
         }
     };
 
-    if(!store_structure.isViewOn) return <></>;
+    if(!store_structure.isViewOn || store_structure.view !== 'edit') return <></>;
 
     const currentTotal = getCurrentTotal();
     const difference = currentTotal - originalTotal;
