@@ -1,0 +1,195 @@
+.CardEditAgreement {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 700px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    box-shadow: var(--box-shadow);
+}
+
+.CardEditAgreement h3 {
+    background-color: var(--bg-alert-successful);
+    width: 100%;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    height: 50px;
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: bold;
+    color: var(--color-3);
+    font-size: 14px;
+    margin: 0;
+}
+
+.CardEditAgreement__summary {
+    width: 100%;
+    background-color: var(--bg-1);
+    padding: 15px;
+    border-radius: 0;
+    margin: 10px 0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bg-2);
+    color: var(--color-texts);
+    font-size: 14px;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-row.error {
+    color: var(--color-error);
+    font-weight: 600;
+}
+
+.total-original {
+    font-weight: 600;
+    color: var(--color-5);
+}
+
+.total-valid {
+    font-weight: 600;
+    color: var(--bg-alert-successful);
+}
+
+.total-invalid {
+    font-weight: 600;
+    color: var(--color-error);
+}
+
+.CardEditAgreement__table {
+    width: 100%;
+    background-color: var(--bg-1);
+    border-radius: 0;
+    overflow: auto;
+    max-height: 400px;
+    margin: 10px 0;
+}
+
+.CardEditAgreement__table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.CardEditAgreement__table thead {
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-1);
+    z-index: 10;
+}
+
+.CardEditAgreement__table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-5);
+    border-bottom: 2px solid var(--bg-2);
+    font-size: 13px;
+}
+
+.CardEditAgreement__table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--bg-2);
+    color: var(--color-5);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.CardEditAgreement__table tbody tr:hover {
+    background-color: var(--bg-2);
+}
+
+.input-valor, .input-fecha {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--bg-2);
+    border-radius: 3px;
+    background-color: var(--bg-2);
+    color: var(--color-5);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.input-valor:focus, .input-fecha:focus {
+    outline: none;
+    border-color: var(--color-1);
+}
+
+.btn-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px 8px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.btn-remove:hover {
+    opacity: 1;
+}
+
+.btn-add-fee {
+    width: calc(100% - 20px);
+    margin: 10px 10px;
+    padding: 10px;
+    background-color: var(--bg-1);
+    border: 2px dashed var(--color-5);
+    border-radius: 5px;
+    color: var(--color-5);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-add-fee:hover {
+    background-color: var(--bg-2);
+    border-color: var(--color-1);
+    color: var(--color-1);
+}
+
+.CardEditAgreement__actions {
+    background-color: var(--bg-alert-successful);
+    width: 100%;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    height: 50px;
+    padding: 10px 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.btn-save {
+    width: 150px;
+    height: 35px;
+    border-radius: 2px;
+    background-color: #008682;
+    color: var(--color-3);
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-save:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.btn-save--disabled {
+    color: var(--color-texts);
+    cursor: not-allowed;
+    opacity: 0.5;
+}

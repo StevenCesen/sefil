@@ -16,6 +16,15 @@
     font-weight: bold;
 }
 
+.CardContact__contact-phone--EXTERNAL{
+    font-weight: bold !important;
+    color: var(--bg-alert-successful) !important;
+}
+
+.CardContact__contact-phone--INACTIVE{
+    color: var(--bg-alert-error);
+}
+
 .CardContact__metrics,.CardContact__actions{
     display: flex;
     justify-content:center;

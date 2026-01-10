@@ -1,18 +1,132 @@
 .ResumeCondonation{
     margin: 10px 0;
-    border-top: 1px solid rgb(241, 241, 241);
-    padding-top: 10px;
-    border-bottom: 1px solid rgb(241, 241, 241);
-    padding-bottom: 10px;
+    padding: 15px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    border-top: 4px solid var(--bg-alert-successful);
+}
+
+.ResumeCondonation__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ResumeCondonation__header h4 {
+    margin: 0;
+    color: var(--color-5);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ResumeCondonation p {
+    margin: 5px 0;
+    color: var(--color-texts);
+    font-size: 13px;
+}
+
+.status {
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status--pendiente {
+    background-color: var(--bg-alert-error);
+    color: var(--color-3);
+}
+
+.status--aplicada {
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+}
+
+.status--denegada {
+    background-color: var(--color-error);
+    color: var(--color-3);
 }
 
 .ResumeCondonation>span{
     display: block;
     margin-top: 10px;
-    font-weight: bold;
-    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--color-5);
+    text-transform: uppercase;
+}
+
+.ResumeCondonation__total {
+    display: block;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: var(--color-1) !important;
+    margin-top: 10px !important;
+    padding: 10px;
+    background-color: var(--bg-1);
+    border-radius: 3px;
+    text-align: center;
+}
+
+.ResumeCondonation__detail {
+    background-color: var(--bg-1);
+    padding: 10px;
+    border-radius: 3px;
+    margin-top: 5px;
 }
 
 .ResumeCondonation__detail>p{
-    margin-bottom: 5px;
+    margin: 3px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--color-5);
+}
+
+.ResumeCondonation__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.ResumeCondonation__actions .btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.btn--success {
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+}
+
+.btn--success:hover {
+    opacity: 0.9;
+}
+
+.btn--warning {
+    background-color: var(--bg-alert-error);
+    color: var(--color-3);
+}
+
+.btn--warning:hover {
+    opacity: 0.9;
+}
+
+.btn--danger {
+    background-color: var(--color-error);
+    color: var(--color-3);
+}
+
+.btn--danger:hover {
+    opacity: 0.9;
 }

@@ -9,6 +9,7 @@ import Me from './pages/Me/Me'
 import Push from './components/Push/Push'
 import CardSelectStateCall from './components/Management/CardSelectStateCall/CardSelectStateCall'
 import CardStructure from './components/CardStructure/CardStructure'
+import CardEditAgreement from './components/CardEditAgreement/CardEditAgreement'
 import CardCondonacion from './components/CardCondonacion/CardCondonacion'
 import Loader from './components/Loader/loader'
 import Home from './pages/Home/Home'
@@ -28,6 +29,7 @@ import Businesses from './pages/Businesses/Businesses'
 import ImportPayments from './pages/ImportPayments/ImportPayments'
 import AccountingPayments from './pages/Reports/AccountingPayments/AccountingPayments'
 import CampaignAssignment from './pages/Reports/CampaignAssignment/CampaignAssignment'
+import ReportPaymentsWithManagement from './pages/Reports/ReportPaymentsWithManagement/ReportPaymentsWithManagement'
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -73,8 +75,7 @@ function App() {
       <Header />
       <Push />
       <CardSelectStateCall />
-      <CardStructure />
-      <CardCondonacion />
+      <CardStructure />      <CardEditAgreement/>      <CardCondonacion />
       <Loader />
 
       <Routes>
@@ -254,6 +255,15 @@ function App() {
           element={
             <ProtectedRoute>
               <CampaignAssignment/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports/payments-with-management"
+          element={
+            <ProtectedRoute>
+              <ReportPaymentsWithManagement/>
             </ProtectedRoute>
           }
         />

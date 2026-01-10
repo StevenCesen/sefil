@@ -23,7 +23,7 @@ export default function PaymentVoucherModal({
         ? agentName.substring(0, 1) + (agentName.split(' ')[1]?.substring(0, 1) || '')
         : 'N/A';
 
-    const printType = (reprint && payment.payment_status !== 'revertido') ? 'COPIA' : payment.payment_status.toUpperCase();
+    const printType = (reprint && payment.status !== 'revertido') ? 'COPIA' : payment.status.toUpperCase();
     const paymentMethod = (payment.payment_method || payment.payment_type || payment.forma_pago || 'efectivo').toLowerCase();
 
     return (
@@ -33,7 +33,7 @@ export default function PaymentVoucherModal({
             left: 0,
             width: '100%',
             height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',

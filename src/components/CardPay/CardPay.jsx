@@ -48,7 +48,7 @@ const DETAIL_LABELS = {
     totalAmount: 'Total'
 };
 
-export default function CardPay({ setView, cartera, credit, updateInfoValues, amount, quoteNumber, paymentDate }) {
+export default function CardPay({ setView, cartera, credit, updateInfoValues, amount, quoteNumber, paymentDate, campain_id }) {
     const [payment, setPayment] = useState(null);
     const [isActive, setIsActive] = useState(true);
     const [voucher, setVoucher] = useState(null);
@@ -185,18 +185,6 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
         button.textContent = 'Registrando pago...';
 
         try {
-            // Verificar código de depósito si no es efectivo
-            // if (payment.forma_pago !== 'efectivo') {
-            //     const verifyResponse = await fetch(
-            //         `${import.meta.env.VITE_URL_BASE}/vouchers/verify?institucion=${payment.institucion_financiera}&codigo=${payment.codigo_deposito.trim()}`
-            //     );
-            //     const verifyData = await verifyResponse.json();
-
-            //     if (verifyData.state !== 200) {
-            //         throw new Error('Código de depósito repetido');
-            //     }
-            // }
-
             const valorRecibido = valueRef.current?.value || payment.valor_recibido;
 
             let capitalPagado, interesPagado, moraPagado, seguroPagado, gastosCobranzaPagado, gastosJudicialesPagado, otrosValoresPagado;
@@ -241,6 +229,11 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                 credit_id: credit.id,
                 business_id: cartera
             };
+
+            // Solo agregar campain_id si está presente y no está vacío
+            if (campain_id && campain_id !== '') {
+                paymentData.campain_id = campain_id;
+            }
 
             const result = await createPayment({ data: paymentData });
             console.log(result);
@@ -518,7 +511,7 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                     payment={{
                         id: voucher.id,
                         payment_reference: voucher.id,
-                        status: "GUARDADO",
+                        status: "ORIGINAL",
                         tipo_transaccion: sendData.tipo_transaccion,
                         forma_pago: sendData.forma_pago,
                         institucion_financiera: sendData.institucion_financiera,

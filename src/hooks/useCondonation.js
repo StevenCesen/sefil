@@ -1,34 +1,37 @@
-export default async function useCondonation(data,btn,id,setPDF){
-    const request= await fetch(`${import.meta.env.VITE_URL_BASE}/credit/condonar/${id}`,{
-        method:'POST',
-        body:new URLSearchParams(data),
-        headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-    });
-    
-    const response=await request.json();
+export default async function useCondonation(data, btn, setPDF, updateId = null) {
+    try {
+        const isUpdate = updateId !== null && updateId !== '';
+        const url = isUpdate 
+            ? `${import.meta.env.VITE_URL_BASE}/condonations/${updateId}`
+            : `${import.meta.env.VITE_URL_BASE}/condonations`;
+        
+        const request = await fetch(url, {
+            method: isUpdate ? 'PUT' : 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
 
-    if(response.status===200){
-        // if(update!==null){
-        //     update({
-        //         capital:data.saldo_capital,
-        //         interes:data.interes,
-        //         mora:data.mora,
-        //         seguro_desgravamen:data.seguro_desgravamen,
-        //         gastos_judiciales:data.gastos_judiciales,
-        //         gastos_cobranza:data.gastos_cobranza,
-        //         otros_valores:data.otros_valores,
-        //         totalAmount:data.totalAmount
-        //     }); 
-        // }
-        console.log(response);
-        setPDF(response.data);
-        btn.textContent='Condonación guardada';
-        btn.setAttribute('disabled','');
-    }else{
-        btn.textContent='Inténtalo de nuevo';
-        btn.removeAttribute('disabled','');
+        const response = await request.json();
+
+        if (response.code === 1 && response.result) {
+            console.log(response);
+            setPDF(response.result);
+            btn.textContent = isUpdate ? 'Cambios guardados' : 'Condonación guardada';
+            btn.setAttribute('disabled', '');
+            return response;
+        } else {
+            btn.textContent = 'Inténtalo de nuevo';
+            btn.removeAttribute('disabled');
+            throw new Error(response.message || `Error al ${isUpdate ? 'actualizar' : 'crear'} condonación`);
+        }
+    } catch (error) {
+        console.error(`Error ${updateId ? 'updating' : 'creating'} condonation:`, error);
+        btn.textContent = 'Inténtalo de nuevo';
+        btn.removeAttribute('disabled');
+        throw error;
     }
 }

@@ -15,6 +15,9 @@ export const useStoreStructure = create((set) => ({
     total_fees:0,
     amount_fee:0,
     fees:[],
+    agreement_id: null,
+    view: '',
+    existing_fees: [],
     viewOn:(value)=>{set({isViewOn:value})},
     setViewPDF:(value)=>{set({viewPDF:value})},
     setTitle:(value)=>{set({title:value})},
@@ -25,12 +28,15 @@ export const useStoreStructure = create((set) => ({
     setTotalFees: (value)=>{set({total_fees:value})},
     setAmountFee: (value)=>{set({amount_fee:value})},
     setFees: (value)=>{set({fees:value})},
-    setInfoCredit: ({ci,name,total_amount,gasto_cobranza,cartera,credit_id})=>{
+    setInfoCredit: ({ci,name,total_amount,gasto_cobranza,cartera,credit_id,agreement_id,view,existing_fees})=>{
         set({ci})
         set({name})
         set({total_amount})
         set({gasto_cobranza})
         set({cartera})
         set({credit_id})
+        set({agreement_id: agreement_id || null})
+        set({view: view || ''})
+        set({existing_fees: existing_fees || []})
     }
 }));

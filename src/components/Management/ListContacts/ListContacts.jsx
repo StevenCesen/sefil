@@ -26,7 +26,7 @@ export default function ListContacts(){
                             type={store_management.client_type}
                             total_amount={store_management.monto}
                             days_past_due={store_management.dias_vencidos}
-                            channel={phone.channel}
+                            is_external={phone.is_external}
                             client_id={store_management.client_id}
                         />
                     ))

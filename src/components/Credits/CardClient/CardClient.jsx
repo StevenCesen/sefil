@@ -121,7 +121,10 @@ export default function CardClient({id,credit_id,name,email,ci,sector_economico,
                     contacts.map((contact) => (
                         <div key={contact.id} className="CardClient__contact-item">
                             <div className="CardClient__contact-info">
-                                <p className="CardClient__contact-phone">{contact.phone_number}</p>
+                                {
+                                    console.log(contact)
+                                }
+                                <p className={`CardClient__contact-phone ${contact.is_external ? 'CardClient__contact-phone--EXTERNAL' : ''}`}>{contact.phone_number}</p>
                                 <span className="CardClient__contact-type">{contact.phone_type}</span>
                                 <span className={`CardClient__contact-status ${contact.phone_status === 'ACTIVE' ? 'active' : 'inactive'}`}>
                                     {contact.phone_status}

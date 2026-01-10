@@ -1,0 +1,213 @@
+.ResumeAgreement{
+    margin: 10px 0;
+    padding: 15px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    border-top: 4px solid var(--bg-alert-successful);
+}
+
+.ResumeAgreement__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ResumeAgreement__header h4 {
+    margin: 0;
+    color: var(--color-5);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ResumeAgreement p {
+    margin: 5px 0;
+    color: var(--color-texts);
+    font-size: 13px;
+}
+
+.status {
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status--pendiente {
+    background-color: var(--bg-alert-error);
+    color: var(--color-3);
+}
+
+.status--aplicada {
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+}
+
+.status--denegada {
+    background-color: var(--color-error);
+    color: var(--color-3);
+}
+
+.ResumeAgreement>span{
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--color-5);
+    text-transform: uppercase;
+}
+
+.ResumeAgreement__detail {
+    background-color: var(--bg-1);
+    padding: 10px;
+    border-radius: 3px;
+    margin-top: 5px;
+}
+
+.ResumeAgreement__detail>p{
+    margin: 3px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--color-5);
+}
+
+.ResumeAgreement__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.ResumeAgreement__actions .btn {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.btn--success {
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+}
+
+.btn--success:hover {
+    opacity: 0.9;
+}
+
+.btn--warning {
+    background-color: var(--bg-alert-error);
+    color: var(--color-3);
+}
+
+.btn--warning:hover {
+    opacity: 0.9;
+}
+
+.btn--danger {
+    background-color: var(--color-error);
+    color: var(--color-3);
+}
+
+.btn--danger:hover {
+    opacity: 0.9;
+}
+
+.btn-show-details {
+    width: 100%;
+    padding: 8px;
+    background-color: var(--bg-1);
+    border: 1px solid var(--color-5);
+    border-radius: 3px;
+    color: var(--color-5);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.btn-show-details:hover {
+    background-color: var(--bg-2);
+}
+
+.ResumeAgreement__fees {
+    margin-top: 15px;
+    background-color: var(--bg-1);
+    border-radius: 3px;
+    overflow: auto;
+    max-height: 300px;
+}
+
+.ResumeAgreement__fees table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ResumeAgreement__fees thead {
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-1);
+    z-index: 1;
+}
+
+.ResumeAgreement__fees th {
+    padding: 10px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-5);
+    border-bottom: 2px solid var(--bg-2);
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.ResumeAgreement__fees td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--bg-2);
+    color: var(--color-texts);
+    font-size: 13px;
+}
+
+.ResumeAgreement__fees tbody tr:hover {
+    background-color: var(--bg-2);
+}
+
+.fee-status {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.fee-status--pendiente {
+    background-color: var(--bg-alert-error);
+    color: var(--color-3);
+}
+
+.fee-status--pagado {
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+}
+
+.btn-pay {
+    padding: 6px 12px;
+    background-color: var(--color-1);
+    color: var(--color-3);
+    border: none;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-pay:hover {
+    opacity: 0.9;
+}

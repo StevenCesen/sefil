@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import "./CardStructure.css";
-import useStruct from "../../hooks/useStruct";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
 import useGenerateQuotes from "../../helpers/Credits/useGenerateQuotes";
 import { useStoreStructure } from "../../stores/useStoreStructure";
+import { useStoreLoader } from "../../stores/useStoreLoader";
 import sendpush from "../../helpers/sendpush";
+import createAgreement from "../../helpers/Credits/createAgreement";
+import updateAgreement from "../../helpers/Credits/updateAgreement";
 
 export default function CardStructure(){
     
     const store_structure=useStoreStructure();
+    const loader = useStoreLoader();
 
     const [by_number_quote,setNumberQuote]=useState(0);
     const [by_amount_quote,setAmountQuote]=useState(0);
@@ -41,9 +44,19 @@ export default function CardStructure(){
             detail:'',
             totalAmount:store_structure.total_amount
         });
+
+        // Si está en modo edit y hay cuotas existentes, cargarlas
+        if(store_structure.view === 'edit' && store_structure.existing_fees?.length > 0){
+            setQuoteDetail(store_structure.existing_fees);
+            // Pre-llenar valores si es necesario
+            if(store_structure.existing_fees.length > 0){
+                setNumberQuote(store_structure.existing_fees.length);
+                setAmountQuote(parseFloat(store_structure.existing_fees[0].valor));
+            }
+        }
     },[store_structure]);
 
-    if(!store_structure.isViewOn) return <></>
+    if(!store_structure.isViewOn || store_structure.view === 'edit') return <></>
 
     return (
         <div className="CardPay">
@@ -194,6 +207,7 @@ export default function CardStructure(){
                     className="CardStructure__button--save"
                     onClick={async (e)=>{
                         e.target.textContent="Guardando...";
+                        e.target.setAttribute('disabled', '');
                         
                         if(quote_detail.length===0){
                             sendpush({
@@ -202,6 +216,8 @@ export default function CardStructure(){
                                 type:'Push--danger',
                                 timeout:5000
                             });
+                            e.target.textContent="Guardar cambios";
+                            e.target.removeAttribute('disabled');
                         }else if(agreement.fecha=="" || agreement.fecha==null){
                             sendpush({
                                 title:'ERR: Sin Fecha.',
@@ -209,28 +225,87 @@ export default function CardStructure(){
                                 type:'Push--danger',
                                 timeout:5000
                             });
+                            e.target.textContent="Guardar cambios";
+                            e.target.removeAttribute('disabled');
                         }else if(by_amount_quote===0 && by_number_quote===0){
                             sendpush({
                                 title:'ERR: Sin datos.',
                                 message:'Se debe ingresar el número de cuotas o el monto de la cuota.',
                                 type:'Push--danger',
                                 timeout:5000
-                            })
+                            });
+                            e.target.textContent="Guardar cambios";
+                            e.target.removeAttribute('disabled');
                         }else{
-                            const data={
-                                ...agreement,
-                                detail:JSON.stringify(quote_detail),
-                                cuota:1,
-                                cuotas_pendientes:quote_detail.length-1,
-                                fecha:quote_detail[0].fecha_pago,
-                                valor_cuota:quote_detail[0].valor
+                            loader.viewOn(true);
+                            
+                            // Preparar fee_detail según el formato del backend
+                            const fee_detail = quote_detail.map(quote => ({
+                                payment_date: quote.fecha_pago,
+                                payment_value: 0,
+                                payment_amount: parseFloat(quote.valor),
+                                payment_status: "PENDIENTE"
+                            }));
+                            
+                            const data = {
+                                credit_id: parseInt(store_structure.credit_id),
+                                total_amount: parseFloat(agreement.totalAmount),
+                                fee_amount: parseFloat(quote_detail[0].valor),
+                                fee_detail: fee_detail
                             };
 
-                            const create_agreement=await useStruct(data,e.target,store_structure.credit_id);
-                            store_structure.setResponse(create_agreement.data);
-                            store_structure.setViewPDF(true);   
+                            try {
+                                let result;
+                                
+                                // Verificar si es edición o creación
+                                if(store_structure.agreement_id && store_structure.view === 'edit') {
+                                    result = await updateAgreement(store_structure.agreement_id, data);
+                                } else {
+                                    result = await createAgreement(data);
+                                }
+                                
+                                loader.viewOn(false);
+                                
+                                if(result.code === 1){
+                                    sendpush({
+                                        title:'Éxito',
+                                        message: store_structure.view === 'edit' 
+                                            ? 'Convenio de pago actualizado exitosamente'
+                                            : 'Convenio de pago creado exitosamente',
+                                        type:'Push--sucessful',
+                                        timeout:3000
+                                    });
+                                    e.target.textContent = store_structure.view === 'edit' 
+                                        ? "Cambios guardados"
+                                        : "Guardado correctamente";
+                                    
+                                    // Cerrar modal después de 2 segundos
+                                    setTimeout(() => {
+                                        store_structure.viewOn(false);
+                                    }, 2000);
+                                } else {
+                                    sendpush({
+                                        title:'Error',
+                                        message: result.message || 'Error al guardar convenio de pago',
+                                        type:'Push--danger',
+                                        timeout:5000
+                                    });
+                                    e.target.textContent="Inténtalo de nuevo";
+                                    e.target.removeAttribute('disabled');
+                                }
+                            } catch (error) {
+                                console.error('Error:', error);
+                                loader.viewOn(false);
+                                sendpush({
+                                    title:'Error',
+                                    message:'Error al guardar convenio de pago',
+                                    type:'Push--danger',
+                                    timeout:5000
+                                });
+                                e.target.textContent="Inténtalo de nuevo";
+                                e.target.removeAttribute('disabled');
+                            }
                         }
-                        e.target.textContent="Guardar cambios";
                     }}
                 >Guardar cambios</button>
             </div>

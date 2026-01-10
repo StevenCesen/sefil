@@ -156,6 +156,15 @@
     color: var(--color-3);
 }
 
+.CardClient__contact-phone--EXTERNAL{
+    font-weight: bold !important;
+    color: var(--bg-alert-successful) !important;
+}
+
+.CardClient__contact-phone--INACTIVE{
+    color: var(--bg-alert-error);
+}
+
 .CardClient__contact-type{
     font-size: 12px;
     padding: 4px 10px;

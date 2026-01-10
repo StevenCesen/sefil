@@ -2,117 +2,64 @@ import { useEffect, useState } from "react";
 import CardDataShort from "../../components/CardDataShort/CardDataShort";
 import CardDataStatics from "../../components/CardDataStatics/CardDataStatics";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
+import useFetch from "../../hooks/useFetch";
+import { useStoreLoader } from "../../stores/useStoreLoader";
 import "./Home.css";
 
 const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-// Datos hardcodeados
-const hardcodedData = {
-    vouchers: [
-        { id: 1, amount: 150.50, date: '2024-02-01' },
-        { id: 2, amount: 320.75, date: '2024-02-02' },
-        { id: 3, amount: 200.00, date: '2024-02-03' }
-    ],
-    totalDay: 1250.80,
-    totalMonth: [
-        { cartera: 'SEFIL 1', total: 45320.50 },
-        { cartera: 'SEFIL 2', total: 38950.25 },
-        { cartera: 'CARTERA A', total: 22100.75 }
-    ],
-    comprobantes: [
-        { name: 'Comprobantes pagados', value: 1245, color: '#10b981' },
-        { name: 'Comprobantes pendientes', value: 856, color: '#f59e0b' },
-        { name: 'Comprobantes rechazados', value: 123, color: '#ef4444' }
-    ],
-    total_value: {
-        nro_credits: 2547,
-        total: 125680.95
-    }
-};
-
 export default function Home() {
-    const [vouchers, setVouchers] = useState(hardcodedData.vouchers);
-    const [totalDay, setTotal] = useState(hardcodedData.totalDay);
-    const [totalMonth, setMonth] = useState(hardcodedData.totalMonth);
-    const [comprobantes, setComprobantes] = useState(hardcodedData.comprobantes);
-    const [total_value, setTotalValue] = useState(hardcodedData.total_value);
+    const { fetchWithAuth } = useFetch();
+    const loader = useStoreLoader();
+    const [paymentsSummary, setPaymentsSummary] = useState(null);
 
     useEffect(() => {
-        // fetch(`${import.meta.env.VITE_URL_BASE}/vouchers?fecha=2024/02&order`, {
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())
-        //     .then((data) => setVouchers(data.data));
-
-        // fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/getTotalDay`, {
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())
-        //     .then((data) => setTotal(data));
-
-        // fetch(`${import.meta.env.VITE_URL_BASE}/vouchers/getTotalMonth`, {
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())
-        //     .then((data) => setMonth(data));
-
-        // fetch(`${import.meta.env.VITE_URL_BASE}/bussines/vouchers`, {
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //         setComprobantes(data.data);
-        //     });
-
-        // fetch(`${import.meta.env.VITE_URL_BASE}/panel-metrics`, {
-        //     headers: {
-        //         Accept: 'application/json',
-        //         Authorization: `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // })
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //         setTotalValue(data[0]);
-        //     });
+        loadPaymentsSummary();
     }, []);
 
-    if (!vouchers) return <></>
-    if (!totalMonth) return <></>
-    if (!comprobantes) return <></>
-    if (!total_value) return <></>
+    const loadPaymentsSummary = async () => {
+        loader.viewOn(true);
+        try {
+            const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/payments/summary`);
+            const data = await response.json();
+
+            if (data.code === 1 && data.result) {
+                setPaymentsSummary(data.result);
+            }
+        } catch (error) {
+            console.error('Error fetching payments summary:', error);
+        } finally {
+            loader.viewOn(false);
+        }
+    };
+
+    if (!paymentsSummary) return <></>
+
+    // Calcular totales
+    const totalCreditsWithPayment = paymentsSummary.reduce((sum, item) => sum + item.nro_credits_with_payment, 0);
+    const totalAmountMonth = paymentsSummary.reduce((sum, item) => sum + item.total_amount_by_month, 0);
+    const totalAmountDay = paymentsSummary.reduce((sum, item) => sum + item.total_amount_by_day, 0);
 
     return (
         <div className="Home">
             <div className="Home__head">
                 <CardDataShort
-                    title="Recuperación FACES"
+                    title="Resumen de Pagos"
                     subtitle={new Date().toLocaleDateString()}
-                    data={`${total_value.nro_credits} créditos con ${useFormatterNumber({ value: total_value.total, currency: "USD" })}`}
+                    data={`${totalCreditsWithPayment} créditos con ${useFormatterNumber({ value: totalAmountMonth, currency: "USD" })}`}
                 />
                 <CardDataShort
                     title="Ingresos diarios"
                     subtitle={new Date().toLocaleDateString()}
-                    data={`${useFormatterNumber({ value: totalDay, currency: "USD" })}`}
+                    data={`${useFormatterNumber({ value: totalAmountDay, currency: "USD" })}`}
                 />
                 {
-                    totalMonth.map((total, index) => (
+                    paymentsSummary.map((business) => (
                         <CardDataShort
-                            key={index}
-                            title={`Ingresos | ${total.cartera}`}
+                            key={business.business_id}
+                            title={`Ingresos | ${business.business_name}`}
                             subtitle={months[new Date().getMonth()]}
-                            data={`${useFormatterNumber({ value: total.total, currency: "USD" })}`}
+                            data={`${business.nro_credits_with_payment} créditos con ${useFormatterNumber({ value: business.total_amount_by_month, currency: "USD" })}`}
                         />
                     ))
                 }

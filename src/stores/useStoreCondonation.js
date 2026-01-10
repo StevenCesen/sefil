@@ -19,11 +19,19 @@ export const useStoreCondonation = create((set) => ({
     setData:'',
     view:'',
     update:'',
+    // Valores condonados (para modo edición)
+    condonated_capital:0,
+    condonated_interes:0,
+    condonated_mora:0,
+    condonated_seguro_desgravamen:0,
+    condonated_gastos_judiciales:0,
+    condonated_gastos_cobranza:0,
+    condonated_otros_valores:0,
     response:{},
     setResponse:(value)=>{set({response:value})},
     viewOn:(value)=>{set({isViewOn:value})},
     setViewPDF:(value)=>{set({viewPDF:value})},
-    setInfoCredit: ({ci,name,total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,gastos_cobranza_sefil,otros_valores,id,cartera,setData,view,update})=>{
+    setInfoCredit: ({ci,name,total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,gastos_cobranza_sefil,otros_valores,id,cartera,setData,view,update,condonated_capital,condonated_interes,condonated_mora,condonated_seguro_desgravamen,condonated_gastos_judiciales,condonated_gastos_cobranza,condonated_otros_valores})=>{
         set({ci})
         set({name})
         set({total})
@@ -40,6 +48,13 @@ export const useStoreCondonation = create((set) => ({
         set({setData})
         set({view})
         set({update})
+        set({condonated_capital: condonated_capital || 0})
+        set({condonated_interes: condonated_interes || 0})
+        set({condonated_mora: condonated_mora || 0})
+        set({condonated_seguro_desgravamen: condonated_seguro_desgravamen || 0})
+        set({condonated_gastos_judiciales: condonated_gastos_judiciales || 0})
+        set({condonated_gastos_cobranza: condonated_gastos_cobranza || 0})
+        set({condonated_otros_valores: condonated_otros_valores || 0})
         set({isViewOn:true})
     }
 }));

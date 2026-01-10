@@ -144,7 +144,7 @@ export default function Contacts() {
                                 <div key={contact.id} className="Contacts__results-item">
                                     <label>{contact.client_name}</label>
                                     <label>{contact.client_ci}</label>
-                                    <label>{contact.phone_number}</label>
+                                    <label>{contact.phone_number} - {contact.is_external ? "Creado mediante fuente Externa" : "Fuente SEFIL"}</label>
                                     <label>{contact.phone_type || '-'}</label>
                                     <label>{contact.credit_number || contact.sync_id}</label>
                                 </div>
