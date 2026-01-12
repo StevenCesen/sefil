@@ -45,31 +45,54 @@ export default function CardSelectStateCall() {
             campain_id:store_call.campain_id
         }
 
-        // const data_upload=new FormData();
-        // data_upload.append('user_id',localStorage.getItem('temp_uS'));
-        // data_upload.append('phone_number',store_call.phone_number);
-        // data_upload.append('credit_id',store_call.credit_id);
-        // data_upload.append('record',store_call.record_audio);
-        // const data_upload=new FormData();
-        // data_upload.append('user_id',localStorage.getItem('temp_uS'));
-        // data_upload.append('phone_number',store_call.phone_number);
-        // data_upload.append('credit_id',store_call.credit_id);
-        // data_upload.append('record',store_call.record_audio);
-        // data_upload.append('ci',store_management.client_ci);
+        // Subir archivo de audio si existe
+        if(store_call.record_audio){
+            try {
+                const currentDate = new Date();
+                const formattedDate = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
+                
+                // Asegurar que el archivo tenga la extensión correcta
+                const audioFile = store_call.record_audio;
+                const fileWithExtension = audioFile.name.includes('.') 
+                    ? audioFile 
+                    : new File([audioFile], `${audioFile.name}.webm`, { type: audioFile.type });
+                
+                const data_upload = new FormData();
+                data_upload.append('record', fileWithExtension);
+                data_upload.append('date', formattedDate);
 
-        // const upload=await uploadFile({data:data_upload});
+                const uploadResponse = await fetch(`${import.meta.env.VITE_URL_PBX}/audios/upload`, {
+                    method: 'POST',
+                    body: data_upload
+                });
 
-        // if(!upload || !upload.path){
-        //     sendpush({
-        //         title:'Error al subir audio',
-        //         message:'No se pudo subir el archivo de audio',
-        //         type:'Push--error',
-        //         timeout:3000
-        //     });
-        //     buttonRef.current.textContent='Intentar de nuevo';
-        //     return;
-        // }
-        // data_call.append('media_path',upload.path);
+                const uploadResult = await uploadResponse.json();
+
+                if(uploadResult.code !== 1 || !uploadResult.result?.relative_path){
+                    sendpush({
+                        title:'Error al subir audio',
+                        message: uploadResult.message || 'No se pudo subir el archivo de audio',
+                        type:'Push--error',
+                        timeout:3000
+                    });
+                    buttonRef.current.textContent='Intentar de nuevo';
+                    return;
+                }
+                
+                data_call.media_path = uploadResult.result.relative_path;
+            } catch (error) {
+                console.error('Error uploading audio:', error);
+                sendpush({
+                    title:'Error al subir audio',
+                    message:'Error de conexión al subir el archivo',
+                    type:'Push--error',
+                    timeout:3000
+                });
+                buttonRef.current.textContent='Intentar de nuevo';
+                return;
+            }
+        }
+
         const id_call=await createCall({data_call});
 
         if(id_call){

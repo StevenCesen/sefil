@@ -7,7 +7,7 @@ import { ExternalLink } from "lucide-react";
 
 export default function Consult() {
     const { fetchWithAuth } = useFetch();
-    const [searchType, setSearchType] = useState("credit_number");
+    const [searchType, setSearchType] = useState("ci");
     const [searchValue, setSearchValue] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);

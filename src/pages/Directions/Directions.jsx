@@ -99,7 +99,8 @@ export default function Directions() {
                 });
                 return;
             }
-            url = `${baseUrl}/GenDirecciones?user_id=${filter.user_id}&agente=${encodeURIComponent(filter.name)}&cartera=${filter.business_name}&agencias=${encodeURIComponent(JSON.stringify(filter.agencia))}`;
+            // Nuevo endpoint de exportación de direcciones
+            url = `${baseUrl}/exports/direcciones?business_id=${filter.business_id}&user_id=${filter.user_id}&agencies=${encodeURIComponent(JSON.stringify(filter.agencia))}`;
         } else if (type === 'asignacion') {
             url = `${baseUrl}/GenAsignacion?user_id=${filter.user_id}&agente=${encodeURIComponent(filter.name)}&cartera=${filter.business_name}`;
         }
