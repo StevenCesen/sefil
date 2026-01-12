@@ -48,14 +48,34 @@ function ProtectedRoute({ children }) {
   );
 }
 
+function getDefaultRoute() {
+  const userRole = localStorage.getItem('role');
+  if (userRole === 'admin' || userRole === 'superadmin' || userRole === 'supervisor') {
+    return '/dashboard';
+  } else {
+    // Roles: campo, call, legal -> redirigir a management
+    return '/dashboard/management';
+  }
+}
+
 function PublicRoute({ children }) {
   const isAuthenticated = useSessions();
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={getDefaultRoute()} replace />;
   }
 
   return children;
+}
+
+function RootRedirect() {
+  const isAuthenticated = useSessions();
+
+  if (isAuthenticated) {
+    return <Navigate to={getDefaultRoute()} replace />;
+  }
+
+  return <Navigate to="/login" replace />;
 }
 
 function App() {
@@ -270,12 +290,12 @@ function App() {
 
         <Route
           path="/"
-          element={<Navigate to={useSessions() ? "/dashboard" : "/login"} replace />}
+          element={<RootRedirect />}
         />
 
         <Route
           path="*"
-          element={<Navigate to={useSessions() ? "/dashboard" : "/login"} replace />}
+          element={<RootRedirect />}
         />
       </Routes>
     </>

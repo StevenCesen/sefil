@@ -38,11 +38,19 @@ export default async function useLogin(data,tag,btn,setload){
 
             if(response.changePassword){
                 localStorage.setItem('change_ps', true);
-                location.href='#/dashboard/me';
+                location.href='#/me';
                 location.reload();
             }else{
                 localStorage.setItem('change_ps', false);
-                location.href='./';
+
+                // Redirigir según el rol del usuario
+                const userRole = response.result.user.role;
+                if (userRole === 'admin' || userRole === 'superadmin' || userRole === 'supervisor') {
+                    location.href='./';
+                } else {
+                    // Roles: campo, call, legal -> redirigir a management
+                    location.href='#/management';
+                }
             }
         }
     }else if(request.status===403){

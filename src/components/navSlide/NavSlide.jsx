@@ -123,6 +123,23 @@ const permissionData = [
         }
     },
     {
+        role: 'legal',
+        permission: {
+            sections: [
+                { section: 'contacts', label: 'Contactos' },
+                { section: 'management', label: 'Gestión' },
+                { section: 'calls', label: 'Llamadas' },
+                { section: 'payments', label: 'Pagos' }
+            ],
+            abilities: [
+                { section: 'calls', abilitie: ['calls:view'] },
+                { section: 'payments', abilitie: ['payments:view'] },
+                { section: 'management', abilitie: ['management:create', 'management:view'] },
+                { section: 'contacts', abilitie: ['contacts:create', 'contacts:view'] }
+            ]
+        }
+    },
+    {
         role: 'call',
         permission: {
             sections: [

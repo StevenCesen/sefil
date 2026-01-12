@@ -21,30 +21,30 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
 
     useEffect(() => {
         const fetchParents = async () => {
-            if (type === 'substate' && mode === 'create') {
-                // Para crear subestado, obtener solo los estados raíz
+            // Al crear estados o subestados, cargar todos los templates desde la API
+            if (mode === 'create') {
                 try {
-                    const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/templates?only_roots=true`);
+                    const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/templates?group=hierarchical`);
                     const result = await response.json();
 
-                    let rootTemplates = [];
+                    let allTemplates = [];
 
-                    // Extraer data de templates raíces
+                    // Extraer data de templates
                     if (result.code === 1 && result.result) {
-                        if (result.result.data && Array.isArray(result.result.data)) {
-                            rootTemplates = result.result.data;
-                        } else if (Array.isArray(result.result)) {
-                            rootTemplates = result.result;
+                        if (Array.isArray(result.result)) {
+                            allTemplates = result.result;
+                        } else if (result.result.data && Array.isArray(result.result.data)) {
+                            allTemplates = result.result.data;
                         }
                     }
 
-                    setAvailableParents(rootTemplates);
+                    setAvailableParents(allTemplates);
                 } catch (error) {
-                    console.error('Error fetching root templates:', error);
+                    console.error('Error fetching templates:', error);
                     setAvailableParents([]);
                 }
             } else {
-                // Para otros casos, usar todos los templates del store
+                // Para modo edición, usar todos los templates del store
                 await store_templates.getTemplates();
             }
         };
@@ -52,12 +52,12 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
         fetchParents();
     }, [type, mode]);
 
-    // Sincronizar availableParents con el store cuando no sea creación de subestado
+    // Sincronizar availableParents con el store cuando sea modo edición
     useEffect(() => {
-        if (!(type === 'substate' && mode === 'create')) {
+        if (mode === 'edit') {
             setAvailableParents(store_templates.templates);
         }
-    }, [store_templates.templates, type, mode]);
+    }, [store_templates.templates, mode]);
 
     useEffect(() => {
         if (mode === 'edit' && data) {
@@ -146,11 +146,13 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
                 body.description = formData.description;
             }
 
-            // Solo incluir roles y days_past_due_min para estados padre (type === 'state')
+            // Incluir roles tanto para estados como subestados
+            if (formData.roles && formData.roles.length > 0) {
+                body.roles = formData.roles;
+            }
+
+            // Solo incluir days_past_due_min para estados padre (type === 'state')
             if (type === 'state') {
-                if (formData.roles && formData.roles.length > 0) {
-                    body.roles = formData.roles;
-                }
                 if (formData.days_past_due_min !== null && formData.days_past_due_min !== '') {
                     body.days_past_due_min = parseInt(formData.days_past_due_min);
                 }
@@ -235,12 +237,12 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
                     </div>
                 )}
 
-                {mode === 'edit' && type === 'state' && (
+                {mode === 'edit' && (
                     <>
                         <div className="CardEditTemplate__field">
                             <label>Roles permitidos</label>
                             <div className="CardEditTemplate__rolesContainer">
-                                {['admin', 'supervisor', 'campo', 'call'].map((role) => (
+                                {['admin', 'supervisor', 'campo', 'call', 'legal'].map((role) => (
                                     <label key={role} className="CardEditTemplate__roleOption">
                                         <input
                                             type="checkbox"
@@ -253,18 +255,20 @@ export default function CardEditTemplate({ type, mode, data, stateId, onSave, on
                             </div>
                         </div>
 
-                        <div className="CardEditTemplate__field">
-                            <label htmlFor="days_past_due_min">Días de mora mínimos</label>
-                            <input
-                                type="number"
-                                id="days_past_due_min"
-                                name="days_past_due_min"
-                                value={formData.days_past_due_min || ''}
-                                onChange={handleChange}
-                                placeholder="Ej: 30"
-                                min="0"
-                            />
-                        </div>
+                        {type === 'state' && (
+                            <div className="CardEditTemplate__field">
+                                <label htmlFor="days_past_due_min">Días de mora mínimos</label>
+                                <input
+                                    type="number"
+                                    id="days_past_due_min"
+                                    name="days_past_due_min"
+                                    value={formData.days_past_due_min || ''}
+                                    onChange={handleChange}
+                                    placeholder="Ej: 30"
+                                    min="0"
+                                />
+                            </div>
+                        )}
                     </>
                 )}
 

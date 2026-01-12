@@ -7,6 +7,7 @@ export default function CardAddChild({ parentState, onSave, onClose }) {
     const { fetchWithAuth } = useFetch();
     const [availableTemplates, setAvailableTemplates] = useState([]);
     const [selectedTemplates, setSelectedTemplates] = useState([]);
+    const [templateRoles, setTemplateRoles] = useState({}); // {templateId: [roles]}
     const [loading, setLoading] = useState(false);
     const [fetchingTemplates, setFetchingTemplates] = useState(true);
 
@@ -14,15 +15,15 @@ export default function CardAddChild({ parentState, onSave, onClose }) {
         const fetchTemplates = async () => {
             try {
                 setFetchingTemplates(true);
-                const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/templates?only_roots=true`);
+                const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/templates?group=hierarchical`);
                 const result = await response.json();
 
                 let templates = [];
                 if (result.code === 1 && result.result) {
-                    if (result.result.data && Array.isArray(result.result.data)) {
-                        templates = result.result.data;
-                    } else if (Array.isArray(result.result)) {
+                    if (Array.isArray(result.result)) {
                         templates = result.result;
+                    } else if (result.result.data && Array.isArray(result.result.data)) {
+                        templates = result.result.data;
                     }
                 }
 
@@ -30,10 +31,25 @@ export default function CardAddChild({ parentState, onSave, onClose }) {
                 const filtered = templates.filter(t => t.id !== parentState.id);
                 setAvailableTemplates(filtered);
 
-                // Pre-seleccionar los hijos existentes del estado padre
+                // Pre-seleccionar los hijos existentes del estado padre y sus roles
                 const existingChildren = parentState.children || [];
                 const existingChildIds = existingChildren.map(child => child.id);
                 setSelectedTemplates(existingChildIds);
+
+                // Pre-cargar roles existentes de los hijos
+                const rolesMap = {};
+                existingChildren.forEach(child => {
+                    if (child.roles) {
+                        try {
+                            rolesMap[child.id] = typeof child.roles === 'string'
+                                ? JSON.parse(child.roles)
+                                : child.roles;
+                        } catch (e) {
+                            rolesMap[child.id] = [];
+                        }
+                    }
+                });
+                setTemplateRoles(rolesMap);
             } catch (error) {
                 console.error('Error fetching templates:', error);
                 sendpush({
@@ -60,6 +76,19 @@ export default function CardAddChild({ parentState, onSave, onClose }) {
         });
     };
 
+    const handleRoleToggle = (templateId, role) => {
+        setTemplateRoles(prev => {
+            const currentRoles = prev[templateId] || [];
+            const isSelected = currentRoles.includes(role);
+            return {
+                ...prev,
+                [templateId]: isSelected
+                    ? currentRoles.filter(r => r !== role)
+                    : [...currentRoles, role]
+            };
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -80,16 +109,24 @@ export default function CardAddChild({ parentState, onSave, onClose }) {
             const promises = selectedTemplates.map(async (templateId) => {
                 const template = availableTemplates.find(t => t.id === templateId);
 
+                const body = {
+                    name: template.name,
+                    is_active: template.is_active,
+                    parent_ids: [parentState.id]
+                };
+
+                // Agregar roles si se han seleccionado
+                const roles = templateRoles[templateId];
+                if (roles && roles.length > 0) {
+                    body.roles = roles;
+                }
+
                 const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/templates/${templateId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        name: template.name,
-                        is_active: template.is_active,
-                        parent_ids: [parentState.id]
-                    })
+                    body: JSON.stringify(body)
                 });
 
                 return response.json();
@@ -141,18 +178,39 @@ export default function CardAddChild({ parentState, onSave, onClose }) {
                     ) : (
                         <div className="CardAddChild__templateList">
                             {availableTemplates.map((template) => (
-                                <label key={template.id} className="CardAddChild__templateOption">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedTemplates.includes(template.id)}
-                                        onChange={() => handleToggleTemplate(template.id)}
-                                        disabled={loading}
-                                    />
-                                    <span>{template.name}</span>
-                                    <span className={`CardAddChild__status ${template.is_active ? 'active' : 'inactive'}`}>
-                                        {template.is_active ? 'Activo' : 'Inactivo'}
-                                    </span>
-                                </label>
+                                <div key={template.id} className="CardAddChild__templateWrapper">
+                                    <label className="CardAddChild__templateOption">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedTemplates.includes(template.id)}
+                                            onChange={() => handleToggleTemplate(template.id)}
+                                            disabled={loading}
+                                        />
+                                        <span>{template.name}</span>
+                                        <span className={`CardAddChild__status ${template.is_active ? 'active' : 'inactive'}`}>
+                                            {template.is_active ? 'Activo' : 'Inactivo'}
+                                        </span>
+                                    </label>
+
+                                    {selectedTemplates.includes(template.id) && (
+                                        <div className="CardAddChild__rolesContainer">
+                                            <label className="CardAddChild__rolesLabel">Roles permitidos:</label>
+                                            <div className="CardAddChild__rolesOptions">
+                                                {['admin', 'supervisor', 'campo', 'call', 'legal'].map((role) => (
+                                                    <label key={role} className="CardAddChild__roleOption">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={(templateRoles[template.id] || []).includes(role)}
+                                                            onChange={() => handleRoleToggle(template.id, role)}
+                                                            disabled={loading}
+                                                        />
+                                                        <span>{role.charAt(0).toUpperCase() + role.slice(1)}</span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             ))}
                         </div>
                     )}

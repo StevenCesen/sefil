@@ -81,6 +81,17 @@ const permissionData = [
                 { section: 'calls', label: 'Llamadas' }
             ]
         }
+    },
+    {
+        role: 'legal',
+        permission: {
+            sections: [
+                { section: 'contacts', label: 'Contactos' },
+                { section: 'management', label: 'Gestión' },
+                { section: 'calls', label: 'Llamadas' },
+                { section: 'payments', label: 'Pagos' }
+            ]
+        }
     }
 ];
 
@@ -434,6 +445,7 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
                                 <option value="supervisor">Supervisor</option>
                                 <option value="call">Gestor | Call Center</option>
                                 <option value="campo">Gestor | Campo</option>
+                                <option value="legal">Legal</option>
                             </select>
                             {errors.role && (
                                 <span className="CardEditUser__error">{errors.role[0]}</span>
