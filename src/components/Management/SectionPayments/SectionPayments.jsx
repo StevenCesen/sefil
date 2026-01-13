@@ -45,14 +45,15 @@ export default function SectionPayments({ payments, credit, view_complete_info =
 
         const endCells = [
             useFormatterNumber({ value: payment.payment_value || payment.valor_recibido, currency: 'USD' }),
-            payment.payment_status || payment.status,
+            (payment.payment_status === 'ERROR_SUM' || payment.status === 'ERROR_SUM') 
+                ? 'PENDIENTE DE PROCESAR' 
+                : (payment.payment_status || payment.status),
         ];
 
         return [...baseCells, ...detailCells, ...endCells];
     };
 
     const handlePrintClick = (payment) => {
-        console.log(payment)
         if (payment.payment_reference === 'FACES' || payment.payment_reference === 'Gasto Cob.' || payment.id === 'FACES' || payment.id === 'Gasto Cob.') {
             sendpush({
                 title: 'No disponible',

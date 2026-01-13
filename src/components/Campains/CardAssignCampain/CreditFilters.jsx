@@ -11,7 +11,8 @@ export default function CreditFilters({ onFiltersChange, typeAssign }) {
         monto: { min: 0, max: 0 },
         estado: '',
         estado_gestion: '',
-        agencies: []
+        agencies: [],
+        management_tray: ''
     });
 
     const handleRangeUpdate = (key, value) => {
@@ -71,6 +72,19 @@ export default function CreditFilters({ onFiltersChange, typeAssign }) {
                         selectedAgencies={filters.agencies}
                         onAgencyChange={handleAgencyFilter}
                     />
+
+                    <label>
+                        Bandeja
+                        <select
+                            value={filters.management_tray}
+                            onChange={(e) => handleRangeUpdate('management_tray', e.target.value)}
+                        >
+                            <option value="">-- Todas --</option>
+                            <option value="PENDIENTE">PENDIENTE</option>
+                            <option value="GESTIONADO">GESTIONADO</option>
+                            <option value="EN PROCESO">EN PROCESO</option>
+                        </select>
+                    </label>
                 </div>
             </div>
         </>

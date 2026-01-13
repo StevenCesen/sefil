@@ -54,7 +54,7 @@ export default function ImportPayments() {
                     <label>Subir pagos</label>
                     <label>Estado</label>
                     <label>Última carga</label>
-                    <label>En proceso</label>
+                    <label>Por procesar</label>
                     <label>Créditos sin pagos</label>
                     <label>Acciones</label>
                 </div>
@@ -66,6 +66,7 @@ export default function ImportPayments() {
                             fecha_carga={cartera.fecha_carga}
                             name={cartera.name}
                             state={cartera.status}
+                            business_id={cartera.id}
                         />
                     ))
                 }

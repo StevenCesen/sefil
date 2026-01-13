@@ -90,6 +90,10 @@ export default function CardAssignCampain({ campain_id }) {
             queryFilters.agency = filters.agencies;
         }
 
+        if (filters.management_tray) {
+            queryFilters.management_tray = filters.management_tray;
+        }
+
         queryFilters.sync_status = 'ACTIVE';
 
         const data = await fetchCreditsData(queryFilters);
@@ -104,6 +108,7 @@ export default function CardAssignCampain({ campain_id }) {
     }, [agents_origin, data_campain, filters])
 
     const handleFiltersChange = useCallback((newFilters) => {
+        console.log('Filtros aplicados:', newFilters);
         setFilters(newFilters);
         setCreditsFromSearch(false);
     }, [])
@@ -188,6 +193,10 @@ export default function CardAssignCampain({ campain_id }) {
 
                 if (filters.agencies?.length > 0) {
                     transferData.agency = filters.agencies;
+                }
+
+                if (filters.management_tray) {
+                    transferData.management_tray = filters.management_tray;
                 }
             }
 

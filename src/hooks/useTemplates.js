@@ -17,7 +17,7 @@ export const useTemplates = () => {
         const fetchTemplates = async () => {
             try {
                 setLoading(true);
-                const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/templates?only_roots=true`);
+                const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/templates?only_roots=true&per_page=1000`);
                 const data = await response.json();
 
                 if (!isMounted) return;

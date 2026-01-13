@@ -496,7 +496,7 @@ export default function ManagementHistorial(){
                             <label>{gestion.client_ci}</label>
                             <label>{gestion.client_type}</label>
                             <label>{gestion.credit.sync_id}</label>
-                            <label>{gestion.substate}</label>
+                            <label>{(gestion.substate==='NOTIFICADO' || gestion.substate==='ENTREGADO AVISO DE COBRANZA') ? <strong>{`${gestion.substate} - Nro. Not: ${gestion.nro_notification}`}</strong> : gestion.substate}</label>
                             <label>{gestion.promise_date ? gestion.promise_date.split(" ")[0] : ''}</label>
                             <label>{gestion.days_past_due}</label>
                             <label>{gestion.created_by_name}</label>

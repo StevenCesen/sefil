@@ -129,7 +129,7 @@
 
 .Campains__item button {
     padding: 6px;
-    background-color: transparent;
+    background-color: var(--bg-alert-successful);
     border: none;
     cursor: pointer;
     transition: all 0.2s;

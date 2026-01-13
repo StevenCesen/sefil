@@ -1,24 +1,36 @@
 .CardManualPay{
     position: fixed !important;
-    top: calc(var(--height-header) - 30px) !important;
+    top: 0 !important;
     right: 0 !important;
     left: 0 !important;
+    bottom: 0 !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
     flex-direction: column !important;
     width: 100% !important;
-    height: 100% !important;
-    background-color: rgba(0, 0, 0, 0.221);
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 9999 !important;
 }
 
 .CardManualPay__close{
-    position: fixed;
-    width: 100px !important;
-    display: block;
-    top: calc(var(--height-header));
-    right: 20px !important;
-    margin-top: 20px !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: flex-end;
+    margin-bottom: 10px;
+    background-color: var(--bg-alert-successful);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.CardManualPay__close:hover{
+    opacity: 0.8;
 }
 
 .CardManualPay__content{

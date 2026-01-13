@@ -122,7 +122,6 @@ export const useStoreManagement = create((set,get) => ({
     },
     setPhones: async ({client_id}) => {
         const phones=await getListPhones({client_id});
-        console.log('setPhones llamado con client_id:', client_id, 'resultado:', phones);
         if(phones && phones.result && phones.result.data) {
             set({phones:phones.result.data});
         }
