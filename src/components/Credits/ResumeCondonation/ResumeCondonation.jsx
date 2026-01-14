@@ -214,7 +214,7 @@ export default function ResumeCondonation({condonation, onActionComplete}){
             </span>
 
             <div className="ResumeCondonation__actions">
-                {condonation.status === 'PENDIENTE' && (
+                {condonation.status?.toUpperCase() === 'PENDIENTE' && (
                     <>
                         <button className="btn btn--success" onClick={handleAuthorize}>
                             Autorizar
@@ -227,7 +227,7 @@ export default function ResumeCondonation({condonation, onActionComplete}){
                         </button>
                     </>
                 )}
-                {condonation.status === 'AUTORIZADA' && (
+                {condonation.status?.toUpperCase() === 'AUTORIZADA' && (
                     <button className="btn btn--danger" onClick={handleRevert}>
                         Revertir
                     </button>

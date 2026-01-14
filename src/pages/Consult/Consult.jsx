@@ -53,6 +53,7 @@ export default function Consult() {
                 `${import.meta.env.VITE_URL_BASE}/credits?per_page=15&${queryParam}`
             );
             const data = await response.json();
+            console.log("Search results data:", data);
 
             if (data.result && data.result.data && Array.isArray(data.result.data)) {
                 setResults(data.result.data);
@@ -80,15 +81,8 @@ export default function Consult() {
         const currentPath = location.pathname;
         const lastPath = prevPathRef.current;
 
-        console.log('🔍 Consult Navigation:', {
-            currentPath,
-            lastPath,
-            shouldClear: currentPath === '/consult' && lastPath && lastPath !== '/consult' && !lastPath.startsWith('/credits/')
-        });
-
         // Si estamos entrando a /consult desde otra sección (no desde /credits/:id), limpiar búsqueda
         if (currentPath === '/consult' && lastPath && lastPath !== '/consult' && !lastPath.startsWith('/credits/')) {
-            console.log('✅ Limpiando búsqueda en Consult');
             consult.clearSearch();
         }
 

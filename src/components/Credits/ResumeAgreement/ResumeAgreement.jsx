@@ -39,13 +39,13 @@ export default function ResumeAgreement({agreement, onActionComplete}){
             valor: parseFloat(fee.payment_amount),
             estado: fee.payment_status || 'PENDIENTE'
         })) || [];
-        
+
         store_structure.viewOn(true);
         store_structure.setInfoCredit({
             ci: agreement.client_ci,
             name: agreement.client_name,
             total_amount: parseFloat(agreement.total_amount),
-            cartera: credit?.portfolio || credit?.business_id || '',
+            cartera: credit?.portfolio || credit?.business_id || agreement.credit?.business_id || '',
             credit_id: agreement.credit_id,
             gasto_cobranza: parseFloat(agreement.management_collection_expenses || credit?.management_collection_expenses || 0),
             agreement_id: agreement.id,
@@ -69,6 +69,7 @@ export default function ResumeAgreement({agreement, onActionComplete}){
         }
 
         if (index === 0) {
+            loader.viewOn(true);
             setShowGastoCobranzaModal(true);
         } else {
             const payData = {
@@ -265,7 +266,7 @@ export default function ResumeAgreement({agreement, onActionComplete}){
                                     </td>
                                     {(userRole === 'admin' || userRole === 'superadmin') && (
                                         <td>
-                                            {fee.payment_status === 'PENDIENTE' && (agreement.status === 'APLICADA' || agreement.status === 'AUTORIZADO') && (
+                                            {fee.payment_status?.toUpperCase() === 'PENDIENTE' && (agreement.status?.toUpperCase() === 'APLICADA' || agreement.status?.toUpperCase() === 'AUTORIZADO') && (
                                                 <button className="btn-pay" onClick={() => handlePayFee(fee, index)}>
                                                     Pago
                                                 </button>
@@ -280,7 +281,7 @@ export default function ResumeAgreement({agreement, onActionComplete}){
             )}
 
             <div className="ResumeAgreement__actions">
-                {agreement.status === 'PENDIENTE' && (
+                {agreement.status?.toUpperCase() === 'PENDIENTE' && (
                     <>
                         <button className="btn btn--success" onClick={handleAuthorize}>
                             Autorizar
@@ -293,7 +294,7 @@ export default function ResumeAgreement({agreement, onActionComplete}){
                         </button>
                     </>
                 )}
-                {(agreement.status === 'APLICADA' || agreement.status === 'AUTORIZADA' || agreement.status === 'AUTORIZADO') && (
+                {(agreement.status?.toUpperCase() === 'APLICADA' || agreement.status?.toUpperCase() === 'AUTORIZADA' || agreement.status?.toUpperCase() === 'AUTORIZADO') && (
                     <button className="btn btn--danger" onClick={handleRevert}>
                         Revertir
                     </button>

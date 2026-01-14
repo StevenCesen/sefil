@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 import "./CardConfirm.css";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import { useStoreBilling } from "../../stores/useStoreBilling";
+import sendpush from "../../helpers/sendpush";
 
 export default function CardConfirm({id,cartera,value,email,name,ci,direccion,telefono,setView}){
     const [dates,setDates]                  =   useState();
     const [cuentas_bancarias,setCuentas]    =   useState();
     const [metodos,setMetodos]              =   useState();
     const [formas,setFormas]                =   useState();
+    const [isProcessing, setIsProcessing]   =   useState(false);
     const loader                            =   useStoreLoader();
     const store_billing                     =   useStoreBilling();
-    
+
     useEffect(()=>{
-        loader.viewOn(false);
         fetch(`${import.meta.env.VITE_URL_BASE}/sofiaconfig`,{
             headers: {
                 Accept: 'application/json',
@@ -27,6 +28,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 setCuentas(cuentas);
                 setFormas(formas_pago);
                 setMetodos(metodos_pago);
+                loader.viewOn(false);
             })
             .catch((error) => {
                 console.error('Error loading sofiaconfig:', error);
@@ -34,6 +36,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 setCuentas([]);
                 setFormas([]);
                 setMetodos(['ANTICIPO', 'CHEQUE', 'EFECTIVO', 'OTROS', 'TARJETA_CREDITO', 'TRANSFERENCIA', 'DEPOSITO']);
+                loader.viewOn(false);
             });
 
         if(id){
@@ -54,11 +57,119 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
         }
     },[]);
 
+    const handleProcessInvoice = async () => {
+        if(isProcessing) return;
+
+        // Validaciones
+        if(dates.formaPago === ""){
+            sendpush({
+                title: 'Error',
+                message: 'Ingrese una forma de pago',
+                type: 'Push--warning',
+                timeout: 3000
+            });
+            return;
+        }
+
+        if(dates.formaPago === 'EFECTIVO' && (dates.metodo === '' || dates.metodo !== 'EFECTIVO')){
+            sendpush({
+                title: 'Error',
+                message: 'Forma de pago y método no corresponden',
+                type: 'Push--warning',
+                timeout: 3000
+            });
+            return;
+        }
+
+        if(dates.formaPago !== 'EFECTIVO' && (dates.metodo === '' || dates.metodo === 'EFECTIVO' || dates.referencia === '' || dates.idBanco === '')){
+            sendpush({
+                title: 'Error',
+                message: 'Forma de pago y método no corresponden o falta información de banco',
+                type: 'Push--warning',
+                timeout: 3000
+            });
+            return;
+        }
+
+        setIsProcessing(true);
+        loader.viewOn(true);
+
+        try {
+            // Preparar el body según el nuevo endpoint
+            const requestBody = {
+                credit_id: parseInt(dates.id),
+                value: parseFloat(dates.value),
+                payment_method: dates.metodo.toLowerCase(),
+                financial_institution: dates.idBanco,
+                payment_reference: dates.referencia,
+                ci: dates.ci,
+                name: dates.name,
+                telefono: dates.telefono,
+                email: dates.email,
+                cartera: dates.cartera,
+                formaPago: dates.formaPago
+            };
+
+            const response = await fetch(`${import.meta.env.VITE_URL_BASE}/payments/process-invoice`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const data = await response.json();
+
+            if(data.code === 1){
+                sendpush({
+                    title: 'Factura generada',
+                    message: data.message || 'Factura procesada correctamente',
+                    type: 'sucessful',
+                    timeout: 3000
+                });
+
+                store_billing.setInfo({
+                    ci: data.result?.ci,
+                    name: data.result?.name,
+                    direction: data.result?.direction,
+                    access_key: data.result?.access_key,
+                    date: data.result?.date,
+                    value: data.result?.value,
+                    subtotal_sin_iva: data.result?.subtotal_sin_iva,
+                    valor_iva: data.result?.valor_iva,
+                    total_con_iva: data.result?.total_con_iva
+                });
+
+                setView(false);
+            } else {
+                sendpush({
+                    title: 'Error',
+                    message: data.message || 'Error al procesar factura',
+                    type: 'Push--warning',
+                    timeout: 3000
+                });
+            }
+        } catch (error) {
+            console.error('Error processing invoice:', error);
+            sendpush({
+                title: 'Error',
+                message: 'Error al procesar la factura, inténtalo de nuevo',
+                type: 'Push--warning',
+                timeout: 3000
+            });
+        } finally {
+            setIsProcessing(false);
+            loader.viewOn(false);
+        }
+    };
+
     if(!dates)              return <></>
     if(!cuentas_bancarias)  return <></>
     if(!formas)             return <></>
     if(!metodos)            return <></>
-    
+
     return (
         <div className="CardConfirm__background">
             <button onClick={()=>{setView(false)}}>Volver</button>
@@ -66,7 +177,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 <p>Gastos de cobranza</p>
                 <label>
                     Total:
-                    <input 
+                    <input
                         type="number"
                         onChange={(e)=>{
                             setDates({
@@ -81,7 +192,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
 
                 <label>
                     Email:
-                    <input 
+                    <input
                         type="text"
                         placeholder="Correo electrónico"
                         onChange={(e)=>{
@@ -89,7 +200,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                                 ...dates,
                                 email:e.target.value
                             });
-                        }}  
+                        }}
                         value={dates.email}
                     />
                 </label>
@@ -125,15 +236,15 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                     >
                         <option value={""}>-- Seleccionar método --</option>
                         {
-                            metodos.map((metodo)=>(
-                                <option value={metodo}>{metodo}</option>
+                            metodos.map((metodo, index)=>(
+                                <option key={index} value={metodo}>{metodo}</option>
                             ))
                         }
                     </select>
                 </label>
 
                 {
-                    (dates.metodo!=='EFECTIVO' & dates.metodo!=='')
+                    (dates.metodo!=='EFECTIVO' && dates.metodo!=='')
                     ?
                         <div className="CardConfirm__cuentas">
                             <label>
@@ -149,8 +260,8 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                                 >
                                     <option value={""}>-- Seleccionar cuenta bancaria --</option>
                                     {
-                                        cuentas_bancarias.map((cuenta)=>(
-                                            <option value={cuenta.id}>{cuenta.nombre}</option>
+                                        cuentas_bancarias.map((cuenta, index)=>(
+                                            <option key={index} value={cuenta.id}>{cuenta.nombre}</option>
                                         ))
                                     }
                                 </select>
@@ -175,55 +286,11 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
 
                 <div>
                     <button
-                        onClick={(e)=>{
-                            e.textContent='Generando factura';
-                            
-                            if(dates.formaPago!==""){
-                                if(dates.formaPago==='EFECTIVO' & (dates.metodo==='' | dates.metodo!=='EFECTIVO')){  
-                                    e.target.textContent="Error, forma de pago y método no corresponden";
-                                }else if(dates.formaPago!=='EFECTIVO' & (dates.metodo==='' | dates.metodo==='EFECTIVO' | dates.referencia==='' | dates.idBanco==='')){
-                                    e.target.textContent="Error, forma de pago y método no corresponden o falta información de banco";
-                                }else{
-                                    fetch(`${import.meta.env.VITE_URL_BASE}/gastos/${dates.id}`,{
-                                        method:'POST',
-                                        headers: {
-                                            Accept: 'application/json',
-                                            Authorization: `Bearer ${localStorage.getItem('token')}`
-                                        },
-                                        body:new URLSearchParams(dates)
-                                    })
-                                        .then((response) => response.json())  
-                                        .then((data) => {
-                                            if('status' in data){
-                                                e.target.textContent='Facturado';
-                                                setView(false);
-                                                // setGastos({
-                                                //     status:false,
-                                                //     email:dates.email,
-                                                //     valor_gasto:dates.value,
-                                                //     fecha:data.fecha,
-                                                //     clave_acceso:data.clave_acceso
-                                                // });
-                                                // setPDF(true);
-                                                e.target.textContent = "Factura generada";
-                                                store_billing.setInfo({
-                                                    ci,
-                                                    name,
-                                                    direction:direccion,
-                                                    access_key:data.clave_acceso,
-                                                    date:data.fecha,
-                                                    value:dates.value
-                                                });
-                                            }else{
-                                                e.target.textContent='Error, inténtalo de nuevo';
-                                            }
-                                        });
-                                }
-                            }else{
-                                e.target.textContent="Error, ingrese una forma de pago";
-                            }
-                        }}
-                    >Confirmar</button>
+                        onClick={handleProcessInvoice}
+                        disabled={isProcessing}
+                    >
+                        {isProcessing ? 'Procesando...' : 'Confirmar'}
+                    </button>
                 </div>
             </div>
         </div>
