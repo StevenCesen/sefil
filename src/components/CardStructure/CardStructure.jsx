@@ -156,7 +156,8 @@ export default function CardStructure(){
                                         parameter_name:'number_quotes',
                                         parameter_value:by_number_quote,
                                         start_date:agreement.fecha,
-                                        setQuote:setQuoteDetail
+                                        setQuote:setQuoteDetail,
+                                        isEdit: store_structure.view === 'edit'
                                     });
                                 }else{
                                     await useGenerateQuotes({
@@ -165,7 +166,8 @@ export default function CardStructure(){
                                         parameter_name:'amount_quotes',
                                         parameter_value:by_amount_quote,
                                         start_date:agreement.fecha,
-                                        setQuote:setQuoteDetail
+                                        setQuote:setQuoteDetail,
+                                        isEdit: store_structure.view === 'edit'
                                     });
                                 }
                             }

@@ -34,7 +34,7 @@ export default function SectionPayments({ payments, credit, view_complete_info =
 
     const renderPaymentCells = (payment) => {
         const baseCells = [
-            payment.payment_reference || payment.id,
+            (payment.payment_number !== null) ? payment.payment_number : 'FACES',
             payment.payment_date || payment.fecha,
             payment.payment_type || payment.forma_pago
         ];

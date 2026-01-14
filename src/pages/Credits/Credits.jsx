@@ -1,11 +1,11 @@
 import "./Credits.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import { useStoreFilterCredits } from "../../stores/useStoreCredits";
 import FilterCredits from "../../components/Credits/FilterCredits/FilterCredits";
 import { ExternalLink } from "lucide-react";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import SearchVoucher from "../../components/Payments/SearchVoucher/SearchVoucher";
 import NavigationToggle from "../../components/Tools/NavigationToggle/NavigationToggle";
 import NavigationFooter from "../../components/Tools/NavigationFooter/NavigationFooter";
@@ -13,6 +13,8 @@ import NavigationFooter from "../../components/Tools/NavigationFooter/Navigation
 export default function Credits(){
     const loader = useStoreLoader();
     const credits= useStoreFilterCredits();
+    const location = useLocation();
+    const prevPathRef = useRef(null);
 
     const handleCredits = async () =>{
         loader.viewOn(true);
@@ -23,6 +25,20 @@ export default function Credits(){
     const handleSetCredits = async (value) =>{
         await credits.setCredits(value);
     }
+
+    // Detectar cuando se navega desde otra sección del NavSlide
+    useEffect(() => {
+        const currentPath = location.pathname;
+        const lastPath = prevPathRef.current;
+
+        // Si estamos entrando a /credits desde otra sección (no desde /credits/:id), limpiar filtros
+        if (currentPath === '/credits' && lastPath && lastPath !== '/credits' && !lastPath.startsWith('/credits/')) {
+            credits.clearAllFilters();
+        }
+
+        // Actualizar el path anterior para la próxima navegación
+        prevPathRef.current = currentPath;
+    }, [location.pathname]);
 
     useEffect(()=>{
         handleCredits()

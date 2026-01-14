@@ -23,18 +23,19 @@ export default function NavTools(){
                 ?
                     <div className="NavTools__menu">
                         <button onClick={()=>{
+                            const managementExpenses = credit.credit.management_collection_expenses || 0;
                             store_condonation.setInfoCredit({
                                 ci:credit.credit.clients[0].ci,
                                 name:credit.credit.clients[0].name,
-                                total:credit.credit.total_amount-credit.credit.gasto_cobranza_sefil,
-                                capital:credit.credit.saldo_capital,
+                                total:credit.credit.total_amount - managementExpenses,
+                                capital:credit.credit.capital,
                                 mora:credit.credit.mora,
-                                interes:credit.credit.interes,
-                                seguro_desgravamen:credit.credit.seguro_desgravamen,
-                                gastos_judiciales:credit.credit.gastos_judiciales,
-                                gastos_cobranza_sefil:credit.credit.gasto_cobranza_sefil,
-                                gastos_cobranza:credit.credit.gastos_cobranza,
-                                otros_valores:credit.credit.otros_valores,
+                                interes:credit.credit.interest,
+                                seguro_desgravamen:credit.credit.safe,
+                                gastos_judiciales:credit.credit.legal_expenses,
+                                gastos_cobranza_sefil:managementExpenses,
+                                gastos_cobranza:credit.credit.collection_expenses,
+                                otros_valores:credit.credit.other_values,
                                 id:credit.credit.id,
                                 cartera:credit.cartera
                             });
@@ -50,11 +51,11 @@ export default function NavTools(){
                             :   
                                 <button onClick={async ()=>{
                                     const check = await useVerifyStruct({
-                                        credit_id:credit.credit.id,
-                                        cartera:credit.cartera
+                                        credit_id:credit.credit.id
                                     });
 
-                                    if(check){
+                                    if(!check){
+                                        const managementExpenses = credit.credit.management_collection_expenses || 0;
                                         store_structure.viewOn(true);
                                         store_structure.setInfoCredit({
                                             ci:credit.credit.clients[0].ci,
@@ -62,7 +63,7 @@ export default function NavTools(){
                                             total_amount:credit.credit.total_amount,
                                             cartera:credit.cartera,
                                             credit_id:credit.credit.id,
-                                            gasto_cobranza:credit.credit.gasto_cobranza_sefil
+                                            gasto_cobranza:managementExpenses
                                         });
                                     }else{
                                         sendpush({

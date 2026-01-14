@@ -89,17 +89,7 @@ export default function FilterCredits(){
     };
 
     const clearAllFilters = () => {
-        filter_credits.setSyncID('');
-        filter_credits.setName('');
-        filter_credits.setCI('');
-        filter_credits.setMinDays('');
-        filter_credits.setMaxDays('');
-        filter_credits.setAgency('');
-        filter_credits.setProvincia('');
-        filter_credits.setCanton('');
-        filter_credits.setSyncStatus('');
-        filter_credits.setCollectionState('');
-        filter_credits.setAgent('');
+        filter_credits.clearAllFilters();
 
         setCreditValue('');
         setNameValue('');
@@ -122,6 +112,39 @@ export default function FilterCredits(){
     useEffect(() => {
         filter_credits.getAgents();
     }, []);
+
+    // Sincronizar los valores locales cuando el store se limpie desde fuera
+    useEffect(() => {
+        if (filter_credits.sync_id === '' && filter_credits.client_name === '' && filter_credits.client_ci === '') {
+            setCreditValue('');
+            setNameValue('');
+            setCiValue('');
+            setActiveFilter(null);
+
+            if (minDaysRef.current) minDaysRef.current.value = '';
+            if (maxDaysRef.current) maxDaysRef.current.value = '';
+            if (carteraSelectRef.current) carteraSelectRef.current.value = '';
+            if (agencySelectRef.current) agencySelectRef.current.value = '';
+            if (provinciaRef.current) provinciaRef.current.value = '';
+            if (cantonRef.current) cantonRef.current.value = '';
+            if (syncStatusSelectRef.current) syncStatusSelectRef.current.value = '';
+            if (collectionStateSelectRef.current) collectionStateSelectRef.current.value = '';
+            if (agentSelectRef.current) agentSelectRef.current.value = '';
+        }
+    }, [
+        filter_credits.sync_id,
+        filter_credits.client_name,
+        filter_credits.client_ci,
+        filter_credits.days_past_due_min,
+        filter_credits.days_past_due_max,
+        filter_credits.cartera,
+        filter_credits.agency,
+        filter_credits.provincia,
+        filter_credits.canton,
+        filter_credits.sync_status,
+        filter_credits.collection_state,
+        filter_credits.agent
+    ]);
 
     return(
         <div className="FilterCredits">

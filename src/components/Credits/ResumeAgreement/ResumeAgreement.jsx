@@ -45,9 +45,9 @@ export default function ResumeAgreement({agreement, onActionComplete}){
             ci: agreement.client_ci,
             name: agreement.client_name,
             total_amount: parseFloat(agreement.total_amount),
-            cartera: credit.portfolio || '',
+            cartera: credit?.portfolio || credit?.business_id || '',
             credit_id: agreement.credit_id,
-            gasto_cobranza: parseFloat(credit.management_collection_expenses || 0),
+            gasto_cobranza: parseFloat(agreement.management_collection_expenses || credit?.management_collection_expenses || 0),
             agreement_id: agreement.id,
             view: 'edit',
             existing_fees: existingFees

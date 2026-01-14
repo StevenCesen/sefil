@@ -22,7 +22,7 @@ export default function Header(){
                             current_option={"CONECTADO"}
                         />
                         {
-                            (localStorage.getItem('rol')==='administrador') &&
+                            (localStorage.getItem('role')==='admin' || localStorage.getItem('role')==='supervisor') &&
                                 <MenuNotifier/>
                         }
                         <MenuUser/>

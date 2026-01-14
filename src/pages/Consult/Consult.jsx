@@ -1,17 +1,29 @@
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import "./Consult.css";
 import useFetch from "../../hooks/useFetch";
 import useFormatterNumber from "../../hooks/useFormatterNumber";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
+import { useStoreConsult } from "../../stores/useStoreConsult";
 
 export default function Consult() {
     const { fetchWithAuth } = useFetch();
-    const [searchType, setSearchType] = useState("ci");
-    const [searchValue, setSearchValue] = useState("");
-    const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [searched, setSearched] = useState(false);
+    const location = useLocation();
+    const consult = useStoreConsult();
+    const prevPathRef = useRef(null);
+
+    const {
+        searchType,
+        searchValue,
+        results,
+        loading,
+        searched,
+        setSearchType,
+        setSearchValue,
+        setResults,
+        setLoading,
+        setSearched
+    } = consult;
 
     const handleSearch = async () => {
         if (!searchValue.trim()) {
@@ -62,6 +74,27 @@ export default function Consult() {
             handleSearch();
         }
     };
+
+    // Detectar cuando se navega desde otra sección del NavSlide
+    useEffect(() => {
+        const currentPath = location.pathname;
+        const lastPath = prevPathRef.current;
+
+        console.log('🔍 Consult Navigation:', {
+            currentPath,
+            lastPath,
+            shouldClear: currentPath === '/consult' && lastPath && lastPath !== '/consult' && !lastPath.startsWith('/credits/')
+        });
+
+        // Si estamos entrando a /consult desde otra sección (no desde /credits/:id), limpiar búsqueda
+        if (currentPath === '/consult' && lastPath && lastPath !== '/consult' && !lastPath.startsWith('/credits/')) {
+            console.log('✅ Limpiando búsqueda en Consult');
+            consult.clearSearch();
+        }
+
+        // Actualizar el path anterior para la próxima navegación
+        prevPathRef.current = currentPath;
+    }, [location.pathname]);
 
     return (
         <div className="Consult">

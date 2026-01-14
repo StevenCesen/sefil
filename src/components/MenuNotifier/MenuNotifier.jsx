@@ -19,7 +19,7 @@ export default function MenuNotifier(){
         setMenu(false);
         setView(view_pdf);
         setCondonation([]);
-        //  Renderizar convenios y condonaciones
+        
         fetch(`${import.meta.env.VITE_URL_BASE}/credit/estructurar`,{
             headers: {
                 Accept: 'application/json',

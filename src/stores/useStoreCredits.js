@@ -17,6 +17,7 @@ export const useStoreFilterCredits = create((set,get) => ({
     collection_state:'',
     agent:'',
     agents:[],
+    lastVisitedPath: null,
     setSyncID:          (value)=>{set({sync_id:value})},
     setName:            (value)=>{set({client_name:value})},
     setCI:              (value)=>{set({client_ci:value})},
@@ -30,8 +31,26 @@ export const useStoreFilterCredits = create((set,get) => ({
     setSyncStatus:      (value)=>{set({sync_status:value})},
     setCollectionState: (value)=>{set({collection_state:value})},
     setAgent:           (value)=>{set({agent:value})},
+    setLastVisitedPath: (path)=>{set({lastVisitedPath:path})},
     setCredits:         async (data)=>{
         set({credits:data})
+    },
+    clearAllFilters: () => {
+        set({
+            sync_id: '',
+            client_name: '',
+            client_ci: '',
+            total_amount: '',
+            days_past_due_min: '',
+            days_past_due_max: '',
+            cartera: '',
+            agency: '',
+            provincia: '',
+            canton: '',
+            sync_status: '',
+            collection_state: '',
+            agent: ''
+        });
     },
     getAgents:          async ()=>{
         const { cartera } = get();

@@ -32,7 +32,8 @@ export default function Credit(){
     const [action,setAction]=useState('');
     const loader = useStoreLoader();
 
-    const attributes=new URLSearchParams(useLocation().search);
+    const location = useLocation();
+    const attributes=new URLSearchParams(location.search);
 
     const helperCredit=async ({credit_id})=>{
         loader.viewOn(true);
