@@ -167,5 +167,30 @@ export const useStoreManagement = create((set,get) => ({
         const {campain_id,credit_id}=get();
         const state=await checkManagement({credit_id,campain_id});
         return state.state;
+    },
+    refreshCredit: async () => {
+        const { credit } = get();
+        if (!credit?.id || !credit?.business_id) return;
+
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_URL_BASE}/credits/${credit.id}?business_id=${credit.business_id}`,
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
+            const data = await response.json();
+            if (data.code === 1 && data.result) {
+                const updatedCredit = data.result;
+                set({ credit: updatedCredit });
+                set({ monto: updatedCredit.total_amount });
+                set({ payments: { data: updatedCredit.collection_payments || [] } });
+            }
+        } catch (error) {
+            console.error('Error refreshing credit:', error);
+        }
     }
 }));

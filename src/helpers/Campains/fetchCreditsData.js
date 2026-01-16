@@ -5,9 +5,11 @@ export const fetchCreditsData = async (filters = {}) => {
         Object.keys(filters).forEach(key => {
             const value = filters[key];
             if (value !== undefined && value !== null && value !== '') {
-                // Si es un array, convertirlo a JSON string
                 if (Array.isArray(value)) {
-                    queryParams.append(key, JSON.stringify(value));
+                    // Enviar cada elemento del array con key[]
+                    value.forEach(item => {
+                        queryParams.append(`${key}[]`, item);
+                    });
                 } else {
                     queryParams.append(key, value);
                 }

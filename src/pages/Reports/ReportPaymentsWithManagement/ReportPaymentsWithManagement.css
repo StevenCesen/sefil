@@ -256,6 +256,20 @@
     outline: none;
 }
 
+.PaymentsWithManagement__filters-actions {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    padding-bottom: 5px;
+}
+
+.PaymentsWithManagement__table-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 0 0 8px 8px;
+    box-shadow: var(--box-shadow);
+}
+
 .filter-actions {
     display: flex;
     gap: 10px;
@@ -402,6 +416,46 @@
 .td-success {
     color: var(--color-1) !important;
     font-weight: 600;
+}
+
+/* Paginación */
+.PaymentsWithManagement__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 20px;
+    margin-top: 20px;
+    border-top: 1px solid rgba(139, 146, 167, 0.1);
+}
+
+.pagination-btn {
+    padding: 10px 20px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--color-1);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: var(--color-1);
+    transform: translateY(-2px);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    color: var(--color-texts);
+    font-size: 14px;
+    font-weight: 500;
 }
 
 /* Responsive */

@@ -6,11 +6,22 @@ import useAgencies from "../../../hooks/useAgencies";
 
 export default function ReportPaymentsWithManagement() {
     const [agents, setAgents] = useState([]);
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const [lastUpdate, setLastUpdate] = useState("");
     const { agencies, loading: loadingAgencies } = useAgencies();
     
+    // Detalle de créditos
+    const [credits, setCredits] = useState([]);
+    const [loadingCredits, setLoadingCredits] = useState(false);
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        lastPage: 1,
+        total: 0,
+        perPage: 15
+    });
+
     // Filtros
     const [credito, setCredito] = useState("");
     const [cedula, setCedula] = useState("");
@@ -19,6 +30,8 @@ export default function ReportPaymentsWithManagement() {
     const [diasMoraMin, setDiasMoraMin] = useState("");
     const [diasMoraMax, setDiasMoraMax] = useState("");
     const [tipoGestion, setTipoGestion] = useState("");
+    const [totalConGestion, setTotalConGestion] = useState("");
+    const [totalSinGestion, setTotalSinGestion] = useState("");
     const [agente, setAgente] = useState("");
     
     // Contadores
@@ -33,7 +46,25 @@ export default function ReportPaymentsWithManagement() {
 
     useEffect(() => {
         fetchData();
+        fetchUsers();
     }, []);
+
+    const fetchUsers = () => {
+        fetch(`${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1`, {
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const usersData = Array.isArray(data) ? data : (data.result?.data || []);
+                setUsers(usersData);
+            })
+            .catch(() => {
+                setUsers([]);
+            });
+    };
 
     const getTimeAgo = (dateString) => {
         if (!dateString) return "Desconocida";
@@ -82,17 +113,67 @@ export default function ReportPaymentsWithManagement() {
             });
     };
 
+    const fetchCreditsDetails = (page = 1) => {
+        setLoadingCredits(true);
+
+        const params = new URLSearchParams();
+        params.append("page", page);
+        if (credito.length >= 3) params.append("credit_name", credito);
+        if (cedula.length >= 3) params.append("client_ci", cedula);
+        if (agencia) params.append("agency", agencia);
+        if (estado) params.append("collection_state", estado);
+        if (diasMoraMin) params.append("days_past_due_min", diasMoraMin);
+        if (diasMoraMax) params.append("days_past_due_max", diasMoraMax);
+        if (tipoGestion) params.append("management_type", tipoGestion);
+        if (agente) params.append("agent_id", agente);
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/statistics/payments-with-management-details?${params.toString()}`, {
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                if (data.code === 1) {
+                    setCredits(data.result.data || []);
+                    setPagination({
+                        currentPage: data.result.current_page || 1,
+                        lastPage: data.result.last_page || 1,
+                        total: data.result.total || 0,
+                        perPage: data.result.per_page || 15
+                    });
+                }
+                setLoadingCredits(false);
+            })
+            .catch(() => {
+                setLoadingCredits(false);
+            });
+    };
+
     const handleFilter = () => {
-        fetchData();
+        fetchCreditsDetails();
     };
 
     const handleClearFilters = () => {
         setCredito("");
+        setCedula("");
         setAgencia("");
         setEstado("");
-        setDiasMora("");
+        setDiasMoraMin("");
+        setDiasMoraMax("");
         setTipoGestion("");
+        setTotalConGestion("");
+        setTotalSinGestion("");
         setAgente("");
+        setCredits([]);
+        setPagination({
+            currentPage: 1,
+            lastPage: 1,
+            total: 0,
+            perPage: 15
+        });
     };
 
     return (
@@ -295,15 +376,10 @@ export default function ReportPaymentsWithManagement() {
                                 onChange={(e) => setTipoGestion(e.target.value)}
                             >
                                 <option value="">-- Seleccionar --</option>
-                                <option value="CON_GESTION">CON GESTIÓN</option>
-                                <option value="SIN_GESTION">SIN GESTIÓN</option>
+                                <option value="SI">CON GESTIÓN</option>
+                                <option value="NO">SIN GESTIÓN</option>
                             </select>
                         </label>
-
-                        <label>Cantidad gestiones efectivas</label>
-                        <label>Cantidad gestiones no efectivas</label>
-                        <label>Total pagado con gestión</label>
-                        <label>Total pagado sin gestión</label>
 
                         <label>
                             Agente
@@ -312,25 +388,116 @@ export default function ReportPaymentsWithManagement() {
                                 onChange={(e) => setAgente(e.target.value)}
                             >
                                 <option value="">-- Seleccionar --</option>
-                                {agents.map((agent, index) => (
-                                    <option key={index} value={agent.name}>
-                                        {agent.name}
+                                {users.map((user) => (
+                                    <option key={user.id} value={user.id}>
+                                        {user.name}
                                     </option>
                                 ))}
                             </select>
                         </label>
+
+                        <div className="PaymentsWithManagement__filters-actions">
+                            <button
+                                className="btn-filter"
+                                onClick={handleFilter}
+                                disabled={loadingCredits}
+                            >
+                                {loadingCredits ? "Buscando..." : "Buscar"}
+                            </button>
+                            <button
+                                className="btn-clear"
+                                onClick={handleClearFilters}
+                            >
+                                Limpiar
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Items de datos */}
-                    {agents.length === 0 && !loading && (
-                        <div style={{textAlign: "center", padding: "40px", color: "var(--color-texts)"}}>
-                            No hay datos disponibles
-                        </div>
-                    )}
-                    
-                    {loading && (
+                    {/* Tabla de créditos */}
+                    {loadingCredits && (
                         <div style={{textAlign: "center", padding: "40px", color: "var(--color-texts)"}}>
                             Cargando datos...
+                        </div>
+                    )}
+
+                    {!loadingCredits && credits.length === 0 && (
+                        <div style={{textAlign: "center", padding: "40px", color: "var(--color-texts)"}}>
+                            Aplica filtros para ver el detalle de créditos
+                        </div>
+                    )}
+
+                    {!loadingCredits && credits.length > 0 && (
+                        <div className="PaymentsWithManagement__table-container">
+                            <table className="PaymentsWithManagement__table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Pago</th>
+                                        <th>Nombre</th>
+                                        <th>Crédito</th>
+                                        <th>Cédula</th>
+                                        <th>Agencia</th>
+                                        <th>Estado</th>
+                                        <th>Días mora</th>
+                                        <th>Gestiones efectivas</th>
+                                        <th>Gestiones no efectivas</th>
+                                        <th>Pagado con gestión</th>
+                                        <th>Pagado sin gestión</th>
+                                        <th>Valor pago</th>
+                                        <th>Fecha pago</th>
+                                        <th>Agente</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {credits.map((credit, index) => (
+                                        <tr key={credit.payment_id || index}>
+                                            <td>{credit.payment_id}</td>
+                                            <td>{credit.credit_name}</td>
+                                            <td>{credit.credit_sync_id}</td>
+                                            <td>{credit.client_ci}</td>
+                                            <td>{credit.agency}</td>
+                                            <td>{credit.collection_state}</td>
+                                            <td>{credit.days_past_due}</td>
+                                            <td>{credit.effective_managements_count}</td>
+                                            <td>{credit.non_effective_managements_count}</td>
+                                            <td>{useFormatterNumber({ value: credit.total_paid_with_management, currency: 'USD' })}</td>
+                                            <td>{useFormatterNumber({ value: credit.total_paid_without_management, currency: 'USD' })}</td>
+                                            <td>{useFormatterNumber({ value: credit.payment_value, currency: 'USD' })}</td>
+                                            <td>{new Date(credit.payment_date).toLocaleString('es-EC', { 
+                                                year: 'numeric',
+                                                month: '2-digit',
+                                                day: '2-digit',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                                hour12: false
+                                            })}</td>
+                                            <td>{credit.agent}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            
+                            {/* Controles de paginación */}
+                            {pagination.lastPage > 1 && (
+                                <div className="PaymentsWithManagement__pagination">
+                                    <button
+                                        onClick={() => fetchCreditsDetails(pagination.currentPage - 1)}
+                                        disabled={pagination.currentPage === 1 || loadingCredits}
+                                        className="pagination-btn"
+                                    >
+                                        ← Anterior
+                                    </button>
+                                    <span className="pagination-info">
+                                        Página {pagination.currentPage} de {pagination.lastPage} ({pagination.total} registros)
+                                    </span>
+                                    <button
+                                        onClick={() => fetchCreditsDetails(pagination.currentPage + 1)}
+                                        disabled={pagination.currentPage === pagination.lastPage || loadingCredits}
+                                        className="pagination-btn"
+                                    >
+                                        Siguiente →
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

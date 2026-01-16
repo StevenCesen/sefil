@@ -235,15 +235,22 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                 paymentData.campain_id = campain_id;
             }
 
+
+            console.log('Datos del pago a enviar:', paymentData);
+
             const result = await createPayment({ data: paymentData });
-            console.log(result);
+
+            console.log('Resultado del pago:', result);
+            
             if (result.code === 1 && result.result) {
                 // Usar los datos que vienen del backend
                 const backendPayment = result.result;
 
                 setVoucher({
                     id: backendPayment.payment_reference || backendPayment.id,
-                    sync: backendPayment.sync_id
+                    sync: backendPayment.sync_id,
+                    payment_number: backendPayment.payment_number,
+                    payment_reference: backendPayment.payment_reference
                 });
 
                 // Preparar datos para el PDF usando la respuesta del backend
@@ -263,8 +270,11 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                     otros_valores: backendPayment.other_values || 0,
                     client_name: backendPayment.client_name || credit.name,
                     client_ci: backendPayment.client_ci || credit.ci,
-                    sync_id: backendPayment.sync_id || credit.sync
+                    sync_id: backendPayment.sync_id || credit.sync,
+                    payment_number: backendPayment.payment_number
                 };
+
+                console.log(pdfData)
 
                 setSendData(pdfData);
                 button.textContent = 'Pago registrado';
@@ -509,8 +519,9 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                         updateInfoValues();
                     }}
                     payment={{
-                        id: voucher.id,
-                        payment_reference: voucher.id,
+                        id: voucher.payment_number,
+                        payment_number: voucher.payment_number,
+                        payment_reference: voucher.payment_reference,
                         status: "ORIGINAL",
                         tipo_transaccion: sendData.tipo_transaccion,
                         forma_pago: sendData.forma_pago,

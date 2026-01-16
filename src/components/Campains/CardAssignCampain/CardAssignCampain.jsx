@@ -91,7 +91,7 @@ export default function CardAssignCampain({ campain_id }) {
         }
 
         if (filters.management_tray) {
-            queryFilters.management_tray = filters.management_tray;
+            queryFilters.management_tray = [filters.management_tray];
         }
 
         queryFilters.sync_status = 'ACTIVE';
@@ -196,9 +196,11 @@ export default function CardAssignCampain({ campain_id }) {
                 }
 
                 if (filters.management_tray) {
-                    transferData.management_tray = filters.management_tray;
+                    transferData.management_tray = [filters.management_tray];
                 }
             }
+
+            console.log('Datos de transferencia:', transferData);
 
             const response = await fetch(`${import.meta.env.VITE_URL_BASE}/campains/transfer/${data_campain.id}`, {
                 method: 'PATCH',

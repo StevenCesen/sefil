@@ -133,7 +133,7 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
                 `}
             >{state}</p>
 
-            <p>{`${(state!=='FUERA DE LÍNEA') ? times.hour+":"+times.minutes+":"+times.second : " - "}`}</p>
+            <p>{`${(state!=='FUERA DE LÍNEA') ? +times.minutes+":"+times.second : " - "}`}</p>
             {/* <p>{name_campain}</p> */}
             {
                 (mode==='complete')

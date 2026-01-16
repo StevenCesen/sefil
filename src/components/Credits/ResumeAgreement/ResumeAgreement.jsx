@@ -73,7 +73,7 @@ export default function ResumeAgreement({agreement, onActionComplete}){
             setShowGastoCobranzaModal(true);
         } else {
             const payData = {
-                amount: parseFloat(fee.payment_amount),
+                amount: parseFloat(fee.payment_value),
                 quoteNumber: index + 1,
                 paymentDate: fee.payment_date
             };
@@ -257,7 +257,7 @@ export default function ResumeAgreement({agreement, onActionComplete}){
                             {agreement.fee_detail.map((fee, index) => (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
-                                    <td>{useFormatterNumber({currency:'USD', value: parseFloat(fee.payment_amount)})}</td>
+                                    <td>{useFormatterNumber({currency:'USD', value: (fee.payment_status!=='PAGADO' && fee.payment_status!=='PAGADA') ? parseFloat(fee.payment_value) : parseFloat(fee.payment_amount)})}</td>
                                     <td>{fee.payment_date}</td>
                                     <td>
                                         <span>
@@ -328,9 +328,13 @@ export default function ResumeAgreement({agreement, onActionComplete}){
                     ci: store_management.credit.client_ci,
                     name: store_management.credit.client_name
                 }}
-                updateInfoValues={(newValues) => {
-                    // Actualizar crédito y recargar actividad
+                updateInfoValues={async () => {
+                    loader.viewOn(true);
+                    // Actualizar crédito con los nuevos valores del backend
+                    await store_management.refreshCredit();
+                    // Recargar actividad
                     if (onActionComplete) onActionComplete();
+                    loader.viewOn(false);
                     setShowPayModal(false);
                 }}
                 amount={paymentData.amount}
@@ -350,11 +354,14 @@ export default function ResumeAgreement({agreement, onActionComplete}){
                 direccion={''}
                 telefono={''}
                 setGastos={() => {}}
-                setView={(value) => {
+                setView={async (value) => {
                     setShowGastoCobranzaModal(value);
-                    // Actualizar crédito y recargar actividad
-                    if (!value && onActionComplete) {
-                        onActionComplete();
+                    // Actualizar crédito con los nuevos valores del backend
+                    if (!value) {
+                        loader.viewOn(true);
+                        await store_management.refreshCredit();
+                        if (onActionComplete) onActionComplete();
+                        loader.viewOn(false);
                     }
                 }}
                 setPDF={() => {}}

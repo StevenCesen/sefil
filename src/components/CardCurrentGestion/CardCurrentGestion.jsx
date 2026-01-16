@@ -32,6 +32,10 @@ export default function CardCurrentGestion({management_id}){
             </div>
 
             {
+                console.log(calls)
+            }
+
+            {
                 (calls.length > 0) ? (
                     calls.map((call,index)=>(
                         <div key={index} className="CardCurrentGestion__item">
@@ -40,7 +44,10 @@ export default function CardCurrentGestion({management_id}){
                             <label>{call.client_name}</label>
                             <label>{(call.call_channel==='WA') ? <MessageCircle color="green" size={16}/> : <></>} {call.phone_number}</label>
                             <label>{call.call_state}</label>
-                            <audio controls style={{width:"100%"}} src={`https://core.sefil.com.ec/api/public/files/audios/${call.call_media_path}`}></audio>
+                            <audio controls style={{width:"100%"}}>
+                                <source src={`https://collapi.sefil.com.ec/public/files/${call.call_media_path}`} type="audio/webm" />
+                                Tu navegador no soporta el elemento de audio.
+                            </audio>
                         </div>
                     ))
                 ) : (

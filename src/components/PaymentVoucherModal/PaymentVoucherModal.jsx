@@ -68,7 +68,7 @@ export default function PaymentVoucherModal({
                     height={'500px'}
                 >
                     <PDF
-                        nro_voucher={payment.payment_number || payment.id}
+                        nro_voucher={payment.payment_number || payment.nro_voucher || payment.voucher_number || payment.id || ''}
                         type_print={printType}
                         tipo_transaccion={payment.payment_way || payment.tipo_transaccion || 'total'}
                         forma_pago={paymentMethod}
