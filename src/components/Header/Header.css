@@ -8,7 +8,6 @@
     background-color: var(--bg-2);
     height: var(--height-header);
     display: grid;
-    grid-template-columns: 2fr 9fr 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
     padding: 0 20px;
@@ -17,6 +16,16 @@
     position: sticky;
     top: 0;
     z-index: 2001;
+}
+
+/* Admin/Supervisor: Logo, CardSelectState, MenuNotifier, MenuUser, Logout */
+.header--admin {
+    grid-template-columns: 2fr 9fr 1fr 1fr 1fr;
+}
+
+/* Agente: Logo, CardSelectState, MenuUser, Logout (sin MenuNotifier) */
+.header--agent {
+    grid-template-columns: 2fr 9fr 1fr 1fr;
 }
 
 .header>div:nth-child(4){

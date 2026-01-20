@@ -15,6 +15,7 @@ export default function ReportPaymentsWithManagement() {
     // Detalle de créditos
     const [credits, setCredits] = useState([]);
     const [loadingCredits, setLoadingCredits] = useState(false);
+    const [totalPagadoConGestion, setTotalPagadoConGestion] = useState(0);
     const [pagination, setPagination] = useState({
         currentPage: 1,
         lastPage: 1,
@@ -137,7 +138,15 @@ export default function ReportPaymentsWithManagement() {
             .then((data) => {
                 console.log(data);
                 if (data.code === 1) {
-                    setCredits(data.result.data || []);
+                    const creditsData = data.result.data || [];
+                    setCredits(creditsData);
+                    
+                    // Calcular total de pagado con gestión
+                    const total = creditsData.reduce((sum, credit) => {
+                        return sum + (parseFloat(credit.total_paid_with_management) || 0);
+                    }, 0);
+                    setTotalPagadoConGestion(total);
+                    
                     setPagination({
                         currentPage: data.result.current_page || 1,
                         lastPage: data.result.last_page || 1,
@@ -168,6 +177,7 @@ export default function ReportPaymentsWithManagement() {
         setTotalSinGestion("");
         setAgente("");
         setCredits([]);
+        setTotalPagadoConGestion(0);
         setPagination({
             currentPage: 1,
             lastPage: 1,
@@ -474,6 +484,15 @@ export default function ReportPaymentsWithManagement() {
                                         </tr>
                                     ))}
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colSpan="9" style={{textAlign: "right", fontWeight: "bold"}}>TOTAL:</td>
+                                        <td style={{fontWeight: "bold", backgroundColor: "var(--color-2)", color: "white"}}>
+                                            {useFormatterNumber({ value: totalPagadoConGestion, currency: 'USD' })}
+                                        </td>
+                                        <td colSpan="4"></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                             
                             {/* Controles de paginación */}

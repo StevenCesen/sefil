@@ -26,7 +26,7 @@ export default function AgentPaymentSummary({ agents }) {
                 </div>
                 <div>
                     <h4>Resumen por Agente</h4>
-                    <p>Muestra el resultado del total recuperado por agente con gestión en campaña en el rango mayor a 60 días de mora en el pago</p>
+                    <p>Muestra el resultado del total recuperado por agente con gestión OFERTA DE PAGO en la campaña actual.</p>
                 </div>
             </div>
             

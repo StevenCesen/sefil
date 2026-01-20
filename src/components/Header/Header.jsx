@@ -11,8 +11,10 @@ export default function Header(){
         useLogout(e);
     };
 
+    const isAdminOrSupervisor = localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'supervisor';
+
     return(
-        <header className="header">
+        <header className={`header ${isAdminOrSupervisor ? 'header--admin' : 'header--agent'}`}>
             <img src={'./icons/logo.png'}/>
             {
                 (useSessions()) &&
@@ -21,10 +23,7 @@ export default function Header(){
                             mode={"select"}
                             current_option={"CONECTADO"}
                         />
-                        {
-                            (localStorage.getItem('role')==='admin' || localStorage.getItem('role')==='supervisor') &&
-                                <MenuNotifier/>
-                        }
+                        {isAdminOrSupervisor && <MenuNotifier/>}
                         <MenuUser/>
                         <button onClick={handleLogout}>Cerrar sesión</button>
                     </>

@@ -19,6 +19,14 @@
     align-items: center;
 }
 
+/* Header Row 2 - Segunda fila para Monto, Estado, Acciones */
+.SectionPayments__header--row2 {
+    grid-template-columns: repeat(3, 1fr);
+    background: linear-gradient(135deg, var(--color-2, #1d4ed8), var(--color-1, #2563eb));
+    padding: 10px;
+    font-size: 13px;
+}
+
 .SectionPayments__header label {
     padding: 5px;
     border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -31,21 +39,61 @@
     border-right: none;
 }
 
+/* Item Group - Contenedor para las dos filas de cada pago */
+.SectionPayments__itemGroup {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.SectionPayments__itemGroup:last-child {
+    border-bottom: none;
+}
+
+.SectionPayments__itemGroup:hover {
+    background-color: #f9fafb;
+}
+
 .SectionPayments__item {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     padding: 15px 10px;
-    border-bottom: 1px solid #e5e7eb;
     align-items: center;
     transition: background-color 0.2s ease;
 }
 
-.SectionPayments__item:hover {
-    background-color: #f9fafb;
+/* Row 2 del item - Monto, Estado, Acciones */
+.SectionPayments__item--row2 {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 8px 10px;
+    background-color: #f8fafc;
+    border-top: 1px dashed #e5e7eb;
 }
 
-.SectionPayments__item:last-child {
-    border-bottom: none;
+/* Celda con header */
+.SectionPayments__cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border-right: 1px solid #e5e7eb;
+    padding: 5px;
+}
+
+.SectionPayments__cell:last-child {
+    border-right: none;
+}
+
+.SectionPayments__cellHeader {
+    background: linear-gradient(135deg, var(--color-1, #2563eb), var(--color-2, #1d4ed8));
+    color: white;
+    font-weight: 600;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.SectionPayments__cell label {
+    border-right: none;
 }
 
 .SectionPayments__item label {
@@ -61,20 +109,37 @@
 
 .SectionPayments__item label:last-child {
     border-right: none;
+}
+
+/* Acciones container */
+.SectionPayments__actions {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
 }
 
-.SectionPayments__item>:nth-child(2),.SectionPayments__item>:nth-child(12){
+.SectionPayments__actions button {
+    background: none;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 5px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.SectionPayments__actions button:hover {
+    background-color: #e5e7eb;
+}
+
+.SectionPayments__item>:nth-child(2) {
     text-align: center;
     font-size: 13px;
     color: #374151;
     padding: 5px;
     white-space-collapse: break-spaces;
-    overflow:hidden;
-    text-overflow:initial;
+    overflow: hidden;
+    text-overflow: initial;
     border-right: 1px solid #e5e7eb;
 }
 

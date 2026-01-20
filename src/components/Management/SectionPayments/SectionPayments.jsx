@@ -14,43 +14,27 @@ export default function SectionPayments({ payments, credit, view_complete_info =
     const [paymentToReverse, setPaymentToReverse] = useState(null);
     const loader = useStoreLoader();
 
-    const { headers, detailFields } = useMemo(() => {
+    const showTwoRows = view_complete_info && is_admin;
+
+    const { headersRow1, detailFields } = useMemo(() => {
         const baseHeaders = ['Comprobante', 'Fecha pago', 'Tipo de pago'];
-        const detailHeaders = (view_complete_info && is_admin) ? ['Capital', 'Interes', 'Mora', 'Seguro', 'Judicial', 'Gastos Cobranza', 'Otros valores'] : [];
-        const endHeaders = is_admin
-            ? ['Monto','Estado','Acciones']
-            : ['Monto'];
+        const detailHeaders = ['Capital', 'Interes', 'Mora', 'Seguro', 'Judicial', 'Gastos Cobr.', 'Otros valores'];
+
+        if (showTwoRows) {
+            return {
+                headersRow1: [...baseHeaders, ...detailHeaders],
+                detailFields: ['capital', 'interest', 'mora', 'safe', 'legal_expenses', 'collection_expenses', 'other_values']
+            };
+        }
 
         return {
-            headers: [...baseHeaders, ...detailHeaders, ...endHeaders],
-            detailFields: (view_complete_info && is_admin) ? ['capital', 'interest', 'mora', 'safe', 'legal_expenses', 'collection_expenses', 'other_values'] : [],
-
+            headersRow1: [...baseHeaders, 'Monto'],
+            detailFields: []
         };
-    }, [view_complete_info, is_admin]);
+    }, [showTwoRows]);
 
     const getDetailValue = (payment, field) => {
         return payment[field] || 0;
-    };
-
-    const renderPaymentCells = (payment) => {
-        const baseCells = [
-            (payment.payment_number !== null) ? payment.payment_number : 'FACES',
-            payment.payment_date || payment.fecha,
-            payment.payment_type || payment.forma_pago
-        ];
-
-        const detailCells = detailFields.map(field =>
-            useFormatterNumber({ value: getDetailValue(payment, field), currency: 'USD' })
-        );
-
-        const endCells = [
-            useFormatterNumber({ value: payment.payment_value || payment.valor_recibido, currency: 'USD' }),
-            (payment.payment_status === 'ERROR_SUM' || payment.status === 'ERROR_SUM') 
-                ? 'PENDIENTE DE PROCESAR' 
-                : (payment.payment_status || payment.status),
-        ];
-
-        return [...baseCells, ...detailCells, ...endCells];
     };
 
     const handlePrintClick = (payment) => {
@@ -151,22 +135,54 @@ export default function SectionPayments({ payments, credit, view_complete_info =
 
     return (
         <>
-            <div className="SectionPayments">
-                <div className="SectionPayments__header">
-                    {headers.map(header => <label key={header}>{header}</label>)}
+            <div className={`SectionPayments ${showTwoRows ? 'SectionPayments--twoRows' : ''}`}>
+                {/* Header Row 1 */}
+                <div className="SectionPayments__header SectionPayments__header--row1">
+                    {headersRow1.map(header => <label key={header}>{header}</label>)}
                 </div>
-                
-                {payments.data.map((payment, n) => {
-                    const cells = renderPaymentCells(payment);
-                    
-                    return (
-                        <div key={n} className="SectionPayments__item">
-                            {cells.map((cell, index) => (
-                                <label key={index}>{cell}</label>
-                            ))}
-                            
-                            {
-                                (view_complete_info && is_admin) && (
+
+                {payments.data.map((payment, n) => (
+                    <div key={n} className="SectionPayments__itemGroup">
+                        {/* Fila 1: Datos principales */}
+                        <div className="SectionPayments__item SectionPayments__item--row1">
+                            <label>{(payment.payment_number !== null) ? payment.payment_number : 'FACES'}</label>
+                            <label>{payment.payment_date || payment.fecha}</label>
+                            <label>{payment.payment_type || payment.forma_pago}</label>
+
+                            {showTwoRows ? (
+                                // Mostrar detalles de rubros
+                                detailFields.map(field => (
+                                    <label key={field}>
+                                        {useFormatterNumber({ value: getDetailValue(payment, field), currency: 'USD' })}
+                                    </label>
+                                ))
+                            ) : (
+                                // Solo mostrar monto
+                                <label>
+                                    {useFormatterNumber({ value: payment.payment_value || payment.valor_recibido, currency: 'USD' })}
+                                </label>
+                            )}
+                        </div>
+
+                        {/* Fila 2: Monto, Estado, Acciones (solo para admin con info completa) */}
+                        {showTwoRows && (
+                            <div className="SectionPayments__item SectionPayments__item--row2">
+                                <div className="SectionPayments__cell">
+                                    <span className="SectionPayments__cellHeader">Monto</span>
+                                    <label>
+                                        {useFormatterNumber({ value: payment.payment_value || payment.valor_recibido, currency: 'USD' })}
+                                    </label>
+                                </div>
+                                <div className="SectionPayments__cell">
+                                    <span className="SectionPayments__cellHeader">Estado</span>
+                                    <label>
+                                        {(payment.payment_status === 'ERROR_SUM' || payment.status === 'ERROR_SUM')
+                                            ? 'PENDIENTE DE PROCESAR'
+                                            : (payment.payment_status || payment.status)}
+                                    </label>
+                                </div>
+                                <div className="SectionPayments__cell">
+                                    <span className="SectionPayments__cellHeader">Acciones</span>
                                     <div className="SectionPayments__actions">
                                         <button onClick={() => handlePrintClick(payment)} title="Reimprimir comprobante">
                                             <Printer size={16} />
@@ -175,11 +191,11 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                                             <Ban size={16} />
                                         </button>
                                     </div>
-                                )
-                            }
-                        </div>
-                    );
-                })}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ))}
             </div>
 
             {showReverseModal && paymentToReverse && (
@@ -210,7 +226,7 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                                 ADVERTENCIA: Al anular este pago, el pago en el convenio también se revertirá.
                             </p>
                         )}
-                        
+
                         <div style={{ marginTop: '20px' }}>
                             <button
                                 onClick={handleConfirmReverse}
