@@ -6,7 +6,7 @@ import getCondonations from "../../../helpers/Credits/getCondonations";
 import getAgreements from "../../../helpers/Credits/getAgreements";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 
-export default function CardActivity(){
+export default function CardActivity({ showActions = true }){
     const [condonations, setCondonations] = useState([]);
     const [agreements, setAgreements] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -66,10 +66,11 @@ export default function CardActivity(){
                 <>
                     <h4 style={{marginTop: '1rem', color: 'var(--color-texts)'}}>Condonaciones</h4>
                     {condonations.map((condonation)=>(
-                        <ResumeCondonation 
-                            key={`condonation-${condonation.id}`} 
+                        <ResumeCondonation
+                            key={`condonation-${condonation.id}`}
                             condonation={condonation}
                             onActionComplete={handleActionComplete}
+                            showActions={showActions}
                         />
                     ))}
                 </>
@@ -79,10 +80,11 @@ export default function CardActivity(){
                 <>
                     <h4 style={{marginTop: '1rem', color: 'var(--color-texts)'}}>Convenios de pago</h4>
                     {agreements.map((agreement)=>(
-                        <ResumeAgreement 
-                            key={`agreement-${agreement.id}`} 
+                        <ResumeAgreement
+                            key={`agreement-${agreement.id}`}
                             agreement={agreement}
                             onActionComplete={handleActionComplete}
+                            showActions={showActions}
                         />
                     ))}
                 </>

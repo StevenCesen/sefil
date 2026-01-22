@@ -8,12 +8,14 @@ import BackButton from "../../components/BackButton/BackButton";
 export default function Me(){
     const navigate = useNavigate();
     const [password, setPassword] = useState('');
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [code, setCode] = useState('');
     const [isLoadingCode, setIsLoadingCode] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [codeSent, setCodeSent] = useState(false);
 
     const pass = useRef();
+    const passConfirm = useRef();
 
     const [validations, setValidations] = useState({
         hasMinLength: false,
@@ -23,16 +25,6 @@ export default function Me(){
     });
 
     const isPasswordValid = Object.values(validations).every(v => v === true);
-
-    const generateUUID = () => {
-        let d = new Date().getTime();
-        let uuid = 'xxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = (d + Math.random() * 16) % 16 | 0;
-            d = Math.floor(d / 16);
-            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-        });
-        return uuid;
-    }
 
     const validatePassword = (value) => {
         setValidations({
@@ -48,32 +40,40 @@ export default function Me(){
 
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_URL_BASE}/sendcode?id=${localStorage.getItem('temp_uS')}&code=${generateUUID()}`,
+                `${import.meta.env.VITE_URL_BASE}/password/send-code`,
                 {
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         Accept: 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ id: parseInt(localStorage.getItem('temp_uS')) })
                 }
             );
 
             const data = await response.json();
 
-            if (response.ok) {
+            if (data.code === 1) {
                 setCodeSent(true);
+                const username = localStorage.getItem('name')?.toLowerCase() === 'maria_bravo';
+
                 sendpush({
                     title: 'Código enviado',
-                    message: 'Revisa tu correo electrónico para obtener el código de seguridad.',
-                    type: 'Push--success',
+                    message: username
+                        ? 'Revisa tu correo electrónico para obtener el código de seguridad.'
+                        : 'Pide el código en sistemas.',
+                    type: 'Push--sucessful',
                     timeout: 5000
                 });
+
             } else {
-                throw new Error('Error al enviar el código');
+                throw new Error(data.message || 'Error al enviar el código');
             }
         } catch (error) {
             sendpush({
                 title: 'Error',
-                message: 'No se pudo enviar el código. Intenta nuevamente.',
+                message: error.message || 'No se pudo enviar el código. Intenta nuevamente.',
                 type: 'Push--danger',
                 timeout: 5000
             });
@@ -87,6 +87,16 @@ export default function Me(){
             sendpush({
                 title: 'Contraseña inválida',
                 message: 'Por favor, cumple con todos los requisitos de seguridad.',
+                type: 'Push--danger',
+                timeout: 5000
+            });
+            return;
+        }
+
+        if (password !== passwordConfirmation) {
+            sendpush({
+                title: 'Error',
+                message: 'Las contraseñas no coinciden.',
                 type: 'Push--danger',
                 timeout: 5000
             });
@@ -107,25 +117,31 @@ export default function Me(){
 
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_URL_BASE}/users/password/${localStorage.getItem('temp_uS')}`,
+                `${import.meta.env.VITE_URL_BASE}/password/reset`,
                 {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         Accept: 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
-                    body: new URLSearchParams({ password, code })
+                    body: JSON.stringify({
+                        id: parseInt(localStorage.getItem('temp_uS')),
+                        code: parseInt(code),
+                        password: password,
+                        password_confirmation: passwordConfirmation
+                    })
                 }
             );
 
             const data = await response.json();
 
-            if (data.state === 200) {
+            if (response.ok) {
                 localStorage.setItem('change_ps', false);
                 sendpush({
                     title: '¡Éxito!',
                     message: 'Tu contraseña ha sido actualizada correctamente.',
-                    type: 'Push--success',
+                    type: 'Push--sucessful',
                     timeout: 5000
                 });
 
@@ -217,7 +233,25 @@ export default function Me(){
                             />
                             <Eye input={pass} />
                         </label>
-                        
+
+                        <label className="Me__field Me__field--password">
+                            <span className="Me__label">Confirmar contraseña</span>
+                            <small className="Me__help">Repite tu nueva contraseña</small>
+                            <input
+                                ref={passConfirm}
+                                type="password"
+                                placeholder="Confirma tu nueva contraseña"
+                                value={passwordConfirmation}
+                                autoComplete="new-password"
+                                className="Me__input Me__input--password"
+                                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                            />
+                            <Eye input={passConfirm} />
+                        </label>
+                        {password && passwordConfirmation && password !== passwordConfirmation && (
+                            <p className="Me__requirement">Las contraseñas no coinciden</p>
+                        )}
+
                         <div className="Me__requirements">
                             <p className="Me__requirements-title">Requisitos de seguridad:</p>
                             <p className={validations.hasMinLength ? 'Me__requirement--valid' : 'Me__requirement'}>
@@ -236,7 +270,7 @@ export default function Me(){
                         
                         <button
                             onClick={handleUpdatePassword}
-                            disabled={!isPasswordValid || !code.trim() || isUpdating}
+                            disabled={!isPasswordValid || !code.trim() || isUpdating || password !== passwordConfirmation}
                             type="button"
                             className="Me__update-btn"
                         >

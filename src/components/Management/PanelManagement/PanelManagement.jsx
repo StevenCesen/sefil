@@ -15,6 +15,7 @@ import ListContacts from "../ListContacts/ListContacts";
 import "./PanelManagement.css";
 import ViewPDFCondonation from "../../Credits/ViewPDFCondonation/ViewPDFCondonation";
 import ViewPDFStructure from "../../Credits/ViewPDFStructure/ViewPDFStructure";
+import CardActivity from "../../Credits/CardActivity/CardActivity";
 
 export default function PanelManagement(){
     const store_management=useStoreManagement();
@@ -101,6 +102,7 @@ export default function PanelManagement(){
                                         campain_id={store_management.campain_id}
                                         credit_status={credit.sync_status}
                                     />
+                                    <CardActivity showActions={false} />
                                 </div>
                             )}
                         </div>

@@ -10,7 +10,7 @@ import denyCondonation from "../../../helpers/Credits/denyCondonation";
 import revertCondonation from "../../../helpers/Credits/revertCondonation";
 import sendpush from "../../../helpers/sendpush";
 
-export default function ResumeCondonation({condonation, onActionComplete}){
+export default function ResumeCondonation({condonation, onActionComplete, showActions = true}){
     const store_condonation = useStoreCondonation();
     const store_management = useStoreManagement();
     const loader = useStoreLoader();
@@ -213,26 +213,28 @@ export default function ResumeCondonation({condonation, onActionComplete}){
                 TOTAL CONDONADO: {useFormatterNumber({ currency:'USD', value: parseFloat(condonation.amount)})}
             </span>
 
-            <div className="ResumeCondonation__actions">
-                {condonation.status?.toUpperCase() === 'PENDIENTE' && (
-                    <>
-                        <button className="btn btn--success" onClick={handleAuthorize}>
-                            Autorizar
+            {showActions && (
+                <div className="ResumeCondonation__actions">
+                    {condonation.status?.toUpperCase() === 'PENDIENTE' && (
+                        <>
+                            <button className="btn btn--success" onClick={handleAuthorize}>
+                                Autorizar
+                            </button>
+                            <button className="btn btn--warning" onClick={handleEdit}>
+                                Editar
+                            </button>
+                            <button className="btn btn--danger" onClick={handleDeny}>
+                                Denegar
+                            </button>
+                        </>
+                    )}
+                    {condonation.status?.toUpperCase() === 'AUTORIZADA' && (
+                        <button className="btn btn--danger" onClick={handleRevert}>
+                            Revertir
                         </button>
-                        <button className="btn btn--warning" onClick={handleEdit}>
-                            Editar
-                        </button>
-                        <button className="btn btn--danger" onClick={handleDeny}>
-                            Denegar
-                        </button>
-                    </>
-                )}
-                {condonation.status?.toUpperCase() === 'AUTORIZADA' && (
-                    <button className="btn btn--danger" onClick={handleRevert}>
-                        Revertir
-                    </button>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
             
             <ConfirmDialog
                 isOpen={confirmDialog.isOpen}

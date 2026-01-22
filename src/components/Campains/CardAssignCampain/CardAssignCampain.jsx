@@ -21,6 +21,8 @@ export default function CardAssignCampain({ campain_id }) {
     const [total_assign, setTotalAssign] = useState(0);
     const [loading, setLoading] = useState(false);
     const [credits_from_search, setCreditsFromSearch] = useState(false);
+    const [search_credit, setSearchCredit] = useState('');
+    const [agent_selector_key, setAgentSelectorKey] = useState(0);
 
     const handleGetDataCampain = async (campain_id) => {
         const data = await fetchCampaignData(campain_id);
@@ -112,6 +114,88 @@ export default function CardAssignCampain({ campain_id }) {
         setFilters(newFilters);
         setCreditsFromSearch(false);
     }, [])
+
+    const handleSearchCredit = async (e) => {
+        if (e.key !== 'Enter') return;
+
+        const creditNumber = e.target.value.trim();
+        if (!creditNumber || !data_campain) return;
+
+        setLoading(true);
+        try {
+            const data = await fetchCreditsData({
+                business_id: data_campain.business_id,
+                sync_id: creditNumber
+            });
+
+            if (data && data.code === 1 && data.result?.data?.length > 0) {
+                const exactMatch = data.result.data.find(
+                    credit => credit.sync_id === creditNumber
+                );
+
+                if (!exactMatch) {
+                    sendpush({
+                        title: 'Sin resultados',
+                        message: 'No se encontró el crédito exacto',
+                        type: 'Push--warning',
+                        timeout: 3000
+                    });
+                    setLoading(false);
+                    return;
+                }
+
+                const foundCredits = [exactMatch];
+                const newCredits = {
+                    total: 1,
+                    data: foundCredits
+                };
+
+                setCredits(newCredits);
+                setCreditsFromSearch(true);
+
+                const agentId = exactMatch.user_id;
+                const agent = all_agents.find(a => a.id === agentId);
+
+                if (agent) {
+                    setAgentsOrigin([agent]);
+                    setAgentSelectorKey(prev => prev + 1);
+                }
+
+                if (exactMatch.sync_status === 'INACTIVE') {
+                    sendpush({
+                        title: 'Crédito inactivo',
+                        message: 'El crédito está inactivo y no puede ser transferido',
+                        type: 'Push--warning',
+                        timeout: 5000
+                    });
+                } else {
+                    sendpush({
+                        title: 'Crédito encontrado',
+                        message: 'Crédito listo para transferir',
+                        type: 'Push--sucessful',
+                        timeout: 3000
+                    });
+                }
+            } else {
+                sendpush({
+                    title: 'Sin resultados',
+                    message: 'No se encontró el crédito buscado',
+                    type: 'Push--warning',
+                    timeout: 3000
+                });
+            }
+        } catch (error) {
+            console.error('Error buscando crédito:', error);
+            sendpush({
+                title: 'Error',
+                message: 'Error al buscar el crédito',
+                type: 'Push--warning',
+                timeout: 3000
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const handleTransfer = async () => {
         if (agents_destino.length === 0) {
@@ -289,7 +373,9 @@ export default function CardAssignCampain({ campain_id }) {
             <label className="CardAssignCampain__searchCredit">
                 <strong>Buscar crédito</strong>
                 <input
-                    onChange={()=>{}}
+                    value={search_credit}
+                    onChange={(e) => setSearchCredit(e.target.value)}
+                    onKeyDown={handleSearchCredit}
                     type="search"
                     placeholder="Número de crédito"
                 />
@@ -297,10 +383,12 @@ export default function CardAssignCampain({ campain_id }) {
 
             <div className="CardAssignCampain__agents">
                 <AgentSelector
+                    key={agent_selector_key}
                     agents_details={all_agents}
                     onChange={handleAgentsOriginChange}
                     title="Agente origen"
                     multiSelect={true}
+                    initialSelectedIds={agents_origin.map(a => a.id)}
                 />
 
                 {is_transfer && (

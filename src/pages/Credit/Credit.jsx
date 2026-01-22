@@ -196,7 +196,7 @@ export default function Credit(){
                         ]}
 
                     />
-                    <CardActivity />
+                    <CardActivity showActions={true} />
                 </div>
 
                 <CardCondonacion />

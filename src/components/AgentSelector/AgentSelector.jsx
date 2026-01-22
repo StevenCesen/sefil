@@ -4,10 +4,11 @@ export default function AgentSelector({
     agents_details = [],
     onChange,
     title = "Seleccionar agente",
-    multiSelect = false
+    multiSelect = false,
+    initialSelectedIds = []
 }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedIds, setSelectedIds] = useState([]);
+    const [selectedIds, setSelectedIds] = useState(initialSelectedIds);
 
     const handleToggle = (agent) => {
         let newSelectedIds;

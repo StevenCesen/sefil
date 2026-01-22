@@ -12,7 +12,7 @@ import sendpush from "../../../helpers/sendpush";
 import CardPay from "../../CardPay/CardPay";
 import CardConfirm from "../../CardConfirm/CardConfirm";
 
-export default function ResumeAgreement({agreement, onActionComplete}){
+export default function ResumeAgreement({agreement, onActionComplete, showActions = true}){
     const loader = useStoreLoader();
     const store_structure = useStoreStructure();
     const store_management = useStoreManagement();
@@ -250,7 +250,7 @@ export default function ResumeAgreement({agreement, onActionComplete}){
                                 <th>Valor</th>
                                 <th>Fecha pago</th>
                                 <th>Estado</th>
-                                {(userRole === 'admin' || userRole === 'superadmin') && <th>Acción</th>}
+                                {showActions && (userRole === 'admin' || userRole === 'superadmin') && <th>Acción</th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -264,7 +264,7 @@ export default function ResumeAgreement({agreement, onActionComplete}){
                                             {fee.payment_status}
                                         </span>
                                     </td>
-                                    {(userRole === 'admin' || userRole === 'superadmin') && (
+                                    {showActions && (userRole === 'admin' || userRole === 'superadmin') && (
                                         <td>
                                             {fee.payment_status?.toUpperCase() === 'PENDIENTE' && (agreement.status?.toUpperCase() === 'APLICADA' || agreement.status?.toUpperCase() === 'AUTORIZADO') && (
                                                 <button className="btn-pay" onClick={() => handlePayFee(fee, index)}>
@@ -280,26 +280,28 @@ export default function ResumeAgreement({agreement, onActionComplete}){
                 </div>
             )}
 
-            <div className="ResumeAgreement__actions">
-                {agreement.status?.toUpperCase() === 'PENDIENTE' && (
-                    <>
-                        <button className="btn btn--success" onClick={handleAuthorize}>
-                            Autorizar
+            {showActions && (
+                <div className="ResumeAgreement__actions">
+                    {agreement.status?.toUpperCase() === 'PENDIENTE' && (
+                        <>
+                            <button className="btn btn--success" onClick={handleAuthorize}>
+                                Autorizar
+                            </button>
+                            <button className="btn btn--warning" onClick={handleEdit}>
+                                Editar
+                            </button>
+                            <button className="btn btn--danger" onClick={handleDeny}>
+                                Denegar
+                            </button>
+                        </>
+                    )}
+                    {(agreement.status?.toUpperCase() === 'APLICADA' || agreement.status?.toUpperCase() === 'AUTORIZADA' || agreement.status?.toUpperCase() === 'AUTORIZADO') && (
+                        <button className="btn btn--danger" onClick={handleRevert}>
+                            Revertir
                         </button>
-                        <button className="btn btn--warning" onClick={handleEdit}>
-                            Editar
-                        </button>
-                        <button className="btn btn--danger" onClick={handleDeny}>
-                            Denegar
-                        </button>
-                    </>
-                )}
-                {(agreement.status?.toUpperCase() === 'APLICADA' || agreement.status?.toUpperCase() === 'AUTORIZADA' || agreement.status?.toUpperCase() === 'AUTORIZADO') && (
-                    <button className="btn btn--danger" onClick={handleRevert}>
-                        Revertir
-                    </button>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
             
             <ConfirmDialog
                 isOpen={confirmDialog.isOpen}
