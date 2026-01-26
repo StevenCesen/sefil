@@ -383,7 +383,7 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
             <div className="CardPay__contentPay">
                 <div className="CardPay__head">
                     <h3 ref={titleRef}>PAGO</h3>
-                    <img src="./icons/logo.png" alt="Logo" />
+                    <img src="/icons/logo.png" alt="Logo" />
                 </div>
                 
                 <div className="CardPay__detailPay">

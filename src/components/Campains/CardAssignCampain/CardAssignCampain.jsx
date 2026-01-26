@@ -284,8 +284,6 @@ export default function CardAssignCampain({ campain_id }) {
                 }
             }
 
-            console.log('Datos de transferencia:', transferData);
-
             const response = await fetch(`${import.meta.env.VITE_URL_BASE}/campains/transfer/${data_campain.id}`, {
                 method: 'PATCH',
                 headers: {

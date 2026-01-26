@@ -125,7 +125,7 @@ export default function MenuNotifier(){
 
     return (
         <div className="MenuNotifier">
-            <img src="./icons/push.png" onClick={()=>{setMenu(!menu)}}/>
+            <img src="/icons/push.png" onClick={()=>{setMenu(!menu)}}/>
             {
                 totalPending > 0 && <span>{totalPending}</span>
             }

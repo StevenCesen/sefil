@@ -209,12 +209,12 @@ export default function NavSlide() {
     return (
         <div className="Dashboard__navSlide">
             <div>
-                <img src="./icons/entypo_menu.png" onClick={(e) => { useNav(e) }} />
+                <img src="/icons/entypo_menu.png" onClick={(e) => { useNav(e) }} />
             </div>
 
             {hasSection('home') && (
                 <NavLink to="/dashboard" className="NavSlide__option">
-                    <img src="./icons/mdi_home.png" />
+                    <img src="/icons/mdi_home.png" />
                     <label>{getSectionLabel('home')}</label>
                     <span>{getSectionLabel('home')}</span>
                 </NavLink>
@@ -222,7 +222,7 @@ export default function NavSlide() {
 
             {hasSection('monitor') && (
                 <NavLink to="/monitor" className="NavSlide__option">
-                    <img src="./icons/monitor.png" />
+                    <img src="/icons/monitor.png" />
                     <label>{getSectionLabel('monitor')}</label>
                     <span>{getSectionLabel('monitor')}</span>
                 </NavLink>
@@ -230,7 +230,7 @@ export default function NavSlide() {
 
             {hasSection('consult') && (
                 <NavLink to="/consult" className="NavSlide__option">
-                    <img src="./icons/ic_round-search.png" />
+                    <img src="/icons/ic_round-search.png" />
                     <label>{getSectionLabel('consult')}</label>
                     <span>{getSectionLabel('consult')}</span>
                 </NavLink>
@@ -238,7 +238,7 @@ export default function NavSlide() {
             
             {hasSection('directions') && (
                 <NavLink to="/directions" className="NavSlide__option">
-                    <img src="./icons/location.png" />
+                    <img src="/icons/location.png" />
                     <label>{getSectionLabel('directions')}</label>
                     <span>{getSectionLabel('directions')}</span>
                 </NavLink>
@@ -246,7 +246,7 @@ export default function NavSlide() {
 
             {hasSection('contacts') && (
                 <NavLink to="/contacts-consult" className="NavSlide__option">
-                    <img src="./icons/ph_user-bold.png" />
+                    <img src="/icons/ph_user-bold.png" />
                     <label>{getSectionLabel('contacts')}</label>
                     <span>{getSectionLabel('contacts')}</span>
                 </NavLink>
@@ -254,7 +254,7 @@ export default function NavSlide() {
 
             {hasSection('management_historial') && (
                 <NavLink to="/managements-historial" className="NavSlide__option">
-                    <img src="./icons/ion_bar-chart.png" />
+                    <img src="/icons/ion_bar-chart.png" />
                     <label>{getSectionLabel('management_historial')}</label>
                     <span>{getSectionLabel('management_historial')}</span>
                 </NavLink>
@@ -262,7 +262,7 @@ export default function NavSlide() {
 
             {hasSection('management') && (
                 <NavLink to="/management" className="NavSlide__option">
-                    <img src="./icons/zoiper.png" />
+                    <img src="/icons/zoiper.png" />
                     <label>{getSectionLabel('management')}</label>
                     <span>{getSectionLabel('management')}</span>
                 </NavLink>
@@ -270,7 +270,7 @@ export default function NavSlide() {
 
             {hasSection('campains') && (
                 <NavLink to="/campains" className="NavSlide__option">
-                    <img src="./icons/ion_bar-chart.png" />
+                    <img src="/icons/ion_bar-chart.png" />
                     <label>{getSectionLabel('campains')}</label>
                     <span>{getSectionLabel('campains')}</span>
                 </NavLink>
@@ -278,7 +278,7 @@ export default function NavSlide() {
 
             {hasSection('users') && (
                 <NavLink to="/users" className="NavSlide__option">
-                    <img src="./icons/ph_user-bold.png" />
+                    <img src="/icons/ph_user-bold.png" />
                     <label>{getSectionLabel('users')}</label>
                     <span>{getSectionLabel('users')}</span>
                 </NavLink>
@@ -287,11 +287,11 @@ export default function NavSlide() {
             {hasSection('reports') && (
                 <>
                     <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuCashReports, 'NavSlide__subOption--active', menuCashReports) }}>
-                        <img src={"./icons/ion_bar-chart.png"} />
+                        <img src={"/icons/ion_bar-chart.png"} />
                         <label>Reportes cierre de caja</label>
                         <span>Reportes cierre de caja</span>
                         <div className="NavSlide__option--down">
-                            <img src="./icons/arrowDown.png" />
+                            <img src="/icons/arrowDown.png" />
                             <div ref={menuCashReports}>
                                 <NavLink to={"/reports/cash-payments"}>Pagos en efectivo</NavLink>
                                 <NavLink to={"/reports/reversed-payments"}>Pagos revertidos</NavLink>
@@ -303,11 +303,11 @@ export default function NavSlide() {
                     </div>
 
                     <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuStatisticsReports, 'NavSlide__subOption--active', menuStatisticsReports) }}>
-                        <img src={"./icons/ion_bar-chart.png"} />
+                        <img src={"/icons/ion_bar-chart.png"} />
                         <label>Reportes estadísticas</label>
                         <span>Reportes estadísticas</span>
                         <div className="NavSlide__option--down">
-                            <img src="./icons/arrowDown.png" />
+                            <img src="/icons/arrowDown.png" />
                             <div ref={menuStatisticsReports}>
                                 <NavLink to={"/reports/judicial-expenses"}>Gastos judiciales cargados</NavLink>
                                 <NavLink to={"/reports/agreement-status"}>Estado de convenios</NavLink>
@@ -324,11 +324,11 @@ export default function NavSlide() {
 
             {hasSection('settings') && (
                 <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuSettings, 'NavSlide__subOption--active', menuSettings) }}>
-                    <img src={"./icons/mdi_database-cog.png"} />
+                    <img src={"/icons/mdi_database-cog.png"} />
                     <label>{getSectionLabel('settings')}</label>
                     <span>{getSectionLabel('settings')}</span>
                     <div className="NavSlide__option--down">
-                        <img src="./icons/arrowDown.png" />
+                        <img src="/icons/arrowDown.png" />
                         <div ref={menuSettings}>
                             <NavLink to={"/templates"}>Control de estados de gestión</NavLink>
                             <NavLink to={"/businesses"}>Carteras</NavLink>

@@ -23,13 +23,13 @@ const CampaignItem = ({ campaign, onEdit, onTransfer, onExport }) => (
         {campaign.state !== 'FINISHED' && (
             <div>
                 <button onClick={() => onEdit(campaign)}>
-                    <img title="Editar campaña" src="./icons/edit.png" alt="Editar"/>
+                    <img title="Editar campaña" src="/icons/edit.png" alt="Editar"/>
                 </button>
                 <button onClick={() => onTransfer(campaign)}>
-                    <img title="Asignar campaña" src="./icons/transfer.png" alt="Asignar"/>
+                    <img title="Asignar campaña" src="/icons/transfer.png" alt="Asignar"/>
                 </button>
                 <button onClick={() => onExport(campaign)}>
-                    <img title="Exportar campaña" src="./icons/expor.png" alt="Exportar"/>
+                    <img title="Exportar campaña" src="/icons/export.png" alt="Exportar"/>
                 </button>
             </div>
         )}

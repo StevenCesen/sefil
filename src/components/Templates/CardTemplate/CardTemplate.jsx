@@ -135,10 +135,10 @@ export default function CardTemplate({ state, onEdit, onCreateSubstate, onEditSu
                 </label>
                 <div className="CardTemplate__actions">
                     <button onClick={() => onEdit(state)}>
-                        <img title="Editar estado" src="./icons/edit.png" alt="Editar" />
+                        <img title="Editar estado" src="/icons/edit.png" alt="Editar" />
                     </button>
                     <button onClick={handleDeleteClick}>
-                        <img title="Desactivar estado" src="./icons/delete.png" alt="Desactivar" />
+                        <img title="Desactivar estado" src="/icons/delete.png" alt="Desactivar" />
                     </button>
                 </div>
             </div>
@@ -162,10 +162,10 @@ export default function CardTemplate({ state, onEdit, onCreateSubstate, onEditSu
                             </label>
                             <div className="CardTemplate__actions">
                                 <button onClick={() => onEditSubstate(state, child)}>
-                                    <img title="Editar" src="./icons/edit.png" alt="Editar" />
+                                    <img title="Editar" src="/icons/edit.png" alt="Editar" />
                                 </button>
                                 <button onClick={() => handleDeleteSubstateClick(child.id, child.name, child.parent_ids)}>
-                                    <img title="Desactivar" src="./icons/delete.png" alt="Desactivar" />
+                                    <img title="Desactivar" src="/icons/delete.png" alt="Desactivar" />
                                 </button>
                             </div>
                         </div>
