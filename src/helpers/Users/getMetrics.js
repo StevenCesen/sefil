@@ -1,6 +1,6 @@
 export default async function getMetrics() {
     try {
-        const request = await fetch(`${import.meta.env.VITE_URL_BASE}/statistics/metrics?agente=${localStorage.getItem('temp_uS')}`,{
+        const request = await fetch(`${import.meta.env.VITE_URL_BASE}/statistics/metrics-by-user?user_id=${localStorage.getItem('temp_uS')}&campain_id=16`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`

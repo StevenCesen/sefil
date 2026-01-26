@@ -118,7 +118,11 @@ export default function CardAssignCampain({ campain_id }) {
     const handleSearchCredit = async (e) => {
         if (e.key !== 'Enter') return;
 
-        const creditNumber = e.target.value.trim();
+        let creditNumber = e.target.value.trim();
+        
+        if (creditNumber.includes('-')) {
+            creditNumber = creditNumber.split('-')[1]?.trim() || '';
+        }
         if (!creditNumber || !data_campain) return;
 
         setLoading(true);
@@ -300,6 +304,7 @@ export default function CardAssignCampain({ campain_id }) {
             }
 
             const data = await response.json();
+            console.log('Respuesta de transferencia:', data);
 
             if (data.code === 1) {
                 sendpush({

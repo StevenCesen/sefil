@@ -16,7 +16,7 @@ export default function Modal({children,view,setView,title}){
             <div className="Modal__head">
                 <h3>{title}</h3>
                 <div>
-                    {/* <NavMetrics/> */}
+                    <NavMetrics/>
                     <NavTools/>
                     <label>
                         <X size={18} color="black" onClick={()=>{
