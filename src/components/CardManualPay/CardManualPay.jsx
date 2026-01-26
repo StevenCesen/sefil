@@ -8,11 +8,7 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
     const [pagos,setPays]=useState();
     
     useEffect(()=>{
-        console.log('CardManualPay useEffect - pays:', pays);
-        
-        // Si el pago ya tiene todos los datos necesarios (viene de error_sum_payments)
         if(pays.data && pays.data[0] && pays.data[0].credit_current_rubros){
-            console.log('Using complete data from error_sum_payments');
             const payment = pays.data[0];
             const currentRubros = payment.credit_current_rubros;
             const paymentRubros = payment.payment_rubros_to_subtract;
@@ -37,7 +33,6 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                 payment_rubros_to_subtract: paymentRubros
             });
         } else if(pays.data && pays.data[0] && pays.data[0].id){
-            console.log('Fetching payment with ID:', pays.data[0].id);
             fetch(`${import.meta.env.VITE_URL_BASE}/payments/${pays.data[0].id}`,{
                 headers: {
                     Accept: 'application/json',
@@ -46,7 +41,6 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data)
                     if(data && data.result && data.result.payment){
                         const payment = data.result.payment;
                         const currentRubros = data.result.credit_current_rubros;
@@ -59,33 +53,26 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                             credito: payment.credit_id,
                             estado: currentRubros?.collection_state || payment.management_prev || 'VENCIDO',
                             paymentDay_actual: payment.payment_date,
-                            // Valores pagados (lo que tiene el pago)
                             saldo_capital_actual: payment.capital,
                             interes_actual: payment.interest,
                             mora_actual: payment.mora,
                             seguro_actual: payment.safe,
                             otros_valores_actual: payment.other_values,
-                            // Valores adeudados (saldo actual del crédito)
                             saldo_capital_previo: currentRubros?.capital || 0,
                             interes_previo: currentRubros?.interest || 0,
                             mora_previo: currentRubros?.mora || 0,
                             seguro_previo: currentRubros?.safe || 0,
                             otros_valores_previo: currentRubros?.other_values || 0,
-                            // Rubros a restar (para mostrar si es necesario)
                             payment_rubros_to_subtract: paymentRubros
                         });
                     } else {
-                        console.log('No result data, using pays.data[0] directly');
                         setPays(pays.data[0]);
                     }
                 })
                 .catch((error) => {
-                    console.error('Error al obtener el pago:', error);
-                    console.log('Using pays.data[0] as fallback');
                     setPays(pays.data[0]);
                 });
         } else {
-            console.log('No valid pays.data, using fallback');
             if(pays && pays.result && pays.result[0]) {
                 setPays(pays.result[0]);
             }
@@ -259,16 +246,14 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                 .then((data) => {
                                     if(data.code === 1){
                                         e.target.textContent="Aplicado correctamente";
-                                        
-                                        // Mostrar notificación de éxito
+
                                         sendpush({
                                             title: 'Éxito',
                                             message: data.message || 'Pago aplicado correctamente al crédito',
                                             type: 'Push--sucessful',
                                             timeout: 3000
                                         });
-                                        
-                                        // Actualizar el contador de pagos pendientes
+
                                         fetch(`${import.meta.env.VITE_URL_BASE}/payments?payment_status=ERROR_SUM&business_id=${pagos.business_id}`,{
                                             headers: {
                                                 Accept: 'application/json',
@@ -283,10 +268,8 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                                         data: data.result,
                                                         total: data.result.length 
                                                     });
-                                                    
-                                                    // Si hay más pagos, mostrar el siguiente
+
                                                     if(data.result.length > 0){
-                                                        // Cargar el primer pago de la lista actualizada
                                                         fetch(`${import.meta.env.VITE_URL_BASE}/payments/${data.result[0].id}`,{
                                                             headers: {
                                                                 Accept: 'application/json',
@@ -324,7 +307,6 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                                                 }
                                                             });
                                                     } else {
-                                                        // No hay más pagos, cerrar modal
                                                         callback();
                                                     }
                                                 }
@@ -332,11 +314,9 @@ export default function CardManualPay({callback,pays,cartera,setUpdate}){
                                     } else {
                                         e.target.textContent="Error - Reintentar";
                                         e.target.disabled = false;
-                                        console.error('Error aplicando pago:', data);
                                     }
                                 })
                                 .catch((error) => {
-                                    console.error('Error al aplicar pago:', error);
                                     e.target.textContent="Error - Reintentar";
                                     e.target.disabled = false;
                                 });

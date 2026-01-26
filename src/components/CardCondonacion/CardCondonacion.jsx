@@ -22,7 +22,6 @@ export default function CardCondonacion() {
     }
 
     useEffect(() => {
-        // Prellenar valores condonados si es modo edición
         const condonatedVals = {
             capital: parseFloat((store_condonation.condonated_capital || 0).toFixed(2)),
             interes: parseFloat((store_condonation.condonated_interes || 0).toFixed(2)),
@@ -35,7 +34,6 @@ export default function CardCondonacion() {
         
         setCondonatedValues(condonatedVals);
         
-        // Calcular valores resultantes (valor actual - valor condonado)
         setValues({
             capital: (Number(store_condonation.capital) - Number(condonatedVals.capital)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9]))?(\. ?0+$)/, '$1'),
             mora: (Number(store_condonation.mora > 0 ? store_condonation.mora : 0) - Number(condonatedVals.mora)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9]))?(\. ?0+$)/, '$1'),

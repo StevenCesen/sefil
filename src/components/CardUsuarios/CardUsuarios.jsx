@@ -16,8 +16,7 @@ export default function CardUsuarios({ id, name, email, rol, extension, phone, p
     const [currentRole, setCurrentRole] = useState(rol);
     const [isEditing, setIsEditing] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
-
-    // Determinar si el usuario tiene permisos personalizados
+    
     const hasCustomPermissions = permission && permission !== '[]';
     const permissionLabel = hasCustomPermissions ? 'Personalizados' : 'Basado en rol';
 

@@ -4,7 +4,6 @@ import useNav from "../../hooks/useNav.js";
 import { useEffect, useRef, useState } from "react";
 import useMenu from "../../hooks/useMenu.js";
 
-// Todas las secciones disponibles en el sistema
 const allSections = [
     { section: 'home', label: 'Dashboard' },
     { section: 'monitor', label: 'Monitoreo' },
@@ -176,7 +175,6 @@ export default function NavSlide() {
                 }));
 
                 setSections(userSections);
-                console.log('✅ Using custom user permissions');
             } catch (error) {
                 console.error('Error parsing user permissions:', error);
                 loadRolePermissions(role);
@@ -191,7 +189,6 @@ export default function NavSlide() {
 
         if (userPermission) {
             setSections(userPermission.permission.sections);
-            console.log('✅ Using role permissions for:', role);
         } else {
             console.log('⚠️ No permissions found for role:', role);
         }

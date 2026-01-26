@@ -32,7 +32,6 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
             })
             .catch((error) => {
                 console.error('Error loading sofiaconfig:', error);
-                // Valores por defecto en caso de error
                 setCuentas([]);
                 setFormas([]);
                 setMetodos(['ANTICIPO', 'CHEQUE', 'EFECTIVO', 'OTROS', 'TARJETA_CREDITO', 'TRANSFERENCIA', 'DEPOSITO']);

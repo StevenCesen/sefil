@@ -95,7 +95,6 @@ const permissionData = [
     }
 ];
 
-// Todas las secciones disponibles en el sistema
 const allSections = [
     { section: 'home', label: 'Dashboard' },
     { section: 'monitor', label: 'Monitoreo' },
@@ -112,7 +111,6 @@ const allSections = [
     { section: 'reports', label: 'Reportes' }
 ];
 
-// Todas las habilidades disponibles por sección
 const allAbilities = {
     home: ['home:view'],
     users: ['users:create', 'users:edit', 'users:delete', 'users:view'],
@@ -129,7 +127,6 @@ const allAbilities = {
     management_historial: ['management_historial:view']
 };
 
-// Etiquetas legibles para las habilidades
 const abilityLabels = {
     'view': 'Ver',
     'create': 'Crear',
@@ -163,7 +160,6 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        // Priorizar permisos personalizados del usuario si existen
         if (user && user.permission && user.permission !== '[]') {
             try {
                 const customPermissions = typeof user.permission === 'string'
@@ -171,11 +167,9 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
                     : user.permission;
 
                 if (Array.isArray(customPermissions) && customPermissions.length > 0) {
-                    // Cargar secciones personalizadas
                     const customSections = customPermissions.map(perm => perm.section);
                     setSelectedSections(customSections);
 
-                    // Cargar abilities personalizadas
                     const customAbilities = {};
                     customPermissions.forEach(perm => {
                         if (perm.abilities && Array.isArray(perm.abilities)) {
@@ -184,7 +178,6 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
                     });
                     setSelectedAbilities(customAbilities);
                     setUseCustomPermissions(true);
-                    console.log('✅ Loaded custom permissions for user:', user.id);
                     return;
                 }
             } catch (error) {
@@ -192,12 +185,9 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
             }
         }
 
-        // Fallback: Cargar permisos del rol
         const rolePermission = permissionData.find(p => p.role === (user?.role || 'call'));
         if (rolePermission) {
             setSelectedSections(rolePermission.permission.sections.map(s => s.section));
-
-            // Cargar abilities por sección
             const abilities = {};
             if (rolePermission.permission.abilities) {
                 rolePermission.permission.abilities.forEach(abilityGroup => {
@@ -206,19 +196,16 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
             }
             setSelectedAbilities(abilities);
             setUseCustomPermissions(false);
-            console.log('✅ Loaded role permissions for:', user?.role || 'call');
         }
     }, [user?.role, user?.permission]);
 
     const handleRoleChange = (newRole) => {
         setUserData({ ...userData, role: newRole });
 
-        // Actualizar secciones según el nuevo rol
         const rolePermission = permissionData.find(p => p.role === newRole);
         if (rolePermission) {
             setSelectedSections(rolePermission.permission.sections.map(s => s.section));
 
-            // Actualizar abilities según el nuevo rol
             const abilities = {};
             if (rolePermission.permission.abilities) {
                 rolePermission.permission.abilities.forEach(abilityGroup => {
@@ -267,7 +254,6 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
         setErrors({});
 
         try {
-            // Preparar permisos en formato de array para el backend
             const permissionsArray = useCustomPermissions
                 ? selectedSections.map(section => ({
                     section: section,
@@ -284,9 +270,6 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
                 permission: JSON.stringify(permissionsArray)
             };
 
-            console.log(requestData)
-
-            // Si es creación, agregar password
             if (isCreating) {
                 requestData.password = userData.password;
             }
@@ -303,8 +286,7 @@ export default function CardEditUser({ user = null, onClose, onSave }) {
             });
 
             const data = await response.json();
-
-            // Verificar si hay errores de validación
+            
             if (data.code === -1 && data.result) {
                 setErrors(data.result);
                 sendpush({

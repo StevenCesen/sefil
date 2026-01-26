@@ -44,7 +44,6 @@ export default function CardUpdatePay({name,fecha_carga,state,business_id}){
             .then((response) => response.json())
             .then((data) => {
                 if(data && data.result){
-                    console.log(data);
                     setPays({ 
                         result: data.result,
                         data: data.result,
@@ -55,7 +54,6 @@ export default function CardUpdatePay({name,fecha_carga,state,business_id}){
                 }
             })
             .catch((error) => {
-                console.error('Error al obtener pagos con error:', error);
                 setPays({ total: 0, data: [], result: [] });
             });
             
@@ -127,7 +125,6 @@ export default function CardUpdatePay({name,fecha_carga,state,business_id}){
                             })
                                 .then((response) => response.json())
                                 .then((data) => {
-                                    console.log(data);
                                     if(data.success || data.imported >= 0){
                                         const skipped = data?.skipped || 0;
                                         const imported = data?.imported || 0;
@@ -195,7 +192,6 @@ export default function CardUpdatePay({name,fecha_carga,state,business_id}){
                                     }
                                 })
                                 .catch((error) => {
-                                    console.error('Error al importar pagos:', error);
                                     sendpush({
                                         title:'ERR: Error de red',
                                         message:'No se pudo conectar con el servidor.',

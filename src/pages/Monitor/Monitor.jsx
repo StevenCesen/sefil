@@ -32,7 +32,7 @@ export default function Monitor(){
 
         const wsUrl = import.meta.env.VITE_WS_URL || 'wss://check.sefil.com.ec/ws';
         const conn = new WebSocket(wsUrl);
-
+        
         conn.onopen = function(e) {
             console.log("WSS: Connection established!");
             setAgents();
@@ -41,7 +41,6 @@ export default function Monitor(){
 
         conn.onmessage = async function(e) {
             const data = JSON.parse(e.data);
-            console.log(data);
             await updateAgent({data});
         };
 

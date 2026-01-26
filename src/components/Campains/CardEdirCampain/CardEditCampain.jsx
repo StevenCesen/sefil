@@ -54,7 +54,6 @@ export default function CardEditCampain({data_campain}){
                 setAgents(data_prev);
             })
             .catch(error => {
-                console.error('Error fetching agents:', error);
                 setAgents([]);
             });
 
@@ -64,7 +63,6 @@ export default function CardEditCampain({data_campain}){
                 setBusiness(data.result.data || []);
             })
             .catch(error => {
-                console.error('Error fetching business:', error);
                 setBusiness([]);
             });
     },[]);

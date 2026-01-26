@@ -235,12 +235,7 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                 paymentData.campain_id = campain_id;
             }
 
-
-            console.log('Datos del pago a enviar:', paymentData);
-
             const result = await createPayment({ data: paymentData });
-
-            console.log('Resultado del pago:', result);
             
             if (result.code === 1 && result.result) {
                 // Usar los datos que vienen del backend
@@ -273,8 +268,6 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
                     sync_id: backendPayment.sync_id || credit.sync,
                     payment_number: backendPayment.payment_number
                 };
-
-                console.log(pdfData)
 
                 setSendData(pdfData);
                 button.textContent = 'Pago registrado';

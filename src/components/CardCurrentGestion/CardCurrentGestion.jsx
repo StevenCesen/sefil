@@ -32,10 +32,6 @@ export default function CardCurrentGestion({management_id}){
             </div>
 
             {
-                console.log(calls)
-            }
-
-            {
                 (calls.length > 0) ? (
                     calls.map((call,index)=>(
                         <div key={index} className="CardCurrentGestion__item">

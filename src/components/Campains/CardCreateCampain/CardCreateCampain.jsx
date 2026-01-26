@@ -53,7 +53,6 @@ export default function CardCreateCampain({setData}){
                 setBusiness(data.result.data || []);
             })
             .catch(error => {
-                console.error('Error fetching business:', error);
                 setBusiness([]);
             });
     },[]);

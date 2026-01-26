@@ -3,7 +3,6 @@ import "./CardPrelacion.css";
 import sendpush from "../../helpers/sendpush";
 import useFetch from "../../hooks/useFetch";
 
-// Mapeo de valores del backend a labels en español
 const PRELATION_LABELS = {
     'capital': 'Capital',
     'interest': 'Interés',
@@ -14,7 +13,6 @@ const PRELATION_LABELS = {
     'collection_expenses': 'Gastos de cobranza'
 };
 
-// Mapeo inverso: de labels a valores del backend
 const PRELATION_VALUES = Object.fromEntries(
     Object.entries(PRELATION_LABELS).map(([key, value]) => [value, key])
 );
@@ -29,10 +27,8 @@ export default function CardPrelacion({ cartera, onClose }) {
 
     useEffect(() => {
         if (cartera) {
-            // Si no hay orden de prelación o está vacío, usar orden por defecto
             if (!cartera.prelation_order || cartera.prelation_order === '[]' ||
                 (Array.isArray(cartera.prelation_order) && cartera.prelation_order.length === 0)) {
-                // Orden por defecto: todos los campos disponibles
                 const defaultOrder = Object.values(PRELATION_LABELS);
                 setPrelationOrder(defaultOrder);
             } else {
@@ -41,12 +37,10 @@ export default function CardPrelacion({ cartera, onClose }) {
                         ? JSON.parse(cartera.prelation_order)
                         : cartera.prelation_order;
 
-                    // Convertir valores del backend a labels
                     const labels = order.map(item => PRELATION_LABELS[item] || item);
                     setPrelationOrder(labels);
                 } catch (error) {
                     console.error('Error parsing prelation_order:', error);
-                    // En caso de error, usar orden por defecto
                     const defaultOrder = Object.values(PRELATION_LABELS);
                     setPrelationOrder(defaultOrder);
                 }
@@ -84,13 +78,8 @@ export default function CardPrelacion({ cartera, onClose }) {
 
         const newOrder = [...prelationOrder];
         const draggedElement = newOrder[draggedItem];
-
-        // Remover el elemento de su posición original
         newOrder.splice(draggedItem, 1);
-
-        // Insertar en la nueva posición
         newOrder.splice(dropIndex, 0, draggedElement);
-
         setPrelationOrder(newOrder);
         setDragOverIndex(null);
     };
@@ -109,10 +98,7 @@ export default function CardPrelacion({ cartera, onClose }) {
         setSaving(true);
 
         try {
-            // Convertir labels a valores del backend
             const backendOrder = prelationOrder.map(label => PRELATION_VALUES[label] || label);
-
-            console.log('Saving prelation order:', backendOrder);
 
             const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/businesses/${cartera.id}/prelation`, {
                 method: 'PATCH',
@@ -174,7 +160,6 @@ export default function CardPrelacion({ cartera, onClose }) {
 
             <div className="CardPrelacion__content">
                 <div className="CardPrelacion__columns">
-                    {/* Columna izquierda: Orden actual (solo lectura) */}
                     <div className="CardPrelacion__column">
                         <div className="CardPrelacion__columnHeader">
                             <span>Orden actual</span>
@@ -191,8 +176,7 @@ export default function CardPrelacion({ cartera, onClose }) {
                             ))}
                         </div>
                     </div>
-
-                    {/* Columna derecha: Cambiar orden (arrastrable) */}
+                    
                     <div className="CardPrelacion__column">
                         <div className="CardPrelacion__columnHeader">
                             <span>Cambiar orden</span>

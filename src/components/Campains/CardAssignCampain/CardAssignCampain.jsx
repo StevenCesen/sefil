@@ -110,7 +110,6 @@ export default function CardAssignCampain({ campain_id }) {
     }, [agents_origin, data_campain, filters])
 
     const handleFiltersChange = useCallback((newFilters) => {
-        console.log('Filtros aplicados:', newFilters);
         setFilters(newFilters);
         setCreditsFromSearch(false);
     }, [])
@@ -189,7 +188,6 @@ export default function CardAssignCampain({ campain_id }) {
                 });
             }
         } catch (error) {
-            console.error('Error buscando crédito:', error);
             sendpush({
                 title: 'Error',
                 message: 'Error al buscar el crédito',
@@ -304,7 +302,6 @@ export default function CardAssignCampain({ campain_id }) {
             }
 
             const data = await response.json();
-            console.log('Respuesta de transferencia:', data);
 
             if (data.code === 1) {
                 sendpush({
@@ -323,7 +320,6 @@ export default function CardAssignCampain({ campain_id }) {
                 });
             }
         } catch (error) {
-            console.error('Error en transferencia:', error);
             sendpush({
                 title: 'Error en transferencia',
                 message: 'Error al transferir créditos',
@@ -351,7 +347,6 @@ export default function CardAssignCampain({ campain_id }) {
             setAllAgents(agents);
         })
         .catch(error => {
-            console.error('Error fetching agents:', error);
             setAllAgents([]);
         });
     }, [campain_id]);

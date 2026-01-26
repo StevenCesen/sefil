@@ -69,7 +69,6 @@ export default function CardEditAgreement(){
         const currentTotal = getCurrentTotal();
         const difference = Math.abs(currentTotal - originalTotal);
 
-        // Validar que la suma sea igual al total original (con tolerancia de 0.01 por redondeos)
         if(difference > 0.01) {
             sendpush({
                 title: 'Error de validación',
@@ -82,7 +81,6 @@ export default function CardEditAgreement(){
             return;
         }
 
-        // Validar que todas las cuotas tengan fecha y valor válido
         const invalidFees = fees.filter(fee => !fee.fecha_pago || parseFloat(fee.valor) <= 0);
         if(invalidFees.length > 0) {
             sendpush({
@@ -139,7 +137,6 @@ export default function CardEditAgreement(){
                 e.target.removeAttribute('disabled');
             }
         } catch (error) {
-            console.error('Error:', error);
             loader.viewOn(false);
             sendpush({
                 title: 'Error',
