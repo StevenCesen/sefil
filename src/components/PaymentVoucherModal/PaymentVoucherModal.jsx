@@ -20,7 +20,7 @@ export default function PaymentVoucherModal({
 
     const agentName = localStorage.getItem('name') || 'N/A';
     const agentInitials = agentName !== 'N/A'
-        ? agentName.substring(0, 1) + (agentName.split(' ')[1]?.substring(0, 1) || '')
+        ? agentName.substring(0, 1) + (agentName.split('_')[1]?.substring(0, 1) || '')
         : 'N/A';
 
     const printType = (reprint && payment.status !== 'revertido') ? 'COPIA' : payment.status.toUpperCase();

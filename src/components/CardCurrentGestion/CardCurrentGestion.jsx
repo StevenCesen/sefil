@@ -40,10 +40,15 @@ export default function CardCurrentGestion({management_id}){
                             <label>{call.client_name}</label>
                             <label>{(call.call_channel==='WA') ? <MessageCircle color="green" size={16}/> : <></>} {call.phone_number}</label>
                             <label>{call.call_state}</label>
-                            <audio controls style={{width:"100%"}}>
-                                <source src={`https://collapi.sefil.com.ec/public/files/${call.call_media_path}`} type="audio/webm" />
-                                Tu navegador no soporta el elemento de audio.
-                            </audio>
+                            {
+                                (call.call_state === 'CONTACTADO' && call.call_media_path)
+                                ?
+                                    <audio controls style={{width:"100%"}}>
+                                        <source src={`https://collapi.sefil.com.ec/public/files/${call.call_media_path}`} type="audio/webm" />
+                                        Tu navegador no soporta el elemento de audio.
+                                    </audio>
+                                :   <label className="CardCurrentGestion__item--void">Audio no subido al servidor</label>
+                            }
                         </div>
                     ))
                 ) : (
