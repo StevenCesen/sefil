@@ -4,6 +4,8 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import "./geogestion.css";
 import icoMarker from "/icons/ico.ico";
+import { renderToString } from "react-dom/server";
+import { Flag, MapPin, X, Search, Calendar } from "lucide-react";
 
 // Custom marker icon using the ico file
 const createCustomIcon = (color) => {
@@ -15,6 +17,24 @@ const createCustomIcon = (color) => {
         className: 'custom-ico-marker'
     });
 };
+
+// Ícono para el punto de inicio (bandera verde) - usando Lucide
+const startIcon = L.divIcon({
+    html: renderToString(<Flag size={32} color="#4CAF50" fill="#4CAF50" strokeWidth={1.5} />),
+    iconSize: [32, 32],
+    iconAnchor: [4, 32],
+    popupAnchor: [12, -32],
+    className: 'custom-div-icon start-marker'
+});
+
+// Ícono para el punto final/ubicación actual (marcador rojo) - usando Lucide
+const currentLocationIcon = L.divIcon({
+    html: renderToString(<MapPin size={40} color="#F44336" fill="#F44336" strokeWidth={1.5} />),
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
+    className: 'custom-div-icon current-marker'
+});
 
 const statusColors = {
     "FIRST DAY": "#4CAF50",
@@ -34,6 +54,10 @@ export default function Geogestion() {
     const [selectedPoints, setSelectedPoints] = useState({ start: null, end: null });
     const [showModal, setShowModal] = useState(false);
     const [partialDistance, setPartialDistance] = useState(null);
+
+    // Filtros de fecha
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
 
     useEffect(() => {
         fetchUsers();
@@ -60,27 +84,34 @@ export default function Geogestion() {
         }
     };
 
-    const fetchGPSPoints = async (userId) => {
+    const fetchGPSPoints = async (userId, fromDate = null, toDate = null) => {
         if (!userId) return;
-        
+
         setLoading(true);
         setTotalDistance(null);
         setSelectedPoints({ start: null, end: null });
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(
-                `${import.meta.env.VITE_URL_BASE}/gps-points?group_by_type_status=true&user_id=${userId}`,
-                {
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
+
+            let url = `${import.meta.env.VITE_URL_BASE}/gps-points?group_by_type_status=true&user_id=${userId}`;
+
+            if (fromDate) {
+                url += `&date_from=${fromDate}`;
+            }
+            if (toDate) {
+                url += `&date_to=${toDate}`;
+            }
+
+            const response = await fetch(url, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
                 }
-            );
+            });
             const data = await response.json();
-            
+
             if (data.code === 1) {
                 setGpsData(data.result);
-                
+
                 if (data.result.length > 0 && data.result[0].locations.length > 0) {
                     const firstLocation = data.result[0].locations[0];
                     setMapCenter([parseFloat(firstLocation.latitude), parseFloat(firstLocation.longitude)]);
@@ -96,7 +127,17 @@ export default function Geogestion() {
     const handleUserChange = (e) => {
         const userId = e.target.value;
         setSelectedUser(userId);
-        fetchGPSPoints(userId);
+        if (userId) {
+            fetchGPSPoints(userId, dateFrom || null, dateTo || null);
+        } else {
+            setGpsData([]);
+        }
+    };
+
+    const handleSearch = () => {
+        if (selectedUser) {
+            fetchGPSPoints(selectedUser, dateFrom || null, dateTo || null);
+        }
     };
 
     const getAllPoints = () => {
@@ -225,9 +266,40 @@ export default function Geogestion() {
                             </option>
                         ))}
                     </select>
-                    
+
+                    <div className="date-filters">
+                        <label className="date-filter-label">
+                            <Calendar size={16} />
+                            <span>Desde:</span>
+                            <input
+                                type="date"
+                                value={dateFrom}
+                                onChange={(e) => setDateFrom(e.target.value)}
+                                className="date-input"
+                            />
+                        </label>
+                        <label className="date-filter-label">
+                            <Calendar size={16} />
+                            <span>Hasta:</span>
+                            <input
+                                type="date"
+                                value={dateTo}
+                                onChange={(e) => setDateTo(e.target.value)}
+                                className="date-input"
+                            />
+                        </label>
+                        <button
+                            className="search-btn"
+                            onClick={handleSearch}
+                            disabled={!selectedUser}
+                            title="Buscar con filtros de fecha"
+                        >
+                            <Search size={16} /> Buscar
+                        </button>
+                    </div>
+
                     {selectedUser && gpsData.length > 0 && (
-                        <button 
+                        <button
                             className="measure-distance-btn"
                             onClick={calculateTotalDistance}
                         >
@@ -266,25 +338,41 @@ export default function Geogestion() {
                             />
                         )}
 
-                        {gpsData.map((group, groupIndex) => (
-                            group.locations.map((location, locationIndex) => (
-                                <Marker
-                                    key={`${groupIndex}-${locationIndex}`}
-                                    position={[parseFloat(location.latitude), parseFloat(location.longitude)]}
-                                    icon={createCustomIcon(statusColors[group.type_status] || statusColors.DEFAULT)}
-                                >
-                                    <Popup>
-                                        <div className="marker-popup">
-                                            <strong>{group.type_status}</strong>
-                                            <p>Hora: {location.hour}</p>
-                                            <p>Batería: {location.battery_percentage}</p>
-                                            <p>Lat: {location.latitude}</p>
-                                            <p>Lng: {location.longitude}</p>
-                                        </div>
-                                    </Popup>
-                                </Marker>
-                            ))
-                        ))}
+                        {gpsData.map((group, groupIndex) => {
+                            const totalPoints = gpsData.reduce((acc, g) => acc + g.locations.length, 0);
+                            return group.locations.map((location, locationIndex) => {
+                                const globalIndex = getGlobalIndex(groupIndex, locationIndex);
+                                const isFirstPoint = globalIndex === 0;
+                                const isLastPoint = globalIndex === totalPoints - 1;
+
+                                let markerIcon;
+                                if (isFirstPoint) {
+                                    markerIcon = startIcon;
+                                } else if (isLastPoint) {
+                                    markerIcon = currentLocationIcon;
+                                } else {
+                                    markerIcon = createCustomIcon(statusColors[group.type_status] || statusColors.DEFAULT);
+                                }
+
+                                return (
+                                    <Marker
+                                        key={`${groupIndex}-${locationIndex}`}
+                                        position={[parseFloat(location.latitude), parseFloat(location.longitude)]}
+                                        icon={markerIcon}
+                                    >
+                                        <Popup>
+                                            <div className="marker-popup">
+                                                <strong>{isFirstPoint ? '🚩 INICIO - ' : isLastPoint ? '📍 UBICACIÓN ACTUAL - ' : ''}{group.type_status}</strong>
+                                                <p>Hora: {location.hour}</p>
+                                                <p>Batería: {location.battery_percentage}</p>
+                                                <p>Lat: {location.latitude}</p>
+                                                <p>Lng: {location.longitude}</p>
+                                            </div>
+                                        </Popup>
+                                    </Marker>
+                                );
+                            });
+                        })}
                     </MapContainer>
                 </div>
 
@@ -362,7 +450,7 @@ export default function Geogestion() {
                         <div className="modal-header">
                             <h2>Ruta Seleccionada</h2>
                             <button className="close-modal" onClick={() => setShowModal(false)}>
-                                <i className="fa fa-times"></i>
+                                <X size={20} />
                             </button>
                         </div>
                         <div className="modal-body">
@@ -390,13 +478,27 @@ export default function Geogestion() {
                                         opacity={1}
                                     />
 
-                                    {getPartialRoutePoints().map((point, idx) => (
-                                        <Marker
-                                            key={idx}
-                                            position={point}
-                                            icon={createCustomIcon(idx === 0 ? "#4CAF50" : idx === getPartialRoutePoints().length - 1 ? "#F44336" : "#2196F3")}
-                                        />
-                                    ))}
+                                    {getPartialRoutePoints().map((point, idx) => {
+                                        const isFirst = idx === 0;
+                                        const isLast = idx === getPartialRoutePoints().length - 1;
+
+                                        let icon;
+                                        if (isFirst) {
+                                            icon = startIcon;
+                                        } else if (isLast) {
+                                            icon = currentLocationIcon;
+                                        } else {
+                                            icon = createCustomIcon("#2196F3");
+                                        }
+
+                                        return (
+                                            <Marker
+                                                key={idx}
+                                                position={point}
+                                                icon={icon}
+                                            />
+                                        );
+                                    })}
                                 </MapContainer>
                             </div>
                         </div>

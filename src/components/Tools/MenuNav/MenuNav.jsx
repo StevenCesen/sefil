@@ -4,6 +4,7 @@ import { useStoreManagement } from "../../../stores/useStoreManagement";
 import SectionManagement from "../../Management/SectionManagement/SectionManagement";
 import SectionPayments from "../../Management/SectionPayments/SectionPayments";
 import SectionNotes from "../../Management/SectionNotes/SectionNotes";
+import SectionDirections from "../../Management/SectionDirections/SectionDirections";
 
 export default function MenuNav({options}){
 
@@ -72,7 +73,10 @@ export default function MenuNav({options}){
                                     <SectionNotes
                                         notes={store_management.notes}
                                     />
-                                :   <></>
+                                :   (store_management.section==='DIRECTIONS')
+                                    ?
+                                        <SectionDirections />
+                                    :   <></>
                 }
             </div>
         </div>

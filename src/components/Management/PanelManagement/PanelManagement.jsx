@@ -125,6 +125,11 @@ export default function PanelManagement(){
                                     name:'Notas',
                                     default_option:false,
                                     end_point:`NOTES`
+                                },
+                                {
+                                    name:'Direcciones',
+                                    default_option:false,
+                                    end_point:`DIRECTIONS`
                                 }
                             ]}
                         />

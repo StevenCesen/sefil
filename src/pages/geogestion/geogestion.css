@@ -78,6 +78,68 @@
     margin-right: 6px;
 }
 
+/* Filtros de fecha */
+.date-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.date-filter-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+}
+
+.date-filter-label svg {
+    color: var(--color-1, #009793);
+}
+
+.date-input {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    min-width: 140px;
+    transition: border-color 0.2s;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: var(--color-1, #009793);
+}
+
+.search-btn {
+    padding: 8px 16px;
+    background: var(--color-1, #009793);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.search-btn:hover {
+    background: var(--color-2, #FF9619);
+}
+
+.search-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
 .loading {
     padding: 20px;
     text-align: center;
@@ -248,6 +310,33 @@
 .custom-ico-marker {
     background: transparent;
     border: none;
+}
+
+/* Íconos personalizados para inicio y ubicación actual */
+.custom-div-icon {
+    background: transparent;
+    border: none;
+}
+
+.start-marker svg {
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+}
+
+.current-marker svg {
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Modal Styles */

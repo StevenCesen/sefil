@@ -286,6 +286,14 @@ export default function NavSlide() {
                 </NavLink>
             )}
 
+            {hasSection('field-trip') && (
+                <NavLink to="/field-trip" className="NavSlide__option">
+                    <img src="/icons/zoiper.png" />
+                    <label>{getSectionLabel('field-trip')}</label>
+                    <span>{getSectionLabel('field-trip')}</span>
+                </NavLink>
+            )}
+
             {hasSection('campains') && (
                 <NavLink to="/campains" className="NavSlide__option">
                     <img src="/icons/ion_bar-chart.png" />
@@ -354,14 +362,6 @@ export default function NavSlide() {
                         </div>
                     </div>
                 </div>
-            )}
-
-            {hasSection('field-trip') && (
-                <NavLink to="/field-trip" className="NavSlide__option">
-                    <img src="/icons/zoiper.png" />
-                    <label>{getSectionLabel('field-trip')}</label>
-                    <span>{getSectionLabel('field-trip')}</span>
-                </NavLink>
             )}
 
             {/* {hasSection('calls') && (

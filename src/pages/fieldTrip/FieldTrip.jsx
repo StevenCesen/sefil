@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import "./fieldTrip.css";
+import { useStoreLoader } from "../../stores/useStoreLoader";
+import sendpush from "../../helpers/sendpush";
 
 export default function FieldTrip() {
     const [credits, setCredits] = useState([]);
@@ -10,6 +12,9 @@ export default function FieldTrip() {
     const [filterAgent, setFilterAgent] = useState("all"); // all, agent_id
     const [agents, setAgents] = useState([]);
     const [pagination, setPagination] = useState(null);
+    const [approvalLoading, setApprovalLoading] = useState({});
+
+    const loader = useStoreLoader();
 
     useEffect(() => {
         fetchAgents();
@@ -60,38 +65,31 @@ export default function FieldTrip() {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            
             let endpoint;
             if (url) {
                 endpoint = url;
             } else {
-                let baseUrl = `${import.meta.env.VITE_URL_BASE}/credits?management_status=VISITA CAMPO`;
-                
+                let baseUrl = `${import.meta.env.VITE_URL_BASE}/credits?`;
                 if (filterApproved === "pending") {
-                    baseUrl += `&approve_field_trip=0`;
+                    baseUrl += `&approve_field_trip=0&management_status=VISITA CAMPO`;
                 } else if (filterApproved === "approved") {
-                    baseUrl += `&approve_field_trip=1`;
+                    baseUrl += `&approve_field_trip=1&management_status=VISITA APROBADA`;
                 }
-
                 if (filterAgent !== "all") {
                     baseUrl += `&user_id=${filterAgent}`;
                 }
-
                 // Agregar búsqueda
                 if (searchTerm.trim()) {
                     baseUrl += `&search=${encodeURIComponent(searchTerm.trim())}`;
                 }
-
                 endpoint = baseUrl;
             }
-
             console.log('=== FETCH CREDITS DEBUG ===');
             console.log('URL completa:', endpoint);
             console.log('filterApproved:', filterApproved);
             console.log('filterAgent:', filterAgent);
             console.log('searchTerm:', searchTerm);
             console.log('========================');
-
             const response = await fetch(endpoint, {
                 headers: {
                     'Accept': 'application/json',
@@ -99,10 +97,6 @@ export default function FieldTrip() {
                 }
             });
             const data = await response.json();
-            
-            console.log('Respuesta del servidor:', data);
-            console.log('Total de créditos recibidos:', data.result?.data?.length);
-            
             if (data.code === 1) {
                 setCredits(data.result?.data || []);
                 setPagination({
@@ -153,54 +147,65 @@ export default function FieldTrip() {
             setLoading(false);
         }
     };
-
-    const handleApprovalToggle = async (creditId, currentStatus) => {
+    
+    const handleApprovalToggle = async (creditId, approveValue) => {
+        setApprovalLoading(prev => ({ ...prev, [creditId]: true }));
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `${import.meta.env.VITE_URL_BASE}/credits/${creditId}`,
+                `${import.meta.env.VITE_URL_BASE}/field-trips/${creditId}/approval`,
                 {
-                    method: 'PUT',
+                    method: 'PATCH',
                     headers: {
                         'Accept': 'application/json',
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        approve_field_trip: !currentStatus
+                        approve: approveValue
                     })
                 }
             );
             const data = await response.json();
-            
             if (data.code === 1) {
-                // Actualizar la lista de créditos
-                setCredits(credits.map(credit => 
-                    credit.id === creditId 
-                        ? { ...credit, approve_field_trip: !currentStatus }
+                setCredits(credits.map(credit =>
+                    credit.id === creditId
+                        ? { ...credit, approve_field_trip: !!approveValue }
                         : credit
                 ));
-
-                // Si hay un crédito seleccionado, actualizarlo también
                 if (selectedCredit && selectedCredit.id === creditId) {
                     setSelectedCredit({
                         ...selectedCredit,
-                        approve_field_trip: !currentStatus
+                        approve_field_trip: !!approveValue
                     });
                 }
-
-                // Refrescar la lista si cambiamos de estado
                 if (filterApproved !== "all") {
                     fetchCredits();
                 }
-
-                alert(data.message || 'Estado actualizado correctamente');
+                sendpush({
+                    title: 'Visita de campo',
+                    message: data.message || 'Visita de campo actualizada correctamente',
+                    type: 'Push--sucessful',
+                    timeout: 4000
+                });
             } else {
-                alert('Error al actualizar el estado');
+                sendpush({
+                    title: 'Error',
+                    message: data.message || 'Error al actualizar el estado',
+                    type: 'Push--danger',
+                    timeout: 4000
+                });
             }
         } catch (error) {
             console.error("Error toggling approval:", error);
-            alert('Error al actualizar el estado');
+            sendpush({
+                title: 'Error',
+                message: 'Error al actualizar el estado',
+                type: 'Push--danger',
+                timeout: 4000
+            });
+        } finally {
+            setApprovalLoading(prev => ({ ...prev, [creditId]: false }));
         }
     };
 
@@ -285,17 +290,20 @@ export default function FieldTrip() {
                                 <div className="credit-card-header">
                                     <h3>{credit.sync_id}</h3>
                                     <div className="approval-toggle">
-                                        <label className="switch">
-                                            <input
-                                                type="checkbox"
-                                                checked={credit.approve_field_trip || false}
-                                                onChange={(e) => {
-                                                    e.stopPropagation();
-                                                    handleApprovalToggle(credit.id, credit.approve_field_trip);
-                                                }}
-                                            />
-                                            <span className="slider"></span>
-                                        </label>
+                                        <button
+                                            className={`approval-btn approval-btn-no${!credit.approve_field_trip ? ' active' : ''}`}
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                handleApprovalToggle(credit.id, 0);
+                                            }}
+                                        >NO</button>
+                                        <button
+                                            className={`approval-btn approval-btn-yes${credit.approve_field_trip ? ' active' : ''}`}
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                handleApprovalToggle(credit.id, 1);
+                                            }}
+                                        >SÍ</button>
                                         <span className={`status-label ${credit.approve_field_trip ? 'approved' : 'pending'}`}>
                                             {credit.approve_field_trip ? 'Aprobado' : 'Pendiente'}
                                         </span>
@@ -475,6 +483,10 @@ export default function FieldTrip() {
                                                                     <span className="stat-not-effective">
                                                                         <i className="fa fa-times-circle"></i> 
                                                                         No efectivas: {contact.calls_not_effective || 0}
+                                                                    </span>
+                                                                    <span className="stat-effective">
+                                                                        <i className="fa fa-phone-square"></i> 
+                                                                        Contactado por whatsapp: {contact.call_by_whatsapp ? 'Sí' : 'No'}
                                                                     </span>
                                                                 </div>
                                                             </div>

@@ -1,3 +1,103 @@
+/* Estilos para los botones de aprobación SÍ/NO */
+.approval-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.approval-btn {
+    padding: 4px 16px;
+    border: 1.5px solid #bbb;
+    border-radius: 5px;
+    background: #f7f7f7;
+    color: #555;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+}
+.approval-btn-yes {
+    border-color: #388e3c;
+    color: #388e3c;
+}
+.approval-btn-no {
+    border-color: #d32f2f;
+    color: #d32f2f;
+}
+.approval-btn.active, .approval-btn:disabled {
+    background: #e3f2fd;
+    color: #fff;
+    border-width: 2px;
+    cursor: default;
+    opacity: 1;
+}
+.approval-btn-yes.active, .approval-btn-yes:disabled {
+    background: #388e3c;
+    color: #fff;
+}
+.approval-btn-no.active, .approval-btn-no:disabled {
+    background: #d32f2f;
+    color: #fff;
+}
+/* Contactos - estilos mejorados */
+.contacts-section {
+    margin-top: 1rem;
+    background: #f7f9fa;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.contacts-section h4 {
+    margin-bottom: 0.7rem;
+    color: #1976d2;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.contacts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+.contact-item {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-size: 1rem;
+}
+.contact-phone {
+    font-weight: 500;
+    color: #333;
+}
+.contact-type {
+    background: #e3f2fd;
+    color: #1976d2;
+    border-radius: 4px;
+    padding: 0.1rem 0.5rem;
+    font-size: 0.95em;
+    margin-left: 0.5rem;
+}
+.contact-stats {
+    display: flex;
+    gap: 1.2rem;
+    font-size: 0.97em;
+    color: #555;
+}
+.stat-effective {
+    color: #388e3c;
+}
+.stat-not-effective {
+    color: #d32f2f;
+}
 .field-trip-container {
     height: 100vh;
     display: flex;
@@ -127,7 +227,22 @@
 .approval-toggle {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+}
+
+.switch-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    min-width: 22px;
+    text-align: center;
+    user-select: none;
+}
+.switch-label-no {
+    color: #d32f2f;
+}
+.switch-label-yes {
+    color: #388e3c;
 }
 
 /* Switch Toggle */
@@ -156,13 +271,15 @@
     border-radius: 24px;
 }
 
+
+/* Centrado de la bolita en NO (por defecto) */
 .slider:before {
     position: absolute;
     content: "";
     height: 18px;
     width: 18px;
     left: 3px;
-    bottom: 3px;
+    top: 3px;
     background-color: white;
     transition: .4s;
     border-radius: 50%;
