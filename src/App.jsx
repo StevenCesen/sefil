@@ -30,6 +30,8 @@ import ImportPayments from './pages/ImportPayments/ImportPayments'
 import AccountingPayments from './pages/Reports/AccountingPayments/AccountingPayments'
 import CampaignAssignment from './pages/Reports/CampaignAssignment/CampaignAssignment'
 import ReportPaymentsWithManagement from './pages/Reports/ReportPaymentsWithManagement/ReportPaymentsWithManagement'
+import Geogestion from './pages/geogestion/Geogestion';
+import FieldTrip from './pages/fieldTrip/FieldTrip';
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -284,6 +286,24 @@ function App() {
           element={
             <ProtectedRoute>
               <ReportPaymentsWithManagement/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/geogestion"
+          element={
+            <ProtectedRoute>
+              <Geogestion />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/field-trip"
+          element={
+            <ProtectedRoute>
+              <FieldTrip />
             </ProtectedRoute>
           }
         />

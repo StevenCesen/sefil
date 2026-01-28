@@ -17,7 +17,9 @@ const allSections = [
     { section: 'settings', label: 'Configuración' },
     { section: 'calls', label: 'Llamadas' },
     { section: 'payments', label: 'Pagos' },
-    { section: 'reports', label: 'Reportes'}
+    { section: 'reports', label: 'Reportes'},
+    { section: 'geogestion', label: 'Geogestión' },
+    { section: 'field-trip', label: 'Módulo visita campo' },
 ];
 
 const permissionData = [
@@ -38,7 +40,9 @@ const permissionData = [
                 { section: 'directions', abilitie: ['directions:create', 'directions:edit', 'directions:delete', 'directions:view'] },
                 { section: 'monitor', abilitie: ['monitor:view'] },
                 { section: 'consult', abilitie: ['consult:view'] },
-                { section: 'management_historial', abilitie: ['management_historial:view'] }
+                { section: 'management_historial', abilitie: ['management_historial:view'] },
+                { section: 'geogestion', abilitie: ['geogestion:view','geogestion:edit'] },
+                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] }
             ]
         }
     },
@@ -58,7 +62,9 @@ const permissionData = [
                 { section: 'settings', label: 'Configuración' },
                 { section: 'calls', label: 'Llamadas' },
                 { section: 'payments', label: 'Pagos' },
-                { section: 'reports', label: 'Reportes' }
+                { section: 'reports', label: 'Reportes' },
+                { section: 'geogestion', label: 'Geogestión' },
+                { section: 'field-trip', label: 'Módulo visita campo' }
             ],
             abilities: [
                 { section: 'home', abilitie: ['home:view'] },
@@ -73,7 +79,9 @@ const permissionData = [
                 { section: 'directions', abilitie: ['directions:create', 'directions:view'] },
                 { section: 'monitor', abilitie: ['monitor:view'] },
                 { section: 'consult', abilitie: ['consult:view'] },
-                { section: 'management_historial', abilitie: ['management_historial:view'] }
+                { section: 'management_historial', abilitie: ['management_historial:view'] },
+                { section: 'geogestion', abilitie: ['geogestion:view','geogestion:edit'] },
+                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] }
             ]
         }
     },
@@ -89,7 +97,10 @@ const permissionData = [
                 { section: 'management', label: 'Gestión' },
                 { section: 'campains', label: 'Campañas' },
                 { section: 'calls', label: 'Llamadas' },
-                { section: 'payments', label: 'Pagos' }
+                { section: 'payments', label: 'Pagos' },
+                { section: 'geogestion', label: 'Geogestión' },
+                { section: 'field-trip', label: 'Módulo visita campo' }
+
             ],
             abilities: [
                 { section: 'calls', abilitie: ['calls:make', 'calls:receive'] },
@@ -100,7 +111,9 @@ const permissionData = [
                 { section: 'directions', abilitie: ['directions:create', 'directions:view'] },
                 { section: 'monitor', abilitie: ['monitor:view'] },
                 { section: 'consult', abilitie: ['consult:view'] },
-                { section: 'management_historial', abilitie: ['management_historial:view'] }
+                { section: 'management_historial', abilitie: ['management_historial:view'] },
+                { section: 'geogestion', abilitie: ['geogestion:view','geogestion:edit'] },
+                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] }
             ]
         }
     },
@@ -225,6 +238,14 @@ export default function NavSlide() {
                 </NavLink>
             )}
 
+            {hasSection('geogestion') && (
+                <NavLink to="/geogestion" className="NavSlide__option">
+                    <img src="/icons/location.png" />
+                    <label>{getSectionLabel('geogestion')}</label>
+                    <span>{getSectionLabel('geogestion')}</span>
+                </NavLink>
+            )}
+
             {hasSection('consult') && (
                 <NavLink to="/consult" className="NavSlide__option">
                     <img src="/icons/ic_round-search.png" />
@@ -333,6 +354,14 @@ export default function NavSlide() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {hasSection('field-trip') && (
+                <NavLink to="/field-trip" className="NavSlide__option">
+                    <img src="/icons/zoiper.png" />
+                    <label>{getSectionLabel('field-trip')}</label>
+                    <span>{getSectionLabel('field-trip')}</span>
+                </NavLink>
             )}
 
             {/* {hasSection('calls') && (

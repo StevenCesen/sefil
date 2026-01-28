@@ -18,10 +18,12 @@
     "env-cmd": "^10.1.0",
     "file-saver": "^2.0.5",
     "google-map-react": "^2.2.1",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.537.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.16.0",
     "recharts": "^2.12.2",
     "zustand": "^5.0.7"
