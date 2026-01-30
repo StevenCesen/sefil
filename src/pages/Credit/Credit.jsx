@@ -13,6 +13,7 @@ import CardClient from "../../components/Credits/CardClient/CardClient";
 import CardPay from "../../components/CardPay/CardPay";
 import CardConfirm from "../../components/CardConfirm/CardConfirm";
 import CardCondonacion from "../../components/CardCondonacion/CardCondonacion";
+import CardEditJudicial from "../../components/CardEditJudicial/CardEditJudicial";
 import CardStructure from "../../components/CardStructure/CardStructure";
 import { useStoreCondonation } from "../../stores/useStoreCondonation";
 import { useStoreLoader } from "../../stores/useStoreLoader";
@@ -238,7 +239,19 @@ export default function Credit(){
                                 setView={setAction}
                                 setPDF={()=>{}}
                             />
-                        :   <></>
+                        :   (action==='GEN_JUDICIAL')
+                            ?
+                                <CardEditJudicial
+                                    id={credit.credit.id}
+                                    cartera={credit.credit.business_name}
+                                    totalAmount={credit.credit.total_amount}
+                                    gastos_judiciales={credit.credit.legal_expenses || 0}
+                                    setNew={() => {
+                                        helperCredit({ credit_id: params.id });
+                                    }}
+                                    close={() => setAction('')}
+                                />
+                            :   <></>
                 }
             </div>
         </div>

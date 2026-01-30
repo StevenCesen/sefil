@@ -97,7 +97,9 @@ export default function CardDial({credit_id,campain_id}){
         if (recorderRef.current) {
             recorderRef.current.stop();
             recorderRef.current.addEventListener('dataavailable', async (e) => {
-                const base = HandleBlobToFile(e.data, 'collecta.webm', 'audio/webm');
+                const timestamp = Date.now();
+                const fileName = `collecta_${timestamp}.webm`;
+                const base = HandleBlobToFile(e.data, fileName, 'audio/webm');
 
                 store_call.setRecordAudio({
                     record: base,
