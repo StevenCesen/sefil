@@ -185,9 +185,7 @@
 .Consult__results-item label {
     font-size: 13px;
     color: #333;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: break-spaces;
     text-align: center;
 }
 

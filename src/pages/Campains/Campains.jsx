@@ -108,7 +108,6 @@ export default function Campains() {
             const data = await response.json();
 
             if (data.result && data.result.data && Array.isArray(data.result.data)) {
-                console.log('Fetched campaigns:', data.result.data);
                 setCampaigns(data.result.data);
             } else {
                 setCampaigns([]);

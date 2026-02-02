@@ -5,12 +5,12 @@ import useClickToCopy from "../../hooks/useClickToCopy";
 export default function CardItemCharge({item,updateCheck}){
 
     const [item_data,setItem]=useState();
-
+    
     useEffect(()=>{
         setItem({
             id:item.id,
-            name:item.name,
-            ci:item.ci,
+            name:item.clients[0]?.name || '',
+            ci:item.clients[0]?.ci || '',
             credito:('credito' in item) ? item.credito : item.sync_id,
             totalAmount:('totalAmount' in item) ? item.totalAmount : item.total_amount,
             pendingFees:('pendingFees' in item) ? item.pendingFees : item.pending_fees,

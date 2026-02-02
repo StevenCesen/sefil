@@ -53,7 +53,6 @@ export default function Consult() {
                 `${import.meta.env.VITE_URL_BASE}/credits?per_page=15&${queryParam}`
             );
             const data = await response.json();
-            console.log("Search results data:", data);
 
             if (data.result && data.result.data && Array.isArray(data.result.data)) {
                 setResults(data.result.data);
@@ -183,7 +182,7 @@ export default function Consult() {
                                     </NavLink>
                                     <label>{credit.sync_id || credit.credit_number}</label>
                                     <label>{credit.clients[0].name}</label>
-                                    <label>{credit.clients[0].ci}</label>
+                                    <label>{(searchType === 'ci' && credit.clients[0].ci=== searchValue) ? <span>{`${credit.clients[0].ci}`} <strong> TITULAR </strong></span> : <span>{credit.clients[0].ci} <strong> GARANTE</strong></span>}</label>
                                     <label>{useFormatterNumber({ value: credit.total_amount, currency: 'USD' })}</label>
                                     <label>{credit.days_past_due}</label>
                                     <label>{credit.business_name}</label>
