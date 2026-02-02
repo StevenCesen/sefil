@@ -182,7 +182,17 @@ export default function Consult() {
                                     </NavLink>
                                     <label>{credit.sync_id || credit.credit_number}</label>
                                     <label>{credit.clients[0].name}</label>
-                                    <label>{(searchType === 'ci' && credit.clients[0].ci=== searchValue) ? <span>{`${credit.clients[0].ci}`} <strong> TITULAR </strong></span> : <span>{credit.clients[0].ci} <strong> GARANTE</strong></span>}</label>
+                                    {
+                                        (searchType === 'ci')
+                                        ?
+                                            <label>{
+                                                (credit.clients[0].ci=== searchValue) 
+                                                    ? 
+                                                        <span>{`${credit.clients[0].ci}`} <strong> TITULAR </strong></span> 
+                                                    :   <span>{credit.clients[0].ci} <strong> GARANTE</strong></span>
+                                            }</label>
+                                        :<label>{credit.clients[0].ci}</label>
+                                    }
                                     <label>{useFormatterNumber({ value: credit.total_amount, currency: 'USD' })}</label>
                                     <label>{credit.days_past_due}</label>
                                     <label>{credit.business_name}</label>

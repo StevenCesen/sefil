@@ -240,11 +240,10 @@ export default function CardStructure(){
                             e.target.removeAttribute('disabled');
                         }else{
                             loader.viewOn(true);
-                            
-                            // Preparar fee_detail según el formato del backend
+
                             const fee_detail = quote_detail.map(quote => ({
                                 payment_date: quote.fecha_pago,
-                                payment_value: 0,
+                                payment_value:  parseFloat(quote.valor),
                                 payment_amount: parseFloat(quote.valor),
                                 payment_status: "PENDIENTE"
                             }));

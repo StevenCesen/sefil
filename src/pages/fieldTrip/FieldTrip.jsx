@@ -11,23 +11,41 @@ export default function FieldTrip() {
     const [filterApproved, setFilterApproved] = useState("pending"); // all, approved, pending
     const [filterAgent, setFilterAgent] = useState("all"); // all, agent_id
     const [agents, setAgents] = useState([]);
+    const [businesses, setBusinesses] = useState([]);
+    const [filterBusiness, setFilterBusiness] = useState("all"); // all, business_id
     const [pagination, setPagination] = useState(null);
-    const [approvalLoading, setApprovalLoading] = useState({});
-
-    const loader = useStoreLoader();
 
     useEffect(() => {
         fetchAgents();
+        fetchBusinesses();
     }, []);
+    const fetchBusinesses = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `${import.meta.env.VITE_URL_BASE}/businesses?per_page=100&is_active=1`,
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+            const data = await response.json();
+            if (data.code === 1) {
+                setBusinesses(data.result?.data || []);
+            }
+        } catch (error) {
+            console.error("Error fetching businesses:", error);
+        }
+    };
 
     useEffect(() => {
         fetchCredits();
-    }, [filterApproved, filterAgent]);
+    }, [filterApproved, filterAgent, filterBusiness]);
 
     // Agregar debounce para la búsqueda
     useEffect(() => {
-        console.log('useEffect búsqueda disparado, searchTerm:', searchTerm);
-        
         const timer = setTimeout(() => {
             console.log('Debounce completado, ejecutando búsqueda...');
             fetchCredits();
@@ -78,18 +96,16 @@ export default function FieldTrip() {
                 if (filterAgent !== "all") {
                     baseUrl += `&user_id=${filterAgent}`;
                 }
+                if (filterBusiness !== "all") {
+                    baseUrl += `&business_id=${filterBusiness}`;
+                }
                 // Agregar búsqueda
                 if (searchTerm.trim()) {
                     baseUrl += `&search=${encodeURIComponent(searchTerm.trim())}`;
                 }
                 endpoint = baseUrl;
             }
-            console.log('=== FETCH CREDITS DEBUG ===');
-            console.log('URL completa:', endpoint);
-            console.log('filterApproved:', filterApproved);
-            console.log('filterAgent:', filterAgent);
-            console.log('searchTerm:', searchTerm);
-            console.log('========================');
+            
             const response = await fetch(endpoint, {
                 headers: {
                     'Accept': 'application/json',
@@ -98,13 +114,14 @@ export default function FieldTrip() {
             });
             const data = await response.json();
             if (data.code === 1) {
+                console.log(data)
                 setCredits(data.result?.data || []);
                 setPagination({
-                    current_page: data.result?.current_page,
-                    last_page: data.result?.last_page,
-                    next_page_url: data.result?.next_page_url,
-                    prev_page_url: data.result?.prev_page_url,
-                    total: data.result?.total
+                    current_page: data.result?.meta?.current_page,
+                    last_page: data.result?.meta?.last_page,
+                    next_page_url: data.result?.links?.next,
+                    prev_page_url: data.result?.links?.prev,
+                    total: data.result?.meta?.total
                 });
             }
         } catch (error) {
@@ -213,13 +230,33 @@ export default function FieldTrip() {
         fetchCreditDetails(credit.id);
     };
 
-    // Eliminar el filtro en el frontend
-    const filteredCredits = credits;
-
+    const filteredCredits = credits;  //EMPRESA, MONTO, AGENCIA, AGENTE, ESTADO DE CRÉDITO, RANGO DE DÍAS DE MORA
+    
     const handlePageChange = (url) => {
-        if (url) {
-            fetchCredits(url);
+        if (!url) return;
+        // Extraer solo la parte de paginación (page=...)
+        const urlObj = new URL(url, window.location.origin);
+        const page = urlObj.searchParams.get('page');
+        // Reconstruir la URL base con los filtros actuales
+        let baseUrl = `${import.meta.env.VITE_URL_BASE}/credits?`;
+        if (filterApproved === "pending") {
+            baseUrl += `&approve_field_trip=0&management_status=VISITA CAMPO`;
+        } else if (filterApproved === "approved") {
+            baseUrl += `&approve_field_trip=1&management_status=VISITA APROBADA`;
         }
+        if (filterAgent !== "all") {
+            baseUrl += `&user_id=${filterAgent}`;
+        }
+        if (filterBusiness !== "all") {
+            baseUrl += `&business_id=${filterBusiness}`;
+        }
+        if (searchTerm.trim()) {
+            baseUrl += `&search=${encodeURIComponent(searchTerm.trim())}`;
+        }
+        if (page) {
+            baseUrl += `&page=${page}`;
+        }
+        fetchCredits(baseUrl);
     };
 
     return (
@@ -262,16 +299,26 @@ export default function FieldTrip() {
 
                             <select 
                                 value={filterAgent} 
-                                onChange={(e) => {
-                                    console.log('Agente seleccionado:', e.target.value);
-                                    setFilterAgent(e.target.value);
-                                }}
+                                onChange={(e) => setFilterAgent(e.target.value)}
                                 className="filter-select"
                             >
                                 <option value="all">Todos los agentes</option>
                                 {agents.map(agent => (
                                     <option key={agent.id} value={agent.id}>
                                         {agent.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={filterBusiness}
+                                onChange={e => setFilterBusiness(e.target.value)}
+                                className="filter-select"
+                            >
+                                <option value="all">Todas las empresas</option>
+                                {businesses.map(business => (
+                                    <option key={business.id} value={business.id}>
+                                        {business.name}
                                     </option>
                                 ))}
                             </select>

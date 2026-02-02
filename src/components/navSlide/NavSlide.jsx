@@ -238,13 +238,13 @@ export default function NavSlide() {
                 </NavLink>
             )}
 
-            {/* {hasSection('geogestion') && (
+            {hasSection('geogestion') && (
                 <NavLink to="/geogestion" className="NavSlide__option">
                     <img src="/icons/location.png" />
                     <label>{getSectionLabel('geogestion')}</label>
                     <span>{getSectionLabel('geogestion')}</span>
                 </NavLink>
-            )} */}
+            )}
 
             {hasSection('consult') && (
                 <NavLink to="/consult" className="NavSlide__option">
@@ -285,14 +285,14 @@ export default function NavSlide() {
                     <span>{getSectionLabel('management')}</span>
                 </NavLink>
             )}
-
-            {/* {hasSection('field-trip') && (
+            
+            {hasSection('field-trip') && (
                 <NavLink to="/field-trip" className="NavSlide__option">
                     <img src="/icons/zoiper.png" />
                     <label>{getSectionLabel('field-trip')}</label>
                     <span>{getSectionLabel('field-trip')}</span>
                 </NavLink>
-            )} */}
+            )}
 
             {hasSection('campains') && (
                 <NavLink to="/campains" className="NavSlide__option">
