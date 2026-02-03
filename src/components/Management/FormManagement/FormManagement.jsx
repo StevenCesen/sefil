@@ -18,11 +18,9 @@ export default function FormManagement(){
 
     const selectedParent = store_templates.current_template.find(item => item.name === store_management.state);
     const allSubstates = selectedParent?.children || [];
-
-    // Filtrar subestados por roles del usuario
     const userRole = localStorage.getItem('role');
+
     const selectedOptions = allSubstates.filter(substate => {
-        // Si no tiene roles definidos o es null, no mostrar
         if (!substate.roles || substate.roles === 'null' || substate.roles === null) {
             return false;
         }
@@ -37,12 +35,10 @@ export default function FormManagement(){
             return false;
         }
 
-        // Si no hay roles definidos o está vacío, no mostrar
         if (!rolesArray || rolesArray.length === 0) {
             return false;
         }
 
-        // Verificar si el rol del usuario está en la lista de roles permitidos
         return rolesArray.includes(userRole);
     });
 
@@ -193,6 +189,7 @@ export default function FormManagement(){
                         value={store_management.promise_date} 
                         onChange={(e)=>{store_management.setPromiseDate(e.target.value)}} 
                         type="date" 
+                        min={new Date().toISOString().split('T')[0]}
                         required
                     />
                 </label>

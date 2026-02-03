@@ -45,7 +45,7 @@ export default function SectionDirections() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `${import.meta.env.VITE_URL_BASE}/clients/${client_id}/directions`,
+                `${import.meta.env.VITE_URL_BASE}/directions?client_id=${client_id}`,
                 {
                     headers: {
                         'Accept': 'application/json',
@@ -55,8 +55,8 @@ export default function SectionDirections() {
             );
             const data = await response.json();
 
-            if (data.code === 1) {
-                setDirections(data.result?.data || data.result || []);
+            if (data.code===1) {
+                setDirections(data.result?.data);
             }
         } catch (error) {
             console.error("Error fetching directions:", error);
@@ -122,10 +122,11 @@ export default function SectionDirections() {
         }
 
         setSaving(true);
+
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `${import.meta.env.VITE_URL_BASE}/clients/${client_id}/directions`,
+                `${import.meta.env.VITE_URL_BASE}/directions`,
                 {
                     method: 'POST',
                     headers: {
@@ -133,7 +134,10 @@ export default function SectionDirections() {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(newDirection)
+                    body: JSON.stringify({
+                        ...newDirection,
+                        client_id: client_id
+                    })
                 }
             );
             const data = await response.json();
