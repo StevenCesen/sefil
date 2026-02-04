@@ -79,10 +79,7 @@ export default function Credit(){
                 credit_id:credit.credit.id,
                 gasto_cobranza:managementExpenses
             });
-        }else if(action==='GEN_JUDICIAL'){
-            //  Ver después
         }else{
-            // Cerrar ambos modales cuando la acción no sea ninguna de las anteriores
             store_condonation.viewOn(false);
             store_structure.viewOn(false);
         }

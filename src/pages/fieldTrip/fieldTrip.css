@@ -145,7 +145,7 @@
 
 /* Credits Panel */
 .credits-panel {
-    width: 400px;
+    width: 500px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -183,6 +183,100 @@
     border-radius: 4px;
     font-size: 14px;
     background: white;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Filas de filtros - 3 columnas */
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+/* Multi-select para agencias */
+.filter-multiselect {
+    position: relative;
+    flex: 1;
+}
+
+.multiselect-btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-arrow {
+    font-size: 10px;
+    margin-left: 8px;
+}
+
+.multiselect-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.multiselect-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.multiselect-option:hover {
+    background: #f5f5f5;
+}
+
+.multiselect-option input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Filtro de rango de monto */
+.filter-amount-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    grid-column: span 2;
+}
+
+.filter-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    flex: 1;
+    min-width: 0;
+}
+
+.amount-separator {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Responsive para filtros */
+@media (max-width: 600px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-amount-range {
+        grid-column: span 1;
+    }
 }
 
 .credits-list {

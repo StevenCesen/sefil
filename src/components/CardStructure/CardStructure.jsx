@@ -44,11 +44,8 @@ export default function CardStructure(){
             detail:'',
             totalAmount:store_structure.total_amount
         });
-
-        // Si está en modo edit y hay cuotas existentes, cargarlas
         if(store_structure.view === 'edit' && store_structure.existing_fees?.length > 0){
             setQuoteDetail(store_structure.existing_fees);
-            // Pre-llenar valores si es necesario
             if(store_structure.existing_fees.length > 0){
                 setNumberQuote(store_structure.existing_fees.length);
                 setAmountQuote(parseFloat(store_structure.existing_fees[0].valor));
@@ -257,8 +254,7 @@ export default function CardStructure(){
 
                             try {
                                 let result;
-                                
-                                // Verificar si es edición o creación
+
                                 if(store_structure.agreement_id && store_structure.view === 'edit') {
                                     result = await updateAgreement(store_structure.agreement_id, data);
                                 } else {

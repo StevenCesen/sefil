@@ -8,7 +8,7 @@ import ReportProgressBar from "../../../components/ReportProgressBar/ReportProgr
 
 export default function AccountingPayments() {
     const [formData, setFormData] = useState({
-        business_id: '',
+        business_ids: [],
         group: 'true',
         filterType: 'range',
         start_date: '',
@@ -19,6 +19,7 @@ export default function AccountingPayments() {
     const [progress, setProgress] = useState(0);
     const [businesses, setBusinesses] = useState([]);
     const [loadingBusinesses, setLoadingBusinesses] = useState(true);
+    const [showBusinessDropdown, setShowBusinessDropdown] = useState(false);
 
     useEffect(() => {
         const loadBusinesses = async () => {
@@ -49,13 +50,41 @@ export default function AccountingPayments() {
         }));
     };
 
+    const handleBusinessChange = (businessId, checked) => {
+        if (businessId === "all") {
+            if (checked) {
+                setFormData(prev => ({
+                    ...prev,
+                    business_ids: businesses.map(b => b.id)
+                }));
+            } else {
+                setFormData(prev => ({
+                    ...prev,
+                    business_ids: []
+                }));
+            }
+        } else {
+            if (checked) {
+                setFormData(prev => ({
+                    ...prev,
+                    business_ids: [...prev.business_ids, businessId]
+                }));
+            } else {
+                setFormData(prev => ({
+                    ...prev,
+                    business_ids: prev.business_ids.filter(id => id !== businessId)
+                }));
+            }
+        }
+    };
+
     const handleExport = async (e) => {
         e.preventDefault();
 
-        if (!formData.business_id) {
+        if (formData.business_ids.length === 0) {
             sendpush({
                 title: 'Error',
-                message: 'Debe seleccionar una cartera',
+                message: 'Debe seleccionar al menos una cartera',
                 type: 'Push--error',
                 timeout: 3000
             });
@@ -98,7 +127,9 @@ export default function AccountingPayments() {
             const link = document.createElement('a');
             link.href = downloadUrl;
 
-            const businessName = businesses.find(b => b.id === parseInt(formData.business_id))?.name || 'EMPRESA';
+            const businessName = formData.business_ids.length === 1
+                ? businesses.find(b => b.id === formData.business_ids[0])?.name || 'EMPRESA'
+                : `${formData.business_ids.length}_CARTERAS`;
             const today = new Date();
             const day = String(today.getDate()).padStart(2, '0');
             const monthNames = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
@@ -151,22 +182,42 @@ export default function AccountingPayments() {
 
                 <form onSubmit={handleExport} className="AccountingPayments__form">
                     <div className="AccountingPayments__field">
-                        <label htmlFor="business_id">Cartera *</label>
-                        <select
-                            id="business_id"
-                            name="business_id"
-                            value={formData.business_id}
-                            onChange={handleChange}
-                            disabled={loadingBusinesses || loading}
-                            required
-                        >
-                            <option value="">-- Seleccionar cartera --</option>
-                            {businesses.map(business => (
-                                <option key={business.id} value={business.id}>
-                                    {business.name}
-                                </option>
-                            ))}
-                        </select>
+                        <label>Carteras *</label>
+                        <div className="AccountingPayments__multiselect">
+                            <button
+                                type="button"
+                                className="AccountingPayments__multiselect-btn"
+                                onClick={() => setShowBusinessDropdown(!showBusinessDropdown)}
+                                disabled={loadingBusinesses || loading}
+                            >
+                                {formData.business_ids.length === 0
+                                    ? "-- Seleccionar carteras --"
+                                    : `${formData.business_ids.length} cartera(s) seleccionada(s)`}
+                                <span className="AccountingPayments__dropdown-arrow">▼</span>
+                            </button>
+                            {showBusinessDropdown && (
+                                <div className="AccountingPayments__multiselect-dropdown">
+                                    <label className="AccountingPayments__multiselect-option">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.business_ids.length === businesses.length && businesses.length > 0}
+                                            onChange={(e) => handleBusinessChange("all", e.target.checked)}
+                                        />
+                                        -- Todas --
+                                    </label>
+                                    {businesses.map(business => (
+                                        <label key={business.id} className="AccountingPayments__multiselect-option">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.business_ids.includes(business.id)}
+                                                onChange={(e) => handleBusinessChange(business.id, e.target.checked)}
+                                            />
+                                            {business.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className="AccountingPayments__field">

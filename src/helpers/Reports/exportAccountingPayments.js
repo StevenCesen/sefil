@@ -1,7 +1,12 @@
-export default async function exportAccountingPayments({ business_id, group, filterType, start_date, end_date, month_name }) {
+export default async function exportAccountingPayments({ business_ids, group, filterType, start_date, end_date, month_name }) {
     const endpoint = `${import.meta.env.VITE_URL_BASE}/exports/accounting`;
 
-    let url = `${endpoint}?business_id=${business_id}&group=${group}`;
+    // Construir parámetro business_ids como array JSON
+    const businessIdsParam = Array.isArray(business_ids)
+        ? JSON.stringify(business_ids)
+        : JSON.stringify([business_ids]);
+
+    let url = `${endpoint}?business_ids=${encodeURIComponent(businessIdsParam)}&group=${group}`;
 
     if (filterType === 'range') {
         url += `&start_date=${start_date}&end_date=${end_date}`;

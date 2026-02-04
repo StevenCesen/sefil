@@ -3,6 +3,44 @@ import "./fieldTrip.css";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import sendpush from "../../helpers/sendpush";
 
+// Opciones de rango basadas en días de mora
+const RANGE_OPTIONS = [
+    { value: "all", label: "Todos los rangos" },
+    { value: "A", label: "A) Preventiva", min: null, max: 0 },
+    { value: "B", label: "B) 1", min: 1, max: 1 },
+    { value: "C", label: "C) 2-5", min: 2, max: 5 },
+    { value: "D", label: "D) 6-15", min: 6, max: 15 },
+    { value: "E", label: "E) 16-30", min: 16, max: 30 },
+    { value: "F", label: "F) 31-60", min: 31, max: 60 },
+    { value: "G", label: "G) 61-90", min: 61, max: 90 },
+    { value: "H", label: "H) 91-120", min: 91, max: 120 },
+    { value: "I", label: "I) 121-180", min: 121, max: 180 },
+    { value: "J", label: "J) 181-360", min: 181, max: 360 },
+    { value: "K", label: "K) 361-720", min: 361, max: 720 },
+    { value: "L", label: "L) 721-1080", min: 721, max: 1080 },
+    { value: "M", label: "M) Más de 1080", min: 1081, max: null }
+];
+
+// Estados de crédito
+const COLLECTION_STATE_OPTIONS = [
+    { value: "all", label: "Todos los estados" },
+    { value: "Vigente", label: "Vigente" },
+    { value: "Vencido", label: "Vencido" },
+    { value: "Castigado", label: "Castigado" },
+    { value: "CONVENIO DE PAGO", label: "Convenio de Pago" },
+    { value: "Vencido en trámite judicial", label: "Vencido en trámite judicial" }
+];
+
+// Función para extraer el número de crédito del sync_id (parte después del guión)
+const extractCreditNumber = (term) => {
+    if (!term) return "";
+    const trimmed = term.trim();
+    if (trimmed.includes("-")) {
+        return trimmed.split("-").pop();
+    }
+    return trimmed;
+};
+
 export default function FieldTrip() {
     const [credits, setCredits] = useState([]);
     const [selectedCredit, setSelectedCredit] = useState(null);
@@ -15,9 +53,20 @@ export default function FieldTrip() {
     const [filterBusiness, setFilterBusiness] = useState("all"); // all, business_id
     const [pagination, setPagination] = useState(null);
 
+    // Nuevos filtros
+    const [agencies, setAgencies] = useState([]);
+    const [filterAgencies, setFilterAgencies] = useState([]); // Multi-select array
+    const [showAgencyDropdown, setShowAgencyDropdown] = useState(false);
+    const [filterRange, setFilterRange] = useState("all");
+    const [filterCollectionState, setFilterCollectionState] = useState("all");
+    const [filterMinAmount, setFilterMinAmount] = useState("");
+    const [filterMaxAmount, setFilterMaxAmount] = useState("");
+    const [approvalLoading, setApprovalLoading] = useState({});
+
     useEffect(() => {
         fetchAgents();
         fetchBusinesses();
+        fetchAgencies();
     }, []);
     const fetchBusinesses = async () => {
         try {
@@ -40,9 +89,46 @@ export default function FieldTrip() {
         }
     };
 
+    const fetchAgencies = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `${import.meta.env.VITE_URL_BASE}/agencies`,
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+            const data = await response.json();
+            if (data.code === 1) {
+                setAgencies(data.result?.data || []);
+            }
+        } catch (error) {
+            console.error("Error fetching agencies:", error);
+        }
+    };
+
+    const handleAgencyChange = (agencyName, checked) => {
+        if (agencyName === "-- Todas --") {
+            if (checked) {
+                setFilterAgencies(agencies.map(a => a.name));
+            } else {
+                setFilterAgencies([]);
+            }
+        } else {
+            if (checked) {
+                setFilterAgencies(prev => [...prev, agencyName]);
+            } else {
+                setFilterAgencies(prev => prev.filter(a => a !== agencyName));
+            }
+        }
+    };
+
     useEffect(() => {
         fetchCredits();
-    }, [filterApproved, filterAgent, filterBusiness]);
+    }, [filterApproved, filterAgent, filterBusiness, filterAgencies, filterRange, filterCollectionState, filterMinAmount, filterMaxAmount]);
 
     // Agregar debounce para la búsqueda
     useEffect(() => {
@@ -99,9 +185,37 @@ export default function FieldTrip() {
                 if (filterBusiness !== "all") {
                     baseUrl += `&business_id=${filterBusiness}`;
                 }
-                // Agregar búsqueda
+                // Filtro de agencias (multi-select)
+                if (filterAgencies.length > 0) {
+                    baseUrl += `&agency=${encodeURIComponent(filterAgencies.join(','))}`;
+                }
+                // Filtro de rango de días de mora
+                if (filterRange !== "all") {
+                    const rangeOption = RANGE_OPTIONS.find(r => r.value === filterRange);
+                    if (rangeOption) {
+                        if (rangeOption.min !== null) {
+                            baseUrl += `&days_past_due_min=${rangeOption.min}`;
+                        }
+                        if (rangeOption.max !== null) {
+                            baseUrl += `&days_past_due_max=${rangeOption.max}`;
+                        }
+                    }
+                }
+                // Filtro de estado de crédito
+                if (filterCollectionState !== "all") {
+                    baseUrl += `&collection_state=${encodeURIComponent(filterCollectionState)}`;
+                }
+                // Filtro de monto
+                if (filterMinAmount) {
+                    baseUrl += `&total_amount_min=${filterMinAmount}`;
+                }
+                if (filterMaxAmount) {
+                    baseUrl += `&total_amount_max=${filterMaxAmount}`;
+                }
+                // Agregar búsqueda por sync_id (extrae número de crédito si viene con prefijo)
                 if (searchTerm.trim()) {
-                    baseUrl += `&search=${encodeURIComponent(searchTerm.trim())}`;
+                    const creditNumber = extractCreditNumber(searchTerm);
+                    baseUrl += `&sync_id=${encodeURIComponent(creditNumber)}`;
                 }
                 endpoint = baseUrl;
             }
@@ -114,7 +228,6 @@ export default function FieldTrip() {
             });
             const data = await response.json();
             if (data.code === 1) {
-                console.log(data)
                 setCredits(data.result?.data || []);
                 setPagination({
                     current_page: data.result?.meta?.current_page,
@@ -230,7 +343,7 @@ export default function FieldTrip() {
         fetchCreditDetails(credit.id);
     };
 
-    const filteredCredits = credits;  //EMPRESA, MONTO, AGENCIA, AGENTE, ESTADO DE CRÉDITO, RANGO DE DÍAS DE MORA
+    const filteredCredits = credits;
     
     const handlePageChange = (url) => {
         if (!url) return;
@@ -250,8 +363,36 @@ export default function FieldTrip() {
         if (filterBusiness !== "all") {
             baseUrl += `&business_id=${filterBusiness}`;
         }
+        // Filtro de agencias (multi-select)
+        if (filterAgencies.length > 0) {
+            baseUrl += `&agency=${encodeURIComponent(filterAgencies.join(','))}`;
+        }
+        // Filtro de rango de días de mora
+        if (filterRange !== "all") {
+            const rangeOption = RANGE_OPTIONS.find(r => r.value === filterRange);
+            if (rangeOption) {
+                if (rangeOption.min !== null) {
+                    baseUrl += `&days_past_due_min=${rangeOption.min}`;
+                }
+                if (rangeOption.max !== null) {
+                    baseUrl += `&days_past_due_max=${rangeOption.max}`;
+                }
+            }
+        }
+        // Filtro de estado de crédito
+        if (filterCollectionState !== "all") {
+            baseUrl += `&collection_state=${encodeURIComponent(filterCollectionState)}`;
+        }
+        // Filtro de monto
+        if (filterMinAmount) {
+            baseUrl += `&total_amount_min=${filterMinAmount}`;
+        }
+        if (filterMaxAmount) {
+            baseUrl += `&total_amount_max=${filterMaxAmount}`;
+        }
         if (searchTerm.trim()) {
-            baseUrl += `&search=${encodeURIComponent(searchTerm.trim())}`;
+            const creditNumber = extractCreditNumber(searchTerm);
+            baseUrl += `&sync_id=${encodeURIComponent(creditNumber)}`;
         }
         if (page) {
             baseUrl += `&page=${page}`;
@@ -279,49 +420,140 @@ export default function FieldTrip() {
                         <h2>Créditos para Visita Campo</h2>
                         
                         <div className="search-filters">
+                            {/* Barra de búsqueda */}
                             <input
                                 type="text"
-                                placeholder="Buscar por ID, cliente o documento..."
+                                placeholder="Buscar por número de crédito (ej: FACES-009033203)..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="search-input"
                             />
 
-                            <select 
-                                value={filterApproved} 
-                                onChange={(e) => setFilterApproved(e.target.value)}
-                                className="filter-select"
-                            >
-                                <option value="all">Todos los estados</option>
-                                <option value="approved">Aprobados</option>
-                                <option value="pending">Pendientes</option>
-                            </select>
+                            {/* Fila 1: Estado aprobación, Agentes, Empresas */}
+                            <div className="filter-row">
+                                <select
+                                    value={filterApproved}
+                                    onChange={(e) => setFilterApproved(e.target.value)}
+                                    className="filter-select"
+                                >
+                                    <option value="all">Todos los estados</option>
+                                    <option value="approved">Aprobados</option>
+                                    <option value="pending">Pendientes</option>
+                                </select>
 
-                            <select 
-                                value={filterAgent} 
-                                onChange={(e) => setFilterAgent(e.target.value)}
-                                className="filter-select"
-                            >
-                                <option value="all">Todos los agentes</option>
-                                {agents.map(agent => (
-                                    <option key={agent.id} value={agent.id}>
-                                        {agent.name}
-                                    </option>
-                                ))}
-                            </select>
+                                <select
+                                    value={filterAgent}
+                                    onChange={(e) => setFilterAgent(e.target.value)}
+                                    className="filter-select"
+                                >
+                                    <option value="all">Todos los agentes</option>
+                                    {agents.map(agent => (
+                                        <option key={agent.id} value={agent.id}>
+                                            {agent.name}
+                                        </option>
+                                    ))}
+                                </select>
 
-                            <select
-                                value={filterBusiness}
-                                onChange={e => setFilterBusiness(e.target.value)}
-                                className="filter-select"
-                            >
-                                <option value="all">Todas las empresas</option>
-                                {businesses.map(business => (
-                                    <option key={business.id} value={business.id}>
-                                        {business.name}
-                                    </option>
-                                ))}
-                            </select>
+                                <select
+                                    value={filterBusiness}
+                                    onChange={e => setFilterBusiness(e.target.value)}
+                                    className="filter-select"
+                                >
+                                    <option value="all">Todas las empresas</option>
+                                    {businesses.map(business => (
+                                        <option key={business.id} value={business.id}>
+                                            {business.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Fila 2: Agencias (multi-select), Rango, Estado crédito */}
+                            <div className="filter-row">
+                                <div className="filter-multiselect">
+                                    <button
+                                        type="button"
+                                        className="filter-select multiselect-btn"
+                                        onClick={() => setShowAgencyDropdown(!showAgencyDropdown)}
+                                    >
+                                        {filterAgencies.length === 0
+                                            ? "Todas las agencias"
+                                            : `${filterAgencies.length} agencia(s)`}
+                                        <span className="dropdown-arrow">▼</span>
+                                    </button>
+                                    {showAgencyDropdown && (
+                                        <div className="multiselect-dropdown">
+                                            <label className="multiselect-option">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={filterAgencies.length === agencies.length && agencies.length > 0}
+                                                    onChange={(e) => handleAgencyChange("-- Todas --", e.target.checked)}
+                                                />
+                                                -- Todas --
+                                            </label>
+                                            {agencies.map((agency, index) => (
+                                                <label key={index} className="multiselect-option">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={filterAgencies.includes(agency.name)}
+                                                        onChange={(e) => handleAgencyChange(agency.name, e.target.checked)}
+                                                    />
+                                                    {agency.name}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <select
+                                    value={filterRange}
+                                    onChange={(e) => setFilterRange(e.target.value)}
+                                    className="filter-select"
+                                >
+                                    {RANGE_OPTIONS.map(option => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <select
+                                    value={filterCollectionState}
+                                    onChange={(e) => setFilterCollectionState(e.target.value)}
+                                    className="filter-select"
+                                >
+                                    {COLLECTION_STATE_OPTIONS.map(option => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Fila 3: Filtro de monto (min - max) */}
+                            <div className="filter-row">
+                                <div className="filter-amount-range">
+                                    <input
+                                        type="number"
+                                        placeholder="Monto mínimo"
+                                        value={filterMinAmount}
+                                        onChange={(e) => setFilterMinAmount(e.target.value)}
+                                        className="filter-input"
+                                        min="0"
+                                        step="0.01"
+                                    />
+                                    <span className="amount-separator">-</span>
+                                    <input
+                                        type="number"
+                                        placeholder="Monto máximo"
+                                        value={filterMaxAmount}
+                                        onChange={(e) => setFilterMaxAmount(e.target.value)}
+                                        className="filter-input"
+                                        min="0"
+                                        step="0.01"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -335,7 +567,7 @@ export default function FieldTrip() {
                                 onClick={() => handleCreditClick(credit)}
                             >
                                 <div className="credit-card-header">
-                                    <h3>{credit.sync_id}</h3>
+                                    <h3>{credit.business_name}-{credit.sync_id}</h3>
                                     <div className="approval-toggle">
                                         <button
                                             className={`approval-btn approval-btn-no${!credit.approve_field_trip ? ' active' : ''}`}
