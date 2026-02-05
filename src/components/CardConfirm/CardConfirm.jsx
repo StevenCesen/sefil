@@ -14,7 +14,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
     const store_billing                     =   useStoreBilling();
 
     useEffect(()=>{
-        fetch(`${import.meta.env.VITE_URL_BASE}/sofiaconfig`,{
+        fetch(`${import.meta.env.VITE_URL_SOFIA}/sofiaconfig`,{
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -109,7 +109,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 formaPago: dates.formaPago
             };
 
-            const response = await fetch(`${import.meta.env.VITE_URL_BASE}/payments/process-invoice`, {
+            const response = await fetch(`${import.meta.env.VITE_URL_SOFIA}/payments/process-invoice`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
