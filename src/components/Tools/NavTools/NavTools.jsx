@@ -6,7 +6,6 @@ import { useStoreStructure } from "../../../stores/useStoreStructure";
 import { useStoreCondonation } from "../../../stores/useStoreCondonation";
 import useVerifyStruct from "../../../hooks/useVerifyRestruct";
 import sendpush from "../../../helpers/sendpush";
-import { useViewStruct } from "../../../stores/useViewStruct";
 
 export default function NavTools(){
     
@@ -23,7 +22,7 @@ export default function NavTools(){
                 ?
                     <div className="NavTools__menu">
                         <button onClick={()=>{
-                            const managementExpenses = credit.credit.management_collection_expenses || 0;
+                            const managementExpenses = credit.credit.invoice_value || 0;
                             store_condonation.setInfoCredit({
                                 ci:credit.credit.clients[0].ci,
                                 name:credit.credit.clients[0].name,
@@ -33,7 +32,8 @@ export default function NavTools(){
                                 interes:credit.credit.interest,
                                 seguro_desgravamen:credit.credit.safe,
                                 gastos_judiciales:credit.credit.legal_expenses,
-                                gastos_cobranza_sefil:managementExpenses,
+                                gastos_cobranza_sefil:credit.credit.management_collection_expenses - managementExpenses,
+                                invoice_value:managementExpenses,
                                 gastos_cobranza:credit.credit.collection_expenses,
                                 otros_valores:credit.credit.other_values,
                                 id:credit.credit.id,
@@ -55,7 +55,7 @@ export default function NavTools(){
                                     });
 
                                     if(!check){
-                                        const managementExpenses = credit.credit.management_collection_expenses || 0;
+                                        const managementExpenses = credit.credit.invoice_value || 0;
                                         store_structure.viewOn(true);
                                         store_structure.setInfoCredit({
                                             ci:credit.credit.clients[0].ci,

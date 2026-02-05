@@ -136,7 +136,15 @@ import logo from '/icons/logo.png';
                 }</Text>
             </View>
             <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Gastos cobranza</Text>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Gastos cobranza SEFIL</Text>
+              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_cobranza_sefil,currency:'USD'})}</Text>
+              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
+                {
+                    useFormatterNumber({value:Number(JSON.parse(prevDates).gastos_cobranza_sefil)-Number(JSON.parse(postDates).gastos_cobranza_sefil),currency:'USD'})
+                }</Text>
+            </View>
+            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Gastos cobranza FACES</Text>
               <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_cobranza,currency:'USD'})}</Text>
               <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
                 {
@@ -161,14 +169,15 @@ import logo from '/icons/logo.png';
                     Number(JSON.parse(prevDates).mora)-Number(JSON.parse(postDates).mora)+
                     Number(JSON.parse(prevDates).seguro_desgravamen)-Number(JSON.parse(postDates).seguro_desgravamen)+
                     Number(JSON.parse(prevDates).gastos_judiciales)-Number(JSON.parse(postDates).gastos_judiciales)+
+                    Number(JSON.parse(prevDates).gastos_cobranza_sefil)-Number(JSON.parse(postDates).gastos_cobranza_sefil)+
                     Number(JSON.parse(prevDates).gastos_cobranza)-Number(JSON.parse(postDates).gastos_cobranza)+
                     Number(JSON.parse(prevDates).otros_valores)-Number(JSON.parse(postDates).otros_valores),currency:'USD'}))
-                
+
                 }</Text>
             </View>
           </View>
 
-          <View style={{marginTop:'100px',width:'100%',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
+          <View style={{marginTop:'50px',width:'100%',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
             <View style={{width:'50%',padding:5,fontSize:8,textAlign:"center"}}>
               <Text>SOLICITADO POR:</Text>
               <Text>GESTOR. {user_auth.toUpperCase()}</Text>

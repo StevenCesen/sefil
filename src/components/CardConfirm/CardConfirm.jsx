@@ -45,7 +45,7 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
                 direccion:direccion,
                 telefono:telefono,
                 email:email,
-                value:(value || 0).toFixed(2),
+                value:value || 0,
                 id:id,
                 cartera:cartera,
                 formaPago:"",
@@ -59,7 +59,6 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
     const handleProcessInvoice = async () => {
         if(isProcessing) return;
 
-        // Validaciones
         if(dates.formaPago === ""){
             sendpush({
                 title: 'Error',
@@ -94,7 +93,6 @@ export default function CardConfirm({id,cartera,value,email,name,ci,direccion,te
         loader.viewOn(true);
 
         try {
-            // Preparar el body según el nuevo endpoint
             const requestBody = {
                 credit_id: parseInt(dates.id),
                 value: parseFloat(dates.value),

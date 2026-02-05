@@ -28,6 +28,7 @@ export default function CardCondonacion() {
             mora: parseFloat((store_condonation.condonated_mora || 0).toFixed(2)),
             seguro_desgravamen: parseFloat((store_condonation.condonated_seguro_desgravamen || 0).toFixed(2)),
             gastos_judiciales: parseFloat((store_condonation.condonated_gastos_judiciales || 0).toFixed(2)),
+            gastos_cobranza_sefil: parseFloat((store_condonation.condonated_gastos_cobranza_sefil || 0).toFixed(2)),
             gastos_cobranza: parseFloat((store_condonation.condonated_gastos_cobranza || 0).toFixed(2)),
             otros_valores: parseFloat((store_condonation.condonated_otros_valores || 0).toFixed(2))
         };
@@ -40,6 +41,7 @@ export default function CardCondonacion() {
             interes: (Number(store_condonation.interes > 0 ? store_condonation.interes : 0) - Number(condonatedVals.interes)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9]))?(\. ?0+$)/, '$1'),
             seguro_desgravamen: (Number(store_condonation.seguro_desgravamen > 0 ? store_condonation.seguro_desgravamen : 0) - Number(condonatedVals.seguro_desgravamen)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9]))?(\. ?0+$)/, '$1'),
             gastos_judiciales: (Number(store_condonation.gastos_judiciales > 0 ? store_condonation.gastos_judiciales : 0) - Number(condonatedVals.gastos_judiciales)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9]))?(\. ?0+$)/, '$1'),
+            gastos_cobranza_sefil: (Number(store_condonation.gastos_cobranza_sefil > 0 ? store_condonation.gastos_cobranza_sefil : 0) - Number(condonatedVals.gastos_cobranza_sefil)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9]))?(\. ?0+$)/, '$1'),
             gastos_cobranza: (Number(store_condonation.gastos_cobranza > 0 ? store_condonation.gastos_cobranza : 0) - Number(condonatedVals.gastos_cobranza)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9]))?(\. ?0+$)/, '$1'),
             otros_valores: (Number(store_condonation.otros_valores > 0 ? store_condonation.otros_valores : 0) - Number(condonatedVals.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9]))?(\. ?0+$)/, '$1')
         });
@@ -64,108 +66,137 @@ export default function CardCondonacion() {
                         <p>Capital</p>
                         <p>$ {store_condonation.capital} USD</p>
                         <input type="number" value={condonatedValues.capital} onChange={(e) => {
-                            const val = e.target.value === '' ? 0 : Number(e.target.value);
+                            const maxVal = Number(store_condonation.capital) || 0;
+                            let val = e.target.value === '' ? 0 : Number(e.target.value);
+                            val = Math.min(Math.max(0, val), maxVal);
                             setCondonatedValues({...condonatedValues, capital: val});
                             setValues({
                                 ...credit,
                                 capital: (Number(store_condonation.capital) - val).toFixed(2).replace(/([0-9]+(\.[ 0-9]+[1-9]))?(\. ?0+$)/, '$1')
                             })
-                        }} placeholder="0.00" min={0} step={0.1} />
+                        }} placeholder="0.00" min={0} max={store_condonation.capital || 0} step={0.1} />
                         <p>$ {credit.capital} USD</p>
                     </div>
                     <div>
                         <p>Interés</p>
                         <p>$ {store_condonation.interes} USD</p>
                         <input type="number" value={condonatedValues.interes} onChange={(e) => {
-                            const val = e.target.value === '' ? 0 : Number(e.target.value);
+                            const maxVal = Number(store_condonation.interes) || 0;
+                            let val = e.target.value === '' ? 0 : Number(e.target.value);
+                            val = Math.min(Math.max(0, val), maxVal);
                             setCondonatedValues({...condonatedValues, interes: val});
                             setValues({
                                 ...credit,
                                 interes: (Number(store_condonation.interes) - val).toFixed(2).replace(/([0-9]+(\.[ 0-9]+[1-9]))?(\. ?0+$)/, '$1')
                             })
-                        }} placeholder="0.00" min={0} step={0.1} />
+                        }} placeholder="0.00" min={0} max={store_condonation.interes || 0} step={0.1} />
                         <p>$ {credit.interes} USD</p>
                     </div>
                     <div>
                         <p>Mora</p>
                         <p>$ {store_condonation.mora} USD</p>
                         <input type="number" value={condonatedValues.mora} onChange={(e) => {
-                            const val = e.target.value === '' ? 0 : Number(e.target.value);
+                            const maxVal = Number(store_condonation.mora) || 0;
+                            let val = e.target.value === '' ? 0 : Number(e.target.value);
+                            val = Math.min(Math.max(0, val), maxVal);
                             setCondonatedValues({...condonatedValues, mora: val});
                             setValues({
                                 ...credit,
                                 mora: (Number(store_condonation.mora) - val).toFixed(2).replace(/([0-9]+(\.[ 0-9]+[1-9]))?(\. ?0+$)/, '$1')
                             })
-                        }} placeholder="0.00" min={0} step={0.1} />
+                        }} placeholder="0.00" min={0} max={store_condonation.mora || 0} step={0.1} />
                         <p>$ {credit.mora} USD</p>
                     </div>
                     <div>
                         <p>Seguro desgravamen</p>
                         <p>$ {store_condonation.seguro_desgravamen} USD</p>
                         <input type="number" value={condonatedValues.seguro_desgravamen} onChange={(e) => {
-                            const val = e.target.value === '' ? 0 : Number(e.target.value);
+                            const maxVal = Number(store_condonation.seguro_desgravamen) || 0;
+                            let val = e.target.value === '' ? 0 : Number(e.target.value);
+                            val = Math.min(Math.max(0, val), maxVal);
                             setCondonatedValues({...condonatedValues, seguro_desgravamen: val});
                             setValues({
                                 ...credit,
                                 seguro_desgravamen: (Number(store_condonation.seguro_desgravamen) - val).toFixed(2).replace(/([0-9]+(\.[ 0-9]+[1-9]))?(\. ?0+$)/, '$1')
                             })
-                        }} placeholder="0.00" min={0} step={0.1} />
+                        }} placeholder="0.00" min={0} max={store_condonation.seguro_desgravamen || 0} step={0.1} />
                         <p>$ {credit.seguro_desgravamen} USD</p>
                     </div>
                     <div>
                         <p>Gastos judiciales</p>
                         <p>$ {store_condonation.gastos_judiciales} USD</p>
                         <input type="number" value={condonatedValues.gastos_judiciales} onChange={(e) => {
-                            const val = e.target.value === '' ? 0 : Number(e.target.value);
+                            const maxVal = Number(store_condonation.gastos_judiciales) || 0;
+                            let val = e.target.value === '' ? 0 : Number(e.target.value);
+                            val = Math.min(Math.max(0, val), maxVal);
                             setCondonatedValues({...condonatedValues, gastos_judiciales: val});
                             setValues({
                                 ...credit,
                                 gastos_judiciales: (Number(store_condonation.gastos_judiciales) - val).toFixed(2).replace(/([0-9]+(\.[ 0-9]+[1-9]))?(\. ?0+$)/, '$1')
                             })
-                        }} placeholder="0.00" min={0} step={0.1} />
+                        }} placeholder="0.00" min={0} max={store_condonation.gastos_judiciales || 0} step={0.1} />
                         <p>$ {credit.gastos_judiciales} USD</p>
                     </div>
                     <div>
-                        <p>Gastos de cobranza</p>
+                        <p>Gastos de cobranza sefil</p>
+                        <p>$ {store_condonation.gastos_cobranza_sefil} USD</p>
+                        <input type="number" value={condonatedValues.gastos_cobranza_sefil} onChange={(e) => {
+                            const maxVal = Number(store_condonation.gastos_cobranza_sefil) || 0;
+                            let val = e.target.value === '' ? 0 : Number(e.target.value);
+                            val = Math.min(Math.max(0, val), maxVal);
+                            setCondonatedValues({...condonatedValues, gastos_cobranza_sefil: val});
+                            setValues({
+                                ...credit,
+                                gastos_cobranza_sefil: (Number(store_condonation.gastos_cobranza_sefil) - val).toFixed(2).replace(/([0-9]+(\.[ 0-9]+[1-9]))?(\. ?0+$)/, '$1')
+                            })
+                        }} placeholder="0.00" min={0} max={store_condonation.gastos_cobranza_sefil || 0} step={0.1} />
+                        <p>$ {credit.gastos_cobranza_sefil} USD</p>
+                    </div>
+                    <div>
+                        <p>Gastos de cobranza faces</p>
                         <p>$ {store_condonation.gastos_cobranza} USD</p>
                         <input type="number" value={condonatedValues.gastos_cobranza} onChange={(e) => {
-                            const val = e.target.value === '' ? 0 : Number(e.target.value);
+                            const maxVal = Number(store_condonation.gastos_cobranza) || 0;
+                            let val = e.target.value === '' ? 0 : Number(e.target.value);
+                            val = Math.min(Math.max(0, val), maxVal);
                             setCondonatedValues({...condonatedValues, gastos_cobranza: val});
                             setValues({
                                 ...credit,
                                 gastos_cobranza: (Number(store_condonation.gastos_cobranza) - val).toFixed(2).replace(/([0-9]+(\.[ 0-9]+[1-9]))?(\. ?0+$)/, '$1')
                             })
-                        }} placeholder="0.00" min={0} step={0.1} />
+                        }} placeholder="0.00" min={0} max={store_condonation.gastos_cobranza || 0} step={0.1} />
                         <p>$ {credit.gastos_cobranza} USD</p>
                     </div>
                     <div>
                         <p>Otros valores</p>
                         <p>$ {store_condonation.otros_valores} USD</p>
                         <input type="number" value={condonatedValues.otros_valores} onChange={(e) => {
-                            const val = e.target.value === '' ? 0 : Number(e.target.value);
+                            const maxVal = Number(store_condonation.otros_valores) || 0;
+                            let val = e.target.value === '' ? 0 : Number(e.target.value);
+                            val = Math.min(Math.max(0, val), maxVal);
                             setCondonatedValues({...condonatedValues, otros_valores: val});
                             setValues({
                                 ...credit,
                                 otros_valores: (Number(store_condonation.otros_valores) - val).toFixed(2).replace(/([0-9]+(\.[ 0-9]+[1-9]))?(\. ?0+$)/, '$1')
                             })
-                        }} placeholder="0.00" min={0} step={0.1} />
+                        }} placeholder="0.00" min={0} max={store_condonation.otros_valores || 0} step={0.1} />
                         <p>$ {credit.otros_valores} USD</p>
                     </div>
                 </div>
 
                 <div className="CardCondonacion__result">
                     <p>Total condonado:</p>
-                    <p>$ {(Number(store_condonation.total) - (Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza) + Number(credit.gastos_judiciales) + Number(credit.otros_valores))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')}</p>
+                    <p>$ {(Number(store_condonation.total) - (Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza) + Number(credit.gastos_cobranza_sefil) + Number(credit.gastos_judiciales) + Number(credit.otros_valores))).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')}</p>
                 </div>
 
                 <div className="CardCondonacion__result">
                     <p>Gasto de cobranza SEFIL:</p>
-                    <p>$ {Number(store_condonation.gastos_cobranza_sefil).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')}</p>
+                    <p>$ {Number(store_condonation.invoice_value).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')}</p>
                 </div>
 
                 <div className="CardCondonacion__result">
                     <p>Total a cancelar:</p>
-                    <p>$ {(Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza) + Number(store_condonation.gastos_cobranza_sefil) + Number(credit.gastos_judiciales) + Number(credit.otros_valores)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')}</p>
+                    <p>$ {(Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza) + Number(credit.gastos_cobranza_sefil) + Number(credit.gastos_judiciales) + Number(credit.otros_valores) + Number(store_condonation.invoice_value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')}</p>
                 </div>
 
                 <button className="CardCondonacion__save"
@@ -173,7 +204,7 @@ export default function CardCondonacion() {
 
                         e.target.textContent = 'Guardando...';
 
-                        const totalAmountPostDates = Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza) + Number(store_condonation.gastos_cobranza_sefil) + Number(credit.gastos_judiciales) + Number(credit.otros_valores);
+                        const totalAmountPostDates = Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza) + Number(credit.gastos_cobranza_sefil) + Number(credit.gastos_judiciales) + Number(credit.otros_valores);
 
                         const data = {
                             credit_id: Number(store_condonation.id),
@@ -183,13 +214,12 @@ export default function CardCondonacion() {
                                 interest: Number(credit.interes),
                                 mora: Number(credit.mora),
                                 safe: Number(credit.seguro_desgravamen),
-                                management_collection_expenses: Number(store_condonation.gastos_cobranza_sefil),
+                                management_collection_expenses: Number(credit.gastos_cobranza_sefil),
                                 collection_expenses: Number(credit.gastos_cobranza),
                                 legal_expenses: Number(credit.gastos_judiciales),
                                 other_values: Number(credit.otros_valores)
                             }
                         };
-
                         useCondonation(data, e.target, handleViewPDF, store_condonation.update);
                     }}
                 >Guardar condonación</button>

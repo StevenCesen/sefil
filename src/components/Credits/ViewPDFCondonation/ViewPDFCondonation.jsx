@@ -10,7 +10,7 @@ export default function ViewPDFCondonation() {
     const response = store_condonation.response;
 
     // Ajustar fecha restando 5 horas para hora local
-    const adjustedDate = response.created_at ? (() => {
+    const adjustedDate = response?.created_at ? (() => {
         const [datePart, timePart] = response.created_at.split(' ');
         const [year, month, day] = datePart.split('/');
         const [hour, minute, second] = timePart.split(':');
@@ -25,27 +25,26 @@ export default function ViewPDFCondonation() {
         return `${adjustedYear}/${adjustedMonth}/${adjustedDay} ${adjustedHour}:${adjustedMinute}:${adjustedSecond}`;
     })() : '';
 
-    // prev_dates: valores originales antes de condonación (desde el store)
     const prevDates = JSON.stringify({
         capital: Number(store_condonation.capital) || 0,
         interes: Number(store_condonation.interes) || 0,
         mora: Number(store_condonation.mora) || 0,
         seguro_desgravamen: Number(store_condonation.seguro_desgravamen) || 0,
+        gastos_cobranza_sefil: Number(store_condonation.gastos_cobranza_sefil) || 0,
         gastos_cobranza: Number(store_condonation.gastos_cobranza) || 0,
         gastos_judiciales: Number(store_condonation.gastos_judiciales) || 0,
         otros_valores: Number(store_condonation.otros_valores) || 0
     });
 
-    // post_dates: valores que quedan por pagar después de la condonación
-    // El backend devuelve los MONTOS CONDONADOS, entonces: post_dates = prev_dates - montos_condonados
     const postDates = JSON.stringify({
-        capital: Number(store_condonation.capital) - Number(response.capital || 0),
-        interes: Number(store_condonation.interes) - Number(response.interest || 0),
-        mora: Number(store_condonation.mora) - Number(response.mora || 0),
-        seguro_desgravamen: Number(store_condonation.seguro_desgravamen) - Number(response.safe || 0),
-        gastos_cobranza: Number(store_condonation.gastos_cobranza) - Number(response.collection_expenses || 0),
-        gastos_judiciales: Number(store_condonation.gastos_judiciales) - Number(response.legal_expenses || 0),
-        otros_valores: Number(store_condonation.otros_valores) - Number(response.other_values || 0)
+        capital: Number(response?.capital || 0),
+        interes: Number(response?.interest || 0),
+        mora: Number(response?.mora || 0),
+        seguro_desgravamen: Number(response?.safe || 0),
+        gastos_cobranza_sefil: Number(response?.management_collection_expenses || 0),
+        gastos_cobranza: Number(response?.collection_expenses || 0),
+        gastos_judiciales: Number(response?.legal_expenses || 0),
+        otros_valores: Number(response?.other_values || 0)
     });
 
     return (
@@ -54,12 +53,12 @@ export default function ViewPDFCondonation() {
             <PDFViewer width={'800px'} height={'600px'}>
                 <PDFcondonacion
                     ci={store_condonation.ci}
-                    credito={response.sync_id || store_condonation.id}
+                    credito={response?.sync_id || store_condonation.id}
                     name={store_condonation.name}
                     fecha={adjustedDate}
                     prevDates={prevDates}
                     postDates={postDates}
-                    user_auth={response.created_by || 'N/A'}
+                    user_auth={response?.created_by || 'N/A'}
                 />
             </PDFViewer>
         </div>

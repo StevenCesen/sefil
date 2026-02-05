@@ -332,9 +332,7 @@ export default function ResumeAgreement({agreement, onActionComplete, showAction
                 }}
                 updateInfoValues={async () => {
                     loader.viewOn(true);
-                    // Actualizar crédito con los nuevos valores del backend
                     await store_management.refreshCredit();
-                    // Recargar actividad
                     if (onActionComplete) onActionComplete();
                     loader.viewOn(false);
                     setShowPayModal(false);
@@ -349,7 +347,7 @@ export default function ResumeAgreement({agreement, onActionComplete, showAction
             <CardConfirm
                 id={store_management.credit.id}
                 cartera={business_id}
-                value={store_management.credit.management_collection_expenses || 0}
+                value={agreement.fee_amount || 0}
                 email={''}
                 name={store_management.credit.client_name}
                 ci={store_management.credit.client_ci}
@@ -358,7 +356,6 @@ export default function ResumeAgreement({agreement, onActionComplete, showAction
                 setGastos={() => {}}
                 setView={async (value) => {
                     setShowGastoCobranzaModal(value);
-                    // Actualizar crédito con los nuevos valores del backend
                     if (!value) {
                         loader.viewOn(true);
                         await store_management.refreshCredit();

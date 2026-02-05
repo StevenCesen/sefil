@@ -11,6 +11,7 @@ export const useStoreCondonation = create((set) => ({
     gastos_judiciales:0,
     gastos_cobranza_sefil:0,
     gastos_cobranza:0,
+    invoice_value:0,
     otros_valores:0,
     id:0,
     cartera:'',
@@ -31,7 +32,7 @@ export const useStoreCondonation = create((set) => ({
     setResponse:(value)=>{set({response:value})},
     viewOn:(value)=>{set({isViewOn:value})},
     setViewPDF:(value)=>{set({viewPDF:value})},
-    setInfoCredit: ({ci,name,total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,gastos_cobranza_sefil,otros_valores,id,cartera,setData,view,update,condonated_capital,condonated_interes,condonated_mora,condonated_seguro_desgravamen,condonated_gastos_judiciales,condonated_gastos_cobranza,condonated_otros_valores})=>{
+    setInfoCredit: ({ci,name,total,capital,mora,interes,seguro_desgravamen,gastos_judiciales,gastos_cobranza,gastos_cobranza_sefil,otros_valores,invoice_value,id,cartera,setData,view,update,condonated_capital,condonated_interes,condonated_mora,condonated_seguro_desgravamen,condonated_gastos_judiciales,condonated_gastos_cobranza,condonated_otros_valores})=>{
         set({ci})
         set({name})
         set({total})
@@ -43,6 +44,7 @@ export const useStoreCondonation = create((set) => ({
         set({gastos_cobranza_sefil})
         set({gastos_cobranza})
         set({otros_valores})
+        set({invoice_value})
         set({id})
         set({cartera})
         set({setData})

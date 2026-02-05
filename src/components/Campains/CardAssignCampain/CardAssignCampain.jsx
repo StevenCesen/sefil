@@ -224,11 +224,22 @@ export default function CardAssignCampain({ campain_id }) {
             return;
         }
 
-        const hasInactiveCredits = credits.data.some(credit => credit.sync_status === 'INACTIVE');
-        if (hasInactiveCredits) {
+        const activeCredits = credits.data.filter(credit => credit.sync_status === 'ACTIVE');
+        const inactiveCount = credits.data.length - activeCredits.length;
+
+        if (inactiveCount > 0) {
             sendpush({
-                title: 'Error de validación',
-                message: 'No se puede transferir créditos inactivos',
+                title: 'Créditos inactivos excluidos',
+                message: `Se excluirán ${inactiveCount} crédito(s) inactivo(s) de la transferencia`,
+                type: 'Push--warning',
+                timeout: 5000
+            });
+        }
+
+        if (activeCredits.length === 0) {
+            sendpush({
+                title: 'Sin créditos activos',
+                message: 'No hay créditos activos para transferir',
                 type: 'Push--warning',
                 timeout: 5000
             });
@@ -245,8 +256,8 @@ export default function CardAssignCampain({ campain_id }) {
                 sync_status: 'ACTIVE'
             };
 
-            if (credits_from_search && credits.data.length > 0) {
-                transferData.sync_ids = credits.data.map(credit => credit.sync_id);
+            if (credits_from_search && activeCredits.length > 0) {
+                transferData.sync_ids = activeCredits.map(credit => credit.sync_id);
             } else {
                 if (filters.mora?.min != null && filters.mora.min > 0) {
                     transferData.days_past_due_min = filters.mora.min;

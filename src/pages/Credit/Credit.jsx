@@ -19,7 +19,6 @@ import { useStoreCondonation } from "../../stores/useStoreCondonation";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import { useStoreStructure } from "../../stores/useStoreStructure";
 import CardActivity from "../../components/Credits/CardActivity/CardActivity";
-import HistorialNav from "../../components/Tools/HistorialNav/HistorialNav";
 import ViewPDFCondonation from "../../components/Credits/ViewPDFCondonation/ViewPDFCondonation";
 import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFStructure";
 import ViewPDFBilling from "../../components/Credits/ViewPDFBilling/ViewPDFBilling";
@@ -49,7 +48,7 @@ export default function Credit(){
         helperCredit({credit_id:params.id,cartera:attributes.get('cartera')});
 
         if(action==='GEN_CONDONATION'){
-            const managementExpenses = credit.credit.management_collection_expenses || 0;
+            const managementExpenses = credit.credit.invoice_value || 0;
             store_structure.viewOn(false);
             store_condonation.viewOn(true);
             store_condonation.setInfoCredit({
@@ -61,14 +60,15 @@ export default function Credit(){
                 interes:credit.credit.interest,
                 seguro_desgravamen:credit.credit.safe,
                 gastos_judiciales:credit.credit.legal_expenses,
-                gastos_cobranza_sefil:managementExpenses,
+                gastos_cobranza_sefil:credit.credit.management_collection_expenses-managementExpenses,
+                invoice_value:managementExpenses,
                 gastos_cobranza:credit.credit.collection_expenses,
                 otros_valores:credit.credit.other_values,
                 id:credit.credit.id,
                 cartera:credit.cartera
             });
         }else if(action==='GEN_CONVENIO'){
-            const managementExpenses = credit.credit.management_collection_expenses || 0;
+            const managementExpenses = credit.credit.invoice_value || 0;
             store_condonation.viewOn(false);
             store_structure.viewOn(true);
             store_structure.setInfoCredit({
@@ -226,7 +226,7 @@ export default function Credit(){
                             <CardConfirm
                                 id={credit.credit.id}
                                 cartera={credit.cartera}
-                                value={credit.credit.management_collection_expenses}
+                                value={credit.credit.invoice_value}
                                 email={''}
                                 name={credit.credit.clients[0].name}
                                 ci={credit.credit.clients[0].ci}
