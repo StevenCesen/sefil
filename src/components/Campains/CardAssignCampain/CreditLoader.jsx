@@ -3,7 +3,7 @@ import { fetchCreditsData } from "../../../helpers/Campains/fetchCreditsData";
 import CreditDetailsModal from "../../CreditDetailsModal/CreditDetailsModal";
 import sendpush from "../../../helpers/sendpush";
 
-export default function CreditLoader({ onCreditsChange, credits: externalCredits = { total: 0, data: [] } }) {
+export default function CreditLoader({ onCreditsChange, business_id,credits: externalCredits = { total: 0, data: [] } }) {
     const [credits, setCredits] = useState({ total: 0, data: [] });
     const [view_details, setViewDetails] = useState(false);
     const debounceRef = useRef(null);
@@ -37,9 +37,10 @@ export default function CreditLoader({ onCreditsChange, credits: externalCredits
             });
 
             if (syncIds.length > 0 && businessName) {
+                console.log("Fetching credits with syncIds:", syncIds, "and businessName:", businessName);
                 const data = await fetchCreditsData({
                     sync_ids: syncIds,
-                    business_name: businessName,
+                    business_id: business_id,
                     per_page: 10000
                 });
 

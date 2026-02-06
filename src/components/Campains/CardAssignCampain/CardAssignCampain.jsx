@@ -427,6 +427,7 @@ export default function CardAssignCampain({ campain_id }) {
             <CreditLoader
                 onCreditsChange={handleCreditsChange}
                 credits={credits}
+                business_id={data_campain.business_id}
             />
 
             <CreditFilters
