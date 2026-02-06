@@ -3,7 +3,6 @@ import "./fieldTrip.css";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import sendpush from "../../helpers/sendpush";
 
-// Opciones de rango basadas en días de mora
 const RANGE_OPTIONS = [
     { value: "all", label: "Todos los rangos" },
     { value: "A", label: "A) Preventiva", min: null, max: 0 },
@@ -21,7 +20,6 @@ const RANGE_OPTIONS = [
     { value: "M", label: "M) Más de 1080", min: 1081, max: null }
 ];
 
-// Estados de crédito
 const COLLECTION_STATE_OPTIONS = [
     { value: "all", label: "Todos los estados" },
     { value: "Vigente", label: "Vigente" },
@@ -31,7 +29,6 @@ const COLLECTION_STATE_OPTIONS = [
     { value: "Vencido en trámite judicial", label: "Vencido en trámite judicial" }
 ];
 
-// Función para extraer el número de crédito del sync_id (parte después del guión)
 const extractCreditNumber = (term) => {
     if (!term) return "";
     const trimmed = term.trim();
@@ -42,26 +39,26 @@ const extractCreditNumber = (term) => {
 };
 
 export default function FieldTrip() {
+    const loader = useStoreLoader();
     const [credits, setCredits] = useState([]);
     const [selectedCredit, setSelectedCredit] = useState(null);
-    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filterApproved, setFilterApproved] = useState("pending"); // all, approved, pending
-    const [filterAgent, setFilterAgent] = useState("all"); // all, agent_id
+    const [filterApproved, setFilterApproved] = useState("pending");
+    const [filterAgent, setFilterAgent] = useState("all");
     const [agents, setAgents] = useState([]);
     const [businesses, setBusinesses] = useState([]);
-    const [filterBusiness, setFilterBusiness] = useState("all"); // all, business_id
+    const [filterBusiness, setFilterBusiness] = useState("all");
     const [pagination, setPagination] = useState(null);
 
-    // Nuevos filtros
     const [agencies, setAgencies] = useState([]);
-    const [filterAgencies, setFilterAgencies] = useState([]); // Multi-select array
+    const [filterAgencies, setFilterAgencies] = useState([]);
     const [showAgencyDropdown, setShowAgencyDropdown] = useState(false);
     const [filterRange, setFilterRange] = useState("all");
     const [filterCollectionState, setFilterCollectionState] = useState("all");
     const [filterMinAmount, setFilterMinAmount] = useState("");
     const [filterMaxAmount, setFilterMaxAmount] = useState("");
     const [approvalLoading, setApprovalLoading] = useState({});
+    const [approvalModal, setApprovalModal] = useState({ open: false, creditId: null, approveValue: null, observation: '' });
 
     useEffect(() => {
         fetchAgents();
@@ -130,15 +127,12 @@ export default function FieldTrip() {
         fetchCredits();
     }, [filterApproved, filterAgent, filterBusiness, filterAgencies, filterRange, filterCollectionState, filterMinAmount, filterMaxAmount]);
 
-    // Agregar debounce para la búsqueda
     useEffect(() => {
         const timer = setTimeout(() => {
-            console.log('Debounce completado, ejecutando búsqueda...');
             fetchCredits();
         }, 500);
 
         return () => {
-            console.log('Limpiando timer de debounce');
             clearTimeout(timer);
         };
     }, [searchTerm]);
@@ -147,7 +141,7 @@ export default function FieldTrip() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `${import.meta.env.VITE_URL_BASE}/users?role=agent&per_page=100&is_active=1`,
+                `${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1&per_page=100`,
                 {
                     headers: {
                         'Accept': 'application/json',
@@ -166,7 +160,7 @@ export default function FieldTrip() {
     };
 
     const fetchCredits = async (url = null) => {
-        setLoading(true);
+        loader.viewOn(true);
         try {
             const token = localStorage.getItem("token");
             let endpoint;
@@ -175,7 +169,7 @@ export default function FieldTrip() {
             } else {
                 let baseUrl = `${import.meta.env.VITE_URL_BASE}/credits?`;
                 if (filterApproved === "pending") {
-                    baseUrl += `&approve_field_trip=0&management_status=VISITA CAMPO`;
+                    baseUrl += `&approve_field_trip=0&management_status=SOLICITADO VISITA CAMPO`;
                 } else if (filterApproved === "approved") {
                     baseUrl += `&approve_field_trip=1&management_status=VISITA APROBADA`;
                 }
@@ -185,11 +179,9 @@ export default function FieldTrip() {
                 if (filterBusiness !== "all") {
                     baseUrl += `&business_id=${filterBusiness}`;
                 }
-                // Filtro de agencias (multi-select)
                 if (filterAgencies.length > 0) {
                     baseUrl += `&agency=${encodeURIComponent(filterAgencies.join(','))}`;
                 }
-                // Filtro de rango de días de mora
                 if (filterRange !== "all") {
                     const rangeOption = RANGE_OPTIONS.find(r => r.value === filterRange);
                     if (rangeOption) {
@@ -201,18 +193,15 @@ export default function FieldTrip() {
                         }
                     }
                 }
-                // Filtro de estado de crédito
                 if (filterCollectionState !== "all") {
                     baseUrl += `&collection_state=${encodeURIComponent(filterCollectionState)}`;
                 }
-                // Filtro de monto
                 if (filterMinAmount) {
                     baseUrl += `&total_amount_min=${filterMinAmount}`;
                 }
                 if (filterMaxAmount) {
                     baseUrl += `&total_amount_max=${filterMaxAmount}`;
                 }
-                // Agregar búsqueda por sync_id (extrae número de crédito si viene con prefijo)
                 if (searchTerm.trim()) {
                     const creditNumber = extractCreditNumber(searchTerm);
                     baseUrl += `&sync_id=${encodeURIComponent(creditNumber)}`;
@@ -240,12 +229,12 @@ export default function FieldTrip() {
         } catch (error) {
             console.error("Error fetching credits:", error);
         } finally {
-            setLoading(false);
+            loader.viewOn(false);
         }
     };
 
     const fetchCreditDetails = async (creditId) => {
-        setLoading(true);
+        loader.viewOn(true);
         try {
             const token = localStorage.getItem("token");
             
@@ -261,7 +250,6 @@ export default function FieldTrip() {
             const data = await response.json();
             
             if (data.code === 1) {
-                // Filtrar solo las gestiones con substate = 'VISITA CAMPO'
                 const fieldTripManagements = data.result.collection_managements?.filter(
                     m => m.substate === 'VISITA CAMPO'
                 ) || [];
@@ -274,11 +262,11 @@ export default function FieldTrip() {
         } catch (error) {
             console.error("Error fetching credit details:", error);
         } finally {
-            setLoading(false);
+            loader.viewOn(false);
         }
     };
     
-    const handleApprovalToggle = async (creditId, approveValue) => {
+    const handleApprovalToggle = async (creditId, approveValue, observation = '') => {
         setApprovalLoading(prev => ({ ...prev, [creditId]: true }));
         try {
             const token = localStorage.getItem("token");
@@ -292,7 +280,8 @@ export default function FieldTrip() {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        approve: approveValue
+                        approve: approveValue,
+                        observation: observation
                     })
                 }
             );
@@ -347,10 +336,9 @@ export default function FieldTrip() {
     
     const handlePageChange = (url) => {
         if (!url) return;
-        // Extraer solo la parte de paginación (page=...)
         const urlObj = new URL(url, window.location.origin);
         const page = urlObj.searchParams.get('page');
-        // Reconstruir la URL base con los filtros actuales
+
         let baseUrl = `${import.meta.env.VITE_URL_BASE}/credits?`;
         if (filterApproved === "pending") {
             baseUrl += `&approve_field_trip=0&management_status=VISITA CAMPO`;
@@ -363,11 +351,11 @@ export default function FieldTrip() {
         if (filterBusiness !== "all") {
             baseUrl += `&business_id=${filterBusiness}`;
         }
-        // Filtro de agencias (multi-select)
+
         if (filterAgencies.length > 0) {
             baseUrl += `&agency=${encodeURIComponent(filterAgencies.join(','))}`;
         }
-        // Filtro de rango de días de mora
+
         if (filterRange !== "all") {
             const rangeOption = RANGE_OPTIONS.find(r => r.value === filterRange);
             if (rangeOption) {
@@ -379,11 +367,11 @@ export default function FieldTrip() {
                 }
             }
         }
-        // Filtro de estado de crédito
+
         if (filterCollectionState !== "all") {
             baseUrl += `&collection_state=${encodeURIComponent(filterCollectionState)}`;
         }
-        // Filtro de monto
+
         if (filterMinAmount) {
             baseUrl += `&total_amount_min=${filterMinAmount}`;
         }
@@ -414,13 +402,11 @@ export default function FieldTrip() {
             </div>
 
             <div className="field-trip-content">
-                {/* Panel izquierdo - Lista de créditos */}
                 <div className="credits-panel">
                     <div className="credits-panel-header">
                         <h2>Créditos para Visita Campo</h2>
                         
                         <div className="search-filters">
-                            {/* Barra de búsqueda */}
                             <input
                                 type="text"
                                 placeholder="Buscar por número de crédito (ej: FACES-009033203)..."
@@ -429,7 +415,6 @@ export default function FieldTrip() {
                                 className="search-input"
                             />
 
-                            {/* Fila 1: Estado aprobación, Agentes, Empresas */}
                             <div className="filter-row">
                                 <select
                                     value={filterApproved}
@@ -467,8 +452,7 @@ export default function FieldTrip() {
                                     ))}
                                 </select>
                             </div>
-
-                            {/* Fila 2: Agencias (multi-select), Rango, Estado crédito */}
+                            
                             <div className="filter-row">
                                 <div className="filter-multiselect">
                                     <button
@@ -530,7 +514,6 @@ export default function FieldTrip() {
                                 </select>
                             </div>
 
-                            {/* Fila 3: Filtro de monto (min - max) */}
                             <div className="filter-row">
                                 <div className="filter-amount-range">
                                     <input
@@ -557,8 +540,6 @@ export default function FieldTrip() {
                         </div>
                     </div>
 
-                    {loading && <div className="loading">Cargando...</div>}
-
                     <div className="credits-list">
                         {filteredCredits.map(credit => (
                             <div 
@@ -573,14 +554,14 @@ export default function FieldTrip() {
                                             className={`approval-btn approval-btn-no${!credit.approve_field_trip ? ' active' : ''}`}
                                             onClick={e => {
                                                 e.stopPropagation();
-                                                handleApprovalToggle(credit.id, 0);
+                                                setApprovalModal({ open: true, creditId: credit.id, approveValue: 0, observation: '' });
                                             }}
                                         >NO</button>
                                         <button
                                             className={`approval-btn approval-btn-yes${credit.approve_field_trip ? ' active' : ''}`}
                                             onClick={e => {
                                                 e.stopPropagation();
-                                                handleApprovalToggle(credit.id, 1);
+                                                setApprovalModal({ open: true, creditId: credit.id, approveValue: 1, observation: '' });
                                             }}
                                         >SÍ</button>
                                         <span className={`status-label ${credit.approve_field_trip ? 'approved' : 'pending'}`}>
@@ -597,12 +578,11 @@ export default function FieldTrip() {
                             </div>
                         ))}
 
-                        {filteredCredits.length === 0 && !loading && (
+                        {filteredCredits.length === 0 && !loader.isViewOn && (
                             <div className="no-data">No se encontraron créditos</div>
                         )}
                     </div>
-
-                    {/* Paginación */}
+                    
                     {pagination && pagination.last_page > 1 && (
                         <div className="pagination">
                             <button 
@@ -774,7 +754,6 @@ export default function FieldTrip() {
                                                 </div>
                                             )}
 
-                                            {/* Direcciones del Cliente */}
                                             {client.directions && client.directions.length > 0 && (
                                                 <div className="client-directions">
                                                     <h4><i className="fa fa-map-marker"></i> Direcciones del Cliente</h4>
@@ -823,7 +802,6 @@ export default function FieldTrip() {
                                 </div>
                             )}
 
-                            {/* Direcciones del Crédito (si existen adicionales) */}
                             {selectedCredit.directions && selectedCredit.directions.length > 0 && (
                                 <div className="detail-section">
                                     <h2>Direcciones Adicionales del Crédito</h2>
@@ -869,7 +847,6 @@ export default function FieldTrip() {
                                 </div>
                             )}
 
-                            {/* Historial de Gestiones de Visita Campo */}
                             <div className="detail-section">
                                 <h2>Historial de Gestiones (Visita Campo)</h2>
                                 {selectedCredit.managements && selectedCredit.managements.length > 0 ? (
@@ -967,6 +944,34 @@ export default function FieldTrip() {
                     )}
                 </div>
             </div>
+
+            {approvalModal.open && (
+                <div className="approval-modal-overlay" onClick={() => setApprovalModal({ open: false, creditId: null, approveValue: null, observation: '' })}>
+                    <div className="approval-modal" onClick={e => e.stopPropagation()}>
+                        <h3>{approvalModal.approveValue === 1 ? 'Aprobar' : 'Rechazar'} visita de campo</h3>
+                        <textarea
+                            placeholder="Ingrese una observación..."
+                            value={approvalModal.observation}
+                            onChange={e => setApprovalModal({ ...approvalModal, observation: e.target.value })}
+                            rows={4}
+                        />
+                        <div className="approval-modal-actions">
+                            <button
+                                className="approval-modal-btn cancel"
+                                onClick={() => setApprovalModal({ open: false, creditId: null, approveValue: null, observation: '' })}
+                            >Cancelar</button>
+                            <button
+                                className={`approval-modal-btn confirm ${approvalModal.approveValue === 1 ? 'yes' : 'no'}`}
+                                disabled={approvalLoading[approvalModal.creditId]}
+                                onClick={() => {
+                                    handleApprovalToggle(approvalModal.creditId, approvalModal.approveValue, approvalModal.observation);
+                                    setApprovalModal({ open: false, creditId: null, approveValue: null, observation: '' });
+                                }}
+                            >{approvalModal.approveValue === 1 ? 'Aprobar' : 'Rechazar'}</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

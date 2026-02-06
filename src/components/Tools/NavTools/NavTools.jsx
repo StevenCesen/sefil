@@ -75,6 +75,45 @@ export default function NavTools(){
                                     }
                                 }} >Convenio de pago</button>
                         }
+
+                        <button onClick={async () => {
+                            try {
+                                const response = await fetch(
+                                    `${import.meta.env.VITE_URL_BASE}/request-field-trips/${credit.credit.id}`,
+                                    {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'Accept': 'application/json',
+                                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                                        }
+                                    }
+                                );
+                                const data = await response.json();
+                                if (data.code === 1) {
+                                    sendpush({
+                                        title: 'Visita de campo',
+                                        message: data.message,
+                                        type: 'Push--sucessful',
+                                        timeout: 5000
+                                    });
+                                    credit.setView(false);
+                                } else {
+                                    sendpush({
+                                        title: 'Error',
+                                        message: data.message || 'Error al solicitar visita de campo',
+                                        type: 'Push--danger',
+                                        timeout: 5000
+                                    });
+                                }
+                            } catch (error) {
+                                sendpush({
+                                    title: 'Error',
+                                    message: 'Error al solicitar visita de campo',
+                                    type: 'Push--danger',
+                                    timeout: 5000
+                                });
+                            }
+                        }}>Solicitar visita campo</button>
                     </div>
                 :   <></>
             }
