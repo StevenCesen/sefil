@@ -36,7 +36,7 @@ export default function InfoCredit({business,sync_id,agency,frequency,due_date,c
                 :   <></>
             }
             {
-                (business==='syncs')
+                (business!=='SEFIL_1' && business!=='SEFIL_2')
                 ?
                     <>
                         <div>
@@ -44,7 +44,7 @@ export default function InfoCredit({business,sync_id,agency,frequency,due_date,c
                             <p>{monthly_fee_amount}</p>
                         </div>
                         <div>
-                            <h4>Terminación:</h4>
+                            <h4>Fecha de terminación:</h4>
                             <p>{due_date}</p>
                         </div>
                     </>    

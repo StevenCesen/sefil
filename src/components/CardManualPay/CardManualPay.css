@@ -115,3 +115,73 @@
 .CardManualPay__card>div:last-child{
     margin-bottom: 0;
 }
+
+.CardManualPay__edit-info{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    background-color: var(--bg-1);
+    border-left: 3px solid var(--color-1);
+    padding: 8px 12px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.CardManualPay__edit-error{
+    width: 100%;
+    color: #e53e3e;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin: 2px 0 0 0;
+}
+
+.CardManualPay__edit-input{
+    width: 90%;
+    padding: 3px 6px;
+    border: 1px solid var(--color-1);
+    border-radius: 3px;
+    font-size: 0.9rem;
+    background-color: var(--bg-2);
+    color: inherit;
+}
+
+.CardManualPay__btn-edit{
+    height: 40px;
+    padding: 0 16px;
+    background-color: inherit;
+    color: var(--color-1);
+    border: 1px solid var(--color-1);
+    border-radius: 2px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+.CardManualPay__btn-cancel{
+    height: 40px;
+    padding: 0 16px;
+    background-color: inherit;
+    color: #e53e3e;
+    border: 1px solid #e53e3e;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+.CardManualPay__btn-save-edit{
+    height: 40px;
+    padding: 0 16px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.CardManualPay__btn-save-edit:disabled{
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
