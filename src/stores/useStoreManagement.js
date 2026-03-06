@@ -101,6 +101,10 @@ export const useStoreManagement = create((set,get) => ({
         const newPhones = [...phones, value];
         set({phones:newPhones});
     },
+    removePhone:     (id)=>{
+        const {phones}=get();
+        set({phones: phones.filter(p => p.id !== id)});
+    },
     setMessage:     (value)=>{set({message:value})},
     setIDCampain: (cartera) => {
         set({cartera:cartera});
@@ -123,7 +127,7 @@ export const useStoreManagement = create((set,get) => ({
     setPhones: async ({client_id}) => {
         const phones=await getListPhones({client_id});
         if(phones && phones.result && phones.result.data) {
-            set({phones:phones.result.data});
+            set({phones: phones.result.data.filter(p => p.phone_status !== 'INACTIVE')});
         }
     },
     addManagement: async (data) => {

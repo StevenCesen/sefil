@@ -1,105 +1,123 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import "./pages.css";
+import downloadExport from "../helpers/Exports/downloadExport";
+import sendpush from "../helpers/sendpush";
 
 export default function PagosEfectivo(){
-    const [fecha_inicio,setFechaInicio]=useState("");
-    const [fecha_final,setFechaFinal]=useState("");
-    const [business,setBusiness]=useState();
-    const [campains,setCampains]=useState();
-    const [empresa,setEmpresa]=useState("SEFIL_1");
-    const [agent,setAgent]=useState("");
+    const [start_date, setStartDate] = useState("");
+    const [end_date, setEndDate] = useState("");
+    const [business_id, setBusinessId] = useState("");
+    const [campain_id, setCampainId] = useState("");
+    const [user_id, setUserId] = useState("");
 
-    useEffect(()=>{
-        fetch(`${import.meta.env.VITE_URL_BASE}/campains`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
+    const [business, setBusiness] = useState([]);
+    const [campains, setCampains] = useState([]);
+    const [agents, setAgents] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetch(`${import.meta.env.VITE_URL_BASE}/businesses`, {
+            headers: { Accept: 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
-            .then((response) => response.json())  
-            .then((data) => {
-                setCampains(data);
-            });
+            .then(r => r.json())
+            .then(data => setBusiness(data.result?.data || []))
+            .catch(() => setBusiness([]));
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/bussines`,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains`, {
+            headers: { Accept: 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
-            .then((response) => response.json())  
-            .then((data) => {
-                setBusiness(data.data);
+            .then(r => r.json())
+            .then(data => setCampains(data.result?.data || data.data || []))
+            .catch(() => setCampains([]));
+
+        fetch(`${import.meta.env.VITE_URL_BASE}/users`, {
+            headers: { Accept: 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+            .then(r => r.json())
+            .then(data => setAgents(data.result?.data || []))
+            .catch(() => setAgents([]));
+    }, []);
+
+    const handleDownload = async () => {
+        if (!start_date || !end_date) {
+            sendpush({
+                title: 'Fechas requeridas',
+                message: 'Ingrese fecha de inicio y fecha de corte.',
+                type: 'Push--danger',
+                timeout: 3000
             });
+            return;
+        }
 
-        setFechaInicio("");
-        setFechaFinal("");
-        setEmpresa("");
-        setAgent("");
-    },[]);
-
-    if(!business) return <></>
-    if(!campains) return <></>
+        setLoading(true);
+        try {
+            await downloadExport({
+                endpoint: 'exports/cash-closing',
+                params: { start_date, end_date, business_id, campain_id, user_id },
+                filename: 'pagos_efectivo.xlsx'
+            });
+        } catch {
+            sendpush({
+                title: 'Error al generar reporte',
+                message: 'No se pudo descargar el archivo.',
+                type: 'Push--danger',
+                timeout: 3000
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="Reports">
             <div className="Reports__content">
-            <h4 className="Reports__title">Pagos en efectivo</h4>
+                <h4 className="Reports__title">Pagos en efectivo</h4>
                 <div className="Reports__filters Reports__filters--columns-5">
 
                     <label className="Reports__filter">
                         Fecha de inicio
-                        <input 
-                            type="date"
-                            value={fecha_inicio}
-                            onChange={(e)=>{
-                                setFechaInicio(e.target.value);
-                            }}
-                        />
+                        <input type="date" value={start_date} onChange={e => setStartDate(e.target.value)} />
                     </label>
 
                     <label className="Reports__filter">
                         Fecha de corte
-                        <input 
-                            type="date" 
-                            value={fecha_final} 
-                            onChange={(e)=>{
-                                setFechaFinal(e.target.value);
-                            }}/>
+                        <input type="date" value={end_date} onChange={e => setEndDate(e.target.value)} />
                     </label>
 
                     <label className="Reports__filter">
                         Empresa
-                        <select 
-                            value={empresa}
-                            onChange={(e)=>{
-                                setEmpresa(e.target.value);
-                            }}
-                        >
-                            <option value={''}>--Todos--</option>
-                            {
-                                business.map((bus,index)=>(
-                                    <option key={index} value={bus.name.toUpperCase()}>{bus.name.toUpperCase()}</option>
-                                ))
-                            }
+                        <select value={business_id} onChange={e => setBusinessId(e.target.value)}>
+                            <option value="">--Todos--</option>
+                            {business.map((bus, i) => (
+                                <option key={i} value={bus.id}>{bus.name.toUpperCase()}</option>
+                            ))}
                         </select>
                     </label>
-                    
-                    <NavLink 
-                        className="Reports__button"
-                        
-                        onClick={(e)=>{
-                            const splits_inicio=fecha_inicio.split('-');
-                            const inicio=`${splits_inicio[0]}/${splits_inicio[1]}/${splits_inicio[2]}`;
 
-                            const splits_final=fecha_final.split('-');
-                            const final=`${splits_final[0]}/${splits_final[1]}/${splits_final[2]}`;
+                    <label className="Reports__filter">
+                        Campaña
+                        <select value={campain_id} onChange={e => setCampainId(e.target.value)}>
+                            <option value="">--Todos--</option>
+                            {campains.map((camp, i) => (
+                                <option key={i} value={camp.id}>{camp.name}</option>
+                            ))}
+                        </select>
+                    </label>
 
-                            location.href=`${import.meta.env.VITE_URL_BASE}/cierre?cartera=${empresa}&user=${localStorage.getItem('name')}&fecha_inicio=${inicio}&fecha_final=${final}&agente=${agent}`;
-                        }}
-                    >Generar EXCEL</NavLink>
+                    <label className="Reports__filter">
+                        Agente
+                        <select value={user_id} onChange={e => setUserId(e.target.value)}>
+                            <option value="">--Todos--</option>
+                            {agents.map((agent, i) => (
+                                <option key={i} value={agent.id}>{agent.name}</option>
+                            ))}
+                        </select>
+                    </label>
+
+                    <button className="Reports__button" onClick={handleDownload} disabled={loading}>
+                        {loading ? 'Generando...' : 'Generar EXCEL'}
+                    </button>
+
                 </div>
             </div>
         </div>

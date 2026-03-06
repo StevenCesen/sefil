@@ -30,14 +30,13 @@ export default function CreditLoader({ onCreditsChange, business_id,credits: ext
 
             entries.forEach(entry => {
                 const parts = entry.split('-');
-                if (parts.length === 2) {
+                if (parts.length >= 2) {
                     businessName = parts[0];
-                    syncIds.push(parts[1]);
+                    syncIds.push(parts.slice(1).join('-'));
                 }
             });
 
             if (syncIds.length > 0 && businessName) {
-                console.log("Fetching credits with syncIds:", syncIds, "and businessName:", businessName);
                 const data = await fetchCreditsData({
                     sync_ids: syncIds,
                     business_id: business_id,

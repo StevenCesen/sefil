@@ -1,30 +1,28 @@
 .CardListUpdate__container {
-    width: 100%;
+    width: fit-content;
     display: flex;
     flex-direction: column;
     gap: 0;
 }
 
 .CardListUpdate__head{
-    width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 10px;
-    padding: 10px;
+    grid-template-columns: 160px 110px 130px 110px 130px;
+    gap: 8px;
+    padding: 8px 12px;
     background-color: var(--bg-alert-error);
     color: #000;
     font-weight: bold;
-    font-size: 13px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    justify-content: flex-start;
+    font-size: 12px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     align-items: center;
 }
 
 .CardListUpdate__head>label{
     text-align: center;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .CardListUpdate__head>label:first-child{
@@ -36,19 +34,17 @@
 }
 
 .CardListUpdateCarteras{
-    width: 100%;
     position: relative;
 }
 
 .CardListUpdateCarteras>div{
-    width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 10px;
-    padding: 10px;
+    grid-template-columns: 160px 110px 130px 110px 130px;
+    gap: 8px;
+    padding: 6px 12px;
     align-items: center;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     position: relative;
 }
 

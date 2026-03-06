@@ -32,6 +32,10 @@ import CampaignAssignment from './pages/Reports/CampaignAssignment/CampaignAssig
 import ReportPaymentsWithManagement from './pages/Reports/ReportPaymentsWithManagement/ReportPaymentsWithManagement'
 import Geogestion from './pages/geogestion/Geogestion';
 import FieldTrip from './pages/fieldTrip/FieldTrip';
+import PagosEfectivo from './pages/PagosEfectivo';
+import ReportCobranza from './pages/ReportCobranza';
+import ReportCondonations from './pages/ReportCondonations';
+import ReportJudicial from './pages/ReportJudicial';
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -259,6 +263,42 @@ function App() {
           element={
             <ProtectedRoute>
               <ImportPayments/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports/cash-payments"
+          element={
+            <ProtectedRoute>
+              <PagosEfectivo/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports/collection-expenses-billing"
+          element={
+            <ProtectedRoute>
+              <ReportCobranza/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports/condonations"
+          element={
+            <ProtectedRoute>
+              <ReportCondonations/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/reports/judicial-expenses"
+          element={
+            <ProtectedRoute>
+              <ReportJudicial/>
             </ProtectedRoute>
           }
         />

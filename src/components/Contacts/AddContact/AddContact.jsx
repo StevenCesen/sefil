@@ -67,9 +67,12 @@ export default function AddContact(){
                     store_management.setNewPhone(data.result);
                 }
             }else{
+                const field_errors = data.result && typeof data.result === 'object' && !Array.isArray(data.result)
+                    ? Object.values(data.result).flat()[0]
+                    : null;
                 sendpush({
                     title: data.code === -1 ? 'Errores de validación.' : 'Error al guardar.',
-                    message: data.message || 'No se pudo guardar el contacto.',
+                    message: field_errors || data.message || 'No se pudo guardar el contacto.',
                     timeout:3000,
                     type:'Push--danger'
                 });

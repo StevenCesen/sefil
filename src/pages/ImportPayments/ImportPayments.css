@@ -1,0 +1,126 @@
+.ImportPayments__upload {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--bg-2);
+    border: 1px solid var(--bg-1);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+}
+
+.ImportPayments__file-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px dashed var(--color-1);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-1);
+    flex: 1;
+    max-width: 400px;
+    transition: background-color 0.2s;
+}
+
+.ImportPayments__file-label:hover {
+    background-color: var(--bg-1);
+}
+
+.ImportPayments__file-label input {
+    display: none;
+}
+
+.ImportPayments__upload-btn {
+    height: 38px;
+    padding: 0 24px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.ImportPayments__upload-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ImportPayments__upload-btn:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+/* ── Resumen de resultado ── */
+
+.ImportPayments__result {
+    background-color: var(--bg-2);
+    border-left: 3px solid var(--color-1);
+    border-radius: 4px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ImportPayments__result-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ImportPayments__stat {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background-color: var(--bg-1);
+}
+
+.ImportPayments__stat--ok {
+    color: var(--bg-alert-successful);
+}
+
+.ImportPayments__stat--warn {
+    color: #d97706;
+}
+
+/* ── Pagos omitidos ── */
+
+.ImportPayments__skipped {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.ImportPayments__skipped > p {
+    font-size: 12px;
+    font-weight: 600;
+    color: #d97706;
+    margin: 0 0 4px 0;
+}
+
+.ImportPayments__skipped-head,
+.ImportPayments__skipped-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 8px;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+.ImportPayments__skipped-head {
+    font-weight: 700;
+    background-color: var(--bg-1);
+}
+
+.ImportPayments__skipped-row:nth-child(even) {
+    background-color: var(--bg-1);
+}
