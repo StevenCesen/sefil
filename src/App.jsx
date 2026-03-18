@@ -36,6 +36,7 @@ import PagosEfectivo from './pages/PagosEfectivo';
 import ReportCobranza from './pages/ReportCobranza';
 import ReportCondonations from './pages/ReportCondonations';
 import ReportJudicial from './pages/ReportJudicial';
+import Calls from './pages/Calls/Calls';
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -344,6 +345,15 @@ function App() {
           element={
             <ProtectedRoute>
               <FieldTrip />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/calls"
+          element={
+            <ProtectedRoute>
+              <Calls />
             </ProtectedRoute>
           }
         />

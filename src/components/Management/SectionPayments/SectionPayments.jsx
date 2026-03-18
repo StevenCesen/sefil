@@ -14,6 +14,8 @@ export default function SectionPayments({ payments, credit, view_complete_info =
     const [paymentToReverse, setPaymentToReverse] = useState(null);
     const loader = useStoreLoader();
 
+    console.log(payments)
+
     const showTwoRows = view_complete_info && is_admin;
 
     const { headersRow1, detailFields } = useMemo(() => {
@@ -167,6 +169,14 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                         {/* Fila 2: Monto, Estado, Acciones (solo para admin con info completa) */}
                         {showTwoRows && (
                             <div className="SectionPayments__item SectionPayments__item--row2">
+                                
+                                <div className="SectionPayments__cell">
+                                    <span className="SectionPayments__cellHeader">Cuota</span>
+                                    <label>
+                                        {payment.fee}
+                                    </label>
+                                </div>
+
                                 <div className="SectionPayments__cell">
                                     <span className="SectionPayments__cellHeader">Monto</span>
                                     <label>

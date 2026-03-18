@@ -1,0 +1,93 @@
+.CardCancelInvoice__overlay {
+    position: fixed;
+    width: 100%;
+    height: calc(100% - var(--height-header));
+    background-color: rgba(100, 100, 100, 0.437);
+    top: var(--height-header);
+    left: 0;
+    z-index: 2010;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.CardCancelInvoice {
+    width: 100%;
+    max-width: 480px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: var(--box-shadow);
+
+}
+
+.CardCancelInvoice__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    color: #dc3545;
+}
+
+.CardCancelInvoice__header > h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.CardCancelInvoice__info {
+    font-size: 14px;
+    color: var(--color-2);
+    margin-bottom: 8px;
+}
+
+.CardCancelInvoice__value {
+    font-size: 16px;
+    color: var(--color-1);
+    margin-bottom: 12px;
+}
+
+.CardCancelInvoice__warning {
+    font-size: 13px;
+    color: #dc3545;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.CardCancelInvoice__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.CardCancelInvoice__btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
+}
+
+.CardCancelInvoice__btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.CardCancelInvoice__btn--cancel {
+    background-color: rgb(235, 235, 235);
+    color: var(--color-1);
+}
+
+.CardCancelInvoice__btn--cancel:hover:not(:disabled) {
+    background-color: rgb(220, 220, 220);
+}
+
+.CardCancelInvoice__btn--confirm {
+    background-color: #dc3545;
+    color: white;
+}
+
+.CardCancelInvoice__btn--confirm:hover:not(:disabled) {
+    opacity: 0.85;
+}

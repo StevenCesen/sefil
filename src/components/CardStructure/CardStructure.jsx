@@ -116,9 +116,10 @@ export default function CardStructure(){
                     <label>
                         Fecha primer pago:
                         <input
-                            type="date" 
-                            value={agreement.fecha} 
-                            onChange={(e)=>{ 
+                            type="date"
+                            min={new Date().toISOString().split('T')[0]}
+                            value={agreement.fecha}
+                            onChange={(e)=>{
                                 setAgreement({
                                     ...agreement,
                                     fecha:e.target.value

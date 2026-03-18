@@ -366,13 +366,13 @@ export default function NavSlide() {
                 </div>
             )}
 
-            {/* {hasSection('calls') && (
+            {['admin', 'superadmin', 'supervisor'].includes(localStorage.getItem('role')) && (
                 <NavLink to="/calls" className="NavSlide__option">
-                    <img src="./icons/zoiper.png" />
-                    <label>{getSectionLabel('calls')}</label>
-                    <span>{getSectionLabel('calls')}</span>
+                    <img src="/icons/call.png" />
+                    <label>Llamadas</label>
+                    <span>Llamadas</span>
                 </NavLink>
-            )} */}
+            )}
 
             {/* {hasSection('payments') && (
                 <NavLink to="/payments" className="NavSlide__option">

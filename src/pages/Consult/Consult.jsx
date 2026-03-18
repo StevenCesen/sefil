@@ -186,7 +186,7 @@ export default function Consult() {
                                         (searchType === 'ci')
                                         ?
                                             <label>{
-                                                (credit.clients[0].ci=== searchValue) 
+                                                (credit.clients[0].ci?.trim() === searchValue?.trim())
                                                     ? 
                                                         <span>{`${credit.clients[0].ci}`} <strong> TITULAR </strong></span> 
                                                     :   <span>{credit.clients[0].ci} <strong> GARANTE</strong></span>

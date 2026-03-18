@@ -6,6 +6,7 @@ export const useStoreFilterManagement = create((set,get) => ({
     current_index:0,
     tray:'PENDIENTE',
     name: '',
+    sync_id: '',
     business_id:0,
     sector:'',
     ci:'',
@@ -21,6 +22,7 @@ export const useStoreFilterManagement = create((set,get) => ({
     setTray:            (value)=>{set({tray:value})},
     setBusiness:        (value)=>{set({business_id:value})},
     setName:            (value)=>{set({name:value})},
+    setSyncId:          (value)=>{set({sync_id:value})},
     setCi:              (value)=>{set({ci:value})},
     setAgency:          (value)=>{set({agency:value})},
     setMinDays:         (value)=>{set({days_past_due_min:value})},
@@ -61,9 +63,10 @@ export const useStoreFilterManagement = create((set,get) => ({
         }
     },
     getFilterString: () => {
-        const {name,business_id,ci,days_past_due_max,days_past_due_min,agency,sector,management_state,promise_date,tray} = get();
+        const {name,sync_id,business_id,ci,days_past_due_max,days_past_due_min,agency,sector,management_state,promise_date,tray} = get();
         const parts = [];
         if (name.trim() !== '') parts.push(`client_name=${name.trim()}`);
+        if (sync_id.trim() !== '') parts.push(`sync_id=${sync_id.trim()}`);
         if (business_id !== 0 && business_id !== '') parts.push(`business_id=${business_id}`);
         if (agency.trim() !== '') parts.push(`agency=${agency.trim()}`);
         if (ci.trim() !== '') parts.push(`client_ci=${ci.trim()}`);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./pages.css";
+import "./ReportExport.css";
 import downloadExport from "../helpers/Exports/downloadExport";
 import sendpush from "../helpers/sendpush";
 
@@ -7,10 +7,7 @@ export default function ReportJudicial(){
     const [start_date, setStartDate] = useState("");
     const [end_date, setEndDate] = useState("");
     const [business_id, setBusinessId] = useState("");
-    const [user_id, setUserId] = useState("");
-
     const [business, setBusiness] = useState([]);
-    const [agents, setAgents] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -20,13 +17,6 @@ export default function ReportJudicial(){
             .then(r => r.json())
             .then(data => setBusiness(data.result?.data || []))
             .catch(() => setBusiness([]));
-
-        fetch(`${import.meta.env.VITE_URL_BASE}/users`, {
-            headers: { Accept: 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` }
-        })
-            .then(r => r.json())
-            .then(data => setAgents(data.result?.data || []))
-            .catch(() => setAgents([]));
     }, []);
 
     const handleDownload = async () => {
@@ -44,7 +34,7 @@ export default function ReportJudicial(){
         try {
             await downloadExport({
                 endpoint: 'exports/legal-expenses',
-                params: { start_date, end_date, business_id, user_id },
+                params: { start_date, end_date, business_id },
                 filename: 'gastos_judiciales.xlsx'
             });
         } catch {
@@ -60,45 +50,41 @@ export default function ReportJudicial(){
     };
 
     return (
-        <div className="Reports">
-            <div className="Reports__content">
-                <h4 className="Reports__title">Gastos judiciales cargados</h4>
-                <div className="Reports__filters Reports__filters--columns-5">
+        <div className="ReportExport">
+            <div className="ReportExport__container">
+                <div className="ReportExport__header">
+                    <h2 className="ReportExport__title">Gastos judiciales cargados</h2>
+                    <p className="ReportExport__subtitle">Exportar gastos judiciales por rango de fechas</p>
+                </div>
 
-                    <label className="Reports__filter">
-                        Fecha de inicio
+                <div className="ReportExport__grid">
+
+                    <div className="ReportExport__field">
+                        <span className="ReportExport__label">Fecha de inicio *</span>
                         <input type="date" value={start_date} onChange={e => setStartDate(e.target.value)} />
-                    </label>
+                    </div>
 
-                    <label className="Reports__filter">
-                        Fecha de corte
+                    <div className="ReportExport__field">
+                        <span className="ReportExport__label">Fecha de corte *</span>
                         <input type="date" value={end_date} onChange={e => setEndDate(e.target.value)} />
-                    </label>
+                    </div>
 
-                    <label className="Reports__filter">
-                        Empresa
+                    <div className="ReportExport__field">
+                        <span className="ReportExport__label">Empresa</span>
                         <select value={business_id} onChange={e => setBusinessId(e.target.value)}>
-                            <option value="">--Todos--</option>
+                            <option value="">-- Todas --</option>
                             {business.map((bus, i) => (
                                 <option key={i} value={bus.id}>{bus.name.toUpperCase()}</option>
                             ))}
                         </select>
-                    </label>
+                    </div>
 
-                    <label className="Reports__filter">
-                        Agente
-                        <select value={user_id} onChange={e => setUserId(e.target.value)}>
-                            <option value="">--Todos--</option>
-                            {agents.map((agent, i) => (
-                                <option key={i} value={agent.id}>{agent.name}</option>
-                            ))}
-                        </select>
-                    </label>
+                </div>
 
-                    <button className="Reports__button" onClick={handleDownload} disabled={loading}>
+                <div className="ReportExport__actions">
+                    <button className="ReportExport__button" onClick={handleDownload} disabled={loading}>
                         {loading ? 'Generando...' : 'Generar EXCEL'}
                     </button>
-
                 </div>
             </div>
         </div>

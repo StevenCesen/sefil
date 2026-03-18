@@ -126,6 +126,10 @@ export default function Contacts() {
                 </div>
             </div>
 
+            {
+                console.log(results)
+            }
+            
             {searched && (
                 <div className="Contacts__results">
                     {loading ? (
@@ -138,15 +142,17 @@ export default function Contacts() {
                                 <label>Teléfono</label>
                                 <label>Tipo</label>
                                 <label>Crédito</label>
+                                <label>Estado</label>
                             </div>
 
                             {results.map((contact) => (
                                 <div key={contact.id} className="Contacts__results-item">
                                     <label>{contact.client_name}</label>
                                     <label>{contact.client_ci}</label>
-                                    <label>{contact.phone_number} - {contact.is_external ? "Creado mediante fuente Externa" : "Fuente SEFIL"}</label>
+                                    <label>{contact.phone_number} - {contact.is_external ? "Fuente FACES" : "Fuente SEFIL"}</label>
                                     <label>{contact.phone_type || '-'}</label>
                                     <label>{contact.credit_number || contact.sync_id}</label>
+                                    <label>{(contact.phone_status==='ACTIVE') ? "ACTIVO" : "INACTIVO"}</label>
                                 </div>
                             ))}
 

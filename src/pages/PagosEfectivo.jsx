@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./pages.css";
+import "./ReportExport.css";
 import downloadExport from "../helpers/Exports/downloadExport";
 import sendpush from "../helpers/sendpush";
 
@@ -8,11 +8,8 @@ export default function PagosEfectivo(){
     const [end_date, setEndDate] = useState("");
     const [business_id, setBusinessId] = useState("");
     const [campain_id, setCampainId] = useState("");
-    const [user_id, setUserId] = useState("");
-
     const [business, setBusiness] = useState([]);
     const [campains, setCampains] = useState([]);
-    const [agents, setAgents] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -29,13 +26,6 @@ export default function PagosEfectivo(){
             .then(r => r.json())
             .then(data => setCampains(data.result?.data || data.data || []))
             .catch(() => setCampains([]));
-
-        fetch(`${import.meta.env.VITE_URL_BASE}/users`, {
-            headers: { Accept: 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` }
-        })
-            .then(r => r.json())
-            .then(data => setAgents(data.result?.data || []))
-            .catch(() => setAgents([]));
     }, []);
 
     const handleDownload = async () => {
@@ -53,7 +43,7 @@ export default function PagosEfectivo(){
         try {
             await downloadExport({
                 endpoint: 'exports/cash-closing',
-                params: { start_date, end_date, business_id, campain_id, user_id },
+                params: { start_date, end_date, business_id, campain_id },
                 filename: 'pagos_efectivo.xlsx'
             });
         } catch {
@@ -69,55 +59,51 @@ export default function PagosEfectivo(){
     };
 
     return (
-        <div className="Reports">
-            <div className="Reports__content">
-                <h4 className="Reports__title">Pagos en efectivo</h4>
-                <div className="Reports__filters Reports__filters--columns-5">
+        <div className="ReportExport">
+            <div className="ReportExport__container">
+                <div className="ReportExport__header">
+                    <h2 className="ReportExport__title">Pagos en efectivo</h2>
+                    <p className="ReportExport__subtitle">Exportar cierre de caja por rango de fechas</p>
+                </div>
 
-                    <label className="Reports__filter">
-                        Fecha de inicio
+                <div className="ReportExport__grid ReportExport__grid--3">
+
+                    <div className="ReportExport__field">
+                        <span className="ReportExport__label">Fecha de inicio *</span>
                         <input type="date" value={start_date} onChange={e => setStartDate(e.target.value)} />
-                    </label>
+                    </div>
 
-                    <label className="Reports__filter">
-                        Fecha de corte
+                    <div className="ReportExport__field">
+                        <span className="ReportExport__label">Fecha de corte *</span>
                         <input type="date" value={end_date} onChange={e => setEndDate(e.target.value)} />
-                    </label>
+                    </div>
 
-                    <label className="Reports__filter">
-                        Empresa
+                    <div className="ReportExport__field">
+                        <span className="ReportExport__label">Empresa</span>
                         <select value={business_id} onChange={e => setBusinessId(e.target.value)}>
-                            <option value="">--Todos--</option>
+                            <option value="">-- Todas --</option>
                             {business.map((bus, i) => (
                                 <option key={i} value={bus.id}>{bus.name.toUpperCase()}</option>
                             ))}
                         </select>
-                    </label>
+                    </div>
 
-                    <label className="Reports__filter">
-                        Campaña
+                    <div className="ReportExport__field">
+                        <span className="ReportExport__label">Campaña</span>
                         <select value={campain_id} onChange={e => setCampainId(e.target.value)}>
-                            <option value="">--Todos--</option>
+                            <option value="">-- Todas --</option>
                             {campains.map((camp, i) => (
                                 <option key={i} value={camp.id}>{camp.name}</option>
                             ))}
                         </select>
-                    </label>
+                    </div>
 
-                    <label className="Reports__filter">
-                        Agente
-                        <select value={user_id} onChange={e => setUserId(e.target.value)}>
-                            <option value="">--Todos--</option>
-                            {agents.map((agent, i) => (
-                                <option key={i} value={agent.id}>{agent.name}</option>
-                            ))}
-                        </select>
-                    </label>
+                </div>
 
-                    <button className="Reports__button" onClick={handleDownload} disabled={loading}>
+                <div className="ReportExport__actions">
+                    <button className="ReportExport__button" onClick={handleDownload} disabled={loading}>
                         {loading ? 'Generando...' : 'Generar EXCEL'}
                     </button>
-
                 </div>
             </div>
         </div>

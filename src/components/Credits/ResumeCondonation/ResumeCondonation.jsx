@@ -14,12 +14,53 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
     const store_condonation = useStoreCondonation();
     const store_management = useStoreManagement();
     const loader = useStoreLoader();
+    const userRole = localStorage.getItem('role');
+    const isAdmin = userRole === 'admin' || userRole === 'superadmin';
     const [confirmDialog, setConfirmDialog] = useState({
         isOpen: false,
         title: '',
         message: '',
         action: null
     });
+
+    const handleReprint = () => {
+        const credit = store_management.credit;
+
+        // prevDates = original values before condonation = remaining + condonated
+        store_condonation.setInfoCredit({
+            ci: condonation.client_ci,
+            name: condonation.client_name,
+            total: 0,
+            capital:           parseFloat(credit.capital || 0)            + parseFloat(condonation.capital || 0),
+            interes:           parseFloat(credit.interest || 0)            + parseFloat(condonation.interest || 0),
+            mora:              parseFloat(credit.mora || 0)                + parseFloat(condonation.mora || 0),
+            seguro_desgravamen:parseFloat(credit.safe || 0)               + parseFloat(condonation.safe || 0),
+            gastos_judiciales: parseFloat(credit.legal_expenses || 0)     + parseFloat(condonation.legal_expenses || 0),
+            gastos_cobranza:   parseFloat(credit.collection_expenses || 0)+ parseFloat(condonation.collection_expenses || 0),
+            gastos_cobranza_sefil: parseFloat(credit.management_collection_expenses || 0),
+            otros_valores:     parseFloat(credit.other_values || 0)       + parseFloat(condonation.other_values || 0),
+            invoice_value:     parseFloat(credit.invoice_value || 0),
+            id: condonation.credit_id,
+            cartera: '',
+            setData: '',
+            view: '',
+            update: ''
+        });
+
+        // postDates = current remaining credit values (ViewPDFCondonation reads response.capital etc.)
+        store_condonation.setResponse({
+            ...condonation,
+            capital:                      parseFloat(credit.capital || 0),
+            interest:                     parseFloat(credit.interest || 0),
+            mora:                         parseFloat(credit.mora || 0),
+            safe:                         parseFloat(credit.safe || 0),
+            management_collection_expenses: parseFloat(credit.management_collection_expenses || 0),
+            collection_expenses:          parseFloat(credit.collection_expenses || 0),
+            legal_expenses:               parseFloat(credit.legal_expenses || 0),
+            other_values:                 parseFloat(credit.other_values || 0),
+        });
+        store_condonation.setViewPDF(true);
+    };
 
     const handleEdit = () => {
         // Obtener valores actuales del crédito
@@ -41,6 +82,7 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
             gastos_cobranza: parseFloat(credit.collection_expenses),
             gastos_cobranza_sefil: parseFloat(credit.management_collection_expenses),
             otros_valores: parseFloat(credit.other_values),
+            invoice_value: parseFloat(credit.invoice_value || 0),
             id: condonation.credit_id,
             cartera: '',
             setData: '',
@@ -52,6 +94,7 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
             condonated_mora: parseFloat(condonation.mora || 0),
             condonated_seguro_desgravamen: parseFloat(condonation.safe || 0),
             condonated_gastos_judiciales: parseFloat(condonation.legal_expenses || 0),
+            condonated_gastos_cobranza_sefil: parseFloat(condonation.management_collection_expenses || 0),
             condonated_gastos_cobranza: parseFloat(condonation.collection_expenses || 0),
             condonated_otros_valores: parseFloat(condonation.other_values || 0)
         });
@@ -212,6 +255,14 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
             <span className="ResumeCondonation__total">
                 TOTAL CONDONADO: {useFormatterNumber({ currency:'USD', value: parseFloat(condonation.amount)})}
             </span>
+
+            {isAdmin && (
+                <div className="ResumeCondonation__actions">
+                    <button className="btn btn--primary" onClick={handleReprint}>
+                        Reimprimir
+                    </button>
+                </div>
+            )}
 
             {showActions && (
                 <div className="ResumeCondonation__actions">

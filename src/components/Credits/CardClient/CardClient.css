@@ -211,6 +211,39 @@
     background-color: #4a5568;
 }
 
+.CardClient__toggle-status{
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+
+.CardClient__toggle-status--active{
+    background-color: var(--bg-alert-successful);
+    color: white;
+}
+
+.CardClient__toggle-status--active:hover{
+    background-color: #007a77;
+}
+
+.CardClient__toggle-status--inactive{
+    background-color: var(--bg-alert-error-error);
+    color: white;
+}
+
+.CardClient__toggle-status--inactive:hover{
+    background-color: #c0392b;
+}
+
+.CardClient__toggle-status:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .CardClient__contacts-empty{
     text-align: center;
     color: rgb(160, 160, 160);

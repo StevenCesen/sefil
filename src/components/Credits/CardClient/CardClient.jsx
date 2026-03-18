@@ -6,6 +6,7 @@ import { useStoreEmail } from "../../../stores/useStoreEmail";
 import ClickToCopy from "../../../helpers/ClickToCopy";
 import { useState } from "react";
 import getContacts from "../../../helpers/Contacts/getContacts";
+import toggleContactStatus from "../../../helpers/Contacts/toggleContactStatus";
 import { useStoreProgressCall } from "../../../stores/useStoreProgessCall";
 import { useStoreSMS } from "../../../stores/useStoreSMS";
 
@@ -18,6 +19,31 @@ export default function CardClient({id,credit_id,name,email,ci,sector_economico,
     const [showContacts, setShowContacts] = useState(false);
     const [contacts, setContacts] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [togglingId, setTogglingId] = useState(null);
+
+    const role = localStorage.getItem('role');
+    const canToggle = ['admin', 'superadmin', 'supervisor'].includes(role);
+
+    const handleToggleStatus = async (contact) => {
+        const newStatus = contact.phone_status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        setTogglingId(contact.id);
+        try {
+            await toggleContactStatus(contact.id, newStatus);
+            setContacts(prev => prev.map(c =>
+                c.id === contact.id ? { ...c, phone_status: newStatus } : c
+            ));
+            sendpush({
+                title: 'Contacto actualizado',
+                message: `Número ${newStatus === 'ACTIVE' ? 'activado' : 'inactivado'}`,
+                type: 'Push--sucessful',
+                timeout: 2000
+            });
+        } catch {
+            sendpush({ title: 'Error', message: 'No se pudo actualizar el contacto', type: 'Push--error', timeout: 3000 });
+        } finally {
+            setTogglingId(null);
+        }
+    };
 
     const handleCopy=({text})=>{
         const copy=ClickToCopy({text});
@@ -128,6 +154,16 @@ export default function CardClient({id,credit_id,name,email,ci,sector_economico,
                                 </span>
                             </div>
                             <div className="CardClient__contact-actions">
+                                {canToggle && (
+                                    <button
+                                        title={contact.phone_status === 'ACTIVE' ? 'Inactivar contacto' : 'Activar contacto'}
+                                        className={`CardClient__toggle-status ${contact.phone_status === 'ACTIVE' ? 'CardClient__toggle-status--active' : 'CardClient__toggle-status--inactive'}`}
+                                        disabled={togglingId === contact.id}
+                                        onClick={() => handleToggleStatus(contact)}
+                                    >
+                                        {togglingId === contact.id ? '...' : (contact.phone_status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE')}
+                                    </button>
+                                )}
                                 <button
                                     title="Enviar SMS a este contacto"
                                     onClick={()=>{

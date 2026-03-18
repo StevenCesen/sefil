@@ -26,6 +26,17 @@
     cursor: pointer;
 }
 
+.MenuNav__addBtn {
+    margin-left: auto !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--bg-buttons) !important;
+    color: white !important;
+    border-color: transparent !important;
+    font-weight: 600;
+}
+
 .MenuNav__navigation{
     width: 100%;
     display: flex;

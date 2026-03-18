@@ -80,6 +80,7 @@ export const useStoreManagement = create((set,get) => ({
         set({payments: { data: value.collection_payments || [] }});
         set({calls: { data: value.collection_calls || [] }});
         set({notes: { data: [] }});
+        set({section: 'MANAGEMENTS'});
 
     },
     setState:     (value)=>{set({state:value})},

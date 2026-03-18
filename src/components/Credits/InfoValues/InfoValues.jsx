@@ -21,10 +21,15 @@ export default function InfoValues({capital,interest,mora,seguro,gasto_cobranza_
                 <h4>Seguro desgravamen:</h4>
                 <p>{useFormatterNumber({value:(seguro>0) ? seguro : 0,currency:'USD'})}</p>
             </div>
-            <div>
-                <h4>Gasto de cobranza SEFIL:</h4>
-                <p>{useFormatterNumber({value:(gasto_cobranza_sefil>0) ? gasto_cobranza_sefil : 0,currency:'USD'})}</p>
-            </div>
+            {
+                (gasto_cobranza_sefil>0)
+                ?
+                    <div>
+                        <h4>Gasto de cobranza SEFIL:</h4>
+                        <p>{useFormatterNumber({value:(gasto_cobranza_sefil>0) ? gasto_cobranza_sefil : 0,currency:'USD'})}</p>
+                    </div>
+                :   <></>
+            }
             <div>
                 <h4>Gasto de cobranza:</h4>
                 <p>{useFormatterNumber({value:(gasto_cobranza>0) ? gasto_cobranza : 0,currency:'USD'})}</p>

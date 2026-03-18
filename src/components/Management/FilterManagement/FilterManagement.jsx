@@ -25,6 +25,7 @@ export default function FilterManagement(){
     const hasActiveFilters = () => {
         return (
             filter_management.name.length >= 3 ||
+            filter_management.sync_id.length >= 3 ||
             filter_management.ci.length >= 3 ||
             filter_management.agency !== '' ||
             filter_management.days_past_due_min !== '' ||
@@ -44,6 +45,7 @@ export default function FilterManagement(){
         if (!value || value.length < 3) {
             if (filterType === 'name') {
                 filter_management.setName('');
+                filter_management.setSyncId('');
                 setNameValue(value);
                 if (activeFilter === 'name') setActiveFilter(null);
             } else if (filterType === 'ci') {
@@ -53,15 +55,21 @@ export default function FilterManagement(){
             }
         } else {
             if (filterType === 'name') {
-                // Limpiar cédula y establecer nombre
                 filter_management.setCi('');
                 setCiValue('');
-                filter_management.setName(value);
+                const hasNumbers = /\d/.test(value);
+                if (hasNumbers) {
+                    filter_management.setName('');
+                    filter_management.setSyncId(value);
+                } else {
+                    filter_management.setSyncId('');
+                    filter_management.setName(value);
+                }
                 setNameValue(value);
                 setActiveFilter('name');
             } else if (filterType === 'ci') {
-                // Limpiar nombre y establecer cédula
                 filter_management.setName('');
+                filter_management.setSyncId('');
                 setNameValue('');
                 filter_management.setCi(value);
                 setCiValue(value);
@@ -75,6 +83,7 @@ export default function FilterManagement(){
     const clearAllFilters = () => {
         // Limpiar store
         filter_management.setName('');
+        filter_management.setSyncId('');
         filter_management.setCi('');
         filter_management.setAgency('');
         filter_management.setMinDays('');

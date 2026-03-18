@@ -58,6 +58,7 @@ export default function ViewPDFCondonation() {
                     fecha={adjustedDate}
                     prevDates={prevDates}
                     postDates={postDates}
+                    invoiceValue={Number(store_condonation.invoice_value) || 0}
                     user_auth={response?.created_by || 'N/A'}
                 />
             </PDFViewer>

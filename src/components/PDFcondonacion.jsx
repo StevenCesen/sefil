@@ -44,14 +44,46 @@ import logo from '/icons/logo.png';
       flexDirection:'row',
       justifyContent:"space-between"
     }
-    
+
   });
-  
-  function PDFcondonacion({ci,credito,name,fecha,prevDates,postDates,user_auth}) {
+
+  const COL = { desc: '34%', orig: '22%', cond: '22%', cobrar: '22%' };
+
+  function Row({ label, original, condonado, aCobrar, isHeader, isTotal }) {
+    const bg = isHeader ? '#C6EFCE' : isTotal ? '#f0f0f0' : 'transparent';
+    const weight = (isHeader || isTotal) ? 'bold' : 'normal';
+    return (
+      <View style={{width:'100%', borderTop: isHeader ? undefined : '1px solid black', display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'row', backgroundColor: bg}}>
+        <Text style={{width:COL.desc, borderRight:'1px solid black', padding:5, fontSize:8, textAlign:'center', fontWeight:weight}}>{label}</Text>
+        <Text style={{width:COL.orig, borderRight:'1px solid black', padding:5, fontSize:8, textAlign:'center'}}>{original}</Text>
+        <Text style={{width:COL.cond, borderRight:'1px solid black', padding:5, fontSize:8, textAlign:'center'}}>{condonado}</Text>
+        <Text style={{width:COL.cobrar, padding:5, fontSize:8, textAlign:'center'}}>{aCobrar}</Text>
+      </View>
+    );
+  }
+
+  function PDFcondonacion({ci,credito,name,fecha,prevDates,postDates,invoiceValue,user_auth}) {
+    const prev = JSON.parse(prevDates);
+    const post = JSON.parse(postDates);
+    const fmt = (v) => useFormatterNumber({value: v, currency:'USD'});
+
+    const rows = [
+      { label: 'Capital',               orig: prev.capital,            post: post.capital },
+      { label: 'Interés',               orig: prev.interes,            post: post.interes },
+      { label: 'Mora',                  orig: prev.mora,               post: post.mora },
+      { label: 'Seguro desgravamen',    orig: prev.seguro_desgravamen, post: post.seguro_desgravamen },
+      { label: 'Gastos judiciales',     orig: prev.gastos_judiciales,  post: post.gastos_judiciales },
+      { label: 'Gastos cobranza FACES', orig: prev.gastos_cobranza,    post: post.gastos_cobranza },
+      { label: 'Otros valores',         orig: prev.otros_valores,      post: post.otros_valores },
+    ];
+
+    const totalCondonado = rows.reduce((acc, r) => acc + (Number(r.orig) - Number(r.post)), 0);
+    const totalACobrar   = rows.reduce((acc, r) => acc + Number(r.post), 0) + invoiceValue;
+
     return (
       <Document>
         <Page style={styles.page}>
-        
+
           <View style={styles.sectionHeader}>
             <Image style={styles.logo} src={logo}/>
 
@@ -63,7 +95,6 @@ import logo from '/icons/logo.png';
                 <View>
                   <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>RUC: 1792679443001</Text>
                   <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>FECHA Y HORA DE AUTORIZACIÓN: {fecha}</Text>
-                  {/* <Text style={[{fontSize:7,marginBottom:3,color:'#178DAB'}]}>{(localStorage.getItem('permission').includes('User:minimize')) ? "AUTORIZADO POR:" : "SOLICITADO POR" } {user_auth.toUpperCase()}</Text> */}
                 </View>
               </View>
             </View>
@@ -89,92 +120,43 @@ import logo from '/icons/logo.png';
 
           {/* DETALLE */}
 
-          <View style={{width:'60%',border:'1px solid black'}}>
-            <View style={{width:'100%',backgroundColor:"#C6EFCE",display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>DESCRIPCIÓN</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>VALOR ORIGINAL</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>VALOR CONDONADO</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Capital</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).capital,currency:'USD'})}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    useFormatterNumber({value:Number(JSON.parse(prevDates).capital)-Number(JSON.parse(postDates).capital),currency:'USD'})
-                }</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Interés</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).interes,currency:'USD'})}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    useFormatterNumber({value:Number(JSON.parse(prevDates).interes)-Number(JSON.parse(postDates).interes),currency:'USD'})
-                }</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Mora</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).mora,currency:'USD'})}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    useFormatterNumber({value:Number(JSON.parse(prevDates).mora)-Number(JSON.parse(postDates).mora),currency:'USD'})
-                }</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Seguro desgravamen</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).seguro_desgravamen,currency:'USD'})}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    useFormatterNumber({value:Number(JSON.parse(prevDates).seguro_desgravamen)-Number(JSON.parse(postDates).seguro_desgravamen),currency:'USD'})
-                }</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Gastos judiciales</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_judiciales,currency:'USD'})}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    useFormatterNumber({value:Number(JSON.parse(prevDates).gastos_judiciales)-Number(JSON.parse(postDates).gastos_judiciales),currency:'USD'})
-                }</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Gastos cobranza SEFIL</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_cobranza_sefil,currency:'USD'})}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    useFormatterNumber({value:Number(JSON.parse(prevDates).gastos_cobranza_sefil)-Number(JSON.parse(postDates).gastos_cobranza_sefil),currency:'USD'})
-                }</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Gastos cobranza FACES</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).gastos_cobranza,currency:'USD'})}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    useFormatterNumber({value:Number(JSON.parse(prevDates).gastos_cobranza)-Number(JSON.parse(postDates).gastos_cobranza),currency:'USD'})
-                }</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>Otros valores</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>{useFormatterNumber({value:JSON.parse(prevDates).otros_valores,currency:'USD'})}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    useFormatterNumber({value:Number(JSON.parse(prevDates).otros_valores)-Number(JSON.parse(postDates).otros_valores),currency:'USD'})
-                }</Text>
-            </View>
-            <View style={{width:'100%',borderTop:'1px solid black',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
-              <Text style={{width:'40%',borderRight:'1px solid black',padding:5,fontSize:8,textAlign:"center"}}>TOTAL</Text>
-              <Text style={{width:'30%',borderRight:'1px solid black',padding:5,textAlign:"center"}}>{}</Text>
-              <Text style={{width:'30%',fontSize:8,padding:5,textAlign:"center"}}>
-                {
-                    (useFormatterNumber({value:Number(JSON.parse(prevDates).capital)-Number(JSON.parse(postDates).capital)+
-                    Number(JSON.parse(prevDates).interes)-Number(JSON.parse(postDates).interes)+
-                    Number(JSON.parse(prevDates).mora)-Number(JSON.parse(postDates).mora)+
-                    Number(JSON.parse(prevDates).seguro_desgravamen)-Number(JSON.parse(postDates).seguro_desgravamen)+
-                    Number(JSON.parse(prevDates).gastos_judiciales)-Number(JSON.parse(postDates).gastos_judiciales)+
-                    Number(JSON.parse(prevDates).gastos_cobranza_sefil)-Number(JSON.parse(postDates).gastos_cobranza_sefil)+
-                    Number(JSON.parse(prevDates).gastos_cobranza)-Number(JSON.parse(postDates).gastos_cobranza)+
-                    Number(JSON.parse(prevDates).otros_valores)-Number(JSON.parse(postDates).otros_valores),currency:'USD'}))
+          <View style={{width:'100%',border:'1px solid black'}}>
+            {/* Header */}
+            <Row
+              isHeader
+              label="DESCRIPCIÓN"
+              original="VALOR ORIGINAL"
+              condonado="VALOR CONDONADO"
+              aCobrar="VALOR A COBRAR"
+            />
 
-                }</Text>
-            </View>
+            {/* Condonable rows */}
+            {rows.map((r) => (
+              <Row
+                key={r.label}
+                label={r.label}
+                original={fmt(r.orig)}
+                condonado={fmt(Number(r.orig) - Number(r.post))}
+                aCobrar={fmt(r.post)}
+              />
+            ))}
+
+            {/* SEFIL row — not condonable, uses invoice_value */}
+            <Row
+              label="Gastos cobranza SEFIL"
+              original={fmt(invoiceValue)}
+              condonado={fmt(0)}
+              aCobrar={fmt(invoiceValue)}
+            />
+
+            {/* Total */}
+            <Row
+              isTotal
+              label="TOTAL"
+              original=""
+              condonado={fmt(totalCondonado)}
+              aCobrar={fmt(totalACobrar)}
+            />
           </View>
 
           <View style={{marginTop:'50px',width:'100%',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:'row'}}>
@@ -191,6 +173,5 @@ import logo from '/icons/logo.png';
       </Document>
     );
   }
-  
+
   export default PDFcondonacion;
-  

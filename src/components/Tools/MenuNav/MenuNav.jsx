@@ -5,12 +5,16 @@ import SectionManagement from "../../Management/SectionManagement/SectionManagem
 import SectionPayments from "../../Management/SectionPayments/SectionPayments";
 import SectionNotes from "../../Management/SectionNotes/SectionNotes";
 import SectionDirections from "../../Management/SectionDirections/SectionDirections";
+import FormManagement from "../../Management/FormManagement/FormManagement";
+import { useState } from "react";
+import { PlusCircle } from "lucide-react";
 
 export default function MenuNav({options}){
 
     const store_management=useStoreManagement();
     const userRole = localStorage.getItem('role');
     const isAdmin = userRole === 'superadmin' || userRole === 'admin';
+    const [showForm, setShowForm] = useState(false);
 
     if(!store_management.managements) return <></>
 
@@ -19,15 +23,23 @@ export default function MenuNav({options}){
             <div className="MenuNav__sectionOptions">
                 {
                     options.map(option=>(
-                        <button 
+                        <button
                             key={option.name}
                             className={`${(option.default_option) ? "Credit__sectionOptions--activeButton" : ""}`}
                             onClick={(e)=>{
                                 store_management.setSection(option.end_point);
-                            }}    
+                            }}
                         >{option.name}</button>
                     ))
                 }
+                {isAdmin && store_management.section === 'MANAGEMENTS' && (
+                    <button
+                        className="MenuNav__addBtn"
+                        onClick={() => setShowForm(v => !v)}
+                    >
+                        <PlusCircle size={16} /> {showForm ? 'Ocultar formulario' : 'Agregar gestión'}
+                    </button>
+                )}
             </div>
             {/* <div className="MenuNav__navigation">
                 <h2>Registros</h2>
@@ -40,6 +52,9 @@ export default function MenuNav({options}){
                 />
             </div> */}
             <div className="MenuNav__list">
+                {store_management.section === 'MANAGEMENTS' && showForm && (
+                    <FormManagement />
+                )}
                 {
                     (store_management.section==='MANAGEMENTS')
                     ?

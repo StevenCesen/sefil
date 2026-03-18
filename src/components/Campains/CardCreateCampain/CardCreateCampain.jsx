@@ -11,7 +11,7 @@ export default function CardCreateCampain({setData}){
         begin_time:"",
         end_time:"",
         data:[],
-        business_id:"",
+        business_ids:[],
         type:"manual"
     });
 
@@ -25,7 +25,7 @@ export default function CardCreateCampain({setData}){
             begin_time:"",
             end_time:"",
             data:[],
-            business_id:"",
+            business_ids:[],
             type:'manual'
         });
 
@@ -113,34 +113,31 @@ export default function CardCreateCampain({setData}){
             </div>
 
             <div className="CardCreateCampain__form">
-                <label className="CardCreateCampain__select">
-                    Empresa
-                    <select
-                        value={campain.business_id}
-                        onChange={(e)=>{
-                            setCampain({
-                                ...campain,
-                                business_id:e.target.value
-                            });
-
-                            if(e.target.value==="OTRA"){
-                                setNew(true);
-                            }else{
-                                setNew(false);
-                            }
-                        }}
-                    >
-                        <option value="">-- Seleccionar --</option>
-                        {
-                            business.map((bus,index)=>(
-                                (bus.name!=='CARTERA VENDIDA')
-                                ?
-                                    <option key={index} value={bus.id}>{bus.name}</option>
-                                : <></>
-                            ))
-                        }
-                    </select>
-                </label>
+                <div className="CardCreateCampain__agents" style={{gridColumn:'1 / -1'}}>
+                    <label>Empresa</label>
+                    <div className="CardCreateCampain__content">
+                        {business.filter(b => b.name !== 'CARTERA VENDIDA').map((bus, index) => (
+                            <label key={index}>
+                                <input
+                                    type="checkbox"
+                                    value={bus.id}
+                                    checked={campain.business_ids.includes(bus.id)}
+                                    onChange={(e) => {
+                                        const { id } = bus;
+                                        const prev = campain.business_ids;
+                                        setCampain({
+                                            ...campain,
+                                            business_ids: e.target.checked
+                                                ? [...prev, id]
+                                                : prev.filter(b => b !== id)
+                                        });
+                                    }}
+                                />
+                                {bus.name}
+                            </label>
+                        ))}
+                    </div>
+                </div>
 
                 <label className="CardCreateCampain__select">
                     Tipo de campaña
@@ -190,7 +187,7 @@ export default function CardCreateCampain({setData}){
                 <button
                     onClick={async (e)=>{
 
-                        if(campain.name==='' || campain.begin_time==='' || campain.end_time==='' || campain.business_id===''){
+                        if(campain.name==='' || campain.begin_time==='' || campain.end_time==='' || campain.business_ids.length===0){
                             sendpush({
                                 title:'ERR: Datos incompletos.',
                                 message:'Por favor, llene todos los campos.',
@@ -213,7 +210,7 @@ export default function CardCreateCampain({setData}){
 
                         const data={
                             name:campain.name,
-                            business_id:campain.business_id,
+                            business_ids:JSON.stringify(campain.business_ids),
                             begin_time:campain.begin_time,
                             end_time:campain.end_time,
                             type:campain.type,

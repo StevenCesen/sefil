@@ -15,6 +15,7 @@ import CardConfirm from "../../components/CardConfirm/CardConfirm";
 import CardCondonacion from "../../components/CardCondonacion/CardCondonacion";
 import CardEditJudicial from "../../components/CardEditJudicial/CardEditJudicial";
 import CardStructure from "../../components/CardStructure/CardStructure";
+import CardCancelInvoice from "../../components/Credits/CardCancelInvoice/CardCancelInvoice";
 import { useStoreCondonation } from "../../stores/useStoreCondonation";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import { useStoreStructure } from "../../stores/useStoreStructure";
@@ -126,7 +127,6 @@ export default function Credit(){
                             due_date={credit.credit.due_date}
                             collection_state={credit.credit.collection_state}
                             monthly_fee_amount={credit.credit.monthly_fee_amount}
-                            //Información adicional
                             info_extra={
                                 {
                                     monthly_fee_amount:credit.credit.monthly_fee_amount,
@@ -161,17 +161,23 @@ export default function Credit(){
                         </div>
                     </div>
                 </div>
-                
-                <CardActions 
-                    isViewOn={
-                        (
-                            credit.cartera==='syncs' || 
-                            credit.credit.collection_state.toLowerCase()==='cancelado' ||
-                            credit.credit.collection_state.toLowerCase()==='convenio de pago'
-                        ) ? false : true
-                    } 
-                    setAction={setAction}
-                />
+
+                {
+                    (credit.credit.business_name!=='FACES')
+                    ?
+                        <CardActions
+                            isViewOn={
+                                (
+                                    credit.cartera==='syncs' ||
+                                    credit.credit.collection_state.toLowerCase()==='cancelado' ||
+                                    credit.credit.collection_state.toLowerCase()==='convenio de pago'
+                                ) ? false : true
+                            }
+                            setAction={setAction}
+                            invoice_value={credit.credit.invoice_value}
+                        />
+                    :   <></>
+                }
                 
                 <div style={{display:'grid',gridTemplateColumns:'70% 30%',gap:'10px'}}>
                     <MenuNav
@@ -247,6 +253,17 @@ export default function Credit(){
                                         helperCredit({ credit_id: params.id });
                                     }}
                                     close={() => setAction('')}
+                                />
+                            :   (action==='CANCEL_INVOICE')
+                            ?
+                                <CardCancelInvoice
+                                    credit_id={credit.credit.id}
+                                    invoice_value={credit.credit.invoice_value}
+                                    onSuccess={() => {
+                                        setAction('');
+                                        helperCredit({ credit_id: params.id });
+                                    }}
+                                    onClose={() => setAction('')}
                                 />
                             :   <></>
                 }

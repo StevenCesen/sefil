@@ -130,3 +130,12 @@
 .btn--danger:hover {
     opacity: 0.9;
 }
+
+.btn--primary {
+    background-color: var(--bg-buttons);
+    color: white;
+}
+
+.btn--primary:hover {
+    opacity: 0.9;
+}

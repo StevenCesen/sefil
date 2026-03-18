@@ -1,0 +1,128 @@
+.ReportExport {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 20px;
+    background-color: var(--bg-1);
+}
+
+.ReportExport__container {
+    max-width: 860px;
+    margin: 0 auto;
+    background-color: var(--bg-2);
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: var(--box-shadow);
+}
+
+.ReportExport__header {
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--bg-alert-successful);
+    padding-bottom: 16px;
+}
+
+.ReportExport__title {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--color-1);
+    margin: 0;
+}
+
+.ReportExport__subtitle {
+    font-size: 13px;
+    color: var(--color-2);
+    margin-top: 4px;
+}
+
+.ReportExport__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.ReportExport__grid--3 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.ReportExport__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ReportExport__field--full {
+    grid-column: 1 / -1;
+}
+
+.ReportExport__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ReportExport__field input,
+.ReportExport__field select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: var(--bg-1);
+    color: var(--color-1);
+    transition: border-color 0.2s;
+    width: 100%;
+}
+
+.ReportExport__field input:focus,
+.ReportExport__field select:focus {
+    outline: none;
+    border-color: var(--bg-alert-successful);
+    box-shadow: 0 0 0 3px rgba(var(--bg-alert-successful-rgb, 72, 199, 142), 0.15);
+}
+
+.ReportExport__actions {
+    margin-top: 28px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ReportExport__button {
+    padding: 12px 32px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ReportExport__button:hover:not(:disabled) {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.ReportExport__button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 700px) {
+    .ReportExport__container {
+        padding: 24px 16px;
+    }
+
+    .ReportExport__grid,
+    .ReportExport__grid--3 {
+        grid-template-columns: 1fr;
+    }
+
+    .ReportExport__field--full {
+        grid-column: 1;
+    }
+}

@@ -21,7 +21,7 @@
 
 /* Header Row 2 - Segunda fila para Monto, Estado, Acciones */
 .SectionPayments__header--row2 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     background: linear-gradient(135deg, var(--color-2, #1d4ed8), var(--color-1, #2563eb));
     padding: 10px;
     font-size: 13px;
@@ -62,7 +62,7 @@
 
 /* Row 2 del item - Monto, Estado, Acciones */
 .SectionPayments__item--row2 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     padding: 8px 10px;
     background-color: #f8fafc;
     border-top: 1px dashed #e5e7eb;

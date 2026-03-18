@@ -28,33 +28,50 @@ export default function Monitor(){
     }, []);
 
     useEffect(() => {
-        loader.viewOn(true);
+        let pingInterval;
+        let destroyed = false;
 
-        const wsUrl = import.meta.env.VITE_WS_URL || 'wss://check.sefil.com.ec/ws';
-        const conn = new WebSocket(wsUrl);
-        
-        conn.onopen = function(e) {
-            console.log("WSS: Connection established!");
-            setAgents();
-            loader.viewOn(false);
-        };
+        function connect() {
+            if (destroyed) return;
 
-        conn.onmessage = async function(e) {
-            const data = JSON.parse(e.data);
-            await updateAgent({data});
-        };
+            const token = localStorage.getItem('token_monitor') || '';
+            const ws = new WebSocket(
+                `wss://services.sefil.com.ec/ws/monitor?role=subscriber&token=${token}`
+            );
+            connection.current = ws;
 
-        connection.current = conn;
-
-        document.addEventListener("visibilitychange", async function(e) {
-            await setAgents();
-        });
-
-        if (connection.current) {
-            return () => {
-                connection.current.close();
+            ws.onopen = () => {
+                pingInterval = setInterval(() => {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({ type: 'ping' }));
+                    }
+                }, 30_000);
             };
+
+            ws.onmessage = (e) => {
+                const msg = JSON.parse(e.data);
+                if (msg.type === 'init') {
+                    localStorage.setItem('token_monitor', msg.token);
+                } else if (msg.type === 'metric') {
+                    updateAgent({ data: msg.data });
+                }
+            };
+
+            ws.onclose = () => {
+                clearInterval(pingInterval);
+                if (!destroyed) setTimeout(connect, 3000);
+            };
+
+            ws.onerror = (e) => console.error('WS monitor error:', e);
         }
+
+        connect();
+
+        return () => {
+            destroyed = true;
+            clearInterval(pingInterval);
+            connection.current?.close();
+        };
     }, []);
 
     return (
