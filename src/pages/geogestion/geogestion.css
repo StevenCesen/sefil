@@ -225,24 +225,46 @@
 
 .status-header {
     background: #f8f9fa;
-    padding: 12px 15px;
+    padding: 10px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    user-select: none;
+}
+
+.status-header:hover {
+    background: #eef1f4;
+}
+
+.status-header-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-time {
+    font-size: 11px;
+    color: #777;
 }
 
 .status-header h4 {
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
     color: #333;
 }
 
 .total-badge {
-    background: #007bff;
+    background: var(--bg-buttons, #009793);
     color: white;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
     font-weight: 500;
 }
 
@@ -257,10 +279,10 @@
 
 .points-table th,
 .points-table td {
-    padding: 10px;
+    padding: 6px 10px;
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .points-table th {

@@ -18,6 +18,8 @@ export default function MenuNav({options}){
 
     if(!store_management.managements) return <></>
 
+    console.log(store_management)
+
     return(
         <div className="MenuNav">
             <div className="MenuNav__sectionOptions">
@@ -32,7 +34,7 @@ export default function MenuNav({options}){
                         >{option.name}</button>
                     ))
                 }
-                {isAdmin && store_management.section === 'MANAGEMENTS' && (
+                {isAdmin && store_management.credit.sync_status==="ACTIVE" && store_management.section === 'MANAGEMENTS' && (
                     <button
                         className="MenuNav__addBtn"
                         onClick={() => setShowForm(v => !v)}

@@ -7,12 +7,14 @@ import { useStoreTemplate } from "../../../stores/useStoreTemplates";
 import createManagement from "../../../helpers/Managements/createManagement";
 import sendpush from "../../../helpers/sendpush";
 import { useViewStruct } from "../../../stores/useViewStruct";
+import useFetch from "../../../hooks/useFetch";
 
 export default function FormManagement(){
     const store_management=useStoreManagement();
     const store_credits=useStoreFilterManagement();
     const store_templates=useStoreTemplate();
     const store_view_struct=useViewStruct();
+    const { fetchWithAuth } = useFetch();
     const button=useRef();
     const [isSaving, setIsSaving] = useState(false);
 
@@ -122,7 +124,29 @@ export default function FormManagement(){
     }
     
     useEffect(()=>{
-        store_templates.setTemplate();
+        const load = async () => {
+            if (store_templates.templates.length === 0) {
+                await store_templates.getTemplates();
+            }
+            store_templates.setTemplate();
+
+            // Si no hay campain_id, buscarlo por business_id
+            if (!store_management.campain_id && store_management.credit?.business_id) {
+                try {
+                    const res = await fetchWithAuth(
+                        `${import.meta.env.VITE_URL_BASE}/campains?state=ACTIVE&business_id=${store_management.credit.business_id}`
+                    );
+                    const data = await res.json();
+                    const campains = data.result?.data || [];
+                    if (campains.length > 0) {
+                        store_management.setCampainID(campains[0].id);
+                    }
+                } catch (e) {
+                    console.error('Error fetching campain:', e);
+                }
+            }
+        };
+        load();
     },[store_management.credit_id]);
 
     return(
