@@ -1,5 +1,4 @@
 import "./MenuNav.css";
-import NavigationToggle from "../NavigationToggle/NavigationToggle";
 import { useStoreManagement } from "../../../stores/useStoreManagement";
 import SectionManagement from "../../Management/SectionManagement/SectionManagement";
 import SectionPayments from "../../Management/SectionPayments/SectionPayments";
@@ -13,12 +12,10 @@ export default function MenuNav({options}){
 
     const store_management=useStoreManagement();
     const userRole = localStorage.getItem('role');
-    const isAdmin = userRole === 'superadmin' || userRole === 'admin';
+    const isAdmin = userRole === 'superadmin' || userRole === 'admin' || userRole === 'supervisor';
     const [showForm, setShowForm] = useState(false);
 
     if(!store_management.managements) return <></>
-
-    console.log(store_management)
 
     return(
         <div className="MenuNav">
@@ -78,7 +75,6 @@ export default function MenuNav({options}){
                                         store_management.calls.data.map((call, index) => (
                                             <div key={index} style={{padding: '10px', borderBottom: '1px solid #eee'}}>
                                                 <p>Llamada #{index + 1}</p>
-                                                {/* Aquí puedes agregar más detalles de la llamada */}
                                             </div>
                                         ))
                                     ) : (

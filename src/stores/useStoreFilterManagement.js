@@ -7,7 +7,7 @@ export const useStoreFilterManagement = create((set,get) => ({
     tray:'PENDIENTE',
     name: '',
     sync_id: '',
-    business_id:0,
+    campain_id:0,
     sector:'',
     ci:'',
     agency:'',
@@ -20,7 +20,7 @@ export const useStoreFilterManagement = create((set,get) => ({
     nro_managements:0,
     nro_inactive:0,
     setTray:            (value)=>{set({tray:value})},
-    setBusiness:        (value)=>{set({business_id:value})},
+    setBusiness:        (value)=>{set({campain_id:value})},
     setName:            (value)=>{set({name:value})},
     setSyncId:          (value)=>{set({sync_id:value})},
     setCi:              (value)=>{set({ci:value})},
@@ -56,18 +56,18 @@ export const useStoreFilterManagement = create((set,get) => ({
 
             const data = await request.json();
             set({ campains:data.result});
-            set({ business_id:data.result.data.length > 0 ? data.result.data[0].business_id : 0 }); 
+            set({ campain_id: data.result.data.length > 0 ? data.result.data[0].id : 0 });
             await numberTrays();
         } catch (error) {
             console.error('Error al hacer fetchFilteredCredits:', error);
         }
     },
     getFilterString: () => {
-        const {name,sync_id,business_id,ci,days_past_due_max,days_past_due_min,agency,sector,management_state,promise_date,tray} = get();
+        const {name,sync_id,campain_id,ci,days_past_due_max,days_past_due_min,agency,sector,management_state,promise_date,tray} = get();
         const parts = [];
         if (name.trim() !== '') parts.push(`client_name=${name.trim()}`);
         if (sync_id.trim() !== '') parts.push(`sync_id=${sync_id.trim()}`);
-        if (business_id !== 0 && business_id !== '') parts.push(`business_id=${business_id}`);
+        if (campain_id !== 0 && campain_id !== '') parts.push(`campain_id=${campain_id}`);
         if (agency.trim() !== '') parts.push(`agency=${agency.trim()}`);
         if (ci.trim() !== '') parts.push(`client_ci=${ci.trim()}`);
         if (days_past_due_max.trim() !== '') parts.push(`days_past_due_max=${days_past_due_max.trim()}`);
@@ -174,8 +174,8 @@ export const useStoreFilterManagement = create((set,get) => ({
         }
     },
     numberTrays: async () => {
-        const { business_id }=get();
-        const end_point=`${import.meta.env.VITE_URL_BASE}/number-trays?user_id=${localStorage.getItem('temp_uS')}&business_id=${business_id}`;
+        const { campain_id }=get();
+        const end_point=`${import.meta.env.VITE_URL_BASE}/number-trays?user_id=${localStorage.getItem('temp_uS')}&campain_id=${campain_id}`;
         try {
             const request=await fetch(end_point,{
                 headers: {

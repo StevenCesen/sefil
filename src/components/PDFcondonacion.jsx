@@ -77,8 +77,9 @@ import logo from '/icons/logo.png';
       { label: 'Otros valores',         orig: prev.otros_valores,      post: post.otros_valores },
     ];
 
+    const sefilTotal     = Number(prev.gastos_cobranza_sefil) + invoiceValue;
     const totalCondonado = rows.reduce((acc, r) => acc + (Number(r.orig) - Number(r.post)), 0);
-    const totalACobrar   = rows.reduce((acc, r) => acc + Number(r.post), 0) + invoiceValue;
+    const totalACobrar   = rows.reduce((acc, r) => acc + Number(r.post), 0) + sefilTotal;
 
     return (
       <Document>
@@ -141,12 +142,12 @@ import logo from '/icons/logo.png';
               />
             ))}
 
-            {/* SEFIL row — not condonable, uses invoice_value */}
+            {/* SEFIL row — not condonable: management_collection_expenses + invoice_value */}
             <Row
               label="Gastos cobranza SEFIL"
-              original={fmt(invoiceValue)}
+              original={fmt(sefilTotal)}
               condonado={fmt(0)}
-              aCobrar={fmt(invoiceValue)}
+              aCobrar={fmt(sefilTotal)}
             />
 
             {/* Total */}

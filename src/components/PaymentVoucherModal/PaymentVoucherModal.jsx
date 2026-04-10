@@ -23,7 +23,8 @@ export default function PaymentVoucherModal({
         ? agentName.substring(0, 1) + (agentName.split('_')[1]?.substring(0, 1) || '')
         : 'N/A';
 
-    const printType = (reprint && payment.status !== 'revertido') ? 'COPIA' : payment.status.toUpperCase();
+    const paymentStatus = (payment.payment_status || payment.status || '').toLowerCase();
+    const printType = (reprint && paymentStatus !== 'revertido') ? 'COPIA' : paymentStatus.toUpperCase();
     const paymentMethod = (payment.payment_method || payment.payment_type || payment.forma_pago || 'efectivo').toLowerCase();
 
     return (

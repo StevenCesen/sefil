@@ -208,28 +208,27 @@ export default function CardCreateCampain({setData}){
                             }
                         });
 
-                        const data={
-                            name:campain.name,
-                            business_ids:JSON.stringify(campain.business_ids),
-                            begin_time:campain.begin_time,
-                            end_time:campain.end_time,
-                            type:campain.type,
-                            agents:JSON.stringify(agents_select),
-                            state:'ACTIVE'
-                        };
+                        const formData = new FormData();
+                        formData.append('name', campain.name);
+                        campain.business_ids.forEach(id => formData.append('business_ids[]', id));
+                        formData.append('begin_time', campain.begin_time);
+                        formData.append('end_time', campain.end_time);
+                        formData.append('type', campain.type);
+                        formData.append('agents', JSON.stringify(agents_select));
+                        formData.append('state', 'ACTIVE');
 
                         try {
                             const response = await fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains`,{
                                 method:'POST',
-                                body:new URLSearchParams(data)
+                                body:formData
                             });
 
                             const result = await response.json();
 
                             e.target.textContent='Campaña creada';
 
-                            if(result.result && result.result.data) {
-                                setData(result.result.data);
+                            if(result.result) {
+                                setData(prev => [result.result, ...(Array.isArray(prev) ? prev : [])]);
                             }
 
                             setCampain({
@@ -237,7 +236,7 @@ export default function CardCreateCampain({setData}){
                                 begin_time:"",
                                 end_time:"",
                                 data:[],
-                                business_id:"",
+                                business_ids:[],
                                 type:"manual"
                             });
 

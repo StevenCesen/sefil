@@ -209,7 +209,7 @@ export default function CardCondonacion() {
 
                 <div className="CardCondonacion__result">
                     <p>Total a cancelar:</p>
-                    <p>$ {(Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza) + Number(credit.gastos_judiciales) + Number(credit.otros_valores) + Number(store_condonation.invoice_value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')}</p>
+                    <p>$ {(Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza_sefil) + Number(credit.gastos_cobranza) + Number(credit.gastos_judiciales) + Number(credit.otros_valores) + Number(store_condonation.invoice_value)).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1')}</p>
                 </div>
 
                 <button className="CardCondonacion__save"
@@ -217,10 +217,11 @@ export default function CardCondonacion() {
 
                         e.target.textContent = 'Guardando...';
 
-                        const totalAmountPostDates = Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza) + Number(credit.gastos_judiciales) + Number(credit.otros_valores) + Number(store_condonation.invoice_value);
+                        const totalAmountPostDates = Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza_sefil) + Number(credit.gastos_cobranza) + Number(credit.gastos_judiciales) + Number(credit.otros_valores);
 
                         const data = {
                             credit_id: Number(store_condonation.id),
+                            invoice_value: Number(store_condonation.invoice_value),
                             post_dates: {
                                 total_amount: Number(totalAmountPostDates.toFixed(2)),
                                 capital: Number(credit.capital),

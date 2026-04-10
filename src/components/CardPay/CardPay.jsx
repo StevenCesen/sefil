@@ -163,7 +163,7 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
         if (payment.forma_pago !== 'efectivo' && !payment.codigo_deposito) {
             errors.push('Falta código de transacción');
         }
-        if (payment.tipo_transaccion === 'total' && Number(payment.valor_recibido) < Number(credit.totalAmount)) {
+        if (payment.tipo_transaccion === 'total' && Number(payment.valor_recibido) < (Number(credit.totalAmount)-Number(credit.invoice_value))) {
             errors.push('Valor recibido no es correcto');
         }
         if (!payment.valor_recibido || payment.valor_recibido === '0') {
@@ -372,7 +372,7 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
             <button className="CardCondonacion__close" onClick={() => setView('')}>
                 Volver
             </button>
-            
+
             <div className="CardPay__contentPay">
                 <div className="CardPay__head">
                     <h3 ref={titleRef}>PAGO</h3>

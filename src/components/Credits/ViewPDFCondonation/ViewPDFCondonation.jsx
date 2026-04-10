@@ -36,15 +36,16 @@ export default function ViewPDFCondonation() {
         otros_valores: Number(store_condonation.otros_valores) || 0
     });
 
+    // response fields = condonated amounts → remaining = prev - condonated
     const postDates = JSON.stringify({
-        capital: Number(response?.capital || 0),
-        interes: Number(response?.interest || 0),
-        mora: Number(response?.mora || 0),
-        seguro_desgravamen: Number(response?.safe || 0),
-        gastos_cobranza_sefil: Number(response?.management_collection_expenses || 0),
-        gastos_cobranza: Number(response?.collection_expenses || 0),
-        gastos_judiciales: Number(response?.legal_expenses || 0),
-        otros_valores: Number(response?.other_values || 0)
+        capital:             Number(store_condonation.capital)            - Number(response?.capital || 0),
+        interes:             Number(store_condonation.interes)            - Number(response?.interest || 0),
+        mora:                Number(store_condonation.mora)               - Number(response?.mora || 0),
+        seguro_desgravamen:  Number(store_condonation.seguro_desgravamen)- Number(response?.safe || 0),
+        gastos_cobranza_sefil: 0,
+        gastos_cobranza:     Number(store_condonation.gastos_cobranza)   - Number(response?.collection_expenses || 0),
+        gastos_judiciales:   Number(store_condonation.gastos_judiciales) - Number(response?.legal_expenses || 0),
+        otros_valores:       Number(store_condonation.otros_valores)     - Number(response?.other_values || 0),
     });
 
     return (

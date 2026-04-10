@@ -2,38 +2,43 @@ import { useState, useEffect } from "react";
 import "./CampaignAssignment.css";
 import BackButton from "../../../components/BackButton/BackButton";
 import sendpush from "../../../helpers/sendpush";
-import getBusinesses from "../../../helpers/getBusinesses";
 import exportCampaignAssignment from "../../../helpers/Reports/exportCampaignAssignment";
 import ReportProgressBar from "../../../components/ReportProgressBar/ReportProgressBar";
 
 export default function CampaignAssignment() {
     const [formData, setFormData] = useState({
-        business_id: ''
+        campain_id: ''
     });
     const [loading, setLoading] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [businesses, setBusinesses] = useState([]);
-    const [loadingBusinesses, setLoadingBusinesses] = useState(true);
+    const [campaigns, setCampaigns] = useState([]);
+    const [loadingCampaigns, setLoadingCampaigns] = useState(true);
 
     useEffect(() => {
-        const loadBusinesses = async () => {
+        const loadCampaigns = async () => {
             try {
-                const data = await getBusinesses();
-                setBusinesses(data.result.data);
+                const response = await fetch(`${import.meta.env.VITE_URL_BASE}/campains?state=ACTIVE`, {
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await response.json();
+                setCampaigns(data.result?.data || data.result || []);
             } catch (error) {
-                console.error('Error fetching businesses:', error);
+                console.error('Error fetching campaigns:', error);
                 sendpush({
                     title: 'Error',
-                    message: 'Error al cargar las carteras',
+                    message: 'Error al cargar las campañas',
                     type: 'Push--error',
                     timeout: 3000
                 });
             } finally {
-                setLoadingBusinesses(false);
+                setLoadingCampaigns(false);
             }
         };
 
-        loadBusinesses();
+        loadCampaigns();
     }, []);
 
     const handleChange = (e) => {
@@ -47,10 +52,10 @@ export default function CampaignAssignment() {
     const handleExport = async (e) => {
         e.preventDefault();
 
-        if (!formData.business_id) {
+        if (!formData.campain_id) {
             sendpush({
                 title: 'Error',
-                message: 'Debe seleccionar una cartera',
+                message: 'Debe seleccionar una campaña',
                 type: 'Push--error',
                 timeout: 3000
             });
@@ -71,13 +76,8 @@ export default function CampaignAssignment() {
             const link = document.createElement('a');
             link.href = downloadUrl;
 
-            const businessName = businesses.find(b => b.id === parseInt(formData.business_id))?.name || 'EMPRESA';
-            const today = new Date();
-            const monthNames = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
-                              'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
-            const month = monthNames[today.getMonth()];
-
-            link.download = `AsignacionCampaña-${month}-${businessName}.xlsx`;
+            const campaignName = campaigns.find(c => c.id === parseInt(formData.campain_id))?.name || 'CAMPAÑA';
+            link.download = `AsignacionCampaña-${campaignName}.xlsx`;
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -118,19 +118,19 @@ export default function CampaignAssignment() {
 
                 <form onSubmit={handleExport} className="CampaignAssignment__form">
                     <div className="CampaignAssignment__field">
-                        <label htmlFor="business_id">Cartera *</label>
+                        <label htmlFor="campain_id">Campaña *</label>
                         <select
-                            id="business_id"
-                            name="business_id"
-                            value={formData.business_id}
+                            id="campain_id"
+                            name="campain_id"
+                            value={formData.campain_id}
                             onChange={handleChange}
-                            disabled={loadingBusinesses || loading}
+                            disabled={loadingCampaigns || loading}
                             required
                         >
-                            <option value="">-- Seleccionar cartera --</option>
-                            {businesses.map(business => (
-                                <option key={business.id} value={business.id}>
-                                    {business.name}
+                            <option value="">-- Seleccionar campaña --</option>
+                            {campaigns.map(campaign => (
+                                <option key={campaign.id} value={campaign.id}>
+                                    {campaign.name}
                                 </option>
                             ))}
                         </select>
@@ -141,7 +141,7 @@ export default function CampaignAssignment() {
                     <button
                         type="submit"
                         className="CampaignAssignment__button"
-                        disabled={loading || loadingBusinesses}
+                        disabled={loading || loadingCampaigns}
                     >
                         {loading ? 'Generando...' : 'Descargar reporte'}
                     </button>

@@ -108,17 +108,7 @@ export const useStoreManagement = create((set,get) => ({
     },
     setMessage:     (value)=>{set({message:value})},
     setIDCampain: (cartera) => {
-        set({cartera:cartera});
-
-        if(cartera=='SEFIL_1'){
-            set({campain_id:16});
-        }else if(cartera==='SEFIL_2'){
-            set({campain_id:17});
-        }else if(cartera==='legal'){
-            set({campain_id:36});
-        }else{
-            set({campain_id:32});
-        }
+        set({campain_id:cartera});
     },
     setNew:     ()=>{
         set({phones:null}),

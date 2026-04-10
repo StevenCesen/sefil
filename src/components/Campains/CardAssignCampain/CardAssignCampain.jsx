@@ -51,7 +51,7 @@ export default function CardAssignCampain({ campain_id }) {
         if (!data_campain) return;
 
         const queryFilters = {
-            business_id: data_campain.business_id
+            business_ids: data_campain.business_ids
         };
         
         if (agents_origin.length > 0) {
@@ -127,7 +127,7 @@ export default function CardAssignCampain({ campain_id }) {
         setLoading(true);
         try {
             const data = await fetchCreditsData({
-                business_id: data_campain.business_id,
+                business_ids: data_campain.business_ids,
                 sync_id: creditNumber
             });
 
@@ -250,7 +250,7 @@ export default function CardAssignCampain({ campain_id }) {
 
         try {
             const transferData = {
-                business_id: data_campain.business_id,
+                business_ids: data_campain.business_ids,
                 user_origin: originIds.length > 0 ? originIds : undefined,
                 user_dstn: destinoIds,
                 sync_status: 'ACTIVE'
@@ -377,7 +377,7 @@ export default function CardAssignCampain({ campain_id }) {
             </p>
 
             <span>Créditos activos: <strong>{data_campain.total_credits}</strong></span>
-            <span>Cartera: <strong>{data_campain.business_name || 0}</strong></span>
+            <span>Cartera: <strong>{data_campain.businesses_details?.map(b => b.name).join(', ') || 0}</strong></span>
 
             <label className="CardAssignCampain__searchCredit">
                 <strong>Buscar crédito</strong>
@@ -426,8 +426,7 @@ export default function CardAssignCampain({ campain_id }) {
 
             <CreditLoader
                 onCreditsChange={handleCreditsChange}
-                credits={credits}
-                business_id={data_campain.business_id}
+                business_ids={data_campain.business_ids}
             />
 
             <CreditFilters

@@ -33,9 +33,9 @@ export default function SelectNameCampain(){
             >
                 <option value={''}>-- Seleccionar --</option>
                 {filter_management.campains.data.map((campain)=>(
-                    <option 
+                    <option
                         key={campain.id}
-                        value={campain.business_id}
+                        value={campain.id}
                     >
                         {campain.name}
                     </option>

@@ -1,7 +1,7 @@
-export default async function exportCampaignAssignment({ business_id }) {
+export default async function exportCampaignAssignment({ campain_id }) {
     const endpoint = `${import.meta.env.VITE_URL_BASE}/exports/campain-assignments`;
 
-    const url = `${endpoint}?business_id=${business_id}`;
+    const url = `${endpoint}?campain_id=${campain_id}`;
 
     const request = await fetch(url, {
         headers: {

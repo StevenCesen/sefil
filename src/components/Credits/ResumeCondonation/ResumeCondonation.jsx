@@ -24,7 +24,7 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
     });
 
     const handleReprint = () => {
-        const credit = store_management.credit;
+        const { credit } = store_management;
 
         // prevDates = original values before condonation = remaining + condonated
         store_condonation.setInfoCredit({
@@ -37,7 +37,7 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
             seguro_desgravamen:parseFloat(credit.safe || 0)               + parseFloat(condonation.safe || 0),
             gastos_judiciales: parseFloat(credit.legal_expenses || 0)     + parseFloat(condonation.legal_expenses || 0),
             gastos_cobranza:   parseFloat(credit.collection_expenses || 0)+ parseFloat(condonation.collection_expenses || 0),
-            gastos_cobranza_sefil: parseFloat(credit.management_collection_expenses || 0),
+            gastos_cobranza_sefil: parseFloat(credit.management_collection_expenses || 0) - parseFloat(credit.invoice_value || 0),
             otros_valores:     parseFloat(credit.other_values || 0)       + parseFloat(condonation.other_values || 0),
             invoice_value:     parseFloat(credit.invoice_value || 0),
             id: condonation.credit_id,
@@ -47,24 +47,16 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
             update: ''
         });
 
-        // postDates = current remaining credit values (ViewPDFCondonation reads response.capital etc.)
+        // response fields = condonated amounts (same semantics as create flow)
         store_condonation.setResponse({
             ...condonation,
-            capital:                      parseFloat(credit.capital || 0),
-            interest:                     parseFloat(credit.interest || 0),
-            mora:                         parseFloat(credit.mora || 0),
-            safe:                         parseFloat(credit.safe || 0),
-            management_collection_expenses: parseFloat(credit.management_collection_expenses || 0),
-            collection_expenses:          parseFloat(credit.collection_expenses || 0),
-            legal_expenses:               parseFloat(credit.legal_expenses || 0),
-            other_values:                 parseFloat(credit.other_values || 0),
+            sync_id: credit.sync_id,
         });
         store_condonation.setViewPDF(true);
     };
 
     const handleEdit = () => {
-        // Obtener valores actuales del crédito
-        const credit = store_management.credit;
+        const { credit } = store_management;
         const managementExpenses = credit.management_collection_expenses || 0;
         
         // En el store: los campos principales son los valores ACTUALES del crédito
