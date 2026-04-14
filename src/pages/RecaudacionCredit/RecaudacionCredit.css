@@ -1,0 +1,22 @@
+.RecaudacionCredit {
+    padding: 20px 5%;
+}
+
+.RecaudacionCredit__sections {
+    margin-top: 10px;
+}
+
+.RecaudacionCredit__sectionClients {
+    width: 70%;
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 10px;
+}
+
+.RecaudacionCredit__sectionPending {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}

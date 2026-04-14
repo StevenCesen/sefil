@@ -99,6 +99,7 @@ const allSections = [
     { section: 'home', label: 'Dashboard' },
     { section: 'monitor', label: 'Monitoreo' },
     { section: 'consult', label: 'Consultas' },
+    { section: 'recaudacion', label: 'Recaudación' },
     { section: 'directions', label: 'Direcciones' },
     { section: 'contacts', label: 'Contactos' },
     { section: 'management_historial', label: 'Historial de gestiones' },
@@ -108,7 +109,9 @@ const allSections = [
     { section: 'settings', label: 'Configuración' },
     { section: 'calls', label: 'Llamadas' },
     { section: 'payments', label: 'Pagos' },
-    { section: 'reports', label: 'Reportes' }
+    { section: 'reports', label: 'Reportes' },
+    { section: 'geogestion', label: 'Geogestión' },
+    { section: 'field-trip', label: 'Módulo visita campo' },
 ];
 
 const allAbilities = {
@@ -124,7 +127,10 @@ const allAbilities = {
     directions: ['directions:create', 'directions:edit', 'directions:delete', 'directions:view'],
     monitor: ['monitor:view'],
     consult: ['consult:view'],
-    management_historial: ['management_historial:view']
+    management_historial: ['management_historial:view'],
+    recaudacion: ['recaudacion:view'],
+    geogestion: ['geogestion:view', 'geogestion:edit'],
+    'field-trip': ['field-trip:view', 'field-trip:create', 'field-trip:edit', 'field-trip:delete'],
 };
 
 const abilityLabels = {

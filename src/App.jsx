@@ -37,6 +37,8 @@ import ReportCobranza from './pages/ReportCobranza';
 import ReportCondonations from './pages/ReportCondonations';
 import ReportJudicial from './pages/ReportJudicial';
 import Calls from './pages/Calls/Calls';
+import Recaudacion from './pages/Recaudacion/Recaudacion';
+import RecaudacionCredit from './pages/RecaudacionCredit/RecaudacionCredit';
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -354,6 +356,24 @@ function App() {
           element={
             <ProtectedRoute>
               <Calls />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/recaudacion"
+          element={
+            <ProtectedRoute>
+              <Recaudacion />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/recaudacion/credits/:id"
+          element={
+            <ProtectedRoute>
+              <RecaudacionCredit />
             </ProtectedRoute>
           }
         />

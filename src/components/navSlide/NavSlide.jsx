@@ -20,6 +20,7 @@ const allSections = [
     { section: 'reports', label: 'Reportes'},
     { section: 'geogestion', label: 'Geogestión' },
     { section: 'field-trip', label: 'Módulo visita campo' },
+    { section: 'recaudacion', label: 'Recaudación' },
 ];
 
 const permissionData = [
@@ -42,7 +43,8 @@ const permissionData = [
                 { section: 'consult', abilitie: ['consult:view'] },
                 { section: 'management_historial', abilitie: ['management_historial:view'] },
                 { section: 'geogestion', abilitie: ['geogestion:view','geogestion:edit'] },
-                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] }
+                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] },
+                { section: 'recaudacion', abilitie: ['recaudacion:view'] }
             ]
         }
     },
@@ -53,6 +55,7 @@ const permissionData = [
                 { section: 'home', label: 'Dashboard' },
                 { section: 'monitor', label: 'Monitoreo' },
                 { section: 'consult', label: 'Consultas' },
+                { section: 'recaudacion', label: 'Recaudación' },
                 { section: 'directions', label: 'Direcciones' },
                 { section: 'contacts', label: 'Contactos' },
                 { section: 'management_historial', label: 'Historial de gestiones' },
@@ -81,7 +84,8 @@ const permissionData = [
                 { section: 'consult', abilitie: ['consult:view'] },
                 { section: 'management_historial', abilitie: ['management_historial:view'] },
                 { section: 'geogestion', abilitie: ['geogestion:view','geogestion:edit'] },
-                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] }
+                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] },
+                { section: 'recaudacion', abilitie: ['recaudacion:view'] }
             ]
         }
     },
@@ -91,6 +95,7 @@ const permissionData = [
             sections: [
                 { section: 'monitor', label: 'Monitoreo' },
                 { section: 'consult', label: 'Consultas' },
+                { section: 'recaudacion', label: 'Recaudación' },
                 { section: 'directions', label: 'Direcciones' },
                 { section: 'contacts', label: 'Contactos' },
                 { section: 'reports', abilitie: ['reports:view', 'reports:export'] },
@@ -115,7 +120,8 @@ const permissionData = [
                 { section: 'consult', abilitie: ['consult:view'] },
                 { section: 'management_historial', abilitie: ['management_historial:view'] },
                 { section: 'geogestion', abilitie: ['geogestion:view','geogestion:edit'] },
-                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] }
+                { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] },
+                { section: 'recaudacion', abilitie: ['recaudacion:view'] }
             ]
         }
     },
@@ -255,7 +261,15 @@ export default function NavSlide() {
                     <span>{getSectionLabel('consult')}</span>
                 </NavLink>
             )}
-            
+
+            {hasSection('recaudacion') && (
+                <NavLink to="/recaudacion" className="NavSlide__option">
+                    <img src="/icons/ic_round-search.png" />
+                    <label>{getSectionLabel('recaudacion')}</label>
+                    <span>{getSectionLabel('recaudacion')}</span>
+                </NavLink>
+            )}
+
             {hasSection('directions') && (
                 <NavLink to="/directions" className="NavSlide__option">
                     <img src="/icons/location.png" />

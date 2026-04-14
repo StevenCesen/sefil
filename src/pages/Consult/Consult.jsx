@@ -180,7 +180,7 @@ export default function Consult() {
                                     <NavLink to={`/credits/${credit.id}`}>
                                         <ExternalLink size={20} color="#007bff" />
                                     </NavLink>
-                                    <label>{credit.sync_id || credit.credit_number}</label>
+                                    <label>{credit.business_name}-{credit.sync_id}</label>
                                     <label>{credit.clients[0].name}</label>
                                     {
                                         (searchType === 'ci')

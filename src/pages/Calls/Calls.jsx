@@ -16,6 +16,7 @@ function buildUrl(filters) {
     if (filters.sync_id)      params.append('sync_id', filters.sync_id);
     if (filters.start_date)   params.append('start_date', filters.start_date);
     if (filters.end_date)     params.append('end_date', filters.end_date);
+    if (filters.created_by)   params.append('created_by', filters.created_by);
     return `${BASE}/calls?${params}`;
 }
 
@@ -38,9 +39,24 @@ export default function Calls() {
     const [data, setData]       = useState(null);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
-        state: '', phone_number: '', sync_id: '', start_date: '', end_date: ''
+        state: '', phone_number: '', sync_id: '', start_date: '', end_date: '', created_by: ''
     });
     const [currentPage, setCurrentPage] = useState(1);
+    const [agents, setAgents] = useState([]);
+
+    useEffect(() => {
+        fetch(`${BASE}/users?agents=true&is_active=1`, { headers: authHeaders() })
+            .then(r => r.json())
+            .then(data => {
+                const list = Array.isArray(data) ? data
+                    : Array.isArray(data.result) ? data.result
+                    : Array.isArray(data.result?.data) ? data.result.data
+                    : Array.isArray(data.data) ? data.data
+                    : [];
+                setAgents(list);
+            })
+            .catch(() => {});
+    }, []);
 
     const fetchData = (url) => {
         setLoading(true);
@@ -112,6 +128,16 @@ export default function Calls() {
                         <input type="text" value={filters.sync_id} placeholder="Ej: 001033581"
                             onChange={e => handleFilterChange('sync_id', e.target.value)} />
                     </label>
+                    <label>
+                        Agente
+                        <select value={filters.created_by}
+                            onChange={e => handleFilterChange('created_by', e.target.value)}>
+                            <option value="">-- Todos --</option>
+                            {agents.map(agent => (
+                                <option key={agent.id} value={agent.id}>{agent.name}</option>
+                            ))}
+                        </select>
+                    </label>
                 </div>
 
                 <div className="Calls__row Calls__row--header">
@@ -128,7 +154,7 @@ export default function Calls() {
                 {loading && <p className="Calls__loading">Cargando...</p>}
 
                 {data && !loading && data.data.map(call => (
-                    <div key={call.id} className="Calls__row">
+                    <div key={call.id} className={`Calls__row ${call.channel === 'WA' ? 'Calls__row--wa' : ''}`}>
                         <span>{formatDate(call.created_at)}</span>
                         <span>{call.phone_number}</span>
                         <span>

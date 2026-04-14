@@ -7,7 +7,7 @@ import { useStoreLoader } from "../../../stores/useStoreLoader";
 import revertPayment from "../../../helpers/revertPayment";
 import PaymentVoucherModal from "../../PaymentVoucherModal/PaymentVoucherModal";
 
-export default function SectionPayments({ payments, credit, view_complete_info = false, is_admin = false }) {
+export default function SectionPayments({ payments, credit, view_complete_info = false, is_admin = false, showActions = true }) {
     const [showPDF, setShowPDF] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState(null);
     const [showReverseModal, setShowReverseModal] = useState(false);
@@ -143,12 +143,14 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                     {headersRow1.map(header => <label key={header}>{header}</label>)}
                 </div>
 
-                {payments.data.map((payment, n) => (
-                    <div key={n} className="SectionPayments__itemGroup">
+                {payments.data.map((payment, n) => {
+                    const isReversed = (payment.payment_status || payment.status || '').toLowerCase() === 'revertido';
+                    return (
+                    <div key={n} className={`SectionPayments__itemGroup ${isReversed ? 'SectionPayments__itemGroup--reversed' : ''}`}>
                         {/* Fila 1: Datos principales */}
                         <div className="SectionPayments__item SectionPayments__item--row1">
                             <label>{(payment.payment_number !== null) ? payment.payment_number : 'FACES'}</label>
-                            <label>{payment.payment_date || payment.fecha}</label>
+                            <label>{payment.payment_date}</label>
                             <label>{payment.payment_type || payment.forma_pago}</label>
 
                             {showTwoRows ? (
@@ -191,21 +193,24 @@ export default function SectionPayments({ payments, credit, view_complete_info =
                                             : (payment.payment_status || payment.status)}
                                     </label>
                                 </div>
-                                <div className="SectionPayments__cell">
-                                    <span className="SectionPayments__cellHeader">Acciones</span>
-                                    <div className="SectionPayments__actions">
-                                        <button onClick={() => handlePrintClick(payment)} title="Reimprimir comprobante">
-                                            <Printer size={16} />
-                                        </button>
-                                        <button onClick={() => handleReverseClick(payment)} title="Anular comprobante">
-                                            <Ban size={16} />
-                                        </button>
+                                {showActions && (
+                                    <div className="SectionPayments__cell">
+                                        <span className="SectionPayments__cellHeader">Acciones</span>
+                                        <div className="SectionPayments__actions">
+                                            <button onClick={() => handlePrintClick(payment)} title="Reimprimir comprobante">
+                                                <Printer size={16} />
+                                            </button>
+                                            <button onClick={() => handleReverseClick(payment)} title="Anular comprobante">
+                                                <Ban size={16} />
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         )}
                     </div>
-                ))}
+                    );
+                })}
             </div>
 
             {showReverseModal && paymentToReverse && (

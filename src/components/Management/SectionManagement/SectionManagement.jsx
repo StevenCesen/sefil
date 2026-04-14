@@ -11,6 +11,7 @@ export default function SectionManagement({managements}){
                 <label>Estado de gestión</label>
                 <label>Días de mora</label>
                 <label>Fecha compromiso</label>
+                <label>Monto compromiso</label>
                 <label>Observación</label>
             </div>
             {

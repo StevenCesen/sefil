@@ -52,6 +52,14 @@
     background-color: #f9fafb;
 }
 
+.SectionPayments__itemGroup--reversed {
+    background-color: #fff0f0 !important;
+}
+
+.SectionPayments__itemGroup--reversed:hover {
+    background-color: #ffe0e0 !important;
+}
+
 .SectionPayments__item {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));

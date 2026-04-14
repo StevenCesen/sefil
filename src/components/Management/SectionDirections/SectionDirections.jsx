@@ -20,7 +20,7 @@ export default function SectionDirections() {
 
     const [newDirection, setNewDirection] = useState({
         type: 'DOMICILIO',
-        direction: '',
+        address: '',
         neighborhood: '',
         parish: '',
         canton: '',
@@ -111,7 +111,7 @@ export default function SectionDirections() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!newDirection.direction.trim()) {
+        if (!newDirection.address.trim()) {
             sendpush({
                 title: 'Error',
                 message: 'La dirección es requerida',
@@ -152,7 +152,7 @@ export default function SectionDirections() {
                 setShowForm(false);
                 setNewDirection({
                     type: 'DOMICILIO',
-                    direction: '',
+                    address: '',
                     neighborhood: '',
                     parish: '',
                     canton: '',
@@ -232,8 +232,8 @@ export default function SectionDirections() {
                             Dirección *
                             <input
                                 type="text"
-                                name="direction"
-                                value={newDirection.direction}
+                                name="address"
+                                value={newDirection.address}
                                 onChange={handleInputChange}
                                 placeholder="Calle principal, número..."
                                 required

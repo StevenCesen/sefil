@@ -8,7 +8,7 @@
     width: 100%;
     padding: 10px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 10px;
     background-color: var(--bg-alert-error);
     border-top-left-radius: 10px;
@@ -63,6 +63,10 @@
 
 .Calls__row:not(.Calls__row--header):nth-child(2n+1) {
     background-color: var(--bg-2);
+}
+
+.Calls__row--wa {
+    background-color: #f0fdf4 !important;
 }
 
 .Calls__badge {
@@ -165,7 +169,7 @@
 
 @media (max-width: 900px) {
     .Calls__filters {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
     }
 
     .Calls__row--header {

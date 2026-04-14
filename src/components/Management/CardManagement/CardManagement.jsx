@@ -9,6 +9,7 @@ export default function CardManagement({management}){
             <label>{management.substate}</label>
             <label>{management.days_past_due}</label>
             <label>{management.promise_date}</label>
+            <label>{management.promise_amount !== null && management.promise_amount !== undefined ? `$${Number(management.promise_amount).toFixed(2)}` : '-'}</label>
             <label>{management.observation}</label>
         </div>
     );

@@ -5,7 +5,7 @@
 .SectionManagement__header{
     display: grid;
     justify-content: center;
-    grid-template-columns: 10% 10% 10% 10% 10% 10% 40%;
+    grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 30%;
     align-items: center;
     font-size: 12px;
     text-align: center;
