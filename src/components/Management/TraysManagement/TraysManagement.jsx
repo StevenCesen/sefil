@@ -10,6 +10,10 @@ export default function TraysManagement(){
                 filter_management.FilteredCredits(filter_management.getFilterString());
             }}>Pendientes ({filter_management.nro_pending})</button>
             <button onClick={()=>{
+                filter_management.setTray('NO CONTACTABLES');
+                filter_management.FilteredCredits(filter_management.getFilterString());
+            }}>No contactables ({filter_management.nro_no_contactables})</button>
+            <button onClick={()=>{
                 filter_management.setTray('EN PROCESO');
                 filter_management.FilteredCredits(filter_management.getFilterString());
             }}>En proceso ({filter_management.nro_processed})</button>

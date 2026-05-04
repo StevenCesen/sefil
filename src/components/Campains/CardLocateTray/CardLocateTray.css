@@ -1,0 +1,88 @@
+.CardLocateTray {
+    width: 480px;
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+}
+
+.CardLocateTray__body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.CardLocateTray__field {
+    display: flex;
+    flex-direction: column;
+    font-weight: 100;
+    gap: 6px;
+}
+
+.CardLocateTray__field > select {
+    height: 35px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.CardLocateTray__btn {
+    padding: 10px 20px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    align-self: flex-end;
+}
+
+.CardLocateTray__btn:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.CardLocateTray__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.CardLocateTray__textarea {
+    resize: vertical;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.CardLocateTray__hint {
+    font-size: 11px;
+    color: #888;
+}
+
+.CardLocateTray__count {
+    font-weight: normal;
+    color: var(--bg-alert-successful);
+}
+
+.CardLocateTray__result {
+    padding: 12px;
+    background-color: var(--bg-3, #f5f5f5);
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.CardLocateTray__result p {
+    margin: 0;
+}
+
+.CardLocateTray__notFound {
+    word-break: break-all;
+    font-size: 12px;
+    color: #c0392b;
+}

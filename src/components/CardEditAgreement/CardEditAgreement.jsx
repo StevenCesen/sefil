@@ -17,8 +17,8 @@ export default function CardEditAgreement(){
             // Cargar cuotas existentes
             const loadedFees = store_structure.existing_fees.map((fee, index) => ({
                 id: index + 1,
-                fecha_pago: fee.fecha_pago,
-                valor: parseFloat(parseFloat(fee.valor).toFixed(2)),
+                fecha_pago: fee.payment_date,
+                valor: parseFloat(parseFloat(fee.payment_amount).toFixed(2)),
                 editable: true
             }));
             setFees(loadedFees);
@@ -98,7 +98,7 @@ export default function CardEditAgreement(){
 
         const fee_detail = fees.map(fee => ({
             payment_date: fee.fecha_pago,
-            payment_value: 0,
+            payment_value: parseFloat(fee.valor),
             payment_amount: parseFloat(fee.valor),
             payment_status: "PENDIENTE"
         }));

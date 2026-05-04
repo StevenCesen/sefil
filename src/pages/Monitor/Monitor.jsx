@@ -114,6 +114,7 @@ export default function Monitor(){
                     <label>Nro. créditos gestion efec.<br/>HOY.</label>
                     <label>Nro. créditos pendientes</label>
                     <label>Nro. créditos en proceso</label>
+                    <label>Nro. créditos no contactables</label>
                     <label>Nro. llamadas<br/>MES.</label>
                     <label>Nro. llamadas<br/>HOY.</label>
                 </div>
@@ -134,6 +135,7 @@ export default function Monitor(){
                                 nro_gestions_efec_dia: agent.data?.nro_gestions_efec_dia || 0,
                                 nro_pendientes: agent.data?.nro_pendientes || 0,
                                 nro_proceso: agent.data?.nro_proceso || 0,
+                                nro_no_contactables: agent.data?.nro_no_contactables || 0,
                                 nro_proceso_dia: agent.data?.nro_proceso_dia || 0,
                                 nro_calls: agent.data?.nro_calls || 0,
                                 nro_calls_acum: agent.data?.nro_calls_acum || 0,

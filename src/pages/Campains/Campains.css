@@ -56,6 +56,11 @@
     margin-bottom: 20px;
 }
 
+.Campains__actions {
+    display: flex;
+    gap: 10px;
+}
+
 .Campains__access button {
     padding: 10px 24px;
     background-color: var(--bg-alert-successful, #10b981);

@@ -83,6 +83,7 @@ export default function CreditFilters({ onFiltersChange, typeAssign }) {
                             <option value="PENDIENTE">PENDIENTE</option>
                             <option value="GESTIONADO">GESTIONADO</option>
                             <option value="EN PROCESO">EN PROCESO</option>
+                            <option value="NO CONTACTABLES">NO CONTACTABLES</option>
                         </select>
                     </label>
                 </div>

@@ -9,6 +9,7 @@ import authorizeCondonation from "../../../helpers/Credits/authorizeCondonation"
 import denyCondonation from "../../../helpers/Credits/denyCondonation";
 import revertCondonation from "../../../helpers/Credits/revertCondonation";
 import sendpush from "../../../helpers/sendpush";
+import getCondonation from "../../../helpers/Credits/getCondonation";
 
 export default function ResumeCondonation({condonation, onActionComplete, showActions = true}){
     const store_condonation = useStoreCondonation();
@@ -23,34 +24,50 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
         action: null
     });
 
-    const handleReprint = () => {
-        const { credit } = store_management;
+    const handleReprint = async () => {
+        loader.viewOn(true);
 
-        // prevDates = original values before condonation = remaining + condonated
+        const data = await getCondonation({ id: condonation.id });
+
+        loader.viewOn(false);
+
+        if (!data || data.code !== 1 || !data.result) {
+            sendpush({ title: 'Error', message: 'No se pudo obtener los datos de la condonación', type: 'Push--warning', timeout: 3000 });
+            return;
+        }
+
+        const full = data.result;
+        const prevRaw = full.prev_dates;
+        const prev = prevRaw
+            ? (typeof prevRaw === 'string' ? JSON.parse(prevRaw) : prevRaw)
+            : {};
+        const managementExpenses = parseFloat(full.invoice_value || 0);
+
         store_condonation.setInfoCredit({
-            ci: condonation.client_ci,
-            name: condonation.client_name,
+            ci: full.client_ci,
+            name: full.client_name,
             total: 0,
-            capital:           parseFloat(credit.capital || 0)            + parseFloat(condonation.capital || 0),
-            interes:           parseFloat(credit.interest || 0)            + parseFloat(condonation.interest || 0),
-            mora:              parseFloat(credit.mora || 0)                + parseFloat(condonation.mora || 0),
-            seguro_desgravamen:parseFloat(credit.safe || 0)               + parseFloat(condonation.safe || 0),
-            gastos_judiciales: parseFloat(credit.legal_expenses || 0)     + parseFloat(condonation.legal_expenses || 0),
-            gastos_cobranza:   parseFloat(credit.collection_expenses || 0)+ parseFloat(condonation.collection_expenses || 0),
-            gastos_cobranza_sefil: parseFloat(credit.management_collection_expenses || 0) - parseFloat(credit.invoice_value || 0),
-            otros_valores:     parseFloat(credit.other_values || 0)       + parseFloat(condonation.other_values || 0),
-            invoice_value:     parseFloat(credit.invoice_value || 0),
-            id: condonation.credit_id,
+            capital:             parseFloat(prev.capital || 0),
+            interes:             parseFloat(prev.interest || 0),
+            mora:                parseFloat(prev.mora || 0),
+            seguro_desgravamen:  parseFloat(prev.safe || 0),
+            gastos_judiciales:   parseFloat(prev.legal_expenses || 0),
+            gastos_cobranza:     parseFloat(prev.collection_expenses || 0),
+            gastos_cobranza_sefil: parseFloat(prev.management_collection_expenses || 0),
+            otros_valores:       parseFloat(prev.other_values || 0),
+            invoice_value:       managementExpenses,
+            id: full.credit_id,
             cartera: '',
             setData: '',
             view: '',
             update: ''
         });
 
-        // response fields = condonated amounts (same semantics as create flow)
+        store_condonation.viewOn(false);
+
         store_condonation.setResponse({
-            ...condonation,
-            sync_id: credit.sync_id,
+            ...full,
+            sync_id: full.sync_id || full.credit_id,
         });
         store_condonation.setViewPDF(true);
     };

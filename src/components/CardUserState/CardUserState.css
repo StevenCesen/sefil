@@ -19,7 +19,7 @@
 }
 
 .CardUserState__complete{
-    grid-template-columns: 150px 120px 100px 120px 90px 90px 90px 90px 120px 120px 90px 90px;
+    grid-template-columns: 150px 120px 100px 120px 90px 90px 90px 90px 120px 120px 120px 90px 90px;
 } 
 
 .CardUserState__minimize{

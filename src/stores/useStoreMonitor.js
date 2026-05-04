@@ -44,7 +44,8 @@ export const useStoreMonitor = create((set,get) => ({
                             nro_proceso: data.data.nro_proceso,
                             nro_proceso_dia: data.data.nro_proceso_dia,
                             nro_calls: data.data.nro_calls,
-                            nro_calls_acum: data.data.nro_calls_acum
+                            nro_calls_acum: data.data.nro_calls_acum,
+                            nro_no_contactables: data.data.nro_no_contactables
                         }
                     };
                 }

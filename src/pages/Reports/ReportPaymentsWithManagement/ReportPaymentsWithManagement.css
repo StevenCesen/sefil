@@ -58,6 +58,18 @@
     color: #8b92a7;
 }
 
+.PaymentsWithManagement__campain-select {
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid #dde1ec;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--color-1);
+    background-color: var(--bg-1);
+    cursor: pointer;
+    min-width: 200px;
+}
+
 .status-dot {
     width: 8px;
     height: 8px;

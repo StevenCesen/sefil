@@ -19,6 +19,7 @@ export const useStoreFilterManagement = create((set,get) => ({
     nro_processed:0,
     nro_managements:0,
     nro_inactive:0,
+    nro_no_contactables:0,
     setTray:            (value)=>{set({tray:value})},
     setBusiness:        (value)=>{set({campain_id:value})},
     setName:            (value)=>{set({name:value})},
@@ -201,6 +202,7 @@ export const useStoreFilterManagement = create((set,get) => ({
             set({nro_processed: ('EN PROCESO' in data.result.trays) ? data.result.trays['EN PROCESO'] : 0 });
             set({nro_managements: ('GESTIONADO' in data.result.trays) ? data.result.trays.GESTIONADO : 0 });
             set({nro_inactive: ('INACTIVE' in data.result.trays) ? data.result.trays.INACTIVE : 0 });
+            set({nro_no_contactables: ('NO CONTACTABLES' in data.result.trays) ? data.result.trays['NO CONTACTABLES'] : 0 });
 
         } catch (error) {
             console.error('Error al hacer fetchFilteredCredits:', error);

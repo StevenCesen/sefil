@@ -6,10 +6,10 @@
 
 .Calls__filters {
     width: 100%;
-    padding: 10px;
+    padding: 8px 10px;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
     background-color: var(--bg-alert-error);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -169,7 +169,7 @@
 
 @media (max-width: 900px) {
     .Calls__filters {
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 
     .Calls__row--header {

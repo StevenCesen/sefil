@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import CardSync from "../../components/CardSync/CardSync";
 import CardEditCampain from "../../components/Campains/CardEdirCampain/CardEditCampain";
 import CardAssignCampain from "../../components/Campains/CardAssignCampain/CardAssignCampain";
+import CardLocateTray from "../../components/Campains/CardLocateTray/CardLocateTray";
 import CardCreateCampain from "../../components/Campains/CardCreateCampain/CardCreateCampain";
 import BackButton from "../../components/BackButton/BackButton";
 import useFetch from "../../hooks/useFetch";
@@ -11,7 +12,8 @@ import exportCampaign from "../../helpers/Campaigns/exportCampaign";
 const MODAL_TYPES = {
     CREATE: 'create',
     EDIT: 'edit',
-    TRANSFER: 'transfer'
+    TRANSFER: 'transfer',
+    LOCATE_TRAY: 'locate_tray'
 };
 
 const CampaignItem = ({ campaign, onEdit, onTransfer, onExport }) => (
@@ -82,6 +84,10 @@ export default function Campains() {
         openModal(MODAL_TYPES.TRANSFER, campaign);
     }, [openModal]);
 
+    const handleLocateTray = useCallback((campaign) => {
+        openModal(MODAL_TYPES.LOCATE_TRAY, campaign);
+    }, [openModal]);
+
     const handleExport = useCallback(async (campaign) => {
         const blob = await exportCampaign({ campain_id: campaign.id });
         const downloadUrl = window.URL.createObjectURL(blob);
@@ -146,9 +152,14 @@ export default function Campains() {
                 <div className="Campains__list">
                     <div className="Campains__access">
                         <h4 className="Campains__subtitle">Campañas</h4>
-                        <button onClick={() => openModal(MODAL_TYPES.CREATE)}>
-                            Nueva campaña
-                        </button>
+                        <div className="Campains__actions">
+                            <button onClick={() => openModal(MODAL_TYPES.LOCATE_TRAY)}>
+                                Ubicar en bandeja
+                            </button>
+                            <button onClick={() => openModal(MODAL_TYPES.CREATE)}>
+                                Nueva campaña
+                            </button>
+                        </div>
                     </div>
 
                     <div className="Campains__header">
@@ -207,6 +218,14 @@ export default function Campains() {
                         campain_id={selectedCampaign.id}
                     />
                 )}
+            </Modal>
+
+            <Modal
+                isOpen={activeModal === MODAL_TYPES.LOCATE_TRAY}
+                onClose={closeModal}
+                title="Volver"
+            >
+                <CardLocateTray />
             </Modal>
         </div>
     );

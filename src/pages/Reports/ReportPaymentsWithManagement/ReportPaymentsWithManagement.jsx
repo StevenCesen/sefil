@@ -7,6 +7,8 @@ import useAgencies from "../../../hooks/useAgencies";
 export default function ReportPaymentsWithManagement() {
     const [agents, setAgents] = useState([]);
     const [users, setUsers] = useState([]);
+    const [campaigns, setCampaigns] = useState([]);
+    const [campainId, setCampainId] = useState("");
     const [loading, setLoading] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const [lastUpdate, setLastUpdate] = useState("");
@@ -48,7 +50,29 @@ export default function ReportPaymentsWithManagement() {
     useEffect(() => {
         fetchData();
         fetchUsers();
+        fetchCampaigns();
     }, []);
+
+    useEffect(() => {
+        fetchData(campainId);
+    }, [campainId]);
+
+    const fetchCampaigns = () => {
+        fetch(`${import.meta.env.VITE_URL_BASE}/campains`, {
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+            .then(r => r.json())
+            .then(data => {
+                const list = data.result?.data || [];
+                setCampaigns(list);
+                const firstActive = list.find(c => c.state === 'ACTIVE');
+                if (firstActive) setCampainId(firstActive.id);
+            })
+            .catch(() => setCampaigns([]));
+    };
 
     const fetchUsers = () => {
         fetch(`${import.meta.env.VITE_URL_BASE}/users?agents=true&is_active=1`, {
@@ -83,10 +107,11 @@ export default function ReportPaymentsWithManagement() {
         return `Hace ${diffDays} ${diffDays === 1 ? 'día' : 'días'}`;
     };
 
-    const fetchData = () => {
+    const fetchData = (campain_id = "") => {
         setLoading(true);
 
-        fetch(`${import.meta.env.VITE_URL_BASE}/statistics/payments-with-management`, {
+        const params = campain_id ? `?campain_id=${campain_id}` : "";
+        fetch(`${import.meta.env.VITE_URL_BASE}/statistics/payments-with-management${params}`, {
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -203,6 +228,22 @@ export default function ReportPaymentsWithManagement() {
                     </div>
                 </div>
                 <div className="PaymentsWithManagement__update">
+                    <select
+                        value={campainId}
+                        onChange={e => setCampainId(e.target.value)}
+                        className="PaymentsWithManagement__campain-select"
+                    >
+                        <optgroup label="Activas">
+                            {campaigns.filter(c => c.state === 'ACTIVE').map(c => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </optgroup>
+                        <optgroup label="Inactivas">
+                            {campaigns.filter(c => c.state !== 'ACTIVE').map(c => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </optgroup>
+                    </select>
                     <span>Última actualización: {getTimeAgo(lastUpdate)}</span>
                     <span className="status-dot"></span>
                 </div>
@@ -341,8 +382,8 @@ export default function ReportPaymentsWithManagement() {
                             >
                                 <option value="">--Todos--</option>
                                 {agencies.map((agency) => (
-                                    <option key={agency.id} value={agency.id}>
-                                        {agency.name}
+                                    <option key={agency} value={agency}>
+                                        {agency}
                                     </option>
                                 ))}
                             </select>

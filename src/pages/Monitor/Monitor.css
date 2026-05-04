@@ -63,7 +63,7 @@
 
 .Monitor__contentHead {
     display: grid;
-    grid-template-columns: 150px 120px 100px 120px 90px 90px 90px 90px 120px 120px 90px 90px;
+    grid-template-columns: 150px 120px 100px 120px 90px 90px 90px 90px 120px 120px 120px 90px 90px;
     gap: 8px;
     padding: 10px 15px;
     background-color: var(--bg-alert-error);

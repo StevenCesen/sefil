@@ -9,13 +9,14 @@ const authHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem('token')}`
 });
 
-function buildUrl(filters) {
-    const params = new URLSearchParams({ page: 1 });
+function buildUrl(filters, page = 1) {
+    const params = new URLSearchParams({ page });
     if (filters.state)        params.append('state', filters.state);
     if (filters.phone_number) params.append('phone_number', filters.phone_number);
     if (filters.sync_id)      params.append('sync_id', filters.sync_id);
-    if (filters.start_date)   params.append('start_date', filters.start_date);
-    if (filters.end_date)     params.append('end_date', filters.end_date);
+    if (filters.date_from)    params.append('date_from', filters.date_from);
+    if (filters.date_to)      params.append('date_to', filters.date_to);
+    if (filters.date)         params.append('date', filters.date);
     if (filters.created_by)   params.append('created_by', filters.created_by);
     return `${BASE}/calls?${params}`;
 }
@@ -39,7 +40,7 @@ export default function Calls() {
     const [data, setData]       = useState(null);
     const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState({
-        state: '', phone_number: '', sync_id: '', start_date: '', end_date: '', created_by: ''
+        state: '', phone_number: '', sync_id: '', date_from: '', date_to: '', date: '', created_by: ''
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [agents, setAgents] = useState([]);
@@ -101,14 +102,19 @@ export default function Calls() {
 
                 <div className="Calls__filters">
                     <label>
-                        Fecha inicio
-                        <input type="date" value={filters.start_date}
-                            onChange={e => handleFilterChange('start_date', e.target.value)} />
+                        Fecha exacta
+                        <input type="date" value={filters.date}
+                            onChange={e => handleFilterChange('date', e.target.value)} />
                     </label>
                     <label>
-                        Fecha fin
-                        <input type="date" value={filters.end_date}
-                            onChange={e => handleFilterChange('end_date', e.target.value)} />
+                        Fecha desde
+                        <input type="date" value={filters.date_from}
+                            onChange={e => handleFilterChange('date_from', e.target.value)} />
+                    </label>
+                    <label>
+                        Fecha hasta
+                        <input type="date" value={filters.date_to}
+                            onChange={e => handleFilterChange('date_to', e.target.value)} />
                     </label>
                     <label>
                         Estado
@@ -176,11 +182,11 @@ export default function Calls() {
                     <div className="Calls__pagination">
                         <p>Registros {data.from}–{data.to} de {data.total}</p>
                         <div>
-                            <button disabled={!data.prev_page_url}
-                                onClick={() => fetchData(data.prev_page_url)}>Anterior</button>
+                            <button disabled={currentPage <= 1}
+                                onClick={() => fetchData(buildUrl(filters, currentPage - 1))}>Anterior</button>
                             <span className="Calls__page">Página {currentPage} / {data.last_page}</span>
-                            <button disabled={!data.next_page_url}
-                                onClick={() => fetchData(data.next_page_url)}>Siguiente</button>
+                            <button disabled={currentPage >= data.last_page}
+                                onClick={() => fetchData(buildUrl(filters, currentPage + 1))}>Siguiente</button>
                         </div>
                     </div>
                 )}

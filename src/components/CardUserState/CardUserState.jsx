@@ -145,6 +145,7 @@ export default function CardUserState({name,state,time,mode,data,name_campain}){
                         <p>{data.nro_gestions_efec_dia}</p>
                         <p>{data.nro_pendientes}</p>
                         <p>{data.nro_proceso}</p>
+                        <p>{data.nro_no_contactables}</p>
                         <p>{data.nro_calls_acum}</p>
                         <p>{data.nro_calls}</p>
                     </>

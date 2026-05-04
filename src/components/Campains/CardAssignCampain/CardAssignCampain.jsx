@@ -14,7 +14,6 @@ export default function CardAssignCampain({ campain_id }) {
     const [is_transfer, setIsTransfer] = useState(false);
     const [agents_origin, setAgentsOrigin] = useState([]);
     const [agents_destino, setAgentsDestino] = useState([]);
-    const [all_agents, setAllAgents] = useState([]);
     const [credits, setCredits] = useState({ total: 0, data: [] });
     const [filters, setFilters] = useState({});
     const [errors, setErrors] = useState([]);
@@ -117,10 +116,10 @@ export default function CardAssignCampain({ campain_id }) {
     const handleSearchCredit = async (e) => {
         if (e.key !== 'Enter') return;
 
-        let creditNumber = e.target.value.trim();
-        
+        let creditNumber = e.target.value.trim().toUpperCase();
+
         if (creditNumber.includes('-')) {
-            creditNumber = creditNumber.split('-')[1]?.trim() || '';
+            creditNumber = creditNumber.substring(creditNumber.indexOf('-') + 1).trim();
         }
         if (!creditNumber || !data_campain) return;
 
@@ -133,7 +132,7 @@ export default function CardAssignCampain({ campain_id }) {
 
             if (data && data.code === 1 && data.result?.data?.length > 0) {
                 const exactMatch = data.result.data.find(
-                    credit => credit.sync_id === creditNumber
+                    credit => credit.sync_id?.toUpperCase() === creditNumber
                 );
 
                 if (!exactMatch) {
@@ -157,7 +156,8 @@ export default function CardAssignCampain({ campain_id }) {
                 setCreditsFromSearch(true);
 
                 const agentId = exactMatch.user_id;
-                const agent = all_agents.find(a => a.id === agentId);
+                const campaignAgents = data_campain.agents_details || [];
+                const agent = campaignAgents.find(a => a.id === agentId);
 
                 if (agent) {
                     setAgentsOrigin([agent]);
@@ -253,7 +253,8 @@ export default function CardAssignCampain({ campain_id }) {
                 business_ids: data_campain.business_ids,
                 user_origin: originIds.length > 0 ? originIds : undefined,
                 user_dstn: destinoIds,
-                sync_status: 'ACTIVE'
+                sync_status: 'ACTIVE',
+                ...(total_assign > 0 && { limit: total_assign })
             };
 
             if (credits_from_search && activeCredits.length > 0) {
@@ -344,22 +345,6 @@ export default function CardAssignCampain({ campain_id }) {
 
     useEffect(() => {
         handleGetDataCampain(campain_id);
-        
-        // Fetch all active users
-        fetch(`${import.meta.env.VITE_URL_BASE}/users?per_page=100&agents=true&is_active=1`, {
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const agents = data.result?.data || [];
-            setAllAgents(agents);
-        })
-        .catch(error => {
-            setAllAgents([]);
-        });
     }, [campain_id]);
 
     useEffect(() => {
@@ -393,7 +378,7 @@ export default function CardAssignCampain({ campain_id }) {
             <div className="CardAssignCampain__agents">
                 <AgentSelector
                     key={agent_selector_key}
-                    agents_details={all_agents}
+                    agents_details={data_campain.agents_details || []}
                     onChange={handleAgentsOriginChange}
                     title="Agente origen"
                     multiSelect={true}
@@ -404,7 +389,7 @@ export default function CardAssignCampain({ campain_id }) {
                     <>
                         <p>a</p>
                         <AgentSelector
-                            agents_details={all_agents}
+                            agents_details={data_campain.agents_details || []}
                             onChange={handleAgentsDestinoChange}
                             title="Agente destino"
                             multiSelect={true}
