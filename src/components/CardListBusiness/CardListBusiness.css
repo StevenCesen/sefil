@@ -1,7 +1,7 @@
 .CardListBusiness {
     width: 100%;
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1.5fr 1fr 1.5fr 1fr 0.6fr;
     gap: 10px;
     padding: 10px;
     align-items: center;
@@ -49,6 +49,80 @@
 
 .CardListBusiness__prelacionBtn:hover {
     background-color: #0d9f6e;
+}
+
+.CardListBusiness__displayRow,
+.CardListBusiness__editRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.CardListBusiness__displayValue {
+    font-size: 13px;
+    color: #333;
+}
+
+.CardListBusiness__editBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: #999;
+    padding: 2px 4px;
+    border-radius: 4px;
+    line-height: 1;
+    transition: color 0.15s;
+}
+
+.CardListBusiness__editBtn:hover {
+    color: var(--bg-alert-successful, #13b17f);
+}
+
+.CardListBusiness__editInput {
+    width: 70px;
+    padding: 3px 6px;
+    border: 1px solid var(--bg-alert-successful, #13b17f);
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: center;
+    outline: none;
+}
+
+.CardListBusiness__saveBtn,
+.CardListBusiness__cancelBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    padding: 5px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.CardListBusiness__saveBtn {
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+}
+
+.CardListBusiness__saveBtn:hover {
+    background-color: #0d9f6e;
+}
+
+.CardListBusiness__saveBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.CardListBusiness__cancelBtn {
+    background-color: #e2e8f0;
+    color: #4a5568;
+}
+
+.CardListBusiness__cancelBtn:hover {
+    background-color: #cbd5e0;
 }
 
 /* Responsive */

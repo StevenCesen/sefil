@@ -15,16 +15,25 @@ export default function Monitor(){
     const [selectedCampain, setSelectedCampain] = useState("");
 
     useEffect(() => {
+        loader.viewOn(true);
         fetchWithAuth(`${import.meta.env.VITE_URL_BASE}/campains?state=ACTIVE`)
             .then((response) => response.json())
-            .then((data) => {
+            .then(async (data) => {
                 if (data.result && data.result.data) {
-                    setCampains(data.result.data);
+                    const list = data.result.data;
+                    setCampains(list);
+                    if (list.length > 0) {
+                        const first = list[0];
+                        setSelectedCampain(String(first.id));
+                        setIDCampain(String(first.id));
+                        await setAgents();
+                    }
                 }
             })
             .catch((error) => {
-                console.error('Error fetching campains:', error);
-            });
+                console.error('Error al inicializar monitoreo:', error);
+            })
+            .finally(() => loader.viewOn(false));
     }, []);
 
     useEffect(() => {

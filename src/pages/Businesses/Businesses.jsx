@@ -56,7 +56,9 @@ export default function Businesses() {
                 <span>Subida</span>
                 <span>Última actualización</span>
                 <span>Estado</span>
+                <span>Porcentaje capital contable</span>
                 <span>Prelación</span>
+                <span>Acciones</span>
             </div>
 
             <div className="Businesses__list">
