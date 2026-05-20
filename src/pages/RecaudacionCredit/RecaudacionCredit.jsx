@@ -15,6 +15,7 @@ import CardCondonacion from "../../components/CardCondonacion/CardCondonacion";
 import CardEditJudicial from "../../components/CardEditJudicial/CardEditJudicial";
 import CardStructure from "../../components/CardStructure/CardStructure";
 import CardCancelInvoice from "../../components/Credits/CardCancelInvoice/CardCancelInvoice";
+import CardLegalPayment from "../../components/CardLegalPayment/CardLegalPayment";
 import { useStoreCondonation } from "../../stores/useStoreCondonation";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import { useStoreStructure } from "../../stores/useStoreStructure";
@@ -164,6 +165,7 @@ export default function RecaudacionCredit() {
                         }
                         setAction={setAction}
                         invoice_value={credit.credit.invoice_value}
+                        collection_state={credit.credit.collection_state}
                     />
                 )}
 
@@ -219,6 +221,15 @@ export default function RecaudacionCredit() {
                             helperCredit({ credit_id: params.id });
                         }}
                         onClose={() => setAction('')}
+                    />
+                ) : action === 'GEN_LEGAL_PAYMENT' ? (
+                    <CardLegalPayment
+                        creditId={credit.credit.id}
+                        syncId={credit.credit.sync_id}
+                        businessName={credit.credit.business_name}
+                        clientName={credit.credit.clients?.[0]?.name}
+                        onClose={() => setAction('')}
+                        onSuccess={() => helperCredit({ credit_id: params.id })}
                     />
                 ) : null}
             </div>

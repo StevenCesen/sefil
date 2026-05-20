@@ -1,0 +1,167 @@
+.CardEditCredit__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2003;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+.CardEditCredit {
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    background-color: var(--bg-2);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.CardEditCredit__header {
+    height: 50px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0 16px;
+    flex-shrink: 0;
+}
+
+.CardEditCredit__close {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.CardEditCredit__close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.CardEditCredit__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.CardEditCredit__section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--bg-alert-error);
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+}
+
+.CardEditCredit__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.CardEditCredit__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.CardEditCredit__field label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+}
+
+.CardEditCredit__field input,
+.CardEditCredit__field select {
+    height: 36px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0 10px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--bg-1);
+}
+
+.CardEditCredit__field input:focus,
+.CardEditCredit__field select:focus {
+    outline: none;
+    border-color: var(--color-1);
+}
+
+.CardEditCredit__total-preview {
+    background-color: var(--bg-1);
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+}
+
+.CardEditCredit__total-preview strong {
+    color: var(--color-1);
+    font-size: 16px;
+}
+
+.CardEditCredit__total-preview .mismatch {
+    color: var(--bg-alert-error);
+}
+
+.CardEditCredit__footer {
+    height: 54px;
+    background-color: var(--bg-alert-successful);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    flex-shrink: 0;
+}
+
+.CardEditCredit__btn-cancel {
+    height: 34px;
+    padding: 0 16px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.CardEditCredit__btn-save {
+    height: 34px;
+    padding: 0 20px;
+    background: #037874;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.CardEditCredit__btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

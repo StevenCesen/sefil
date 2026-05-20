@@ -16,6 +16,7 @@ import CardCondonacion from "../../components/CardCondonacion/CardCondonacion";
 import CardEditJudicial from "../../components/CardEditJudicial/CardEditJudicial";
 import CardStructure from "../../components/CardStructure/CardStructure";
 import CardCancelInvoice from "../../components/Credits/CardCancelInvoice/CardCancelInvoice";
+import CardLegalPayment from "../../components/CardLegalPayment/CardLegalPayment";
 import { useStoreCondonation } from "../../stores/useStoreCondonation";
 import { useStoreLoader } from "../../stores/useStoreLoader";
 import { useStoreStructure } from "../../stores/useStoreStructure";
@@ -24,6 +25,22 @@ import ViewPDFCondonation from "../../components/Credits/ViewPDFCondonation/View
 import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFStructure";
 import ViewPDFBilling from "../../components/Credits/ViewPDFBilling/ViewPDFBilling";
 import BackButton from "../../components/BackButton/BackButton";
+import CardEditCredit from "../../components/CardEditCredit/CardEditCredit";
+
+const canEditCredit = () => {
+    const role = localStorage.getItem('role');
+    if (['admin', 'superadmin', 'legal'].includes(role)) return true;
+    const userPermissions = localStorage.getItem('user_permissions');
+    if (userPermissions && userPermissions !== '[]') {
+        try {
+            const permissions = JSON.parse(userPermissions);
+            return permissions.some(p =>
+                p.section === 'cartera_update' && p.abilities?.includes('cartera_update:edit')
+            );
+        } catch { return false; }
+    }
+    return false;
+};
 
 export default function Credit(){
     const params=useParams();
@@ -31,6 +48,7 @@ export default function Credit(){
     const store_condonation=useStoreCondonation();
     const store_structure=useStoreStructure();
     const [action,setAction]=useState('');
+    const [showEditCredit, setShowEditCredit] = useState(false);
     const loader = useStoreLoader();
 
     const location = useLocation();
@@ -94,6 +112,13 @@ export default function Credit(){
             <ViewPDFStructure/>
             <ViewPDFBilling/>
             <BackButton />
+            {showEditCredit && (
+                <CardEditCredit
+                    credit={credit.credit}
+                    onClose={() => setShowEditCredit(false)}
+                    onSuccess={() => helperCredit({ credit_id: params.id })}
+                />
+            )}
 
             <h2>Consulta de crédito</h2>
 
@@ -134,19 +159,44 @@ export default function Credit(){
                                     sync_status:credit.credit.sync_status
                                 }
                             }
+                            canEdit={canEditCredit()}
+                            creditId={credit.credit.id}
+                            startDateProcess={credit.credit.start_date_process}
+                            onSaved={() => helperCredit({ credit_id: params.id })}
                         />
                     </div>
                     <div className="Credit__sectionPending">
-                        <InfoValues
-                            capital={credit.credit.capital}
-                            interest={credit.credit.interest}
-                            mora={credit.credit.mora}
-                            seguro={credit.credit.safe}
-                            gasto_cobranza_sefil={credit.credit.management_collection_expenses}
-                            gasto_cobranza={credit.credit.collection_expenses}
-                            gastos_judiciales={credit.credit.legal_expenses}
-                            otros_valores={credit.credit.other_values}
-                        />
+                        <div style={{position:'relative'}}>
+                            <InfoValues
+                                capital={credit.credit.capital}
+                                interest={credit.credit.interest}
+                                mora={credit.credit.mora}
+                                seguro={credit.credit.safe}
+                                gasto_cobranza_sefil={credit.credit.management_collection_expenses}
+                                gasto_cobranza={credit.credit.collection_expenses}
+                                gastos_judiciales={credit.credit.legal_expenses}
+                                otros_valores={credit.credit.other_values}
+                            />
+                            {canEditCredit() && (
+                                <button
+                                    onClick={() => setShowEditCredit(true)}
+                                    style={{
+                                        marginTop:'8px',
+                                        width:'100%',
+                                        height:'32px',
+                                        background:'var(--bg-alert-successful)',
+                                        color:'white',
+                                        border:'none',
+                                        borderRadius:'4px',
+                                        cursor:'pointer',
+                                        fontSize:'13px',
+                                        fontWeight:'bold'
+                                    }}
+                                >
+                                    Editar valores
+                                </button>
+                            )}
+                        </div>
                         <div>
                             <InfoPending
                                 days_past_due={credit.credit.days_past_due}
@@ -167,14 +217,15 @@ export default function Credit(){
                     ?
                         <CardActions
                             isViewOn={
-                                (
+                                !(
                                     credit.cartera==='syncs' ||
                                     credit.credit.collection_state.toLowerCase()==='cancelado' ||
                                     credit.credit.collection_state.toLowerCase()==='convenio de pago'
-                                ) ? false : true
+                                )
                             }
                             setAction={setAction}
                             invoice_value={credit.credit.invoice_value}
+                            collection_state={credit.credit.collection_state}
                         />
                     :   <></>
                 }
@@ -264,6 +315,16 @@ export default function Credit(){
                                         helperCredit({ credit_id: params.id });
                                     }}
                                     onClose={() => setAction('')}
+                                />
+                            :   (action==='GEN_LEGAL_PAYMENT')
+                            ?
+                                <CardLegalPayment
+                                    creditId={credit.credit.id}
+                                    syncId={credit.credit.sync_id}
+                                    businessName={credit.credit.business_name}
+                                    clientName={credit.credit.clients?.[0]?.name}
+                                    onClose={() => setAction('')}
+                                    onSuccess={() => helperCredit({ credit_id: params.id })}
                                 />
                             :   <></>
                 }

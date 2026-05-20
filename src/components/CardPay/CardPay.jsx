@@ -64,9 +64,11 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
     const isPresetAmount = amount !== null && amount !== undefined;
     const maxDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
 
+    const payableTotal = Number(credit.totalAmount) - (Number(credit.invoice_value) || 0);
+
     const initializePayment = () => {
         const detail = {
-            totalAmount: credit.totalAmount,
+            totalAmount: payableTotal,
             saldo_capital: credit.saldo_capital,
             interes: credit.interes,
             mora: credit.mora,
@@ -121,35 +123,36 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
         if (!payment || !ordenPrelacion) return;
 
         const numValue = Number(value) || 0;
+        const change = numValue > payableTotal ? (numValue - payableTotal).toFixed(2) : 0;
 
-        if (payment.tipo_transaccion === 'parcial' || payment.tipo_transaccion === 'total') {
-            const totalAmount = Number(credit.totalAmount);
-            const change = numValue > totalAmount ? (numValue - totalAmount).toFixed(2) : 0;
-            setPayment(prev => ({ ...prev, valor_recibido: numValue ,valor_devuelto:change}));
-            if (numValue > 0) {
-                usePrelacion(value, credit, setPrelacion, updateDetalle, ordenPrelacion);
+        const fullDetail = {
+            totalAmount: payableTotal,
+            saldo_capital: credit.saldo_capital,
+            interes: credit.interes,
+            mora: credit.mora,
+            seguro_desgravamen: credit.seguro_desgravamen,
+            gastos_cobranza: credit.gastos_cobranza,
+            gastos_judiciales: credit.gastos_judiciales,
+            otros_valores: credit.otros_valores
+        };
+
+        setPayment(prev => ({ ...prev, valor_recibido: numValue, valor_devuelto: change }));
+
+        if (numValue > 0) {
+            if (payment.tipo_transaccion === 'total') {
+                // Aplica prelación normalmente pero fija el Total en payableTotal
+                // (la prelación calcula totalAmount como suma de rubros restantes = 0 para pago total,
+                // lo que no refleja el monto real del crédito)
+                const setDataConTotal = (prelacionData) => {
+                    updateDetalle({ ...prelacionData, totalAmount: payableTotal });
+                };
+                usePrelacion(value, credit, setPrelacion, setDataConTotal, ordenPrelacion);
             } else {
-                setPrelacion(INITIAL_DETAIL);
-                updateDetalle({
-                    totalAmount: credit.totalAmount,
-                    saldo_capital: credit.saldo_capital,
-                    interes: credit.interes,
-                    mora: credit.mora,
-                    seguro_desgravamen: credit.seguro_desgravamen,
-                    gastos_cobranza: credit.gastos_cobranza,
-                    gastos_judiciales: credit.gastos_judiciales,
-                    otros_valores: credit.otros_valores
-                });
+                usePrelacion(value, credit, setPrelacion, updateDetalle, ordenPrelacion);
             }
-        } else if (payment.forma_pago === 'efectivo') {
-            const totalAmount = Number(credit.totalAmount);
-            const change = numValue > totalAmount ? (numValue - totalAmount).toFixed(2) : 0;
-            
-            setPayment(prev => ({
-                ...prev,
-                valor_recibido: value,
-                valor_devuelto: change
-            }));
+        } else {
+            setPrelacion(INITIAL_DETAIL);
+            updateDetalle(fullDetail);
         }
     };
 
@@ -163,7 +166,7 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
         if (payment.forma_pago !== 'efectivo' && !payment.codigo_deposito) {
             errors.push('Falta código de transacción');
         }
-        if (payment.tipo_transaccion === 'total' && Number(payment.valor_recibido) < (Number(credit.totalAmount)-Number(credit.invoice_value))) {
+        if (payment.tipo_transaccion === 'total' && Number(payment.valor_recibido) < payableTotal) {
             errors.push('Valor recibido no es correcto');
         }
         if (!payment.valor_recibido || payment.valor_recibido === '0') {

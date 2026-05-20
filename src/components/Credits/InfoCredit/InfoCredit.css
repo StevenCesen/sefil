@@ -23,3 +23,83 @@
 .InfoCredit>div{
     font-size: 14px;
 }
+
+.InfoCredit__state-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.InfoCredit__btn-edit {
+    height: 24px;
+    padding: 0 10px;
+    font-size: 11px;
+    background: var(--bg-alert-successful);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.InfoCredit__edit-state {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.InfoCredit__edit-state select,
+.InfoCredit__edit-state input[type="date"] {
+    width: 100%;
+    height: 34px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0 8px;
+    font-size: 13px;
+    background: var(--bg-1);
+    box-sizing: border-box;
+}
+
+.InfoCredit__date-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+}
+
+.InfoCredit__edit-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.InfoCredit__btn-cancel,
+.InfoCredit__btn-save {
+    height: 30px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.InfoCredit__btn-cancel {
+    background: #e0e0e0;
+    color: #555;
+}
+
+.InfoCredit__btn-save {
+    background: var(--bg-alert-successful);
+    color: white;
+}
+
+.InfoCredit__btn-save:disabled,
+.InfoCredit__btn-cancel:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

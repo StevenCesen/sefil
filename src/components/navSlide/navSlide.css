@@ -3,6 +3,14 @@
     cursor: pointer;
 }
 
+.NavSlide__option > svg {
+    color: var(--color-3, white);
+    flex-shrink: 0;
+    margin-right: 10px;
+    width: 22px;
+    height: 22px;
+}
+
 .NavSlide__option>label{
     cursor: pointer;
 }
@@ -24,7 +32,8 @@
     font-weight: 100;
 }
 
-.NavSlide__option>img:hover ~ span{
+.NavSlide__option>img:hover ~ span,
+.NavSlide__option>svg:hover ~ span {
     display: block;
 }
 
@@ -62,6 +71,7 @@
     justify-content: center;
     align-items: flex-start;
     flex-direction: column;
+    width: 100%;
 }
 
 .NavSlide__subOption--active{

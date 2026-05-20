@@ -39,6 +39,9 @@ import ReportJudicial from './pages/ReportJudicial';
 import Calls from './pages/Calls/Calls';
 import Recaudacion from './pages/Recaudacion/Recaudacion';
 import RecaudacionCredit from './pages/RecaudacionCredit/RecaudacionCredit';
+import Certificados from './pages/Certificados/Certificados';
+import ReportLegalPayments from './pages/ReportLegalPayments';
+import ActualizacionCartera from './pages/ActualizacionCartera/ActualizacionCartera';
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
@@ -307,6 +310,15 @@ function App() {
         />
 
         <Route
+          path="/reports/legal-payments"
+          element={
+            <ProtectedRoute>
+              <ReportLegalPayments/>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/reports/accounting-payments"
           element={
             <ProtectedRoute>
@@ -374,6 +386,24 @@ function App() {
           element={
             <ProtectedRoute>
               <RecaudacionCredit />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/recaudacion/certificados"
+          element={
+            <ProtectedRoute>
+              <Certificados />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/update-cartera"
+          element={
+            <ProtectedRoute>
+              <ActualizacionCartera />
             </ProtectedRoute>
           }
         />

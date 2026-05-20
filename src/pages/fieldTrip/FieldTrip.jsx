@@ -169,9 +169,9 @@ export default function FieldTrip() {
             } else {
                 let baseUrl = `${import.meta.env.VITE_URL_BASE}/credits?`;
                 if (filterApproved === "pending") {
-                    baseUrl += `&approve_field_trip=0&management_status=SOLICITADO VISITA CAMPO`;
+                    baseUrl += `&state_field_trip=pending`;
                 } else if (filterApproved === "approved") {
-                    baseUrl += `&approve_field_trip=1&management_status=VISITA APROBADA`;
+                    baseUrl += `&state_field_trip=approved`;
                 }
                 if (filterAgent !== "all") {
                     baseUrl += `&user_id=${filterAgent}`;
@@ -341,9 +341,9 @@ export default function FieldTrip() {
 
         let baseUrl = `${import.meta.env.VITE_URL_BASE}/credits?`;
         if (filterApproved === "pending") {
-            baseUrl += `&approve_field_trip=0&management_status=VISITA CAMPO`;
+            baseUrl += `&state_field_trip=pending`;
         } else if (filterApproved === "approved") {
-            baseUrl += `&approve_field_trip=1&management_status=VISITA APROBADA`;
+            baseUrl += `&state_field_trip=approved`;
         }
         if (filterAgent !== "all") {
             baseUrl += `&user_id=${filterAgent}`;
@@ -421,9 +421,9 @@ export default function FieldTrip() {
                                     onChange={(e) => setFilterApproved(e.target.value)}
                                     className="filter-select"
                                 >
-                                    <option value="all">Todos los estados</option>
-                                    <option value="approved">Aprobados</option>
                                     <option value="pending">Pendientes</option>
+                                    <option value="approved">Aprobados</option>
+                                    <option value="all">Todos los estados</option>
                                 </select>
 
                                 <select
@@ -550,22 +550,26 @@ export default function FieldTrip() {
                                 <div className="credit-card-header">
                                     <h3>{credit.business_name}-{credit.sync_id}</h3>
                                     <div className="approval-toggle">
-                                        <button
-                                            className={`approval-btn approval-btn-no${!credit.approve_field_trip ? ' active' : ''}`}
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                setApprovalModal({ open: true, creditId: credit.id, approveValue: 0, observation: '' });
-                                            }}
-                                        >NO</button>
-                                        <button
-                                            className={`approval-btn approval-btn-yes${credit.approve_field_trip ? ' active' : ''}`}
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                setApprovalModal({ open: true, creditId: credit.id, approveValue: 1, observation: '' });
-                                            }}
-                                        >SÍ</button>
-                                        <span className={`status-label ${credit.approve_field_trip ? 'approved' : 'pending'}`}>
-                                            {credit.approve_field_trip ? 'Aprobado' : 'Pendiente'}
+                                        {credit.approve_field_trip === null && (
+                                            <>
+                                                <button
+                                                    className="approval-btn approval-btn-no"
+                                                    onClick={e => {
+                                                        e.stopPropagation();
+                                                        setApprovalModal({ open: true, creditId: credit.id, approveValue: 0, observation: '' });
+                                                    }}
+                                                >NO</button>
+                                                <button
+                                                    className="approval-btn approval-btn-yes"
+                                                    onClick={e => {
+                                                        e.stopPropagation();
+                                                        setApprovalModal({ open: true, creditId: credit.id, approveValue: 1, observation: '' });
+                                                    }}
+                                                >SÍ</button>
+                                            </>
+                                        )}
+                                        <span className={`status-label ${credit.approve_field_trip === 1 ? 'approved' : credit.approve_field_trip === 0 ? 'rejected' : 'pending'}`}>
+                                            {credit.approve_field_trip === 1 ? 'Aprobado' : credit.approve_field_trip === 0 ? 'Rechazado' : 'Pendiente'}
                                         </span>
                                     </div>
                                 </div>
@@ -574,6 +578,7 @@ export default function FieldTrip() {
                                     <p><strong>Documento:</strong> {credit.clients?.[0]?.ci || 'N/A'}</p>
                                     <p><strong>Monto:</strong> ${parseFloat(credit.total_amount || 0).toFixed(2)}</p>
                                     <p><strong>Días mora:</strong> {credit.days_past_due || 0}</p>
+                                    <p><strong>Fecha solicitud:</strong> {credit.date_request_field_trip || 'N/A'}</p>
                                 </div>
                             </div>
                         ))}
@@ -684,9 +689,13 @@ export default function FieldTrip() {
                                         <span>{selectedCredit.management_promise || 'N/A'}</span>
                                     </div>
                                     <div className="detail-item">
+                                        <label>Fecha Solicitud Visita:</label>
+                                        <span>{selectedCredit.date_request_field_trip || 'N/A'}</span>
+                                    </div>
+                                    <div className="detail-item">
                                         <label>Aprobado Visita Campo:</label>
-                                        <span className={`badge ${selectedCredit.approve_field_trip ? 'approved' : 'pending'}`}>
-                                            {selectedCredit.approve_field_trip ? 'SÍ' : 'NO'}
+                                        <span className={`badge ${selectedCredit.approve_field_trip === 1 ? 'approved' : 'pending'}`}>
+                                            {selectedCredit.approve_field_trip === 1 ? 'SÍ' : selectedCredit.approve_field_trip === 0 ? 'NO' : 'PENDIENTE'}
                                         </span>
                                     </div>
                                 </div>

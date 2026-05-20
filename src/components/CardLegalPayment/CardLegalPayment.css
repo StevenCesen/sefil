@@ -1,0 +1,207 @@
+.CardLegalPayment__background {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2003;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.CardLegalPayment {
+    width: 520px;
+    max-width: calc(100vw - 32px);
+    background-color: var(--bg-2);
+    border-radius: 5px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.CardLegalPayment__header {
+    height: 50px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0 10px;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.CardLegalPayment__closeBtn {
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.CardLegalPayment__closeBtn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.CardLegalPayment__creditInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 14px;
+    background-color: var(--bg-1);
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.CardLegalPayment__creditId {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--color-1);
+}
+
+.CardLegalPayment__clientName {
+    font-size: 12px;
+    color: #555;
+}
+
+.CardLegalPayment__form {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.CardLegalPayment__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.CardLegalPayment__row label,
+.CardLegalPayment__form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    font-weight: 600;
+    gap: 4px;
+}
+
+.CardLegalPayment__row input,
+.CardLegalPayment__form input {
+    height: 38px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 8px;
+    font-size: 13px;
+    background-color: var(--bg-1);
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.CardLegalPayment__row input:focus,
+.CardLegalPayment__form input:focus {
+    outline: none;
+    border-color: var(--color-1);
+}
+
+.CardLegalPayment__section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.CardLegalPayment__sectionTitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-1);
+    margin: 0;
+}
+
+.CardLegalPayment__sectionTitle span {
+    font-weight: 400;
+    color: #888;
+    font-size: 12px;
+}
+
+.CardLegalPayment__distribution {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.CardLegalPayment__error {
+    font-size: 12px;
+    color: #e53e3e;
+    font-weight: 600;
+    margin: 0;
+}
+
+.CardLegalPayment__summary {
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    color: #444;
+    padding: 6px 8px;
+    background-color: var(--bg-1);
+    border-radius: 4px;
+}
+
+.CardLegalPayment__summary strong {
+    color: var(--color-1);
+}
+
+.CardLegalPayment__fullWidth {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+.CardLegalPayment__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 4px;
+}
+
+.CardLegalPayment__btnCancel {
+    height: 38px;
+    padding: 0 16px;
+    background-color: transparent;
+    color: #555;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.CardLegalPayment__btnSave {
+    height: 38px;
+    padding: 0 20px;
+    background-color: var(--bg-alert-successful);
+    color: var(--color-3);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.CardLegalPayment__btnSave:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+}

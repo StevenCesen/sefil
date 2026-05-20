@@ -107,6 +107,7 @@ const allSections = [
     { section: 'campains', label: 'Campañas' },
     { section: 'users', label: 'Usuarios' },
     { section: 'settings', label: 'Configuración' },
+    { section: 'cartera_update', label: 'Actualización cartera' },
     { section: 'calls', label: 'Llamadas' },
     { section: 'payments', label: 'Pagos' },
     { section: 'reports', label: 'Reportes' },
@@ -131,6 +132,7 @@ const allAbilities = {
     recaudacion: ['recaudacion:view'],
     geogestion: ['geogestion:view', 'geogestion:edit'],
     'field-trip': ['field-trip:view', 'field-trip:create', 'field-trip:edit', 'field-trip:delete'],
+    cartera_update: ['cartera_update:view', 'cartera_update:edit'],
 };
 
 const abilityLabels = {

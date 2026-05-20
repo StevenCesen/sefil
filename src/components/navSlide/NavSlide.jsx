@@ -3,6 +3,24 @@ import "./navSlide.css";
 import useNav from "../../hooks/useNav.js";
 import { useEffect, useRef, useState } from "react";
 import useMenu from "../../hooks/useMenu.js";
+import {
+    LayoutDashboard,
+    Monitor,
+    Map,
+    Search,
+    Wallet,
+    Navigation,
+    UserRound,
+    History,
+    ClipboardCheck,
+    Car,
+    Megaphone,
+    Users,
+    FileSpreadsheet,
+    TrendingUp,
+    Settings,
+    PhoneCall,
+} from "lucide-react";
 
 const allSections = [
     { section: 'home', label: 'Dashboard' },
@@ -15,6 +33,7 @@ const allSections = [
     { section: 'campains', label: 'Campañas' },
     { section: 'users', label: 'Usuarios' },
     { section: 'settings', label: 'Configuración' },
+    { section: 'cartera_update', label: 'Actualización cartera' },
     { section: 'calls', label: 'Llamadas' },
     { section: 'payments', label: 'Pagos' },
     { section: 'reports', label: 'Reportes'},
@@ -44,7 +63,8 @@ const permissionData = [
                 { section: 'management_historial', abilitie: ['management_historial:view'] },
                 { section: 'geogestion', abilitie: ['geogestion:view','geogestion:edit'] },
                 { section: 'field-trip', abilitie: ['field-trip:view','field-trip:edit','field-trip:create','field-trip:delete'] },
-                { section: 'recaudacion', abilitie: ['recaudacion:view'] }
+                { section: 'recaudacion', abilitie: ['recaudacion:view'] },
+                { section: 'cartera_update', abilitie: ['cartera_update:view', 'cartera_update:edit'] }
             ]
         }
     },
@@ -63,6 +83,7 @@ const permissionData = [
                 { section: 'campains', label: 'Campañas' },
                 { section: 'users', label: 'Usuarios' },
                 { section: 'settings', label: 'Configuración' },
+                { section: 'cartera_update', label: 'Actualización cartera' },
                 { section: 'calls', label: 'Llamadas' },
                 { section: 'payments', label: 'Pagos' },
                 { section: 'reports', label: 'Reportes' },
@@ -73,6 +94,7 @@ const permissionData = [
                 { section: 'home', abilitie: ['home:view'] },
                 { section: 'users', abilitie: ['users:create', 'users:view'] },
                 { section: 'settings', abilitie: ['settings:edit'] },
+                { section: 'cartera_update', abilitie: ['cartera_update:view', 'cartera_update:edit'] },
                 { section: 'calls', abilitie: ['calls:create', 'calls:make', 'calls:view'] },
                 { section: 'payments', abilitie: ['payments:create', 'payments:view'] },
                 { section: 'reports', abilitie: ['reports:view', 'reports:export'] },
@@ -180,6 +202,7 @@ export default function NavSlide() {
     const menuSettings = useRef();
     const menuCashReports = useRef();
     const menuStatisticsReports = useRef();
+    const menuRecaudacion = useRef();
 
     const [sections, setSections] = useState([]);
 
@@ -232,7 +255,7 @@ export default function NavSlide() {
 
             {hasSection('home') && (
                 <NavLink to="/dashboard" className="NavSlide__option">
-                    <img src="/icons/mdi_home.png" />
+                    <LayoutDashboard size={22} />
                     <label>{getSectionLabel('home')}</label>
                     <span>{getSectionLabel('home')}</span>
                 </NavLink>
@@ -240,7 +263,7 @@ export default function NavSlide() {
 
             {hasSection('monitor') && (
                 <NavLink to="/monitor" className="NavSlide__option">
-                    <img src="/icons/monitor.png" />
+                    <Monitor size={22} />
                     <label>{getSectionLabel('monitor')}</label>
                     <span>{getSectionLabel('monitor')}</span>
                 </NavLink>
@@ -248,7 +271,7 @@ export default function NavSlide() {
 
             {hasSection('geogestion') && (
                 <NavLink to="/geogestion" className="NavSlide__option">
-                    <img src="/icons/location.png" />
+                    <Map size={22} />
                     <label>{getSectionLabel('geogestion')}</label>
                     <span>{getSectionLabel('geogestion')}</span>
                 </NavLink>
@@ -256,23 +279,30 @@ export default function NavSlide() {
 
             {hasSection('consult') && (
                 <NavLink to="/consult" className="NavSlide__option">
-                    <img src="/icons/ic_round-search.png" />
+                    <Search size={22} />
                     <label>{getSectionLabel('consult')}</label>
                     <span>{getSectionLabel('consult')}</span>
                 </NavLink>
             )}
 
             {hasSection('recaudacion') && (
-                <NavLink to="/recaudacion" className="NavSlide__option">
-                    <img src="/icons/ic_round-search.png" />
+                <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuRecaudacion, 'NavSlide__subOption--active', menuRecaudacion) }}>
+                    <Wallet size={22} />
                     <label>{getSectionLabel('recaudacion')}</label>
                     <span>{getSectionLabel('recaudacion')}</span>
-                </NavLink>
+                    <div className="NavSlide__option--down">
+                        <img src="/icons/arrowDown.png" />
+                        <div ref={menuRecaudacion}>
+                            <NavLink to="/recaudacion">Recaudación</NavLink>
+                            <NavLink to="/recaudacion/certificados">Certificados</NavLink>
+                        </div>
+                    </div>
+                </div>
             )}
 
             {hasSection('directions') && (
                 <NavLink to="/directions" className="NavSlide__option">
-                    <img src="/icons/location.png" />
+                    <Navigation size={22} />
                     <label>{getSectionLabel('directions')}</label>
                     <span>{getSectionLabel('directions')}</span>
                 </NavLink>
@@ -280,7 +310,7 @@ export default function NavSlide() {
 
             {hasSection('contacts') && (
                 <NavLink to="/contacts-consult" className="NavSlide__option">
-                    <img src="/icons/ph_user-bold.png" />
+                    <UserRound size={22} />
                     <label>{getSectionLabel('contacts')}</label>
                     <span>{getSectionLabel('contacts')}</span>
                 </NavLink>
@@ -288,23 +318,31 @@ export default function NavSlide() {
 
             {hasSection('management_historial') && (
                 <NavLink to="/managements-historial" className="NavSlide__option">
-                    <img src="/icons/ion_bar-chart.png" />
+                    <History size={22} />
                     <label>{getSectionLabel('management_historial')}</label>
                     <span>{getSectionLabel('management_historial')}</span>
                 </NavLink>
             )}
 
+            {['admin', 'superadmin', 'supervisor'].includes(localStorage.getItem('role')) && (
+                <NavLink to="/calls" className="NavSlide__option">
+                    <PhoneCall size={22} />
+                    <label>Historial de llamadas</label>
+                    <span>Historial de llamadas</span>
+                </NavLink>
+            )}
+
             {hasSection('management') && (
                 <NavLink to="/management" className="NavSlide__option">
-                    <img src="/icons/zoiper.png" />
+                    <ClipboardCheck size={22} />
                     <label>{getSectionLabel('management')}</label>
                     <span>{getSectionLabel('management')}</span>
                 </NavLink>
             )}
-            
+
             {hasSection('field-trip') && (
                 <NavLink to="/field-trip" className="NavSlide__option">
-                    <img src="/icons/zoiper.png" />
+                    <Car size={22} />
                     <label>{getSectionLabel('field-trip')}</label>
                     <span>{getSectionLabel('field-trip')}</span>
                 </NavLink>
@@ -312,7 +350,7 @@ export default function NavSlide() {
 
             {hasSection('campains') && (
                 <NavLink to="/campains" className="NavSlide__option">
-                    <img src="/icons/ion_bar-chart.png" />
+                    <Megaphone size={22} />
                     <label>{getSectionLabel('campains')}</label>
                     <span>{getSectionLabel('campains')}</span>
                 </NavLink>
@@ -320,7 +358,7 @@ export default function NavSlide() {
 
             {hasSection('users') && (
                 <NavLink to="/users" className="NavSlide__option">
-                    <img src="/icons/ph_user-bold.png" />
+                    <Users size={22} />
                     <label>{getSectionLabel('users')}</label>
                     <span>{getSectionLabel('users')}</span>
                 </NavLink>
@@ -329,7 +367,7 @@ export default function NavSlide() {
             {hasSection('reports') && (
                 <>
                     <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuCashReports, 'NavSlide__subOption--active', menuCashReports) }}>
-                        <img src={"/icons/ion_bar-chart.png"} />
+                        <FileSpreadsheet size={22} />
                         <label>Reportes cierre de caja</label>
                         <span>Reportes cierre de caja</span>
                         <div className="NavSlide__option--down">
@@ -340,12 +378,13 @@ export default function NavSlide() {
                                 <NavLink to={"/reports/collection-expenses-billing"}>Facturación gastos de cobranza</NavLink>
                                 <NavLink to={"/reports/condonations"}>Condonaciones</NavLink>
                                 <NavLink to={"/reports/accounting-payments"}>Pagos contabilidad</NavLink>
+                                <NavLink to={"/reports/legal-payments"}>Pagos proceso legal</NavLink>
                             </div>
                         </div>
                     </div>
 
                     <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuStatisticsReports, 'NavSlide__subOption--active', menuStatisticsReports) }}>
-                        <img src={"/icons/ion_bar-chart.png"} />
+                        <TrendingUp size={22} />
                         <label>Reportes estadísticas</label>
                         <span>Reportes estadísticas</span>
                         <div className="NavSlide__option--down">
@@ -364,29 +403,27 @@ export default function NavSlide() {
                 </>
             )}
 
-            {hasSection('settings') && (
+            {(hasSection('settings') || hasSection('cartera_update')) && (
                 <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuSettings, 'NavSlide__subOption--active', menuSettings) }}>
-                    <img src={"/icons/mdi_database-cog.png"} />
-                    <label>{getSectionLabel('settings')}</label>
-                    <span>{getSectionLabel('settings')}</span>
+                    <Settings size={22} />
+                    <label>Configuración</label>
+                    <span>Configuración</span>
                     <div className="NavSlide__option--down">
                         <img src="/icons/arrowDown.png" />
                         <div ref={menuSettings}>
-                            <NavLink to={"/templates"}>Control de estados de gestión</NavLink>
-                            <NavLink to={"/businesses"}>Carteras</NavLink>
-                            <NavLink to={"/import-payments"}>Carga de pagos</NavLink>
+                            {hasSection('settings') && (
+                                <>
+                                    <NavLink to={"/templates"}>Control de estados de gestión</NavLink>
+                                    <NavLink to={"/businesses"}>Carteras</NavLink>
+                                    <NavLink to={"/import-payments"}>Carga de pagos</NavLink>
+                                </>
+                            )}
+                            <NavLink to={"/update-cartera"}>Actualización cartera</NavLink>
                         </div>
                     </div>
                 </div>
             )}
 
-            {['admin', 'superadmin', 'supervisor'].includes(localStorage.getItem('role')) && (
-                <NavLink to="/calls" className="NavSlide__option">
-                    <img src="/icons/call.png" />
-                    <label>Llamadas</label>
-                    <span>Llamadas</span>
-                </NavLink>
-            )}
 
             {/* {hasSection('payments') && (
                 <NavLink to="/payments" className="NavSlide__option">
