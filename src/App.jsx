@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import useSessions from './hooks/useSessions'
 import Login from './pages/Login'
 import Header from './components/Header/Header'
@@ -45,9 +45,14 @@ import ActualizacionCartera from './pages/ActualizacionCartera/ActualizacionCart
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = useSessions();
+  const location = useLocation();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (localStorage.getItem('change_ps') === 'true' && location.pathname !== '/me') {
+    return <Navigate to="/me" replace />;
   }
 
   return (
@@ -93,7 +98,6 @@ function RootRedirect() {
 function App() {
 
   const [session, setSession] = useState({});
-
   useEffect(() => {
     setSession({
       state: true

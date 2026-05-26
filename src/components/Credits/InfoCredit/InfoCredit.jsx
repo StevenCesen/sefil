@@ -126,11 +126,6 @@ export default function InfoCredit({ business, sync_id, agency, frequency, due_d
                 ) : (
                     <div className="InfoCredit__state-row">
                         <p>{collection_state}</p>
-                        {canEdit && (
-                            <button className="InfoCredit__btn-edit" onClick={() => setEditing(true)}>
-                                Editar
-                            </button>
-                        )}
                     </div>
                 )}
             </div>

@@ -34,7 +34,7 @@ export default function ManagementHistorial(){
                 if (response.status === 401) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('role');
-                    window.location.href = '/login';
+                    window.location.href = '/';
                     return;
                 }
                 return response.json();
@@ -121,7 +121,7 @@ export default function ManagementHistorial(){
                 if (response.status === 401) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('role');
-                    window.location.href = '/login';
+                    window.location.href = '/';
                     return;
                 }
                 return response.json();
@@ -141,7 +141,7 @@ export default function ManagementHistorial(){
                 if (response.status === 401) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('role');
-                    window.location.href = '/login';
+                    window.location.href = '/';
                     return;
                 }
                 return response.json();
@@ -161,7 +161,7 @@ export default function ManagementHistorial(){
                             if (response.status === 401) {
                                 localStorage.removeItem('token');
                                 localStorage.removeItem('role');
-                                window.location.href = '/login';
+                                window.location.href = '/';
                                 return;
                             }
                             return response.json();
@@ -195,7 +195,7 @@ export default function ManagementHistorial(){
                             if (response.status === 401) {
                                 localStorage.removeItem('token');
                                 localStorage.removeItem('role');
-                                window.location.href = '/login';
+                                window.location.href = '/';
                                 return;
                             }
                             return response.json();

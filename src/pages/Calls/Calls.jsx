@@ -65,7 +65,7 @@ export default function Calls() {
             .then(r => {
                 if (r.status === 401) {
                     localStorage.removeItem('token');
-                    window.location.href = '/login';
+                    window.location.href = '/';
                     return;
                 }
                 return r.json();

@@ -13,7 +13,7 @@ const useFetch = () => {
         localStorage.removeItem('change_ps');
 
         // Redirigir al login
-        window.location.href = '/login';
+        window.location.href = '/';
     };
 
     const fetchWithAuth = async (url, options = {}) => {

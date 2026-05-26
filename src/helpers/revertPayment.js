@@ -11,7 +11,7 @@ export default async function revertPayment({ paymentId }) {
 
         if (request.status === 401) {
             localStorage.removeItem('token');
-            window.location.href = '/login';
+            window.location.href = '/';
             return;
         }
 

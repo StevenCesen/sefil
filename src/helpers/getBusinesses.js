@@ -10,7 +10,7 @@ export default async function getBusinesses() {
 
     if (request.status === 401) {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        window.location.href = '/';
         return;
     }
 

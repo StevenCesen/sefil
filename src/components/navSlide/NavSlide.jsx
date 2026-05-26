@@ -33,13 +33,30 @@ const allSections = [
     { section: 'campains', label: 'Campañas' },
     { section: 'users', label: 'Usuarios' },
     { section: 'settings', label: 'Configuración' },
+    { section: 'templates', label: 'Control de estados de gestión' },
+    { section: 'businesses', label: 'Carteras' },
+    { section: 'import_payments', label: 'Carga de pagos' },
     { section: 'cartera_update', label: 'Actualización cartera' },
     { section: 'calls', label: 'Llamadas' },
     { section: 'payments', label: 'Pagos' },
-    { section: 'reports', label: 'Reportes'},
+    { section: 'reports', label: 'Reportes' },
+    { section: 'report_cash_payments', label: 'Pagos en efectivo' },
+    { section: 'report_reversed_payments', label: 'Pagos revertidos' },
+    { section: 'report_collection_billing', label: 'Facturación gastos de cobranza' },
+    { section: 'report_condonations', label: 'Condonaciones' },
+    { section: 'report_accounting_payments', label: 'Pagos contabilidad' },
+    { section: 'report_legal_payments', label: 'Pagos proceso legal' },
+    { section: 'report_judicial_expenses', label: 'Gastos judiciales cargados' },
+    { section: 'report_agreement_status', label: 'Estado de convenios' },
+    { section: 'report_payments_management', label: 'Pagos con gestión' },
+    { section: 'report_faces_management', label: 'Reporte gestión FACES' },
+    { section: 'report_portfolio_status', label: 'Estado de cartera (SEFIL)' },
+    { section: 'report_credits_evolution', label: 'Evolución créditos y pagos (SEFIL)' },
+    { section: 'report_campaign_assignment', label: 'Asignación de campaña' },
     { section: 'geogestion', label: 'Geogestión' },
     { section: 'field-trip', label: 'Módulo visita campo' },
     { section: 'recaudacion', label: 'Recaudación' },
+    { section: 'certificados', label: 'Certificados' },
 ];
 
 const permissionData = [
@@ -285,16 +302,16 @@ export default function NavSlide() {
                 </NavLink>
             )}
 
-            {hasSection('recaudacion') && (
+            {(hasSection('recaudacion') || hasSection('certificados')) && (
                 <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuRecaudacion, 'NavSlide__subOption--active', menuRecaudacion) }}>
                     <Wallet size={22} />
-                    <label>{getSectionLabel('recaudacion')}</label>
-                    <span>{getSectionLabel('recaudacion')}</span>
+                    <label>Recaudación</label>
+                    <span>Recaudación</span>
                     <div className="NavSlide__option--down">
                         <img src="/icons/arrowDown.png" />
                         <div ref={menuRecaudacion}>
-                            <NavLink to="/recaudacion">Recaudación</NavLink>
-                            <NavLink to="/recaudacion/certificados">Certificados</NavLink>
+                            {hasSection('recaudacion') && <NavLink to="/recaudacion">Recaudación</NavLink>}
+                            {hasSection('certificados') && <NavLink to="/recaudacion/certificados">Certificados</NavLink>}
                         </div>
                     </div>
                 </div>
@@ -364,46 +381,46 @@ export default function NavSlide() {
                 </NavLink>
             )}
 
-            {hasSection('reports') && (
-                <>
-                    <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuCashReports, 'NavSlide__subOption--active', menuCashReports) }}>
-                        <FileSpreadsheet size={22} />
-                        <label>Reportes cierre de caja</label>
-                        <span>Reportes cierre de caja</span>
-                        <div className="NavSlide__option--down">
-                            <img src="/icons/arrowDown.png" />
-                            <div ref={menuCashReports}>
-                                <NavLink to={"/reports/cash-payments"}>Pagos en efectivo</NavLink>
-                                <NavLink to={"/reports/reversed-payments"}>Pagos revertidos</NavLink>
-                                <NavLink to={"/reports/collection-expenses-billing"}>Facturación gastos de cobranza</NavLink>
-                                <NavLink to={"/reports/condonations"}>Condonaciones</NavLink>
-                                <NavLink to={"/reports/accounting-payments"}>Pagos contabilidad</NavLink>
-                                <NavLink to={"/reports/legal-payments"}>Pagos proceso legal</NavLink>
-                            </div>
+            {(hasSection('reports') || hasSection('report_cash_payments') || hasSection('report_reversed_payments') || hasSection('report_collection_billing') || hasSection('report_condonations') || hasSection('report_accounting_payments') || hasSection('report_legal_payments')) && (
+                <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuCashReports, 'NavSlide__subOption--active', menuCashReports) }}>
+                    <FileSpreadsheet size={22} />
+                    <label>Reportes cierre de caja</label>
+                    <span>Reportes cierre de caja</span>
+                    <div className="NavSlide__option--down">
+                        <img src="/icons/arrowDown.png" />
+                        <div ref={menuCashReports}>
+                            {(hasSection('reports') || hasSection('report_cash_payments')) && <NavLink to={"/reports/cash-payments"}>Pagos en efectivo</NavLink>}
+                            {(hasSection('reports') || hasSection('report_reversed_payments')) && <NavLink to={"/reports/reversed-payments"}>Pagos revertidos</NavLink>}
+                            {(hasSection('reports') || hasSection('report_collection_billing')) && <NavLink to={"/reports/collection-expenses-billing"}>Facturación gastos de cobranza</NavLink>}
+                            {(hasSection('reports') || hasSection('report_condonations')) && <NavLink to={"/reports/condonations"}>Condonaciones</NavLink>}
+                            {(hasSection('reports') || hasSection('report_accounting_payments')) && <NavLink to={"/reports/accounting-payments"}>Pagos contabilidad</NavLink>}
+                            {(hasSection('reports') || hasSection('report_legal_payments')) && <NavLink to={"/reports/legal-payments"}>Pagos proceso legal</NavLink>}
                         </div>
                     </div>
-
-                    <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuStatisticsReports, 'NavSlide__subOption--active', menuStatisticsReports) }}>
-                        <TrendingUp size={22} />
-                        <label>Reportes estadísticas</label>
-                        <span>Reportes estadísticas</span>
-                        <div className="NavSlide__option--down">
-                            <img src="/icons/arrowDown.png" />
-                            <div ref={menuStatisticsReports}>
-                                <NavLink to={"/reports/judicial-expenses"}>Gastos judiciales cargados</NavLink>
-                                <NavLink to={"/reports/agreement-status"}>Estado de convenios</NavLink>
-                                <NavLink to={"/reports/payments-with-management"}>Pagos con gestión</NavLink>
-                                <NavLink to={"/reports/faces-management"}>Reporte gestión FACES</NavLink>
-                                <NavLink to={"/reports/portfolio-status"}>Estado de cartera (SEFIL)</NavLink>
-                                <NavLink to={"/reports/credits-payments-evolution"}>Evolución créditos y pagos (SEFIL)</NavLink>
-                                <NavLink to={"/reports/campaign-assignment"}>Asignación de campaña</NavLink>
-                            </div>
-                        </div>
-                    </div>
-                </>
+                </div>
             )}
 
-            {(hasSection('settings') || hasSection('cartera_update')) && (
+            {(hasSection('reports') || hasSection('report_judicial_expenses') || hasSection('report_agreement_status') || hasSection('report_payments_management') || hasSection('report_faces_management') || hasSection('report_portfolio_status') || hasSection('report_credits_evolution') || hasSection('report_campaign_assignment')) && (
+                <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuStatisticsReports, 'NavSlide__subOption--active', menuStatisticsReports) }}>
+                    <TrendingUp size={22} />
+                    <label>Reportes estadísticas</label>
+                    <span>Reportes estadísticas</span>
+                    <div className="NavSlide__option--down">
+                        <img src="/icons/arrowDown.png" />
+                        <div ref={menuStatisticsReports}>
+                            {(hasSection('reports') || hasSection('report_judicial_expenses')) && <NavLink to={"/reports/judicial-expenses"}>Gastos judiciales cargados</NavLink>}
+                            {(hasSection('reports') || hasSection('report_agreement_status')) && <NavLink to={"/reports/agreement-status"}>Estado de convenios</NavLink>}
+                            {(hasSection('reports') || hasSection('report_payments_management')) && <NavLink to={"/reports/payments-with-management"}>Pagos con gestión</NavLink>}
+                            {(hasSection('reports') || hasSection('report_faces_management')) && <NavLink to={"/reports/faces-management"}>Reporte gestión FACES</NavLink>}
+                            {(hasSection('reports') || hasSection('report_portfolio_status')) && <NavLink to={"/reports/portfolio-status"}>Estado de cartera (SEFIL)</NavLink>}
+                            {(hasSection('reports') || hasSection('report_credits_evolution')) && <NavLink to={"/reports/credits-payments-evolution"}>Evolución créditos y pagos (SEFIL)</NavLink>}
+                            {(hasSection('reports') || hasSection('report_campaign_assignment')) && <NavLink to={"/reports/campaign-assignment"}>Asignación de campaña</NavLink>}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {(hasSection('settings') || hasSection('templates') || hasSection('businesses') || hasSection('import_payments') || hasSection('cartera_update')) && (
                 <div className="NavSlide__option" onClick={(e) => { useMenu(e.target, menuSettings, 'NavSlide__subOption--active', menuSettings) }}>
                     <Settings size={22} />
                     <label>Configuración</label>
@@ -411,14 +428,10 @@ export default function NavSlide() {
                     <div className="NavSlide__option--down">
                         <img src="/icons/arrowDown.png" />
                         <div ref={menuSettings}>
-                            {hasSection('settings') && (
-                                <>
-                                    <NavLink to={"/templates"}>Control de estados de gestión</NavLink>
-                                    <NavLink to={"/businesses"}>Carteras</NavLink>
-                                    <NavLink to={"/import-payments"}>Carga de pagos</NavLink>
-                                </>
-                            )}
-                            <NavLink to={"/update-cartera"}>Actualización cartera</NavLink>
+                            {(hasSection('settings') || hasSection('templates')) && <NavLink to={"/templates"}>Control de estados de gestión</NavLink>}
+                            {(hasSection('settings') || hasSection('businesses')) && <NavLink to={"/businesses"}>Carteras</NavLink>}
+                            {(hasSection('settings') || hasSection('import_payments')) && <NavLink to={"/import-payments"}>Carga de pagos</NavLink>}
+                            {hasSection('cartera_update') && <NavLink to={"/update-cartera"}>Actualización cartera</NavLink>}
                         </div>
                     </div>
                 </div>

@@ -48,7 +48,7 @@ export const useStoreFilterManagement = create((set,get) => ({
             if (request.status === 401) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('role');
-                window.location.href = '/login';
+                window.location.href = '/';
                 return;
             }
             if (!request.ok) {
@@ -97,7 +97,7 @@ export const useStoreFilterManagement = create((set,get) => ({
             if (request.status === 401) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('role');
-                window.location.href = '/login';
+                window.location.href = '/';
                 return;
             }
 
@@ -127,7 +127,7 @@ export const useStoreFilterManagement = create((set,get) => ({
             if (request.status === 401) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('role');
-                window.location.href = '/login';
+                window.location.href = '/';
                 return;
             }
 
@@ -159,7 +159,7 @@ export const useStoreFilterManagement = create((set,get) => ({
             if (request.status === 401) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('role');
-                window.location.href = '/login';
+                window.location.href = '/';
                 return;
             }
 
@@ -188,7 +188,7 @@ export const useStoreFilterManagement = create((set,get) => ({
             if (request.status === 401) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('role');
-                window.location.href = '/login';
+                window.location.href = '/';
                 return;
             }
 

@@ -15,7 +15,7 @@ export default async function cancelInvoice({ credit_id }) {
 
         if (response.status === 401) {
             localStorage.removeItem('token');
-            window.location.href = '/login';
+            window.location.href = '/';
             return;
         }
 

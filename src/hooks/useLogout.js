@@ -19,15 +19,15 @@ export default async function useLogout(e){
         console.log(response);
         if(response.code===1){
             localStorage.removeItem('token');
-            localStorage.removeItem('rol');
+            localStorage.removeItem('role');
             localStorage.removeItem('temp_uS');
             localStorage.removeItem('permission');
             localStorage.removeItem('name');
             localStorage.removeItem('extension');
-            localStorage.removeItem('extension');
             localStorage.removeItem('timestamp_cc');
             localStorage.removeItem('estado');
-            location.href='./'
+            localStorage.removeItem('change_ps');
+            location.href='/';
         }
     }
 }

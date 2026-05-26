@@ -12,7 +12,7 @@ export default async function exportCampaign({ campain_id }) {
 
     if (request.status === 401) {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        window.location.href = '/';
         return;
     }
 

@@ -7,6 +7,7 @@ import BackButton from "../../components/BackButton/BackButton";
 
 export default function Me(){
     const navigate = useNavigate();
+    const isForced = localStorage.getItem('change_ps') === 'true';
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [code, setCode] = useState('');
@@ -137,7 +138,7 @@ export default function Me(){
             const data = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('change_ps', false);
+                localStorage.setItem('change_ps', 'false');
                 sendpush({
                     title: '¡Éxito!',
                     message: 'Tu contraseña ha sido actualizada correctamente.',
@@ -146,7 +147,11 @@ export default function Me(){
                 });
 
                 setTimeout(() => {
-                    navigate(-1);
+                    if (isForced) {
+                        location.href = '/';
+                    } else {
+                        navigate(-1);
+                    }
                 }, 2000);
             } else {
                 sendpush({
@@ -189,6 +194,9 @@ export default function Me(){
                 <div className="Me__form-container">
                     <p className="Me__name">{localStorage.getItem('name')}</p>
                     <div className="Me__form">
+                        {isForced && (
+                            <p className="Me__forced-warning">🔒 Por tu seguridad, es necesario que cambies tu contraseña.</p>
+                        )}
                         <h2>Actualizar Contraseña</h2>
 
                         <label className="Me__field">

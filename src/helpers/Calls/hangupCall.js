@@ -12,7 +12,7 @@ export default async function hangupCall(){
 
     if (hangup_request.status === 401) {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        window.location.href = '/';
         return;
     }
 

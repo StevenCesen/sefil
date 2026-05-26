@@ -13,7 +13,7 @@ export default async function createCall({data_call}){
 
         if (request.status === 401) {
             localStorage.removeItem('token');
-            window.location.href = '/login';
+            window.location.href = '/';
             return;
         }
 

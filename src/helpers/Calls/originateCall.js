@@ -33,7 +33,7 @@ export default async function originateCall({phone_number,campain_id=null}) {
 
     if (change_state.status === 401) {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        window.location.href = '/';
         return;
     }
 

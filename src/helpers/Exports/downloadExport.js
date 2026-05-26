@@ -17,7 +17,7 @@ export default async function downloadExport({ endpoint, params, filename }) {
 
     if (response.status === 401) {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        window.location.href = '/';
         return;
     }
 

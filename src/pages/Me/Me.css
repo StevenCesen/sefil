@@ -218,6 +218,18 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.Me__forced-warning {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #856404;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
 .Me__info {
     font-size: 13px;
     color: #666;

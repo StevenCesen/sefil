@@ -177,25 +177,6 @@ export default function Credit(){
                                 gastos_judiciales={credit.credit.legal_expenses}
                                 otros_valores={credit.credit.other_values}
                             />
-                            {canEditCredit() && (
-                                <button
-                                    onClick={() => setShowEditCredit(true)}
-                                    style={{
-                                        marginTop:'8px',
-                                        width:'100%',
-                                        height:'32px',
-                                        background:'var(--bg-alert-successful)',
-                                        color:'white',
-                                        border:'none',
-                                        borderRadius:'4px',
-                                        cursor:'pointer',
-                                        fontSize:'13px',
-                                        fontWeight:'bold'
-                                    }}
-                                >
-                                    Editar valores
-                                </button>
-                            )}
                         </div>
                         <div>
                             <InfoPending

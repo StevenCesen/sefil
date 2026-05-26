@@ -64,7 +64,7 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
     const isPresetAmount = amount !== null && amount !== undefined;
     const maxDate = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split("T")[0];
 
-    const payableTotal = Number(credit.totalAmount) - (Number(credit.invoice_value) || 0);
+    const payableTotal = parseFloat((Number(credit.totalAmount) - (Number(credit.invoice_value) || 0)).toFixed(2));
 
     const initializePayment = () => {
         const detail = {
@@ -139,15 +139,13 @@ export default function CardPay({ setView, cartera, credit, updateInfoValues, am
         setPayment(prev => ({ ...prev, valor_recibido: numValue, valor_devuelto: change }));
 
         if (numValue > 0) {
-            if (payment.tipo_transaccion === 'total') {
-                // Aplica prelación normalmente pero fija el Total en payableTotal
-                // (la prelación calcula totalAmount como suma de rubros restantes = 0 para pago total,
-                // lo que no refleja el monto real del crédito)
-                const setDataConTotal = (prelacionData) => {
-                    updateDetalle({ ...prelacionData, totalAmount: payableTotal });
-                };
-                usePrelacion(value, credit, setPrelacion, setDataConTotal, ordenPrelacion);
+            if (numValue >= payableTotal) {
+                // El monto cubre el total: mostrar valores del crédito (lo que se paga)
+                // Total = suma de rubros = payableTotal — consistente visualmente
+                usePrelacion(value, credit, setPrelacion, () => {}, ordenPrelacion);
+                updateDetalle(fullDetail);
             } else {
+                // Monto insuficiente: prelación muestra el saldo restante por rubro
                 usePrelacion(value, credit, setPrelacion, updateDetalle, ordenPrelacion);
             }
         } else {

@@ -36,20 +36,16 @@ export default async function useLogin(data,tag,btn,setload){
                 localStorage.removeItem('user_permissions');
             }
 
-            if(response.changePassword){
-                localStorage.setItem('change_ps', true);
-                location.href='#/me';
-                location.reload();
+            const userRole = response.result.user.role;
+            if(response.result.user.change_password){
+                localStorage.setItem('change_ps', 'true');
+                location.href='/#/me';
             }else{
-                localStorage.setItem('change_ps', false);
-
-                // Redirigir según el rol del usuario
-                const userRole = response.result.user.role;
+                localStorage.setItem('change_ps', 'false');
                 if (userRole === 'admin' || userRole === 'superadmin' || userRole === 'supervisor') {
-                    location.href='./';
+                    location.href='/';
                 } else {
-                    // Roles: campo, call, legal -> redirigir a management
-                    location.href='#/management';
+                    location.href='/#/management';
                 }
             }
         }

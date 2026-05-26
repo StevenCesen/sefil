@@ -10,6 +10,7 @@ import denyCondonation from "../../../helpers/Credits/denyCondonation";
 import revertCondonation from "../../../helpers/Credits/revertCondonation";
 import sendpush from "../../../helpers/sendpush";
 import getCondonation from "../../../helpers/Credits/getCondonation";
+import getCredit from "../../../helpers/Credits/getCredit";
 
 export default function ResumeCondonation({condonation, onActionComplete, showActions = true}){
     const store_condonation = useStoreCondonation();
@@ -72,32 +73,43 @@ export default function ResumeCondonation({condonation, onActionComplete, showAc
         store_condonation.setViewPDF(true);
     };
 
-    const handleEdit = () => {
-        const { credit } = store_management;
-        const managementExpenses = credit.management_collection_expenses || 0;
-        
-        // En el store: los campos principales son los valores ACTUALES del crédito
-        // Los inputs mostrarán cuánto se condonó (que ya está guardado en condonation)
+    const handleEdit = async () => {
+        loader.viewOn(true);
+
+        let creditData = store_management.credit;
+
+        if (!creditData || creditData.id !== condonation.credit_id) {
+            const response = await getCredit({ credit_id: condonation.credit_id });
+            if (!response || response.code !== 1 || !response.result) {
+                loader.viewOn(false);
+                sendpush({ title: 'Error', message: 'No se pudo obtener los datos del crédito', type: 'Push--warning', timeout: 3000 });
+                return;
+            }
+            creditData = response.result;
+        }
+
+        loader.viewOn(false);
+
+        const managementExpenses = creditData.invoice_value || 0;
+
         store_condonation.setInfoCredit({
             ci: condonation.client_ci,
             name: condonation.client_name,
-            total: parseFloat(credit.total_amount - managementExpenses),
-            // Valores ACTUALES del crédito (se muestran en columna "Valor actual")
-            capital: parseFloat(credit.capital),
-            interes: parseFloat(credit.interest),
-            mora: parseFloat(credit.mora),
-            seguro_desgravamen: parseFloat(credit.safe),
-            gastos_judiciales: parseFloat(credit.legal_expenses),
-            gastos_cobranza: parseFloat(credit.collection_expenses),
-            gastos_cobranza_sefil: parseFloat(credit.management_collection_expenses),
-            otros_valores: parseFloat(credit.other_values),
-            invoice_value: parseFloat(credit.invoice_value || 0),
+            total: parseFloat(creditData.total_amount - managementExpenses),
+            capital: parseFloat(creditData.capital),
+            interes: parseFloat(creditData.interest),
+            mora: parseFloat(creditData.mora),
+            seguro_desgravamen: parseFloat(creditData.safe),
+            gastos_judiciales: parseFloat(creditData.legal_expenses),
+            gastos_cobranza: parseFloat(creditData.collection_expenses),
+            gastos_cobranza_sefil: parseFloat(creditData.management_collection_expenses),
+            otros_valores: parseFloat(creditData.other_values),
+            invoice_value: parseFloat(creditData.invoice_value || 0),
             id: condonation.credit_id,
             cartera: '',
             setData: '',
             view: 'edit',
             update: condonation.id,
-            // Valores CONDONADOS previamente (se pre-llenan en los inputs)
             condonated_capital: parseFloat(condonation.capital || 0),
             condonated_interes: parseFloat(condonation.interest || 0),
             condonated_mora: parseFloat(condonation.mora || 0),

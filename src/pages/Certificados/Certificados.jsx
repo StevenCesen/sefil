@@ -36,9 +36,11 @@ export default function Certificados() {
     const [historyMeta, setHistoryMeta] = useState(null);
     const [historyPage, setHistoryPage] = useState(1);
     const [loadingHist, setLoadingHist] = useState(false);
-    const [issuedFrom,  setIssuedFrom]  = useState("");
-    const [issuedTo,    setIssuedTo]    = useState("");
-    const [downloading, setDownloading] = useState({});
+    const [issuedFrom,    setIssuedFrom]    = useState("");
+    const [issuedTo,      setIssuedTo]      = useState("");
+    const [filterSyncId,  setFilterSyncId]  = useState("");
+    const [filterClient,  setFilterClient]  = useState("");
+    const [downloading,   setDownloading]   = useState({});
 
     // ── helpers ─────────────────────────────────────────────────────────────
     const buildSearchQuery = () => {
@@ -86,7 +88,29 @@ export default function Certificados() {
     };
 
     // ── selección de crédito ──────────────────────────────────────────────
-    const selectCredit = (credit) => {
+    const [selecting, setSelecting] = useState(null);
+
+    const selectCredit = async (credit) => {
+        setSelecting(credit.id);
+        try {
+            const res  = await fetchWithAuth(
+                `${import.meta.env.VITE_URL_BASE}/certificates/credit/${credit.id}/has`
+            );
+            const data = await res.json();
+            if (data?.result?.has_certificates) {
+                sendpush({
+                    title: 'Certificado existente',
+                    message: `Este crédito ya tiene certificados emitidos.`,
+                    type: 'Push--warning',
+                    timeout: 4000
+                });
+                return;
+            }
+        } catch {
+            // si el endpoint falla, igual permitir selección
+        } finally {
+            setSelecting(null);
+        }
         setSelectedCredit(credit);
         setResults([]);
         setSearched(false);
@@ -138,12 +162,18 @@ export default function Certificados() {
     };
 
     // ── historial ─────────────────────────────────────────────────────────
-    const fetchHistory = async (page = 1) => {
+    const fetchHistory = async (page = 1, overrides = {}) => {
         setLoadingHist(true);
+        const from   = overrides.issuedFrom   ?? issuedFrom;
+        const to     = overrides.issuedTo     ?? issuedTo;
+        const syncId = overrides.filterSyncId ?? filterSyncId;
+        const client = overrides.filterClient ?? filterClient;
         try {
             let url = `${import.meta.env.VITE_URL_BASE}/certificates?page=${page}&per_page=15`;
-            if (issuedFrom) url += `&issued_from=${issuedFrom}`;
-            if (issuedTo)   url += `&issued_to=${issuedTo}`;
+            if (from)          url += `&issued_from=${from}`;
+            if (to)            url += `&issued_to=${to}`;
+            if (syncId.trim()) url += `&sync_id=${encodeURIComponent(syncId.trim())}`;
+            if (client.trim()) url += `&client=${encodeURIComponent(client.trim())}`;
             const res  = await fetchWithAuth(url);
             const data = await res.json();
             if (data.code === 1) {
@@ -160,12 +190,12 @@ export default function Certificados() {
 
     useEffect(() => { fetchHistory(1); }, []);
 
-    const handleHistoryFilter = () => fetchHistory(1);
-
     const handleClearFilters = () => {
         setIssuedFrom("");
         setIssuedTo("");
-        setTimeout(() => fetchHistory(1), 0);
+        setFilterSyncId("");
+        setFilterClient("");
+        fetchHistory(1, { issuedFrom: "", issuedTo: "", filterSyncId: "", filterClient: "" });
     };
 
     // ── descarga histórico ────────────────────────────────────────────────
@@ -294,8 +324,9 @@ export default function Certificados() {
                                             <button
                                                 className="Certificados__select-btn"
                                                 onClick={() => selectCredit(credit)}
+                                                disabled={selecting !== null}
                                             >
-                                                Seleccionar
+                                                {selecting === credit.id ? "..." : "Seleccionar"}
                                             </button>
                                             <label>{credit.business_name}-{credit.sync_id}</label>
                                             <label>{credit.clients?.[0]?.name}</label>
@@ -399,19 +430,42 @@ export default function Certificados() {
             {/* ── PANEL CONSULTAR ───────────────────────────────────────────── */}
             {activeTab === "consultar" && (
                 <div className="Certificados__panel">
-                    <div className="Certificados__history-header">
-                        <h3>Historial de certificados emitidos</h3>
-                        <div className="Certificados__history-filters">
-                            <label>
-                                Desde
-                                <input type="date" value={issuedFrom} onChange={(e) => setIssuedFrom(e.target.value)} />
-                            </label>
-                            <label>
-                                Hasta
-                                <input type="date" value={issuedTo} onChange={(e) => setIssuedTo(e.target.value)} />
-                            </label>
-                            <button className="Certificados__filter-btn" onClick={handleHistoryFilter}>Filtrar</button>
-                            {(issuedFrom || issuedTo) && (
+                    <h3 style={{ color: "var(--color-1)", paddingBottom: "4px" }}>Historial de certificados emitidos</h3>
+
+                    <div className="Certificados__table">
+                    <div className="Certificados__hist-filters">
+                        <label>
+                            N° Crédito
+                            <input
+                                type="text"
+                                placeholder="Filtrar..."
+                                value={filterSyncId}
+                                onChange={(e) => setFilterSyncId(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === "Enter") fetchHistory(1); }}
+                            />
+                        </label>
+                        <label>
+                            Cliente
+                            <input
+                                type="text"
+                                placeholder="Nombre o cédula"
+                                value={filterClient}
+                                onChange={(e) => setFilterClient(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === "Enter") fetchHistory(1); }}
+                            />
+                        </label>
+                        <label>Cédula</label>
+                        <label>Tipo</label>
+                        <label>Emitido por</label>
+                        <label>
+                            Fecha emisión
+                            <div className="Certificados__hist-dates">
+                                <input type="date" value={issuedFrom} onChange={(e) => { setIssuedFrom(e.target.value); fetchHistory(1, { issuedFrom: e.target.value }); }} />
+                                <input type="date" value={issuedTo} onChange={(e) => { setIssuedTo(e.target.value); fetchHistory(1, { issuedTo: e.target.value }); }} />
+                            </div>
+                        </label>
+                        <div className="Certificados__hist-actions">
+                            {(issuedFrom || issuedTo || filterSyncId || filterClient) && (
                                 <button className="Certificados__clear-btn" onClick={handleClearFilters}>
                                     <X size={14} /> Limpiar
                                 </button>
@@ -425,28 +479,19 @@ export default function Certificados() {
                         <div className="Certificados__no-results">No hay certificados emitidos.</div>
                     ) : (
                         <>
-                            <div className="Certificados__table-head">
-                                <span>N° Crédito</span>
-                                <span>Cliente</span>
-                                <span>Cédula</span>
-                                <span>Tipo</span>
-                                <span>Emitido por</span>
-                                <span>Fecha emisión</span>
-                                <span>Descargar</span>
-                            </div>
                             {history.map((cert) => (
-                                <div key={cert.id} className="Certificados__table-row">
-                                    <span>{cert.credit?.sync_id ?? "—"}</span>
-                                    <span>{cert.client?.name ?? "—"}</span>
-                                    <span>{cert.client?.ci ?? "—"}</span>
-                                    <span>
+                                <div key={cert.id} className="Certificados__hist-item">
+                                    <label>{cert.credit?.sync_id ?? "—"}</label>
+                                    <label>{cert.client?.name ?? "—"}</label>
+                                    <label>{cert.client?.ci ?? "—"}</label>
+                                    <label>
                                         <span className={`Certificados__badge ${cert.type === "TITULAR" ? "titular" : "garante"}`}>
                                             {cert.type}
                                         </span>
-                                    </span>
-                                    <span>{cert.user?.name ?? "—"}</span>
-                                    <span>{cert.issued_at}</span>
-                                    <span>
+                                    </label>
+                                    <label>{cert.user?.name ?? "—"}</label>
+                                    <label>{cert.issued_at}</label>
+                                    <label>
                                         <button
                                             className="Certificados__dl-btn"
                                             onClick={() => handleDownload(cert)}
@@ -455,7 +500,7 @@ export default function Certificados() {
                                             <Download size={14} />
                                             {downloading[cert.id] ? "..." : "PDF"}
                                         </button>
-                                    </span>
+                                    </label>
                                 </div>
                             ))}
                             {historyMeta && historyMeta.last_page > 1 && (
@@ -472,6 +517,7 @@ export default function Certificados() {
                             )}
                         </>
                     )}
+                    </div>
                 </div>
             )}
         </div>
