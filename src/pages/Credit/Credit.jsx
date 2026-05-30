@@ -200,7 +200,7 @@ export default function Credit(){
                             isViewOn={
                                 !(
                                     credit.cartera==='syncs' ||
-                                    credit.credit.collection_state.toLowerCase()==='cancelado' ||
+                                    (credit.credit.collection_state.toLowerCase()==='cancelado' && credit.credit.total_amount <= 0 && !(credit.credit.invoice_value > 0)) ||
                                     credit.credit.collection_state.toLowerCase()==='convenio de pago'
                                 )
                             }

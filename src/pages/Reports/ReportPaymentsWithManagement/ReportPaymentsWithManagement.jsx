@@ -144,6 +144,7 @@ export default function ReportPaymentsWithManagement() {
 
         const params = new URLSearchParams();
         params.append("page", page);
+        if (campainId) params.append("campain_id", campainId);
         if (credito.length >= 3) params.append("credit_name", credito);
         if (cedula.length >= 3) params.append("client_ci", cedula);
         if (agencia) params.append("agency", agencia);

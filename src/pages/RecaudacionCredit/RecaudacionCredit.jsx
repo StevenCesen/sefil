@@ -23,6 +23,9 @@ import ViewPDFCondonation from "../../components/Credits/ViewPDFCondonation/View
 import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFStructure";
 import ViewPDFBilling from "../../components/Credits/ViewPDFBilling/ViewPDFBilling";
 import BackButton from "../../components/BackButton/BackButton";
+import MenuNav from "../../components/Tools/MenuNav/MenuNav";
+import CardActivity from "../../components/Credits/CardActivity/CardActivity";
+import getListPayments from "../../helpers/Payments/getListPayments";
 
 export default function RecaudacionCredit() {
     const params = useParams();
@@ -31,12 +34,32 @@ export default function RecaudacionCredit() {
     const store_structure = useStoreStructure();
     const [action, setAction] = useState('');
     const loader = useStoreLoader();
+    const userRole = localStorage.getItem('role');
+    const isAdmin = userRole === 'superadmin' || userRole === 'admin';
 
     const helperCredit = async ({ credit_id }) => {
         loader.viewOn(true);
         const data_credit = await getCredit({ credit_id });
         if (data_credit && data_credit.result) {
             credit.setCredit(data_credit.result);
+            credit.setSection('PAYMENTS');
+            const paymentsData = await getListPayments({
+                credit_id,
+                cartera: data_credit.result.business_name
+            });
+            let formatted = null;
+            if (Array.isArray(paymentsData)) {
+                formatted = { data: paymentsData };
+            } else if (paymentsData?.result && Array.isArray(paymentsData.result)) {
+                formatted = { data: paymentsData.result };
+            } else if (Array.isArray(paymentsData?.result?.data)) {
+                formatted = { data: paymentsData.result.data };
+            } else if (Array.isArray(paymentsData?.data)) {
+                formatted = { data: paymentsData.data };
+            }
+            if (formatted?.data?.length > 0) {
+                credit.setPayments(formatted);
+            }
         }
         loader.viewOn(false);
     };
@@ -159,7 +182,7 @@ export default function RecaudacionCredit() {
                         isViewOn={
                             !(
                                 credit.cartera === 'syncs' ||
-                                credit.credit.collection_state.toLowerCase() === 'cancelado' ||
+                                (credit.credit.collection_state.toLowerCase() === 'cancelado' && credit.credit.total_amount <= 0 && !(credit.credit.invoice_value > 0)) ||
                                 credit.credit.collection_state.toLowerCase() === 'convenio de pago'
                             )
                         }
@@ -232,6 +255,19 @@ export default function RecaudacionCredit() {
                         onSuccess={() => helperCredit({ credit_id: params.id })}
                     />
                 ) : null}
+
+                <div style={{ display: 'grid', gridTemplateColumns: '70% 30%', gap: '10px' }}>
+                    <MenuNav
+                        options={[
+                            {
+                                name: 'Historial de pagos',
+                                default_option: true,
+                                end_point: 'PAYMENTS'
+                            }
+                        ]}
+                    />
+                    <CardActivity showActions={true} />
+                </div>
             </div>
         </div>
     );

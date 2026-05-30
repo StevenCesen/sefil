@@ -83,6 +83,7 @@ export const useStoreManagement = create((set,get) => ({
         set({section: 'MANAGEMENTS'});
 
     },
+    setPayments:  (value)=>{set({payments:value})},
     setState:     (value)=>{set({state:value})},
     setSubstate:     (value)=>{set({substate:value})},
     setPromiseDate:     (value)=>{set({promise_date:value})},

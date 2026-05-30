@@ -209,7 +209,7 @@ export default function CardCondonacion() {
 
                 <div className="CardCondonacion__result">
                     <p>Total a cancelar:</p>
-                    <p>$ {(Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza_sefil) + Number(credit.gastos_cobranza) + Number(credit.gastos_judiciales) + Number(credit.otros_valores)).toFixed(2)}</p>
+                    <p>$ {(Number(credit.capital) + Number(credit.mora) + Number(credit.interes) + Number(credit.seguro_desgravamen) + Number(credit.gastos_cobranza_sefil) + Number(credit.gastos_cobranza) + Number(credit.gastos_judiciales) + Number(credit.otros_valores) + Number(store_condonation.invoice_value)).toFixed(2)}</p>
                 </div>
 
                 <button className="CardCondonacion__save"
