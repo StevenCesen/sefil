@@ -1,0 +1,164 @@
+.RelTree {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #364153;
+}
+
+.RelTree__title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #90b4d0;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 0 0 12px 0;
+}
+
+/* Timeline vertical */
+.RelTree__timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+}
+
+/* Línea vertical central continua */
+.RelTree__timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 70px;
+    width: 2px;
+    background: linear-gradient(to bottom, #1e3a5f, #4a6fa5 30%, #4a6fa5 70%, #1e3a5f);
+    z-index: 0;
+}
+
+/* Fila de generación */
+.RelTree__gen-row {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+    padding: 6px 0;
+}
+
+/* Punto en la línea central */
+.RelTree__gen-row::before {
+    content: '';
+    position: absolute;
+    left: 67px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4a6fa5;
+    border: 2px solid #101828;
+    z-index: 1;
+}
+
+.RelTree__gen-row--client::before {
+    background-color: var(--color-2);
+    width: 12px;
+    height: 12px;
+    left: 65px;
+    border: 2px solid #101828;
+    box-shadow: 0 0 0 2px var(--color-2);
+}
+
+/* Etiqueta de generación */
+.RelTree__gen-label {
+    flex-shrink: 0;
+    width: 65px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #5a7a99;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: right;
+    line-height: 1.2;
+    padding-top: 6px;
+}
+
+.RelTree__gen-row--client .RelTree__gen-label {
+    color: var(--color-2);
+}
+
+/* Contenedor de nodos de una generación */
+.RelTree__gen-nodes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-left: 18px;
+    flex: 1;
+}
+
+/* Nodo individual */
+.RelTree__node {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    min-width: 120px;
+    max-width: 200px;
+    position: relative;
+}
+
+.RelTree__node--direct {
+    background-color: #0d1f35;
+    border: 1px solid #4a6fa5;
+}
+
+.RelTree__node--collateral {
+    background-color: #101828;
+    border: 1px solid #2d3f55;
+    border-style: dashed;
+}
+
+.RelTree__node--client {
+    background-color: #0d2a1a;
+    border: 2px solid var(--color-2);
+    min-width: 160px;
+}
+
+.RelTree__node-type {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #e0c97f;
+    letter-spacing: 0.3px;
+}
+
+.RelTree__node--collateral .RelTree__node-type {
+    color: #8aabcc;
+}
+
+.RelTree__node-name {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-3);
+    line-height: 1.3;
+}
+
+.RelTree__node--client .RelTree__node-name {
+    font-size: 12px;
+    color: #6ee7a0;
+}
+
+.RelTree__node-ci {
+    font-size: 10px;
+    color: #5a7a99;
+}
+
+.RelTree__node-deceased {
+    font-size: 10px;
+    color: rgb(244, 142, 142);
+    font-weight: 600;
+}
+
+/* Conector vertical (vacío, la línea la dibuja el ::before del timeline) */
+.RelTree__connector { display: none; }

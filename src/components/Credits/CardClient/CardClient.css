@@ -162,7 +162,13 @@
 }
 
 .CardClient__contact-phone--INACTIVE{
-    color: var(--bg-alert-error);
+    color: #888;
+    font-style: italic;
+}
+
+.CardClient__contact-phone--FACES{
+    color: var(--bg-alert-successful);
+    font-weight: 700;
 }
 
 .CardClient__contact-type{
@@ -251,3 +257,57 @@
     padding: 15px;
     margin: 0;
 }
+
+.CardClient__contact-source{
+    font-size: 11px;
+    padding: 3px 8px;
+    background-color: #2d3f55;
+    border-radius: 4px;
+    color: #90b4d0;
+    white-space: nowrap;
+}
+
+.CardClient__contact-source--faces{
+    background-color: #0d2a1a;
+    color: var(--bg-alert-successful);
+    font-weight: 700;
+    border: 1px solid var(--bg-alert-successful);
+}
+
+.CardClient__contact-metrics{
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.metric--ok{
+    font-size: 12px;
+    font-weight: bold;
+    color: rgb(91, 193, 140);
+    background-color: rgb(235, 235, 235);
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 22px;
+    text-align: center;
+}
+
+.metric--fail{
+    font-size: 12px;
+    font-weight: bold;
+    color: rgb(244, 142, 142);
+    background-color: rgb(235, 235, 235);
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 22px;
+    text-align: center;
+}
+
+.CardClient__contact-wweb{
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 6px;
+    background-color: #25D366;
+    color: white;
+    border-radius: 4px;
+}
+

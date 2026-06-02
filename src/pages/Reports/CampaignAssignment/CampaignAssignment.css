@@ -82,6 +82,69 @@
     cursor: not-allowed;
 }
 
+.CampaignAssignment__mode-toggle {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border: 1px solid var(--bg-alert-successful);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.CampaignAssignment__mode-btn {
+    flex: 1;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--color-1);
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.CampaignAssignment__mode-btn.active {
+    background-color: var(--bg-alert-successful);
+    color: white;
+}
+
+.CampaignAssignment__mode-btn:not(.active):hover {
+    background-color: rgba(0, 150, 136, 0.08);
+}
+
+.CampaignAssignment__businesses {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: var(--bg-1);
+}
+
+.CampaignAssignment__business-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 400 !important;
+    color: var(--color-1);
+    cursor: pointer;
+}
+
+.CampaignAssignment__business-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--bg-alert-successful);
+}
+
+.CampaignAssignment__loading {
+    font-size: 14px;
+    color: var(--color-texts);
+    padding: 10px 0;
+}
+
 @media (max-width: 768px) {
     .CampaignAssignment__container {
         padding: 20px;

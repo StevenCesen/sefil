@@ -4,15 +4,18 @@ import BackButton from "../../../components/BackButton/BackButton";
 import sendpush from "../../../helpers/sendpush";
 import exportCampaignAssignment from "../../../helpers/Reports/exportCampaignAssignment";
 import ReportProgressBar from "../../../components/ReportProgressBar/ReportProgressBar";
+import getBusinesses from "../../../helpers/getBusinesses";
 
 export default function CampaignAssignment() {
-    const [formData, setFormData] = useState({
-        campain_id: ''
-    });
+    const [mode, setMode] = useState('campain'); // 'campain' | 'businesses'
+    const [campainId, setCampainId] = useState('');
+    const [selectedBusinessIds, setSelectedBusinessIds] = useState([]);
     const [loading, setLoading] = useState(false);
     const [progress, setProgress] = useState(0);
     const [campaigns, setCampaigns] = useState([]);
+    const [businesses, setBusinesses] = useState([]);
     const [loadingCampaigns, setLoadingCampaigns] = useState(true);
+    const [loadingBusinesses, setLoadingBusinesses] = useState(true);
 
     useEffect(() => {
         const loadCampaigns = async () => {
@@ -25,40 +28,44 @@ export default function CampaignAssignment() {
                 });
                 const data = await response.json();
                 setCampaigns(data.result?.data || data.result || []);
-            } catch (error) {
-                console.error('Error fetching campaigns:', error);
-                sendpush({
-                    title: 'Error',
-                    message: 'Error al cargar las campañas',
-                    type: 'Push--error',
-                    timeout: 3000
-                });
+            } catch {
+                sendpush({ title: 'Error', message: 'Error al cargar las campañas', type: 'Push--error', timeout: 3000 });
             } finally {
                 setLoadingCampaigns(false);
             }
         };
 
+        const loadBusinesses = async () => {
+            try {
+                const data = await getBusinesses();
+                const list = data?.result?.data || data?.result || data?.data || data || [];
+                setBusinesses(Array.isArray(list) ? list : []);
+            } catch {
+                sendpush({ title: 'Error', message: 'Error al cargar las carteras', type: 'Push--error', timeout: 3000 });
+            } finally {
+                setLoadingBusinesses(false);
+            }
+        };
+
         loadCampaigns();
+        loadBusinesses();
     }, []);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+    const toggleBusiness = (id) => {
+        setSelectedBusinessIds(prev =>
+            prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]
+        );
     };
 
     const handleExport = async (e) => {
         e.preventDefault();
 
-        if (!formData.campain_id) {
-            sendpush({
-                title: 'Error',
-                message: 'Debe seleccionar una campaña',
-                type: 'Push--error',
-                timeout: 3000
-            });
+        if (mode === 'campain' && !campainId) {
+            sendpush({ title: 'Error', message: 'Debe seleccionar una campaña', type: 'Push--error', timeout: 3000 });
+            return;
+        }
+        if (mode === 'businesses' && selectedBusinessIds.length === 0) {
+            sendpush({ title: 'Error', message: 'Debe seleccionar al menos una cartera', type: 'Push--error', timeout: 3000 });
             return;
         }
 
@@ -68,46 +75,43 @@ export default function CampaignAssignment() {
         try {
             setProgress(30);
 
-            const blob = await exportCampaignAssignment(formData);
+            const payload = mode === 'campain'
+                ? { campain_id: campainId }
+                : { business_ids: selectedBusinessIds };
 
+            const blob = await exportCampaignAssignment(payload);
             setProgress(60);
 
             const downloadUrl = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = downloadUrl;
 
-            const campaignName = campaigns.find(c => c.id === parseInt(formData.campain_id))?.name || 'CAMPAÑA';
-            link.download = `AsignacionCampaña-${campaignName}.xlsx`;
+            let filename = 'AsignacionCampaña.xlsx';
+            if (mode === 'campain') {
+                const campaignName = campaigns.find(c => c.id === parseInt(campainId))?.name || 'CAMPAÑA';
+                filename = `AsignacionCampaña-${campaignName}.xlsx`;
+            } else {
+                filename = `AsignacionCampaña-Carteras.xlsx`;
+            }
+
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             link.remove();
             window.URL.revokeObjectURL(downloadUrl);
 
             setProgress(100);
-
-            sendpush({
-                title: 'Éxito',
-                message: 'Reporte descargado correctamente',
-                type: 'Push--sucessful',
-                timeout: 3000
-            });
-
-            setTimeout(() => {
-                setProgress(0);
-            }, 1000);
+            sendpush({ title: 'Éxito', message: 'Reporte descargado correctamente', type: 'Push--sucessful', timeout: 3000 });
+            setTimeout(() => setProgress(0), 1000);
 
         } catch (error) {
-            console.error('Error exporting campaign assignment:', error);
-            sendpush({
-                title: 'Error',
-                message: error.message || 'Error al generar el reporte',
-                type: 'Push--error',
-                timeout: 3000
-            });
+            sendpush({ title: 'Error', message: error.message || 'Error al generar el reporte', type: 'Push--error', timeout: 3000 });
         } finally {
             setLoading(false);
         }
     };
+
+    const isLoadingData = loadingCampaigns || loadingBusinesses;
 
     return (
         <div className="CampaignAssignment">
@@ -116,32 +120,72 @@ export default function CampaignAssignment() {
             <div className="CampaignAssignment__container">
                 <h1 className="CampaignAssignment__title">Asignación de campaña</h1>
 
+                {/* Toggle de modo */}
+                <div className="CampaignAssignment__mode-toggle">
+                    <button
+                        type="button"
+                        className={`CampaignAssignment__mode-btn ${mode === 'campain' ? 'active' : ''}`}
+                        onClick={() => setMode('campain')}
+                    >
+                        Por campaña
+                    </button>
+                    <button
+                        type="button"
+                        className={`CampaignAssignment__mode-btn ${mode === 'businesses' ? 'active' : ''}`}
+                        onClick={() => setMode('businesses')}
+                    >
+                        Por carteras
+                    </button>
+                </div>
+
                 <form onSubmit={handleExport} className="CampaignAssignment__form">
-                    <div className="CampaignAssignment__field">
-                        <label htmlFor="campain_id">Campaña *</label>
-                        <select
-                            id="campain_id"
-                            name="campain_id"
-                            value={formData.campain_id}
-                            onChange={handleChange}
-                            disabled={loadingCampaigns || loading}
-                            required
-                        >
-                            <option value="">-- Seleccionar campaña --</option>
-                            {campaigns.map(campaign => (
-                                <option key={campaign.id} value={campaign.id}>
-                                    {campaign.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+
+                    {mode === 'campain' && (
+                        <div className="CampaignAssignment__field">
+                            <label htmlFor="campain_id">Campaña *</label>
+                            <select
+                                id="campain_id"
+                                value={campainId}
+                                onChange={e => setCampainId(e.target.value)}
+                                disabled={isLoadingData || loading}
+                            >
+                                <option value="">-- Seleccionar campaña --</option>
+                                {campaigns.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    {mode === 'businesses' && (
+                        <div className="CampaignAssignment__field">
+                            <label>Carteras *</label>
+                            {loadingBusinesses ? (
+                                <p className="CampaignAssignment__loading">Cargando carteras...</p>
+                            ) : (
+                                <div className="CampaignAssignment__businesses">
+                                    {businesses.map(b => (
+                                        <label key={b.id} className="CampaignAssignment__business-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedBusinessIds.includes(b.id)}
+                                                onChange={() => toggleBusiness(b.id)}
+                                                disabled={loading}
+                                            />
+                                            {b.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     <ReportProgressBar progress={progress} />
 
                     <button
                         type="submit"
                         className="CampaignAssignment__button"
-                        disabled={loading || loadingCampaigns}
+                        disabled={loading || isLoadingData}
                     >
                         {loading ? 'Generando...' : 'Descargar reporte'}
                     </button>

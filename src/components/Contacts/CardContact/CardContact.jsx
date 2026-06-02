@@ -6,13 +6,13 @@ import { useStoreManagement } from "../../../stores/useStoreManagement";
 import deleteContact from "../../../helpers/Calls/deleteContact";
 import sendpush from "../../../helpers/sendpush";
 
-export default function CardContact({id,phone_number,nro_sucessful,nro_fails,is_external}){
+export default function CardContact({id, phone_number, nro_sucessful, nro_fails, is_external, created_by, created_source, is_active}){
     const store_call=useStoreProgressCall();
     // const store_sms=useStoreSMS();
     const store_management=useStoreManagement();
 
     const handleRemoveContact = async () => {
-        const data = await deleteContact({id});
+        const data = await deleteContact({id, client_identification: store_management.client_ci});
         if(data && data.code === 1){
             store_management.removePhone(id);
         }else{
@@ -28,8 +28,19 @@ export default function CardContact({id,phone_number,nro_sucessful,nro_fails,is_
     return(
         <div className="CardContact">
             <p
-                className={`${is_external ? "CardContact__contact-phone--EXTERNAL" : ""}`}
-                title={`${is_external ? "Número de fuente externa" : "Número creado por Gestor en SEFIL"}`}
+                className={
+                    is_active === false
+                        ? "CardContact__phone--inactive"
+                        : created_by === "FACES"
+                            ? "CardContact__phone--faces"
+                            : ""
+                }
+                title={
+                    is_active === false ? "Número inactivo"
+                    : created_by === "FACES" ? "Fuente: FACES"
+                    : created_source === "Collecta" ? "Fuente: Collecta"
+                    : ""
+                }
             >
                 {phone_number}
             </p>

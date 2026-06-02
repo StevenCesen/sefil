@@ -1,5 +1,6 @@
-export default async function deleteContact({id}){
-    const end_point=`${import.meta.env.VITE_URL_BASE}/contacts/${id}`;
+export default async function deleteContact({id, client_identification}){
+    const qs = client_identification ? `?client_identification=${encodeURIComponent(client_identification)}` : '';
+    const end_point=`${import.meta.env.VITE_URL_BASE}/contacts/${id}${qs}`;
     try {
         const request=await fetch(end_point,{
             method: 'DELETE',
@@ -19,8 +20,7 @@ export default async function deleteContact({id}){
             throw new Error('Error al eliminar el contacto');
         }
 
-        const data = await request.json();
-        return data;
+        return request.json();
 
     } catch (error) {
         console.error('Error al hacer deleteContact:', error);

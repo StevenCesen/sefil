@@ -27,12 +27,8 @@ export default function AddContact(){
         }
 
         const data_phone={
-            phone_number: contact.phone_number,
-            phone_type: contact.type,
-            phone_status: 'ACTIVE',
-            calls_effective: 0,
-            calls_not_effective: 0,
-            client_id: store_management.client_id
+            client_identification: store_management.client_ci,
+            phone_number: contact.phone_number
         };
 
         try {

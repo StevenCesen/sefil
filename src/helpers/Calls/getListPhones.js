@@ -1,5 +1,5 @@
-export default async function getListPhones({client_id}){
-    const end_point=`${import.meta.env.VITE_URL_BASE}/contacts?client_id=${client_id}`;
+export default async function getListPhones({client_identification}){
+    const end_point=`${import.meta.env.VITE_URL_BASE}/contacts?client_identification=${encodeURIComponent(client_identification)}`;
     try {
         const request=await fetch(end_point,{
             headers: {
@@ -18,8 +18,7 @@ export default async function getListPhones({client_id}){
             throw new Error('Error al consultar la API');
         }
 
-        const data = await request.json();
-        return data;
+        return request.json();
 
     } catch (error) {
         console.error('Error al hacer fetchFilteredCredits:', error);

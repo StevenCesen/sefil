@@ -21,6 +21,16 @@
     color: var(--bg-alert-successful) !important;
 }
 
+.CardContact__phone--faces {
+    font-weight: 700;
+    color: var(--bg-alert-successful);
+}
+
+.CardContact__phone--inactive {
+    color: #888;
+    font-style: italic;
+}
+
 .CardContact__contact-phone--INACTIVE{
     color: var(--bg-alert-error);
 }

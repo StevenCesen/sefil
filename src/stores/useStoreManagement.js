@@ -117,9 +117,12 @@ export const useStoreManagement = create((set,get) => ({
         set({payments:null})
     },
     setPhones: async ({client_id}) => {
-        const phones=await getListPhones({client_id});
+        const {client_ci} = get();
+        const phones=await getListPhones({client_identification: client_ci});
         if(phones && phones.result && phones.result.data) {
-            set({phones: phones.result.data.filter(p => p.phone_status !== 'INACTIVE')});
+            set({phones: phones.result.data.filter(p =>
+                p.created_by === 'FACES' || p.created_source === 'Collecta'
+            )});
         }
     },
     addManagement: async (data) => {

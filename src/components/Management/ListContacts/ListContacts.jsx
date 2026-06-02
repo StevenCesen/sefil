@@ -19,7 +19,7 @@ export default function ListContacts(){
                          <CardContact
                             key={phone.id}
                             id={phone.id}
-                            phone_number={phone.phone_number}
+                            phone_number={phone.phone || phone.phone_number}
                             nro_fails={phone.calls_not_effective}
                             nro_sucessful={phone.calls_effective}
                             name={store_management.client_name}
@@ -29,6 +29,9 @@ export default function ListContacts(){
                             days_past_due={store_management.days_past_due}
                             is_external={phone.is_external}
                             client_id={store_management.client_id}
+                            created_by={phone.created_by}
+                            created_source={phone.created_source}
+                            is_active={phone.is_active}
                         />
                     ))
                 }

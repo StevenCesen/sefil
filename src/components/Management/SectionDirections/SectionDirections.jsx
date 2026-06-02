@@ -30,22 +30,22 @@ export default function SectionDirections() {
         longitude: ''
     });
 
-    const client_id = store_management.client_id;
+    const { client_ci } = store_management;
 
     useEffect(() => {
-        if (client_id) {
+        if (client_ci) {
             fetchDirections();
         }
-    }, [client_id]);
+    }, [client_ci]);
 
     const fetchDirections = async () => {
-        if (!client_id) return;
+        if (!client_ci) return;
 
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `${import.meta.env.VITE_URL_BASE}/directions?client_id=${client_id}`,
+                `${import.meta.env.VITE_URL_BASE}/directions?client_identification=${encodeURIComponent(client_ci)}`,
                 {
                     headers: {
                         'Accept': 'application/json',
@@ -56,7 +56,10 @@ export default function SectionDirections() {
             const data = await response.json();
 
             if (data.code===1) {
-                setDirections(data.result?.data);
+                const all = data.result?.data || [];
+                setDirections(all.filter(d =>
+                    d.created_by === 'FACES' || d.created_source === 'Collecta'
+                ));
             }
         } catch (error) {
             console.error("Error fetching directions:", error);
@@ -135,8 +138,16 @@ export default function SectionDirections() {
                         'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({
-                        ...newDirection,
-                        client_id: client_id
+                        client_identification: client_ci,
+                        address_type: newDirection.type,
+                        address_line: newDirection.address,
+                        neighborhood: newDirection.neighborhood || null,
+                        parish: newDirection.parish || null,
+                        canton: newDirection.canton || null,
+                        city: newDirection.canton || null,
+                        province: newDirection.province || null,
+                        latitude: newDirection.latitude || null,
+                        longitude: newDirection.longitude || null
                     })
                 }
             );
@@ -355,16 +366,22 @@ export default function SectionDirections() {
                     <p className="SectionDirections__loading">Cargando direcciones...</p>
                 ) : directions.length > 0 ? (
                     directions.map((direction, index) => (
-                        <div key={direction.id || index} className="SectionDirections__item">
+                        <div key={direction.id || index} className={`SectionDirections__item ${direction.is_active === false ? 'SectionDirections__item--inactive' : ''}`}>
                             <div className="SectionDirections__itemHeader">
                                 {getTypeIcon(direction.type)}
                                 <span className="SectionDirections__itemType">
                                     {direction.type || 'Dirección'}
                                 </span>
+                                {direction.created_by === 'FACES' && (
+                                    <span className="SectionDirections__source SectionDirections__source--faces">FACES</span>
+                                )}
+                                {direction.created_source === 'Collecta' && direction.created_by !== 'FACES' && (
+                                    <span className="SectionDirections__source">Collecta</span>
+                                )}
                             </div>
                             <div className="SectionDirections__itemContent">
-                                <p className="SectionDirections__address">
-                                    {direction.direction || direction.address || 'Sin dirección'}
+                                <p className={`SectionDirections__address ${direction.is_active === false ? 'SectionDirections__address--inactive' : direction.created_by === 'FACES' ? 'SectionDirections__address--faces' : ''}`}>
+                                    {direction.direction || direction.address_line || direction.address || 'Sin dirección'}
                                 </p>
                                 {direction.neighborhood && (
                                     <p className="SectionDirections__detail">

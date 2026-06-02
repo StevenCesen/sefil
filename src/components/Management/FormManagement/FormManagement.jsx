@@ -52,6 +52,7 @@ export default function FormManagement(){
             call_collection:JSON.stringify(store_management.call_collection),
             credit_id:store_management.credit_id,
             client_id:store_management.client_id,
+            client_identification:store_management.client_ci,
             state:store_management.state,
             substate:store_management.substate,
             promise_date:store_management.promise_date,

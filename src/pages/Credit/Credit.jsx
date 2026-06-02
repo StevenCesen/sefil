@@ -140,6 +140,7 @@ export default function Credit(){
                                         total_amount={credit.credit.total_amount}
                                         actions={false}
                                         showContactsButton={true}
+                                        relationships={client.relationships || []}
                                     />
                                 ))
                             }
