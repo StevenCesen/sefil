@@ -223,7 +223,23 @@ export default function ResumeAgreement({agreement, onActionComplete, showAction
             </div>
             <p>Solicitado por: {agreement.created_by}</p>
             <p>Cliente: {agreement.client_name} - {agreement.client_ci}</p>
-            <p>Fecha: {agreement.created_at}</p>
+            <p>Fecha de creación: {agreement.created_at}</p>
+            {agreement.updated_at && (() => {
+                const s = agreement.status?.toUpperCase();
+                const isNegative = s === 'ANULADO' || s === 'RECHAZADO' || s === 'DENEGADO';
+                const label = s === 'ANULADO' ? 'Fecha de anulación'
+                    : (s === 'RECHAZADO' || s === 'DENEGADO') ? 'Fecha de rechazo'
+                    : (s === 'AUTORIZADO' || s === 'AUTORIZADA' || s === 'APLICADA') ? 'Fecha de autorización'
+                    : null;
+                return label ? (
+                    <>
+                        <p>{label}: {agreement.updated_at}</p>
+                        {isNegative && (
+                            <p>Concepto: {agreement.concept || agreement.reason || agreement.motive || '—'}</p>
+                        )}
+                    </>
+                ) : null;
+            })()}
             <span>DETALLE CONVENIO:</span>
 
             <div className="ResumeAgreement__detail">

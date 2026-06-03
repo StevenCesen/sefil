@@ -1,22 +1,10 @@
-export default async function getListPayments({credit_id,cartera}){
-    const end_point=`${import.meta.env.VITE_URL_BASE}/vouchers/group/${credit_id}?cartera=${cartera}`;
+import { apiGet } from "../apiClient";
 
+export default async function getListPayments({ credit_id, cartera }) {
     try {
-        const request=await fetch(end_point,{
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-
-        if (!request.ok) {
-            throw new Error('Error al consultar la API');
-        }
-
-        const data = await request.json();
-        return data;
-
+        return await apiGet(`/vouchers/group/${credit_id}?cartera=${encodeURIComponent(cartera)}`);
     } catch (error) {
-        console.error('Error al hacer fetchFilteredCredits:', error);
+        console.error('Error al obtener pagos:', error);
+        return null;
     }
 }

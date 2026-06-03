@@ -96,15 +96,13 @@ export default function PanelManagement(){
                         <div className="PanelManagement__panelContact">
                             <ListContacts/>
                             {credit.sync_status === 'ACTIVE' && (
-                                <div>
-                                    <CardDial
-                                        credit_id={credit.id}
-                                        campain_id={store_management.campain_id}
-                                        credit_status={credit.sync_status}
-                                    />
-                                    <CardActivity showActions={false} />
-                                </div>
+                                <CardDial
+                                    credit_id={credit.id}
+                                    campain_id={store_management.campain_id}
+                                    credit_status={credit.sync_status}
+                                />
                             )}
+                            <CardActivity showActions={false} />
                         </div>
                     </div>
                     <div>

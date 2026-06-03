@@ -1,28 +1,9 @@
+import { apiPost } from "./apiClient";
+
 export default async function revertPayment({ paymentId }) {
     try {
-        const request = await fetch(`${import.meta.env.VITE_URL_BASE}/payments/revert/${paymentId}`, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-
-        if (request.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = '/';
-            return;
-        }
-
-        const response = await request.json();
-
-        return response;
-
+        return await apiPost(`/payments/revert/${paymentId}`);
     } catch (error) {
-        return {
-            state: 400,
-            error: error
-        };
+        return { state: 400, error };
     }
 }

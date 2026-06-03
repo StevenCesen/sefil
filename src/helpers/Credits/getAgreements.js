@@ -1,17 +1,10 @@
-const getAgreements = async ({credit_id}) => {
-    const url = `${import.meta.env.VITE_URL_BASE}/agreements?credit_id=${credit_id}`;
-    const token = localStorage.getItem('token');
-    
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json'
-        }
-    });
-    
-    const data = await response.json();
-    return data;
-};
+import { apiGet } from "../apiClient";
 
-export default getAgreements;
+export default async function getAgreements({ credit_id }) {
+    try {
+        return await apiGet(`/agreements?credit_id=${credit_id}`);
+    } catch (error) {
+        console.error('Error al obtener convenios:', error);
+        return { code: -1, message: 'Error al obtener convenios', result: [] };
+    }
+}

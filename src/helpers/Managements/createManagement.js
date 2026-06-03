@@ -1,28 +1,9 @@
-export default async function createManagement({data_management}){
+import { apiPost } from "../apiClient";
+
+export default async function createManagement({ data_management }) {
     try {
-        const request=await fetch(`${import.meta.env.VITE_URL_BASE}/managements`,{
-            method:'POST',
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            },
-            body:new URLSearchParams(data_management)
-        });
-
-        if (request.status === 401) {
-            localStorage.removeItem('token');
-            window.location.href = '/';
-            return;
-        }
-
-        const response=await request.json();
-
-        return response;
-
+        return await apiPost('/managements', data_management, true);
     } catch (error) {
-        return {
-            state:400,
-            error:error
-        };
+        return { state: 400, error };
     }
 }

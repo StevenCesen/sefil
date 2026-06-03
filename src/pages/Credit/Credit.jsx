@@ -26,6 +26,7 @@ import ViewPDFStructure from "../../components/Credits/ViewPDFStructure/ViewPDFS
 import ViewPDFBilling from "../../components/Credits/ViewPDFBilling/ViewPDFBilling";
 import BackButton from "../../components/BackButton/BackButton";
 import CardEditCredit from "../../components/CardEditCredit/CardEditCredit";
+import { buildCreditPayload } from "../../helpers/Credits/buildCreditPayload";
 
 const canEditCredit = () => {
     const role = localStorage.getItem('role');
@@ -245,16 +246,7 @@ export default function Credit(){
 
                         <CardPay
                             setView={setAction}
-                            credit={{
-                                ...credit.credit,
-                                totalAmount: credit.credit.total_amount,
-                                saldo_capital: credit.credit.capital,
-                                interes: credit.credit.interest,
-                                seguro_desgravamen: credit.credit.safe,
-                                gastos_cobranza: credit.credit.collection_expenses,
-                                gastos_judiciales: credit.credit.legal_expenses,
-                                otros_valores: credit.credit.other_values
-                            }}
+                            credit={buildCreditPayload(credit.credit)}
                             cartera={credit.credit.business_id}
                             updateInfoValues={()=>{}}
                             amount={null}

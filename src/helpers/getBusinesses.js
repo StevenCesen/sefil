@@ -1,19 +1,10 @@
+import { apiGet } from "./apiClient";
+
 export default async function getBusinesses() {
-    const endpoint = `${import.meta.env.VITE_URL_BASE}/businesses`;
-
-    const request = await fetch(endpoint, {
-        headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-    });
-
-    if (request.status === 401) {
-        localStorage.removeItem('token');
-        window.location.href = '/';
-        return;
+    try {
+        return await apiGet('/businesses');
+    } catch (error) {
+        console.error('Error al obtener carteras:', error);
+        return null;
     }
-
-    const response = await request.json();
-    return response;
 }

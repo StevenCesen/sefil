@@ -50,6 +50,9 @@ export const useStoreManagement = create((set,get) => ({
 
         const { setPhones }=get();
 
+        // Reset inmediato para evitar estado obsoleto del crédito anterior
+        set({phones: null, managements: null, payments: null, calls: null, notes: null});
+
         set({credit:value}),
         set({credit_id:value.id})
         set({client_id:value.clients[0].id});

@@ -26,6 +26,7 @@ import BackButton from "../../components/BackButton/BackButton";
 import MenuNav from "../../components/Tools/MenuNav/MenuNav";
 import CardActivity from "../../components/Credits/CardActivity/CardActivity";
 import getListPayments from "../../helpers/Payments/getListPayments";
+import { buildCreditPayload } from "../../helpers/Credits/buildCreditPayload";
 
 export default function RecaudacionCredit() {
     const params = useParams();
@@ -199,16 +200,7 @@ export default function RecaudacionCredit() {
                 {action === 'PAY_CREDIT' ? (
                     <CardPay
                         setView={setAction}
-                        credit={{
-                            ...credit.credit,
-                            totalAmount: credit.credit.total_amount,
-                            saldo_capital: credit.credit.capital,
-                            interes: credit.credit.interest,
-                            seguro_desgravamen: credit.credit.safe,
-                            gastos_cobranza: credit.credit.collection_expenses,
-                            gastos_judiciales: credit.credit.legal_expenses,
-                            otros_valores: credit.credit.other_values,
-                        }}
+                        credit={buildCreditPayload(credit.credit)}
                         cartera={credit.credit.business_id}
                         updateInfoValues={() => {}}
                         amount={null}
